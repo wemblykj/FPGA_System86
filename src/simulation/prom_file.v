@@ -1,15 +1,15 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer:       Paul Wightmore
 // 
 // Create Date:    20:30:37 04/15/2018 
-// Design Name: 
-// Module Name:   System86\PROM_FILE
-// Project Name:  Namco System86 simulation
+// Design Name:    PROM_FILE
+// Module Name:    system86\simulation\prom_file.v
+// Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:   PROM simulation based on binary file
+// Description:    PROM simulation based on binary file
 //
 // Dependencies: 
 //
@@ -37,10 +37,12 @@ output wire [DATA_WIDTH-1:0] Q;
 
 //reg [DATA_WIDTH-1:0] data [0:2**ADDR_WIDTH-1];
 
-reg [DATA_WIDTH-1:0] data;
+reg [ADDR_WIDTH-1:0] ALatched;
+reg [DATA_WIDTH-1:0] DOut;
+reg [DATA_WIDTH-1:0] DOutLatched;
 reg [DATA_WIDTH-1:0] mem [1:2**ADDR_WIDTH];
 
-assign Q = (CE && OE) ? data : {(DATA_WIDTH){1'bZ}};
+assign Q = DOutLatched;
 
 integer fd;
 integer index;
@@ -54,8 +56,13 @@ end
 	
 always @(A or OE or CE) begin : MEM_READ
 	if (CE && OE) begin
-		data = mem[A+1];
+		DOut =  mem[A+1];
+	end else begin
+		DOut = (CE && OE) ? DOut : {(DATA_WIDTH){1'bZ}};
 	end
+	
+	ALatched = A;
+	DOutLatched = DOut;
 end
 
 endmodule

@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer:       Paul Wightmore
 // 
 // Create Date:    20:13:54 04/24/2018 
-// Design Name: 
-// Module Name:    LS00
-// Project Name: 
+// Design Name:    LS00
+// Module Name:    system86/ttl/ls00.v
+// Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
 // Description: 
@@ -16,6 +16,7 @@
 // Revision: 
 // Revision 0.01 - File Created
 // Additional Comments: 
+// License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LS00(

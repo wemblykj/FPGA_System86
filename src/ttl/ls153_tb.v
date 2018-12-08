@@ -10,7 +10,7 @@
 // Project Name:   Namco System86 simulation
 //// Target Device:  
 // Tool versions:  
-// Description:    LS153 - Dual 4-Input Multiplexer
+// Description:    LS153 - Dual 4-Input Multiplexer - test bench
 //
 // Verilog Test Fixture created by ISE for module: LS153
 //
@@ -19,6 +19,7 @@
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
+// License:        https://www.apache.org/licenses/LICENSE-2.0
 // 
 ////////////////////////////////////////////////////////////////////////////////
 

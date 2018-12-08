@@ -2,12 +2,12 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer:
+// Engineer:       Paul Wightmore
 //
-// Create Date:   20:49:38 05/09/2018
-// Design Name:   SRAM
-// Module Name:   C:/Development/Xilinx/system86/sram_tb.v
-// Project Name:  system86
+// Create Date:    20:49:38 05/09/2018
+// Design Name:    SRAM
+// Module Name:    system86\simulation\sram_tb.v
+// Project Name:   Namco System86 simulation
 // Target Device:  
 // Tool versions:  
 // Description: 
@@ -19,10 +19,11 @@
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
+// License:        https://www.apache.org/licenses/LICENSE-2.0
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module SRAM_TB;
+module SRAM_tb;
 
 	parameter ADDR_WIDTH = 4;
 	parameter DATA_WIDTH = 8;

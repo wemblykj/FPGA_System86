@@ -3,13 +3,13 @@
 // Company: 
 // Engineer:       Paul Wightmore
 // 
-// Create Date:    21:34:16 05/04/2018 
-// Design Name:    LS257
-// Module Name:    system86\src\ttl\ls257.v
+// Create Date:    18:05:38 05/06/2018 
+// Design Name:    CY6264
+// Module Name:    system86\mem\cy6264.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:    LS257 - Quad 2-Line To 1-Line Data Selectors/Multiplexers
+// Description:    CY6264 Static RAM
 //
 // Dependencies: 
 //
@@ -19,14 +19,23 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS257(
-	 input wire G,
-	 input wire SELA,
-	 input wire [3:0] A,
-	 input wire [3:0] B,
-	 output wire [3:0] Y
+module CY6264(
+	 input OE,
+	 input CE,
+	 input WE,
+    input [12:0] A,
+    inout [7:0] D
     );
 
-	assign Y = G ? (SELA ? A : B) : 4'bZ;
-
+	parameter FILE_NAME = "";
+	
+	SRAM #(13, 8, FILE_NAME) sram(
+			.OE(OE), 
+			.CE(CE),
+			.WE(WE),
+			.A(A),
+			.D(D)
+			
+		);
+	
 endmodule

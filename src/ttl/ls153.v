@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    20:13:54 04/24/2018 
-// Design Name: 
-// Module Name:    LS153 
+// Design Name:    LS153
+// Module Name:    system86/ttl/ls153.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 

@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    20:28:10 04/17/2018 
-// Design Name: 
-// Module Name:    system86/src/custom/cus47 
+// Design Name:    CUS47
+// Module Name:    system86/src/custom/cus47.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -121,7 +121,7 @@ module CUS47(
 	// 9404h - 9406h W	(scroll 3 + priority)
 	assign LTH1 = WE && A[15:10] === 'b100101;	
 	
-	// A000h - A000h W	(BACKCOLOR)
+	// A000h - A000h W	(BACKCOLOR) - documented as C000h but implemented as A000h in Mame
 	assign LTH2 = WE && A[15:10] === 'b101000;
 	
 	assign BUFEN = SCR0 | SCR1 | OBJ | SND | LTH0 | LTH1;

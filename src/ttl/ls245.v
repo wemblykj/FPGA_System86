@@ -5,7 +5,7 @@
 // 
 // Create Date:    19:33:12 05/01/2018 
 // Design Name:    LS245
-// Module Name:    system86\src	tl\ls245.v
+// Module Name:    system86\src\ttl\ls245.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 

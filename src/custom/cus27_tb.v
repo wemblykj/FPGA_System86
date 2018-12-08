@@ -2,7 +2,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer:
+// Engineer:       Paul Wightmore
 //
 // Create Date:    20:24:56 04/21/2018
 // Design Name:    CUS27
@@ -19,6 +19,7 @@
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
+// License:        https://www.apache.org/licenses/LICENSE-2.0
 // 
 ////////////////////////////////////////////////////////////////////////////////
 

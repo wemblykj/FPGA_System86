@@ -2,15 +2,15 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: P.Wightmore
+// Engineer:       Paul Wightmore
 //
-// Create Date:   10:40:07 05/13/2018
-// Design Name:   CLUT
-// Module Name:   C:/Development/Xilinx/system86/clut_tb.v
-// Project Name:  system86
+// Create Date:    10:40:07 05/13/2018
+// Design Name:    CLUT
+// Module Name:    system86/clut_tb.v
+// Project Name:   Namco System86 simulation
 // Target Device:  
 // Tool versions:  
-// Description: 
+// Description:    CLUT Subsystem - test bench
 //
 // Verilog Test Fixture created by ISE for module: CLUT
 //
@@ -19,6 +19,7 @@
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
+// License:        https://www.apache.org/licenses/LICENSE-2.0
 // 
 ////////////////////////////////////////////////////////////////////////////////
 

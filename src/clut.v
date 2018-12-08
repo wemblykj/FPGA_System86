@@ -1,33 +1,38 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: P.Wightmore
+// Engineer:       Paul Wightmore
 // 
 // Create Date:    11:16:41 05/12/2018 
-// Design Name: 
-// Module Name:    clut 
-// Project Name: 
+// Design Name:    CLUT
+// Module Name:    system86/clut.v 
+// Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description: 8-bit to 12-bit (RGB) CLUT
+// Description:    CLUT Subsystem - 8-bit to 12-bit (RGB) CLUT
 //
 // Dependencies: 
 //
 // Revision: 
 // Revision 0.01 - File Created
 // Additional Comments: 
+// License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
 module CLUT(
-	 input CLK_6M,
-	 input CLR,
+	  input CLK_6M,
+	  input CLR,
     input [7:0] D,
     input BANK,
-	 output wire [BPP-1:0] R,
-	 output wire [BPP-1:0] G,
-	 output wire [BPP-1:0] B
+	  output wire [BPP-1:0] R,
+	  output wire [BPP-1:0] G,
+	  output wire [BPP-1:0] B
     );
 
+	// == supply rails ==
+	supply1 VCC;
+	supply0 GND;
+	
 	parameter FILE_NAME_3R = "";
 	parameter FILE_NAME_3S = "";
 	parameter RM1 = 220;
@@ -64,8 +69,6 @@ module CLUT(
 		end
 	end
 	
-	supply1 VCC;
-	
 	wire [3:0] r;
 	wire [3:0] g;
 	wire [3:0] b;
@@ -74,7 +77,7 @@ module CLUT(
 	assign G = intensity_tbl[g];
 	assign B = intensity_tbl[b];
 	
-	reg [7:0] ls273_4u_d;
+	wire [7:0] ls273_4u_d;
 	LS273 LS273_4U(
 		.CLK(CLK_6M),
 		.CLR(CLR),

@@ -1,21 +1,22 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: P.Wightmore
+// Engineer:       Paul Wightmore
 // 
 // Create Date:    20:28:15 05/15/2018 
-// Design Name: 
-// Module Name:    LS374 
-// Project Name: 
+// Design Name:    LS374
+// Module Name:    system86/ttl/ls374.v
+// Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description: OCTAL D-TYPE TRANSPARENT LATCHES AND EDGE-TRIGGERED FLIP-FLOPS
+// Description:    LS374 - Octal D-Type Transparent Latches And Edge-Triggered Flip-Flops
 //
 // Dependencies: 
 //
 // Revision: 
 // Revision 0.01 - File Created
 // Additional Comments: 
+// License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LS374(

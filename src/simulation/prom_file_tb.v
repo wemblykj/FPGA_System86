@@ -2,11 +2,11 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer:
+// Engineer:      Paul Wightmore
 //
 // Create Date:   21:26:22 04/15/2018
 // Design Name:   PROM_FILE
-// Module Name:   System86/PROM_FILE_tb.v
+// Module Name:   system86/simulation/prom_file_tb.v
 // Project Name:  Namco System86 simulation
 //// Target Device:  
 // Tool versions:  
@@ -19,6 +19,7 @@
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
+// License:        https://www.apache.org/licenses/LICENSE-2.0
 // 
 ////////////////////////////////////////////////////////////////////////////////
 

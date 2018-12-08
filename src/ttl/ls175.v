@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    20:44:36 04/25/2018 
-// Design Name: 
-// Module Name:    system86\src	tl\ls175 
+// Design Name:    LS175
+// Module Name:    system86\src\ttl\ls175.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -30,7 +30,7 @@ module LS175(
     output wire Q1_L,
     output reg Q2,
     output wire Q2_L,
-    output reg Q3,
+	 output reg Q3,
     output wire Q3_L,
     output reg Q4,
     output wire Q4_L

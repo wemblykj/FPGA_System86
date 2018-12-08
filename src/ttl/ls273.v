@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer:       Paul Wightmore
 // 
 // Create Date:    21:51:32 05/14/2018 
-// Design Name: 
-// Module Name:    LS273 
-// Project Name: 
+// Design Name:    LS273
+// Module Name:    system86/ttl/ls273.v
+// Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
 // Description: 
@@ -16,11 +16,12 @@
 // Revision: 
 // Revision 0.01 - File Created
 // Additional Comments: 
+// License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LS273(
-	 input wire CLK,
-	 input wire CLR,
+	  input wire CLK,
+	  input wire CLR,
     input wire [7:0] D,
     output reg [7:0] Q
     );

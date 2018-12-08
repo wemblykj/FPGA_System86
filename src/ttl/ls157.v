@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    21:46:13 05/04/2018 
-// Design Name: 
-// Module Name:    system86\src\custom\ls157 
+// Design Name:    LS157
+// Module Name:    system86\src\custom\ls157.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 

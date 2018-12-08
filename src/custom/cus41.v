@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    17:00:13 04/29/2018 
-// Design Name: 
-// Module Name:    system86\src\custom\cus41 
+// Design Name:    CUS41
+// Module Name:    system86\src\custom\cus41.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 

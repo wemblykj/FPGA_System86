@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    21:02:26 04/24/2018 
-// Design Name: 
-// Module Name:    system86\src	tl\ls139 
+// Design Name:    LS139
+// Module Name:    system86\src\ttl\ls139.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -30,7 +30,7 @@ module LS139(
     output O1a,
     output O2a,
     output O3a,
-    output O0b,
+	 output O0b,
     output O1b,
     output O2b,
     output O3b
