@@ -36,24 +36,26 @@ input wire [ADDR_WIDTH-1:0] A;
 output wire [DATA_WIDTH-1:0] Q;
 
 //reg [DATA_WIDTH-1:0] data [0:2**ADDR_WIDTH-1];
-reg [DATA_WIDTH-1:0] data [1:2**ADDR_WIDTH];
+
+reg [DATA_WIDTH-1:0] data;
+reg [DATA_WIDTH-1:0] mem [1:2**ADDR_WIDTH];
+
+assign Q = (CE && OE) ? data : {(DATA_WIDTH){1'bZ}};
 
 integer fd;
 integer index;
 integer read;
 
 initial begin
-	//Q = {(DATA_WIDTH){1'bZ}};
-	
 	fd = $fopen(FILE_NAME, "rb");
-	read = $fread(data, fd, 0, 2**ADDR_WIDTH);
+	read = $fread(mem, fd, 0, 2**ADDR_WIDTH);
 	$fclose(fd);
 end
 	
-/*always @(A or OE or CE) begin
-	Q <= (CE && OE) ? data[A+1] : {(DATA_WIDTH){1'bZ}};
-end*/
-
-assign Q = (CE && OE) ? data[A+1] : {(DATA_WIDTH){1'bZ}};
+always @(A or OE or CE) begin : MEM_READ
+	if (CE && OE) begin
+		data = mem[A+1];
+	end
+end
 
 endmodule

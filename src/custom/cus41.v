@@ -93,7 +93,7 @@ module CUS41(
 		SINT = 0;
 	end
 	
-	always @(posedge VBLK, negedge IRQ_ACK) begin
+	/*always @(posedge VBLK, negedge IRQ_ACK) begin
 		SINT <= IRQ_next === 1'b1;
 		
 		if (MWE && MA[15:11] === 'b10000)
@@ -101,5 +101,6 @@ module CUS41(
 		else if (VBLK)
 			watchdog_counter <= watchdog_counter + 1;
 	end
+	*/
 	
 endmodule

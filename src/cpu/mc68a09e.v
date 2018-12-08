@@ -19,16 +19,17 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module MC68A09E(
-	input E,
+    input E,
     input Q,
-	input IRQ,
+    input IRQ,
     input FIRQ,
     input NMI,
     input HALT,
     input RESET,
     input DMABREQ,
- 	inout [15:0] A,
-	inout [7:0] D,
+ 	
+    inout [15:0] A,
+    inout [7:0] D,
     output WE,
     output BS,
     output BA,

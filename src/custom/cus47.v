@@ -32,7 +32,7 @@ module CUS47(
 	output wire ME,
 	output wire SUBE,
 	output wire SUBQ,
-    output reg IRQ,
+        output reg IRQ,
 	output wire LTH2,
 	output wire LTH0,
 	output wire LTH1,
@@ -136,14 +136,14 @@ module CUS47(
 		IRQ = 0;
 	end
 	
-	always @(posedge VBLK, negedge IRQ_ACK) begin
+	/*always @(posedge VBLK, negedge IRQ_ACK) begin
 		IRQ <= IRQ_next;
 		
 		if (WE & (A[15:10] === 'b100000))
 			watchdog_counter <= 0;
 		else if (VBLK)
 			watchdog_counter <= watchdog_counter + 1;
-	end
+	end*/
 	
 	always @(*) begin
 		CKB_LATCHED <= CKB;

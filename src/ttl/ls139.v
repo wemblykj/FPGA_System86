@@ -30,7 +30,7 @@ module LS139(
     output O1a,
     output O2a,
     output O3a,
-	output O0b,
+    output O0b,
     output O1b,
     output O2b,
     output O3b

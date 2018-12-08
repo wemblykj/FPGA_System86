@@ -4,15 +4,15 @@
 // Company: 
 // Engineer:
 //
-// Create Date:   21:26:22 04/15/2018
-// Design Name:   PROM_FILE
-// Module Name:   System86/PROM_FILE_tb.v
-// Project Name:  Namco System86 simulation
-//// Target Device:  
+// Create Date:   20:49:38 05/09/2018
+// Design Name:   SRAM
+// Module Name:   C:/Development/Xilinx/system86/sram_tb.v
+// Project Name:  system86
+// Target Device:  
 // Tool versions:  
-// Description:   PROM simulation based on binary file - test bench
+// Description: 
 //
-// Verilog Test Fixture created by ISE for module: PROM_FILE
+// Verilog Test Fixture created by ISE for module: SRAM
 //
 // Dependencies:
 // 
@@ -22,40 +22,47 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module PROM_FILE_TB;
+module SRAM_TB;
 
-	parameter ADDR_WIDTH = 15;
+	parameter ADDR_WIDTH = 4;
 	parameter DATA_WIDTH = 8;
 
 	// Inputs
-	reg [ADDR_WIDTH-1:0] A;
-	reg CE;
 	reg OE;
+	reg CE;
+	reg WE;
+	reg [ADDR_WIDTH-1:0] A;
 
 	// Outputs
-	wire [DATA_WIDTH-1:0] Q;
+	wire [DATA_WIDTH-1:0] D;
 
+	reg [DATA_WIDTH-1:0] DIn;
+	
 	// Instantiate the Unit Under Test (UUT)
-	PROM_FILE #(ADDR_WIDTH, DATA_WIDTH, "roms/rt3_1b.9c") uut (
-		.A(A), 
-		.Q(Q), 
+	SRAM #(ADDR_WIDTH, DATA_WIDTH) uut (
+		.OE(OE), 
 		.CE(CE), 
-		.OE(OE)
+		.WE(WE), 
+		.A(A), 
+		.D(D)
 	);
 
 	integer i = 0;
 	
+	assign D = (CE && WE) ? DIn : 8'bZ;
+	
 	initial begin
 		// Initialize Inputs
-		A = 0;
-		CE = 0;
 		OE = 0;
+		CE = 0;
+		WE = 0;
+		A = 0;
 
 		// Wait 100 ns for global reset to finish
 		#10;
-
+        
 		// Add stimulus here
-	  $monitor("%d, %d, 0x%x, 0x%x", CE, OE, A, Q);
+		$monitor("%d, %d, %d, 0x%x, 0x%x", CE, OE, WE, A, D);
 	  /*
 	  for (i=0; i<16; i=i+1) begin
 			#4;
@@ -74,21 +81,34 @@ module PROM_FILE_TB;
 			#4;
 			A = i;
 	  end
-	  */  
-	  
+	  */ 
 	  
 	  CE = 1;
 	  for (i=0; i<2**ADDR_WIDTH; i=i+1) begin
+			DIn = A[7:0];
 			#1;
-			A <= i;
+			A = i;
+			#1;
+			WE = 1;
+			#1;
+			WE = 0;
+	  end
+	  
+	  #1;
+	  
+	  for (i=0; i<2**ADDR_WIDTH; i=i+1) begin
+			#1;
+			A = i;
 			#1;
 			OE = 1;
 			#1;
 			OE = 0;
 	  end
+
+	  #1;
+	  CE = 0;
 	  
 	end
-	
-	   
+      
 endmodule
 

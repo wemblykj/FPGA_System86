@@ -27,18 +27,32 @@ module system86_tb;
 	// Inputs
 	reg clk_in;
 	reg rst;
-
+	reg [7:0] R;
+	reg [7:0] G;
+	reg [7:0] B;
+	reg HSYNC;
+	reg VSYNC;
+	
 	// Instantiate the Unit Under Test (UUT)
 	system86 uut (
-		.clk48m(clk_in), 
-		.rst(rst)
+		.clk(clk_in), 
+		.rst(rst),
+		.R(R),
+		.G(G),
+		.B(B),
+		.HSYNC(HSYNC),
+		.VSYNC(VSYNC)
 	);
 
+	integer rgb_fd;
 	initial begin
 		// Initialize Inputs
 		clk_in = 0;
 		rst = 1;
 
+		#10
+		rgb_fd = $fopen("rgb.log", "w");
+		
 		// Wait 1000 ns for global reset to finish
 		#100;
         
@@ -48,6 +62,8 @@ module system86_tb;
       
 	always begin
 		#2 clk_in = ~clk_in;
+		if (!rst && clk_in)
+			$fwrite(rgb_fd, "%d ns: %b %b %b %b %b\n", $time, HSYNC, VSYNC, R, G, B);
 	end
 	
 endmodule
