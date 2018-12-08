@@ -46,10 +46,10 @@ module CUS47(
 	output wire MPGM
     );
 
-	parameter WATCHDOG_WIDTH = 8;
+	// based on Atari watchdog based on LS197 decade
+	// this equates to about 4^2 V-blanks
+	parameter WATCHDOG_WIDTH = 4;
 	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
-	
-	assign RES = watchdog_counter[WATCHDOG_WIDTH-1];
 	
 	wire CKA;
 	wire CKB;
@@ -81,60 +81,72 @@ module CUS47(
 		.Q4_L(PHASEA)
 	);
 	
-	//assign MQ = CKB;
-	//assign ME = CKC;
-	//assign SUBE = CKA;
-	assign MQ = CKD;
-	assign ME = CKA;
-	assign SUBE = CKC;
-	assign SUBQ = CKB;
+	assign MQ = CKB;
+	assign ME = CKC;
+	assign SUBE = CKA;
+	assign SUBQ = CKD;
+	//assign MQ = CKD;
+	//assign ME = CKA;
+	//assign SUBE = CKC;
+	//assign SUBQ = CKB;
 	
 	// 0000h - 1FFFh W 	(videoram 1)
-	assign SCR0 = WE & (/*(ME | MQ) &*/ A[15:13] == 'b000);
+	assign SCR0 = A[15:13] === 'b000;
 	
 	// 2000 - 3FFFh W		(videoram 2)
-	assign SCR1 = WE & (/*(ME | MQ) &*/ A[15:13] == 'b001);
+	assign SCR1 = A[15:13] === 'b001;
 	
 	// 4000h - 5FFFh W	(sprite ram)
-	assign OBJ = WE & (/*(ME | MQ) &*/ A[15:13] == 'b010);
+	assign OBJ = A[15:13] === 'b010;
 
 	// 4000h - 43FFh R/W	(CUS 30)
-	assign SND = (/*(ME | MQ) &*/ A[15:10] == 'b010000);
+	assign SND = A[15:10] === 'b010000;
 	
 	// 6000h - 7FFFh R	(EEPROM 9D)
-	assign SPGM = ~WE & (/*(ME | MQ) &*/ (A[15:13] == 'b011));
+	assign SPGM = ~WE && (A[15:13] === 'b011);
 	
 	// 8000h - FFFFh R	(EEPROM 9C)
-	assign MPGM = ~WE & (/*(ME | MQ) &*/ A[15] == 1);
+	assign MPGM = ~WE && A[15] === 'b1;
 	
 	// 8800h - 8FFFh W	(tile bank select)
-	assign BANK = WE & ((A[15:11] == 'b10001) & A[10]);
+	assign BANK = WE && (A[15:11] === 'b10001) && A[10];
 	
 	// 9000h - 9002h W	(scroll + priority)
 	// 9003h - 9003h W 	(ROM 9D bank select)
 	// 9004h - 9006h W	(scroll + priority)
-	assign LTH0 = WE & (/*(ME | MQ) &*/ A[15:10] == 'b100100);// & (~A[1] == 'b0 | A[1:0] == 'b10));	
+	assign LTH0 = WE && A[15:10] === 'b100100;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
 	
 	// 9400h - 9402h W	(scroll 2 + priority)
 	// 9403h - 9403h W	(ROM 12D bank select)
 	// 9404h - 9406h W	(scroll 3 + priority)
-	assign LTH1 = WE & (/*(ME | MQ) &*/ A[15:10] == 'b100101);	
+	assign LTH1 = WE && A[15:10] === 'b100101;	
 	
 	// A000h - A000h W	(BACKCOLOR)
-	assign LTH2 = WE & (/*(ME | MQ) &*/ A[15:10] == 'b101000);	
+	assign LTH2 = WE && A[15:10] === 'b101000;
 	
 	assign BUFEN = SCR0 | SCR1 | OBJ | SND | LTH0 | LTH1;
 	
-	assign IRQ_ACK = WE & (/*(ME | MQ) &*/ A[15:10] == 'b10001);
-	//wire IRQ_next = 0;
-	assign IRQ_next = VBLK & ~IRQ_ACK;
+	// 0x8400 - 0x8400 W  (INT ACK)
+	assign IRQ_ACK = WE && A[15:10] === 'b100001;
+	assign IRQ_next = VBLK && ~IRQ_ACK;
+	
+	assign RES = watchdog_counter[WATCHDOG_WIDTH-1];
+	
+	initial begin
+		IRQ = 0;
+	end
 	
 	always @(posedge VBLK, negedge IRQ_ACK) begin
 		IRQ <= IRQ_next;
+		
+		if (WE & (A[15:10] === 'b100000))
+			watchdog_counter <= 0;
+		else if (VBLK)
+			watchdog_counter <= watchdog_counter + 1;
 	end
 	
 	always @(*) begin
-		CKB_LATCHED = CKB;
+		CKB_LATCHED <= CKB;
 	end
 	
 endmodule

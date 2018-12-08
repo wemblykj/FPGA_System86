@@ -35,7 +35,7 @@ module CUS41(
 	// MRESET is implied, by convention, as an 'input' on schematics but must logically be an output for watchdog functionality.
 	// ref: Pac-Mania CUS117:SUBRES, MAME namco86.cpp  
 	output wire MRESET,
-	output wire SINT,
+	output reg SINT,
 	output wire SROM,
 	output wire SCS4,
 	output wire SCS3,
@@ -55,33 +55,51 @@ module CUS41(
     );
 
 	parameter WATCHDOG_WIDTH = 8;
+	
 	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
 	
-	assign MRESET = watchdog_counter[WATCHDOG_WIDTH-1];
-	
 	// 0000h - 1FFFh R/W	(sprite ram)
-	assign MCS2 = MA[15:13] == 'b000;
+	assign MCS2 = MA[15:13] === 'b000;
 	
 	// 2000h - 3FFFh R/W 	(videoram 1)
-	assign MCS0 = MA[15:13] == 'b001;
+	assign MCS0 = MA[15:13] === 'b001;
 	
 	// 4000h - 5FFFh R/W		(videoram 2)
-	assign MCS1 = MA[15:13] == 'b010;
+	assign MCS1 = MA[15:13] === 'b010;
 	
 	// 6000h - 7FFFh R	(EEPROM 12D)
-	assign MCS4 = ~MWE & (/*(ME | MQ)*/ & (MA[15:13] == 'b011));
+	assign MCS4 = ~MWE && (MA[15:13] === 'b011);
 	
 	// 8000h - FFFFh R	(EEPROM 12C)
-	assign MROM = ~MWE & MA[15] == 1;
+	assign MROM = ~MWE && MA[15] === 1;
+	
+	// 0x8800 - 0x8800 W  (INT ACK)
+	assign IRQ_ACK = MWE && MA[15:11] === 'b10001;
+	assign IRQ_next = VBLK && ~IRQ_ACK;
 	
 	// D000h - D002h W	(scroll + priority)
 	// D003h - D003h W 	(ROM 9D bank select)
 	// D004h - D006h W	(scroll + priority)
-	assign LTH0 = MWE & (/*(ME | MQ) &*/ MA[15:11] == 'b11010);// & (~A[1] == 'b0 | A[1:0] == 'b10));	
+	assign LTH0 = MWE && MA[15:11] === 'b11010;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
 	
 	// D800h - D802h W	(scroll + priority)
 	// D803h - D803h W 	(ROM 12D bank select)
 	// D8004h - D806h W	(scroll + priority)
-	assign LTH1 = MWE & (/*(ME | MQ) &*/ MA[15:11] == 'b11011);	
-
+	assign LTH1 = MWE && MA[15:11] === 'b11011;	
+	
+	assign MRESET = watchdog_counter[WATCHDOG_WIDTH-1];
+	
+	initial begin
+		SINT = 0;
+	end
+	
+	always @(posedge VBLK, negedge IRQ_ACK) begin
+		SINT <= IRQ_next === 1'b1;
+		
+		if (MWE && MA[15:11] === 'b10000)
+			watchdog_counter <= 0;
+		else if (VBLK)
+			watchdog_counter <= watchdog_counter + 1;
+	end
+	
 endmodule
