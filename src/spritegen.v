@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    20:12:52 06/10/2018 
-// Design Name: 
-// Module Name:    SPRITEGEN 
+// Design Name:    SPRITEGEN 
+// Module Name:    system86/spritegen.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -20,17 +20,17 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module SPRITEGEN(
-	 input CLK_6M,
+    input CLK_6M,
     input CLK_2H,
-	 input OBJECT,
-	 input VRESET,
-	 input [2:0] SPR,
-	 input BLANKING,
-	 input [12:0] A,
-	 input WE,
-	 inout [7:0] D,
-	 output [7:0] DOT,
-	 output SRCWIN
+    input OBJECT,
+    input VRESET,
+    input [2:0] SPR,
+    input BLANKING,
+    input [12:0] A,
+    input WE,
+    inout [7:0] D,
+    output [7:0] DOT,
+    output SRCWIN
     );
 	 
 	 // == supply rails ==
@@ -193,9 +193,8 @@ module SPRITEGEN(
 		);
 		
 	wire [7:0] prom_5v_d;
-	PROM_FILE #(10, 8, "roms/rt1-4.5v") PROM_5V(
-		.OE(VCC),
-		.CE(BLANKING | ls85_7v_agtb), 
+	FPROM_7138 #(10, 8, "roms/rt1-4.5v") PROM_5V(
+		.E(BLANKING | ls85_7v_agtb), 
 		.A( { ls174_9v_q4, ls174_8v_q1, ls174_8v_q3, ls174_8v_q4, ls174_8v_q5, ls174_8v_q6, ls174_6v_q1, ls174_6v_q2, ls174_6v_q3, ls174_6v_q4 } ), 
 		.Q(prom_5v_d)
 		);

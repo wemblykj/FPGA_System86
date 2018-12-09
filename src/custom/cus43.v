@@ -27,62 +27,110 @@ module CUS43(
     input [2:0] CA,
     input WE,
     input [7:0] MDI, // hard to decipher text from schematics
-	 input [2:0] HA, 	// hard to decipher text from schematics
+    input [2:0] HA, 	// hard to decipher text from schematics
     input CLK_6M,
     input CLK_2H,
     input LATCH,
     input FLIP,
-    input [1:0] SYNC,
+    input HA2,
+    input HB2,
     output [2:0] PRO,
     output [7:0] CLO,
     output [2:0] DTO,
     output CLE			// hard to decipher text from schematics (not used)
     );
 
-	assign PRO = PRI;
-	//assign CLO = CLI;
-	//assign DTO = DTI;
+	// layer 1 (A)
+	reg [2:0] PR_A;
+	reg [7:0] CL_A;
+	// 3 planes, 4 bits (4 pixels) with 4-bit delay line
+	reg [3:0] DT_A_PLANE0_BUFFER_H;
+	reg [3:0] DT_A_PLANE1_BUFFER_H;
+	reg [3:0] DT_A_PLANE2_BUFFER_H;
+	reg [3:0] DT_A_PLANE0_BUFFER_L;
+	reg [3:0] DT_A_PLANE1_BUFFER_L;
+	reg [3:0] DT_A_PLANE2_BUFFER_L;
+	// first bit of each plane buffer
+	wire [2:0] DT_A = { DT_A_PLANE2_BUFFER_L[0], DT_A_PLANE1_BUFFER_L[0], DT_A_PLANE0_BUFFER_L[0] };	
 	
-	assign CLO = MDI;
-	assign DTO = { GDI[SYNC+8], GDI[SYNC+4], GDI[SYNC] };
+	// layer 2 (B)
+	reg [2:0] PR_B;
+	reg [7:0] CL_B;
+	// 3 planes, 4 bits (4 pixels)
+	reg [3:0] DT_B_PLANE0_BUFFER;
+	reg [3:0] DT_B_PLANE1_BUFFER;
+	reg [3:0] DT_B_PLANE2_BUFFER;
+	// first bit of each plane buffer
+	wire [2:0] DT_B = { DT_B_PLANE2_BUFFER[0], DT_B_PLANE1_BUFFER[0], DT_B_PLANE0_BUFFER[0] };	
+	
+	// perform priorty selection of layers (layer A or B)
+	wire [13:0] MUX1 = (DT_B != 0) && (PR_B > PR_A) ? { PR_B, CL_B, DT_B } : { PR_A, CL_A, DT_A };
+	// assign highest priority layer [or input] to output
+	assign {PRO, CLO, DTO } = (MUX1[2:0] != 0) && (MUX1[13:10] > PRI) ? MUX1 : { PRI, CLI, DTI };
 	
 	wire layer = CLK_2H;
-	
-	// scroll, may not be used
-	reg [8:0] hscroll[0:1];
-	reg [7:0] vscroll[0:1];
-	// priority, must be used
-	reg [2:0] pri[0:1];
-	
-	reg [4:0] state_counter = 0;
-	
-	integer k;
-	
+
 	initial begin
-		for (k = 0; k < 2; k = k + 1) begin
-			hscroll[k] = 9'b0;
-			vscroll[k] = 8'b0;
-			pri[k] = 3'b0;
-		end
-	end
+		PR_A = 3'b0;
+		CL_A = 3'b0;
+		DT_A_PLANE0_BUFFER_H = 4'b0;
+		DT_A_PLANE1_BUFFER_H = 4'b0;
+		DT_A_PLANE2_BUFFER_H = 4'b0;
+		DT_A_PLANE0_BUFFER_L = 4'b0;
+		DT_A_PLANE1_BUFFER_L = 4'b0;
+		DT_A_PLANE2_BUFFER_L = 4'b0;
 		
-	always @(posedge CLK_2H) begin
-		state_counter <= 0;
+		PR_B = 3'b0;
+		CL_B = 3'b0;
+		DT_B_PLANE0_BUFFER = 4'b0;
+		DT_B_PLANE1_BUFFER = 4'b0;
+		DT_B_PLANE2_BUFFER = 4'b0;
 	end
-	
+
 	always @(posedge CLK_6M) begin
-		state_counter <= state_counter + 1;
+		// forever shift the low buffer shifting in the LSB from the high buffer
+		DT_A_PLANE0_BUFFER_L[3] = DT_A_PLANE0_BUFFER_H[0];
+		DT_A_PLANE1_BUFFER_L[3] = DT_A_PLANE1_BUFFER_H[0];
+		DT_A_PLANE2_BUFFER_L[3] = DT_A_PLANE2_BUFFER_H[0];
+		DT_A_PLANE0_BUFFER_L[2:0] <= DT_A_PLANE0_BUFFER_L[3:1];
+		DT_A_PLANE1_BUFFER_L[2:0] <= DT_A_PLANE1_BUFFER_L[3:1];
+		DT_A_PLANE2_BUFFER_L[2:0] <= DT_A_PLANE2_BUFFER_L[3:1];
+		
+		if (HA2) begin
+			DT_A_PLANE0_BUFFER_H <= GDI[3:0];
+			DT_A_PLANE1_BUFFER_H <= GDI[7:4];
+			DT_A_PLANE2_BUFFER_H <= GDI[11:8];
+			CL_A <= MDI;
+		end else begin
+			// when not loading we are forever shifting
+			// TODO: flip support
+			DT_A_PLANE0_BUFFER_H <= DT_A_PLANE0_BUFFER_H >> 1;
+			DT_A_PLANE1_BUFFER_H <= DT_A_PLANE1_BUFFER_H >> 1;
+			DT_A_PLANE2_BUFFER_H <= DT_A_PLANE2_BUFFER_H >> 1;
+		end
+		
+		if (HB2) begin
+			// load 4 x 3bpp values from bus
+			DT_B_PLANE0_BUFFER <= GDI[3:0];
+			DT_B_PLANE1_BUFFER <= GDI[7:4];
+			DT_B_PLANE2_BUFFER <= GDI[11:8];
+			CL_B <= MDI;
+		end else begin
+			// when not loading we are forever shifting
+			// TODO: flip support
+			DT_B_PLANE0_BUFFER <= DT_B_PLANE0_BUFFER >> 1;
+			DT_B_PLANE1_BUFFER <= DT_B_PLANE1_BUFFER >> 1;
+			DT_B_PLANE2_BUFFER <= DT_B_PLANE2_BUFFER >> 1;	
+		end
 	end
 	
 	always @(LATCH or CA or MDI) begin
 		if (LATCH) begin
-			if (!CA[1])
-				hscroll[CA[2]][7:0] = MDI;
-			else if (!CA[1:0] == 2'b01) begin
-				hscroll[CA[2]][8] = MDI[0];
-				pri[CA[2]] = MDI[3:1];
-			end else if (!CA[1:0] == 2'b10)
-				vscroll[CA[2]][7:0] = MDI;
+			if (!CA[2:0] == 3'b001) begin
+				PR_A = MDI[3:1];
+			end else if (!CA[2:0] == 3'b101) begin
+				PR_B = MDI[3:1];
+			end
 		end 
 	end
 	

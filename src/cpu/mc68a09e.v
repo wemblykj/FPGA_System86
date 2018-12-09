@@ -4,7 +4,7 @@
 // Engineer: Paul Wightmore 
 // 
 // Create Date:    23:55:35 05/01/2018 
-// Design Name: 
+// Design Name:    MC68A09
 // Module Name:    system86\src\cpu\mc68A09e.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
@@ -27,7 +27,6 @@ module MC68A09E(
     input HALT,
     input RESET,
     input DMABREQ,
- 	
     inout [15:0] A,
     inout [7:0] D,
     output WE,

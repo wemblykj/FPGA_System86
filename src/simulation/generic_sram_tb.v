@@ -5,8 +5,8 @@
 // Engineer:       Paul Wightmore
 //
 // Create Date:    20:49:38 05/09/2018
-// Design Name:    SRAM
-// Module Name:    system86\simulation\sram_tb.v
+// Design Name:    GENERIC_SRAM
+// Module Name:    system86\simulation\generic_sram_tb.v
 // Project Name:   Namco System86 simulation
 // Target Device:  
 // Tool versions:  
@@ -23,14 +23,14 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module SRAM_tb;
+module GENERIC_SRAM_tb;
 
 	parameter ADDR_WIDTH = 4;
 	parameter DATA_WIDTH = 8;
 
 	// Inputs
-	reg OE;
 	reg CE;
+	reg OE;
 	reg WE;
 	reg [ADDR_WIDTH-1:0] A;
 
@@ -40,9 +40,9 @@ module SRAM_tb;
 	reg [DATA_WIDTH-1:0] DIn;
 	
 	// Instantiate the Unit Under Test (UUT)
-	SRAM #(ADDR_WIDTH, DATA_WIDTH) uut (
-		.OE(OE), 
+	GENERIC_SRAM #(ADDR_WIDTH, DATA_WIDTH) uut (
 		.CE(CE), 
+		.OE(OE), 
 		.WE(WE), 
 		.A(A), 
 		.D(D)
@@ -50,7 +50,7 @@ module SRAM_tb;
 
 	integer i = 0;
 	
-	assign D = (CE && WE) ? DIn : 8'bZ;
+	//assign D = (CE && WE) ? DIn : 8'bZ;
 	
 	initial begin
 		// Initialize Inputs
@@ -85,30 +85,33 @@ module SRAM_tb;
 	  */ 
 	  
 	  CE = 1;
-	  for (i=0; i<2**ADDR_WIDTH; i=i+1) begin
+	  
+	  /*for (i=0; i<2**ADDR_WIDTH; i=i+1) begin
+			A = i;
+			#100
 			DIn = A[7:0];
 			#1;
-			A = i;
+			
 			#1;
 			WE = 1;
 			#1;
 			WE = 0;
-	  end
+	  end*/
 	  
-	  #1;
+	  #100;
 	  
 	  for (i=0; i<2**ADDR_WIDTH; i=i+1) begin
-			#1;
 			A = i;
-			#1;
+			#10;
 			OE = 1;
-			#1;
-			OE = 0;
+			#90;
+			#100;
 	  end
-
-	  #1;
+	  OE = 0;
+	  #100;
 	  CE = 0;
-	  
+	  #100;
+	  $finish;
 	end
       
 endmodule

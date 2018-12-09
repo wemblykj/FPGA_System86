@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer: 
+// Engineer:       Paul Wightmore
 // 
 // Create Date:    18:05:38 05/06/2018 
-// Design Name: 
-// Module Name:    TMM2064P 
-// Project Name: 
+// Design Name:
+// Module Name:    system86\mem\tmm2064p.v 
+// Project Name:   Namco System86 simulation 
 // Target Devices: 
 // Tool versions: 
 // Description: 
@@ -19,10 +19,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module TMM2064P(
-	 input CE1,
-	 input CE2,
-	 input OE,
-	 input WE,
+	  input CE1,
+	  input CE2,
+	  input OE,
+	  input WE,
     input [12:0] A,
     inout [7:0] D
     );
@@ -38,7 +38,7 @@ module TMM2064P(
 	parameter tLZOE = "5";			// OE to output low-Z
 	parameter tHZOE = "0:35:35";	// OE to output high-Z
 	
-	SRAM #(
+	GENERIC_SRAM #(
 		13, 8, 
 		FILE_NAME,
 		tAA, tOHA,

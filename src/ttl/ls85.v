@@ -22,7 +22,7 @@
 module LS85(
     input [3:0] A,
     input [3:0] B,
-	 output AgtBin,
+    output AgtBin,
     output AeqBin,
     output AltBin,
     output AgtBout,

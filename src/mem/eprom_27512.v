@@ -19,9 +19,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module EPROM_27512(
-	  input wire G,
-	  input wire E,
-    input wire [14:0] A,
+    input wire G,
+    input wire E,
+    input wire [15:0] A,
     output wire [7:0] Q
     );
 

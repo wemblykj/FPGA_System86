@@ -9,7 +9,7 @@
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description: HEX/QUADRUPLE D-TYPE FLIP-FLOPS WITH CLEAR
+// Description:    LS174 - Hex D-Type Positive-Edge-Triggered Flip-Flops With Clear	
 //
 // Dependencies: 
 //

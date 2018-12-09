@@ -5,7 +5,7 @@
 // 
 // Create Date:    21:51:42 07/02/2018 
 // Design Name: 
-// Module Name:    system86\mem\eprom_27256 
+// Module Name:    system86\mem\eprom_27256.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -19,8 +19,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module EPROM_27256(
-	  input wire E,
-	  input wire G,
+    input wire E,
+    input wire G,
     input wire [14:0] A,
     output wire [7:0] Q
     );

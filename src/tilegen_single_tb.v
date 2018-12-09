@@ -63,7 +63,7 @@ module tilegen_single_tb(
 	reg LATCH0;
 	//reg LATCH1;
 	reg FLIP;	
-
+	reg BANK;
 	reg SRCWIN;
 	reg BACKCOLOR;
 	reg [12:0] A;
@@ -91,7 +91,8 @@ module tilegen_single_tb(
 	wire cus42_7k_roe;
 	wire [12:0] cus42_7k_ra;
 	wire [7:0] cus42_7k_rd;
-	wire [1:0] cus42_7k_sync;
+	wire cus42_7k_ha2;
+	wire cus42_7k_hb2;
 	
 	// (possibly priority lut based on Mame's system 1 description)
 	// b4-8 - layer 2 & 4
@@ -153,16 +154,14 @@ module tilegen_single_tb(
 		
 	// tile address decoder (used at runtime) 0x1400 - 0x0020
 	// possibly similar functionality to system 1 functionality as described in Mame
-	PROM_FILE #(5, 8, "roms/rt1-5.6u") EEPROM_6U(
-		.OE(VCC),
-		.CE(VCC), 
+	PROM_7112 #("roms/rt1-5.6u") PROM_6U(
+		.E(VCC), 
 		.A( { CLK_2H, cus42_7k_ga[13:12], GND, GND } ), 
 		.Q(prom_6u_d));
 	
 	// tile map palette prom
-	PROM_FILE #(11, 8, "roms/rt1-3.4v") PROM_4V(
-		.OE(VCC),
-		.CE(VCC), //.CE(SCRWIN), 
+	PROM_7138 #("roms/rt1-3.4v") PROM_4V(
+		.E(VCC), //.CE(SCRWIN), 
 		.A( { CL, DT } ), 
 		.Q(prom_4v_d));
 	
@@ -184,12 +183,14 @@ module tilegen_single_tb(
 		.RWE(cus42_7k_rwe),
 		.RD(cus42_7k_rd),
 		.ROE(cus42_7k_roe),
-		.SYNC(cus42_7k_sync)
+		.HA2(cus42_7k_ha2),
+		.HB2(cus42_7k_hb2)
 		);
 	
 	// tile ram
 	CY6264 #("snapshot/rthunder_videoram1_1.bin") CY6264_7N(
-		.CE(VCC),
+		.CE1(VCC),
+		.CE2(VCC),
 		.WE(cus42_7k_rwe),
 		.OE(cus42_7k_roe),
 		.A(cus42_7k_ra),
@@ -197,17 +198,17 @@ module tilegen_single_tb(
 		);
 	
 	// plane 1/2 0x00000 0x10000
-	PROM_FILE #(15, 8, "roms/rt1_7.7r") EEPROM_7R(
-		.OE(VCC),
-		.CE(VCC), 
-		.A( { prom_6u_d[3:1], cus42_7k_ga[11:0] } ), 
+	EPROM_27512 #("roms/rt1_7.7r") EPROM_7R(
+		.E(VCC), 
+		.G(VCC), 
+		.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:0] } ), 
 		.Q(prom_7r_d));
 		
 	// plane 3 0x10000 0x80000
-	PROM_FILE #(14, 8, "roms/rt1_8.7s") EEPROM_7S(
-		.OE(VCC),
-		.CE(VCC), 
-		.A( { prom_6u_d[3:1], cus42_7k_ga[11:1] } ), 
+	EPROM_27256 #("roms/rt1_8.7s") EPROM_7S(
+		.E(VCC), 
+		.G(VCC), 
+		.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:1] } ), 
 		.Q(prom_7s_d));	
 	
 	wire [3:0] ls158_7u_y;
@@ -234,14 +235,15 @@ module tilegen_single_tb(
 		.PRO(PR),
 		.CLO(CL),
 		.DTO(DT),
-		.SYNC(cus42_7k_sync)
+		.HA2(cus42_7k_ha2),
+		.HB2(cus42_7k_hb2)
 		);
 		
 	CLUT #("roms/rt1-1.3r", "roms/rt1-2.3s") CLUT(
 		// input
 		.CLK_6M(CLK_6M), 
 		.CLR(GND), //.CLR(ls174_6v_q6), 
-		.D(DOT), 
+		.D(prom_4v_d), 
 		.BANK(GND), //.BANK(ls174_9v_q5), 
 		// output
 		.R(R), 
@@ -255,18 +257,25 @@ module tilegen_single_tb(
 		SCROLL0 = 0;
 		LATCH0 = 0;
 		FLIP = 0;
+		BANK = 0;
 		SRCWIN = 0;
 		BACKCOLOR = 0;
 		A = 0;
 		WE = 0;
 		MD = 0;
 
-		rgb_fd = $fopen("rgb.log", "w");
+		rgb_fd = $fopen("rgb.txt", "w");
 
+		rst = 1;
 		// Wait 100 ns for global reset to finish
 		#100;
+		rst = 0;
         
 		// Add stimulus here
+		#100_000_000;
+		rst = 1;
+		$fclose(rgb_fd);
+		$finish;
 
 	end
 	

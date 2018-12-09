@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    20:30:37 04/15/2018 
-// Design Name:    PROM_FILE
-// Module Name:    system86\simulation\prom_file.v
+// Design Name:    GENERIC_PROM
+// Module Name:    system86\simulation\generic_prom.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -16,33 +16,37 @@
 // Revision: 
 // Revision 0.01 - File Created
 // Additional Comments: 
-// License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module PROM_FILE(
-    OE,
-    CE,
-    A,
-    Q
+module GENERIC_PROM(
+    input wire E,
+    input wire G,
+    input wire [ADDR_WIDTH-1:0] A,
+    output wire [DATA_WIDTH-1:0] Q
     );
 	 
 parameter ADDR_WIDTH = 0;
 parameter DATA_WIDTH = 0;
 parameter FILE_NAME = "";
+// timings
+parameter tAVQV = 0;
+parameter tAXQX = 0;
+parameter tELQV = 0;
+parameter tEHQZ = 0;
+parameter tGLQV = 0;
+parameter tGHQZ = 0;
 
-input wire CE;
-input wire OE;
-input wire [ADDR_WIDTH-1:0] A;
-output wire [DATA_WIDTH-1:0] Q;
-
-//reg [DATA_WIDTH-1:0] data [0:2**ADDR_WIDTH-1];
-
-reg [ADDR_WIDTH-1:0] ALatched;
-reg [DATA_WIDTH-1:0] DOut;
-reg [DATA_WIDTH-1:0] DOutLatched;
 reg [DATA_WIDTH-1:0] mem [1:2**ADDR_WIDTH];
+reg [DATA_WIDTH-1:0] DOut;
+wire [ADDR_WIDTH-1:0] AV;
 
-assign Q = DOutLatched;
+// retaining datasheet's naming convention due to active low signals
+assign #(tAVQV, tAXQX) AV = A;	
+assign #(tELQV, tEHQZ) ELQV = E;	
+assign #(tGLQV, tGHQZ) GLQV = G;
+assign QV = ELQV && GLQV;
+
+assign Q = QV ? DOut : {(DATA_WIDTH){1'bZ}};
 
 integer fd;
 integer index;
@@ -54,15 +58,10 @@ initial begin
 	$fclose(fd);
 end
 	
-always @(A or OE or CE) begin : MEM_READ
-	if (CE && OE) begin
-		DOut =  mem[A+1];
-	end else begin
-		DOut = (CE && OE) ? DOut : {(DATA_WIDTH){1'bZ}};
-	end
-	
-	ALatched = A;
-	DOutLatched = DOut;
+always @(*) begin
+	if (QV)
+		// latch data on [delayed] change in address
+		DOut = mem[AV+1];
 end
 
 endmodule

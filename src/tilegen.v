@@ -29,12 +29,13 @@ module TILEGEN(
     input HSYNC,
     input VSYNC,
     input FLIP,
-	 input SRCWIN,
-	 input BACKCOLOR,
-	 input [12:0] A,
-	 input WE,
+    input SRCWIN,
+    input BANK,
+    input BACKCOLOR,
+    input [12:0] A,
+    input WE,
     input [7:0] MD,
-	 inout [7:0] D,
+    inout [7:0] D,
     inout [20:1] J5,
     output [2:0] SPR,
     output [7:0] DOT
@@ -138,16 +139,14 @@ module TILEGEN(
 		
 	// tile address decoder (used at runtime) 0x1400 - 0x0020
 	// possibly similar functionality to system 1 functionality as described in Mame
-	PROM_FILE #(5, 8, "roms/rt1-5.6u") EEPROM_6U(
-		.OE(VCC),
-		.CE(VCC), 
+	PROM_7112 #("roms/rt1-5.6u") PROM_6U(
+		.E(VCC),
 		.A( { CLK_2H, cus42_7k_ga[13:12], cus42_5k_ga[13:12] } ), 
 		.Q(prom_6u_d));
 	
 	// tile map palette prom
-	PROM_FILE #(11, 8, "roms/rt1-3.4v") PROM_4V(
-		.OE(VCC),
-		.CE(VCC), //.CE(SCRWIN), 
+	PROM_7138 #("roms/rt1-3.4v") PROM_4V(
+		.E(VCC), //.E(SCRWIN),
 		.A( { cus43_6n_clo, cus43_6n_dto } ), 
 		.Q(prom_4v_d));
 	
@@ -181,19 +180,21 @@ module TILEGEN(
 		);
 	
 	// plane 1/2 0x00000 0x10000
-	PROM_FILE #(15, 8, "roms/rt1_7.7r") EEPROM_7R(
-		.OE(VCC),
-		.CE(VCC), 
-		.A( { prom_6u_d[3:1], cus42_7k_ga[11:0] } ), 
+	// documented as 27256 but wired up as 27512 (with Mame and rom sizes concurring with 27512)
+	EPROM_27256 #("roms/rt1_7.7r") EPROM_7R(
+		.E(VCC),
+		.G(VCC), 
+		.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:0] } ), 
 		.Q(prom_7r_d));
 		
 	LS158 ls158();
 	
 	// plane 3 0x10000 0x80000
-	PROM_FILE #(14, 8, "roms/rt1_8.7s") EEPROM_7S(
-		.OE(VCC),
-		.CE(VCC), 
-		.A( { prom_6u_d[3:1], cus42_7k_ga[11:1] } ), 
+	// documented as 27128 but wired up as 27256 (with Mame and rom sizes concurring with 27256)
+	EPROM_27256 #("roms/rt1_8.7s") EPROM_7S(
+		.E(VCC),
+		.G(VCC), 
+		.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:1] } ), 
 		.Q(prom_7s_d));	
 	
 	// auxillary select
@@ -254,16 +255,16 @@ module TILEGEN(
 		);
 	
 	// plane 1/2 0x00000 (0x08000)
-	PROM_FILE #(15, 8, "roms/rt1_5.4r") EEPROM_4R(
-		.OE(VCC),
-		.CE(VCC), 
+	EPROM_27256 #(15, 8, "roms/rt1_5.4r") EPROM_4R(
+		.E(VCC),
+		.G(VCC), 
 		.A( { prom_6u_d[7:5], cus42_5k_ga[11:0] } ), 
 		.Q(prom_4r_d));
 		
 	// plane 3 0x08000 (0x04000) 
-	PROM_FILE #(14, 8, "roms/rt1_6.4s") EEPROM_4S(
-		.OE(VCC),
-		.CE(VCC), 
+	EPROM_27128 #(14, 8, "roms/rt1_6.4s") EPROM_4S(
+		.E(VCC), 
+		.G(VCC),
 		.A( { prom_6u_d[7:5], cus42_5k_ga[11:1] } ), 
 		.Q(prom_4s_d));
 	

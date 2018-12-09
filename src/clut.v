@@ -20,13 +20,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module CLUT(
-	  input CLK_6M,
-	  input CLR,
+    input CLK_6M,
+    input CLR,
     input [7:0] D,
     input BANK,
-	  output wire [BPP-1:0] R,
-	  output wire [BPP-1:0] G,
-	  output wire [BPP-1:0] B
+    output wire [BPP-1:0] R,
+    output wire [BPP-1:0] G,
+    output wire [BPP-1:0] B
     );
 
 	// == supply rails ==
@@ -85,16 +85,14 @@ module CLUT(
 		.Q(ls273_4u_d)
 		);
 		
-	PROM_FILE #(9, 8, FILE_NAME_3R) PROM_3R(
-		.OE(VCC),
-		.CE(VCC), 
+	FPROM_7124 #(FILE_NAME_3R) PROM_3R(
+		.E(VCC),
 		.A( {BANK, ls273_4u_d} ), 
 		.Q( {g, r} )
 		);
 		
-	PROM_FILE #(9, 4, FILE_NAME_3S) PROM_3S(
-		.OE(VCC),
-		.CE(VCC), 
+	FPROM_7116 #(FILE_NAME_3S) PROM_3S(
+		.E(VCC),
 		.A( {BANK, ls273_4u_d} ), 
 		.Q(b)
 		);

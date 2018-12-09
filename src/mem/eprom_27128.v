@@ -19,8 +19,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module EPROM_27128(
-	  input wire E,
-	  input wire G,
+    input wire E,
+    input wire G,
     input wire [13:0] A,
     output wire [7:0] Q
     );

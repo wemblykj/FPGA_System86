@@ -20,19 +20,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 module PROM_7112(
     input wire E,
-	  input wire [4:0] A,
+    input wire [4:0] A,
     output wire [7:0] Q
     );
 
 	parameter FILE_NAME = "";
 	// Type E (35ns) timings
-	parameter tAA = "15:15:35";
-	parameter tEN = "10:10:20";
-	parameter tDIS = "15:15:25";
+	parameter tAA = 15:15:35;
+	parameter tEN = 10:10:20;
+	parameter tDIS = 15:15:25;
 	
 	supply1 VCC;
 	
-	GENERIC_PROM #(5, 8, FILE_NAME, tAA, tAA, tEN, tDIS) fprom(
+	GENERIC_PROM #(5, 8, FILE_NAME, tAA, tAA, tEN, tDIS) prom(
 		.E(E),
 		.G(VCC),
 		.A(A),

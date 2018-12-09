@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    21:51:42 07/02/2018 
-// Design Name: 
-// Module Name:    system86\mem\prom_7116 
+// Design Name:    MB7116
+// Module Name:    system86\mem\prom_7116.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -19,20 +19,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module PROM_7116(
-	  input wire E,
+    input wire E,
     input wire [8:0] A,
     output wire [3:0] Q
     );
 
 	parameter FILE_NAME = "";
 	// Type E (45ns) timings
-	parameter tAA = "45";
-	parameter tEN = "30";
-	parameter tDIS = "30";
+	parameter tAA = 45;
+	parameter tEN = 30;
+	parameter tDIS = 30;
 	
 	supply1 VCC;
 	
-	GENERIC_PROM #(9, 4, FILE_NAME, tAA, tAA, tEN, tDIS) fprom(
+	GENERIC_PROM #(9, 4, FILE_NAME, tAA, tAA, tEN, tDIS) prom(
 		.E(E),
 		.G(VCC),
 		.A(A),

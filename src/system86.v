@@ -243,16 +243,16 @@ module system86(
 		.MPGM(cus47_10C_mpmg)
 		);
 	
-	// EEPROM 27256 - CPU 1 PROGRAM ROM 9C
-	PROM_FILE #(15, 8, "roms/rt3_1b.9c") EEPROM_9C(
-		.OE(~CLK_2H),	// negate for active low
-		.CE(cus47_10C_mpmg), 
+	// EPROM 27256 - CPU 1 PROGRAM ROM 9C
+	EPROM_27256 #("roms/rt3_1b.9c") EPROM_9C(
+		.E(cus47_10C_mpmg), 
+		.G(~CLK_2H),	// negate for active low
 		.A(cpu1_9a_a[14:0]), 
 		.Q(cpu1_9a_d)
 		);
 		
-	// EEPROM 27256 - CPU 1 PROGRAM ROM 9D
-	/*PROM_FILE #(14, 8, "roms\rt3_1b.9c") EEPROM_9D(
+	// EPROM 27256 - CPU 1 PROGRAM ROM 9D
+	/*EPROM_27256 #(14, 8, "roms\rt3_1b.9c") EPROM_9D(
 		.OE(CLK_2H),
 		.CE(cus47_10C_spmg), 
 		.A(cpu1_9a_a[14:0]), 
@@ -320,18 +320,17 @@ module system86(
 		.HALT(GND), 
 		.RESET(RESET));	
 	
-	PROM_FILE #(15, 8, "roms/rt3_2b.12c") EEPROM_12C(
-		.OE(~ls00_8d_2y),
-		.CE(cus41_8a_mrom),
+	EPROM_27256 #("roms/rt3_2b.12c") EPROM_12C(
+		.E(cus41_8a_mrom),
+		.G(~ls00_8d_2y),
 		.A(cpu2_11a_a[14:0]), 
 		.Q(cpu2_11a_d));
 		
-	PROM_FILE #(15, 8, "roms/rt3_3.12d") EEPROM_12D(
-		.OE(~ls00_8d_2y),
-		.CE(cus41_8a_mcs4), 
+	EPROM_27256 #("roms/rt3_3.12d") EPROM_12D(
+		.E(cus41_8a_mcs4), 
+		.G(~ls00_8d_2y),
 		.A(cpu2_11a_a[14:0]), 
 		.Q(cpu2_11a_d));
-	
 	
 	// == BUS MULTIPLEXER ==
 	
@@ -415,6 +414,7 @@ module system86(
       .HSYNC(HSYNC),
       .VSYNC(HSYNC),
       .FLIP(FLIP),
+		.BANK(BANK),
 	   .SRCWIN(SRCWIN),
 	   .BACKCOLOR(BACKCOLOR),
 	   .A(A[12:0]),
@@ -461,6 +461,7 @@ module system86(
 	assign SCROLL1 = ~ls08_8e_3y;
 	assign LATCH0 = ls157_8c_y[3];
 	assign LATCH1 = ls157_8c_y[2];
+	assign BANK = cus47_10c_bank;
 	assign WE = ls157_8c_y[1];
 	
 	//assign SPR = cus43_6n_pro;

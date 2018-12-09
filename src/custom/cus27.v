@@ -66,15 +66,21 @@ module CUS27(
 	
 	// based on information found @ http://www.ukvac.com/forum/namco-cus27-in-fpga-cus130-wip_topic362440.html
 	
-	always @(negedge CLK_6M_I) begin		// note: negative edge of clock
+	/*always @(negedge CLK_6M_I) begin		// note: negative edge of clock
 		if (horizontal_counter[8:3] === 6'b110000) 	// ~384
 			horizontal_counter = 0;
 		else begin
 			horizontal_counter = horizontal_counter + 1;
 		end
-	end
+	end*/
 	
 	always @(posedge CLK_6M_I) begin
+		if (horizontal_counter[8:3] === 6'b110000) 	// ~384
+			horizontal_counter = 0;
+		else begin
+			horizontal_counter = horizontal_counter + 1;
+		end
+		
 		// HSYNC & VRESETH
 		if (horizontal_counter[8:0] === 9'b100110011) begin
 			HSYNC <= 1'b1;	// ~304

@@ -30,7 +30,7 @@ module LS175(
     output wire Q1_L,
     output reg Q2,
     output wire Q2_L,
-	 output reg Q3,
+    output reg Q3,
     output wire Q3_L,
     output reg Q4,
     output wire Q4_L
