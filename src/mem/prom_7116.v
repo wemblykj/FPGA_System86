@@ -3,39 +3,40 @@
 // Company: 
 // Engineer:       Paul Wightmore
 // 
-// Create Date:    18:05:38 05/06/2018 
-// Design Name:    CY6264
-// Module Name:    system86\mem\cy6264.v 
+// Create Date:    21:51:42 07/02/2018 
+// Design Name: 
+// Module Name:    system86\mem\prom_7116 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:    CY6264 Static RAM
+// Description: 
 //
 // Dependencies: 
 //
 // Revision: 
 // Revision 0.01 - File Created
 // Additional Comments: 
-// License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module CY6264(
-    input OE,
-    input CE,
-    input WE,
-    input [12:0] A,
-    inout [7:0] D
+module PROM_7116(
+	  input wire E,
+    input wire [8:0] A,
+    output wire [3:0] Q
     );
 
 	parameter FILE_NAME = "";
+	// Type E (45ns) timings
+	parameter tAA = "45";
+	parameter tEN = "30";
+	parameter tDIS = "30";
 	
-	GENERIC_SRAM #(13, 8, FILE_NAME) sram(
-			.OE(OE), 
-			.CE(CE),
-			.WE(WE),
-			.A(A),
-			.D(D)
-			
-		);
+	supply1 VCC;
+	
+	GENERIC_PROM #(9, 4, FILE_NAME, tAA, tAA, tEN, tDIS) fprom(
+		.E(E),
+		.G(VCC),
+		.A(A),
+		.Q(Q)
+	);
 	
 endmodule
