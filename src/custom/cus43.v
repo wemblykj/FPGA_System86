@@ -40,8 +40,12 @@ module CUS43(
     output CLE			// hard to decipher text from schematics (not used)
     );
 
-	reg [11:0] gdiLatched[0:1];
-	reg [7:0] mdiLatched[0:1];
+	//reg [11:0] gdiLatched;
+	//reg [7:0] mdiLatched;
+	reg [11:0] gdiALatched;
+	reg [7:0] mdiALatched;
+	reg [11:0] gdiBLatched;
+	reg [7:0] mdiBLatched;
 	
 	// layer 1 (A)
 	reg [2:0] PR_A;
@@ -66,9 +70,9 @@ module CUS43(
 	wire [2:0] DT_B = { DT_B_PLANE2_BUFFER[3], DT_B_PLANE1_BUFFER[3], DT_B_PLANE0_BUFFER[3] };	
 	
 	// perform priorty selection of layers (layer A or B)
-	wire [13:0] MUX1 = (DT_B != 0) && (PR_B > PR_A) ? { PR_B, CL_B, DT_B } : { PR_A, CL_A, DT_A };
+	wire [13:0] MUX1 = /*(DT_B != 7) && (PR_B > PR_A) ? { PR_B, CL_B, DT_B } :*/ { PR_A, CL_A, DT_A };
 	// assign highest priority layer [or input] to output
-	//assign {PRO, CLO, DTO } = (MUX1[2:0] != 0) && (MUX1[13:10] > PRI) ? MUX1 : { PRI, CLI, DTI };
+	//assign {PRO, CLO, DTO } = (MUX1[2:0] != 7) && (MUX1[13:10] > PRI) ? MUX1 : { PRI, CLI, DTI };
 	
 	// Layer 1 only
 	assign {PRO, CLO, DTO } = { PR_A, CL_A, DT_A };
@@ -82,24 +86,34 @@ module CUS43(
 		DT_A_PLANE0_BUFFER = 4'b0;
 		DT_A_PLANE1_BUFFER = 4'b0;
 		DT_A_PLANE2_BUFFER = 4'b0;
-		gdiLatched[0] = 0;
-		mdiLatched[0] = 0;
+		gdiALatched = 0;
+		mdiALatched = 0;
 		
 		PR_B = 3'b0;
 		CL_B = 3'b0;
 		DT_B_PLANE0_BUFFER = 4'b0;
 		DT_B_PLANE1_BUFFER = 4'b0;
 		DT_B_PLANE2_BUFFER = 4'b0;
-		gdiLatched[1] = 0;
-		mdiLatched[1] = 0;
+		gdiBLatched = 0;
+		mdiBLatched = 0;
 	end
 	
 	reg haLast = 0;
 	reg hbLast = 0;
 	
+	/*always @(posedge layer) begin
+		gdiLatched = GDI;
+		mdiLatched = MDI;
+	end
+	
+	always @(negedge layer) begin
+		gdiLatched = GDI;
+		mdiLatched = MDI;
+	end*/
+	
 	always @(posedge HA2) begin
-		gdiLatched[0] = GDI;
-		mdiLatched[0] = MDI;
+		gdiALatched = GDI;
+		mdiALatched = MDI;
 		/*haLast <= HA2;
 		if (HA2 && !haLast) begin
 			DT_A_PLANE0_BUFFER <= GDI[3:0];
@@ -113,10 +127,10 @@ module CUS43(
 		end*/
 	end
 	
-	always @(posedge HB2) begin
+	/*always @(posedge HB2) begin
 		gdiLatched[1] = GDI;
 		mdiLatched[1] = MDI;
-		/*hbLast <= HB2;
+		/ *hbLast <= HB2;
 		if (HB2 && ! hbLast) begin
 			DT_B_PLANE0_BUFFER <= GDI[3:0];
 			DT_B_PLANE1_BUFFER <= GDI[7:4];
@@ -126,10 +140,10 @@ module CUS43(
 			DT_B_PLANE0_BUFFER <= DT_B_PLANE0_BUFFER_NEXT;
 			DT_B_PLANE1_BUFFER <= DT_B_PLANE1_BUFFER_NEXT;
 			DT_B_PLANE2_BUFFER <= DT_B_PLANE2_BUFFER_NEXT;
-		end*/
-	end
+		end* /
+	end*/
 	
-	always @(posedge CLK_6M) begin
+	always @(negedge CLK_6M) begin
 		/*DT_A_PLANE0_BUFFER_NEXT <= DT_A_PLANE0_BUFFER << 1;
 		DT_A_PLANE1_BUFFER_NEXT <= DT_A_PLANE1_BUFFER << 1;
 		DT_A_PLANE2_BUFFER_NEXT <= DT_A_PLANE2_BUFFER << 1;
@@ -149,13 +163,14 @@ module CUS43(
 		hbLast <= (HB2);
 		
 		if (HA2 && !haLast) begin
-			//DT_A_PLANE0_BUFFER <= gdiLatched[0][3:0];
-			//DT_A_PLANE1_BUFFER <= gdiLatched[0][7:4];
-			//DT_A_PLANE2_BUFFER <= gdiLatched[0][11:8];
-			DT_A_PLANE0_BUFFER <= GDI[3:0];//gdiLatched[0][3:0];
-			DT_A_PLANE1_BUFFER <= GDI[7:4];//gdiLatched[0][7:4];
-			DT_A_PLANE2_BUFFER <= GDI[11:8];//gdiLatched[0][11:8];
-			CL_A <= MDI;
+			DT_A_PLANE0_BUFFER <= gdiALatched[3:0];
+			DT_A_PLANE1_BUFFER <= gdiALatched[7:4];
+			DT_A_PLANE2_BUFFER <= gdiALatched[11:8];
+			//DT_A_PLANE0_BUFFER <= GDI[3:0];//gdiLatched[0][3:0];
+			//DT_A_PLANE1_BUFFER <= GDI[7:4];//gdiLatched[0][7:4];
+			//DT_A_PLANE2_BUFFER <= GDI[11:8];//gdiLatched[0][11:8];
+			//CL_A <= MDI;
+			CL_A <= mdiALatched;
 		end else begin
 			// when not loading we are forever shifting
 			// TODO: flip support

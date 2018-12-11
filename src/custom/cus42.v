@@ -144,6 +144,8 @@ module CUS42(
 		// handle pixel counters and resets
 		hsyncLast <= HSYNC;
 		vsyncLast <= VSYNC;
+		h2[0] <= 0;
+		h2[1] <= 0;
 		if (HSYNC && !hsyncLast) begin
 			hCounter <= 0;
 			vCounter <= vCounter + 1;
@@ -154,14 +156,18 @@ module CUS42(
 			vCounter <= 0;
 		end 
 		
-		if (hScrollCounter[layer][1:0] == 2'b10) begin
+		if (hScrollCounter[layer][1:0] == 2'b01) begin
 			td1[layer] <= RD;
 		end else if (hScrollCounter[layer][1:0] == 2'b11) begin
 			td2[layer] <= RD;
+			GA <= { td2[layer][1:0], td1[layer], ty[layer], tx[layer][2] };
+			h2[layer] <= 1;
+		//end else if (hScrollCounter[layer][1:0] == 2'b11) begin
+			
 		end
 	end
 	
-	reg clkLatched;
+	/*reg clkLatched;
 	always @(*) begin
 		#5 clkLatched <= CLK_6M;
 	end
@@ -176,7 +182,7 @@ module CUS42(
 			h2[layer] <= 1;
 		end
 		
-		/*if (hCounter[1:0] == 2'b00) begin
+		/ *if (hCounter[1:0] == 2'b00) begin
 			td2 = 0;//RD;
 			// possibly we have reversed nibbles so last 4 pixels are first
 			GA = 0;//{ td2, td1, vScrollCounter[0][2:0], hScrollCounter[0][2] };
@@ -200,12 +206,13 @@ module CUS42(
 			td1 = 0;//RD;
 			//RAOut = 12'b1; //{ 1, vScrollCounter[1][7:3], hScrollCounter[1][8:3], 1 };		
 		end
-		*/
-		/*if (hCounter[2:0] == 3'b010) begin
+		* /
+		/ *if (hCounter[2:0] == 3'b010) begin
 			//GA = { td2, td1, vScrollCounter[layer][2:0], hScrollCounter[layer][2] };
 			HA2 = 1;
-		end*/
+		end* /
 	end
+	*/
 	
 	/*always @(negedge CLK_6M) begin
 	always @(negedge CLK_6M) begin
