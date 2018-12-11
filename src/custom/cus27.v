@@ -77,9 +77,10 @@ module CUS27(
 	always @(posedge CLK_6M_I) begin
 		if (horizontal_counter[8:3] === 6'b110000) 	// ~384
 			horizontal_counter = 0;
-		else begin
-			horizontal_counter = horizontal_counter + 1;
-		end
+		//else begin
+		//	horizontal_counter = horizontal_counter + 1;
+		//end
+		horizontal_counter = horizontal_counter + 1;
 		
 		// HSYNC & VRESETH
 		if (horizontal_counter[8:0] === 9'b100110011) begin
@@ -97,8 +98,9 @@ module CUS27(
 	always @(posedge HSYNC) begin		// input is negated
 		if (vertical_counter[8:3] === 6'b100001)	// ~264
 			vertical_counter = 0;
-		else
-			vertical_counter = vertical_counter + 1;
+		//else
+			//vertical_counter = vertical_counter + 1;
+		vertical_counter = vertical_counter + 1;
 		
 		// VSYNC
 		if (vertical_counter[8:3] === 6'b011111) //	~248

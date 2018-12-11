@@ -19,10 +19,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module TMM2064P(
-	  input CE1,
-	  input CE2,
-	  input OE,
-	  input WE,
+    input CE1,
+    input CE2,
+    input OE,
+    input WE,
     input [12:0] A,
     inout [7:0] D
     );

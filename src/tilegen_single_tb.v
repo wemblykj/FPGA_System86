@@ -68,8 +68,7 @@ module tilegen_single_tb(
 	reg BACKCOLOR;
 	reg [12:0] A;
 	reg WE;
-	reg [7:0] MD;
-
+	
 	// Outputs
 	wire [2:0] SPR;
 	wire [7:0] DOT;
@@ -138,7 +137,7 @@ module tilegen_single_tb(
 	// b2 - Pixel 3 bit 0
 	// b1 - Pixel 2 bit 0
 	// b0 - Pixel 1 bit 0
-	wire [7:0] prom_4r_d;	
+	//wire [7:0] prom_4r_d;	
 	// plane 2 (bit 2)
 	// b7 - Pixel 8 bit 2
 	// b6 - Pixel 7 bit 2
@@ -148,19 +147,19 @@ module tilegen_single_tb(
 	// b2 - Pixel 3 bit 2
 	// b1 - Pixel 2 bit 2
 	// b0 - Pixel 1 bit 2
-	wire [7:0] prom_4s_d;	
+	//wire [7:0] prom_4s_d;	
 	// tile map color index
 	wire [7:0] prom_4v_d;	
 		
 	// tile address decoder (used at runtime) 0x1400 - 0x0020
 	// possibly similar functionality to system 1 functionality as described in Mame
-	PROM_7112 #("roms/rt1-5.6u") PROM_6U(
+	FPROM_7112 #("roms/rt1-5.6u") EEPROM_6U(
 		.E(VCC), 
 		.A( { CLK_2H, cus42_7k_ga[13:12], GND, GND } ), 
 		.Q(prom_6u_d));
 	
 	// tile map palette prom
-	PROM_7138 #("roms/rt1-3.4v") PROM_4V(
+	FPROM_7138 #("roms/rt1-3.4v") PROM_4V(
 		.E(VCC), //.CE(SCRWIN), 
 		.A( { CL, DT } ), 
 		.Q(prom_4v_d));
@@ -188,7 +187,7 @@ module tilegen_single_tb(
 		);
 	
 	// tile ram
-	CY6264 #("snapshot/rthunder_videoram1_1.bin") CY6264_7N(
+	CY6264 #("snapshot/rthunder_videoram1_2.bin") CY6264_7N(
 		.CE1(VCC),
 		.CE2(VCC),
 		.WE(cus42_7k_rwe),
@@ -213,8 +212,8 @@ module tilegen_single_tb(
 	
 	wire [3:0] ls158_7u_y;
 	LS158 ls158_7u(
-			.G( prom_6u_d[0]),
-			.SELA(cus42_7k_ga[0]),
+			.G( ~prom_6u_d[0]),
+			.SELA(~cus42_7k_ga[0]),
 			.A(prom_7s_d[7:4]),
 			.B(prom_7s_d[3:0]),
 			.Y(ls158_7u_y)
@@ -262,9 +261,8 @@ module tilegen_single_tb(
 		BACKCOLOR = 0;
 		A = 0;
 		WE = 0;
-		MD = 0;
-
-		rgb_fd = $fopen("rgb.txt", "w");
+		
+		rgb_fd = $fopen("tilegen_single.txt", "w");
 
 		rst = 1;
 		// Wait 100 ns for global reset to finish
@@ -272,7 +270,7 @@ module tilegen_single_tb(
 		rst = 0;
         
 		// Add stimulus here
-		#100_000_000;
+		#40_000_000;
 		rst = 1;
 		$fclose(rgb_fd);
 		$finish;

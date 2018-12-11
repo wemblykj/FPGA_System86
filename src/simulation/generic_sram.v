@@ -67,9 +67,9 @@ module GENERIC_SRAM(
 		end
 	end
 
-	always @(A or D or CE or WE or !WE) 
+	always @(A or D or ACE or WE or !WE) 
 	begin : MEM_WRITE
-		if (CE && WE) begin
+		if (ACE && WE) begin
 			mem[A+1] = D;
 		end
 	end

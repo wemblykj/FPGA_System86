@@ -74,6 +74,9 @@ module CUS27_tb;
         
 		// Add stimulus here
 		HRESET = 0;
+		
+		#400000;
+		$finish;
 	end
       
 	always begin

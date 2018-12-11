@@ -32,7 +32,7 @@ module CUS42(
     input WE,
     inout [7:0] CD,
     inout [7:0] RD,
-    output wire [13:0] GA,
+    output [13:0] GA,
     output [12:0] RA,
     output RWE,
     output ROE,
@@ -45,6 +45,9 @@ module CUS42(
 	reg ROEOut;
 	reg [7:0] RDOut;
 	
+	//reg HA2 = 0;
+	//reg HB2 = 0;
+	
 	// per layer outputs
 	//wire [13:0] GAOut[0:1];
 	
@@ -53,13 +56,17 @@ module CUS42(
 	// 7-11 y-offset (5 bits)
 	// 1-6  x-offset (6 bits)
 	// 0 - byte select
-	wire [12:0] RAOut;
+	wire [12:0] RAOut[0:1];
+	reg [13:0] GA;
 	
 	reg hsyncLast = 0;
 	reg vsyncLast = 0;
 	
-	reg [8:0] hCounter[0:1];	// 9 bits
+	reg [8:0] hCounter = 0;	// 9 bits
 	reg [7:0] vCounter = 0; // 8 bits
+	wire [5:0] column = hCounter[8:3];
+	wire [4:0] row = vCounter[7:3];
+	wire [11:0] tile = (row*8)+column;
 	
 	// per layer inputs
 	
@@ -69,29 +76,47 @@ module CUS42(
 	
 	wire [8:0] hScrollCounter[0:1];	// 2 layers 9 bits 
 	wire [7:0] vScrollCounter[0:1]; // 2 layers 8 bits
+	wire [5:0] sColumn[0:1];
+	wire [4:0] sRow[0:1];
+	wire [11:0] sTile[0:1];
+	
+	wire [2:0] tx[0:1];
+	wire [2:0] ty[0:1];
+	reg h2[0:1];
 	
 	// priority layer 1 & 2, may not be used here (see CUS43)
 	reg [2:0] pri[0:1];						// 2 layers 3 bits
 
-	reg [7:0] TD1 = 0;
-	reg [7:0] TD2 = 0;
+	reg [7:0] td1[0:1];
+	reg [7:0] td2[0:1];
 	
-	wire layer = CLK_2H;
+	wire layer = ~CLK_2H;
 	
 	genvar l;
 	generate
 		for (l = 0; l < 2 ; l = l + 1) begin
 			initial begin
-				hCounter[l] = 0;
 				hScrollOffset[l] = 0;
 				vScrollOffset[l] = 0;
 				pri[l] = 3'b0;
+				td1[l] = 0;
+				td2[l] = 0;
+				h2[l] = 0;
 			end
-			assign hScrollCounter[l] = hCounter[l] + hScrollOffset[l];
+			assign hScrollCounter[l] = hCounter + hScrollOffset[l];
 			assign vScrollCounter[l] = vCounter + vScrollOffset[l];
+			assign sColumn[l] = hScrollCounter[l][8:3];
+			assign sRow[l] = vScrollCounter[l][7:3];
+			assign sTile[l] = (sRow[l]*8)+sColumn[l];
+			assign RAOut[l] = { l, sRow[l], sColumn[l], hScrollCounter[l][0] };
+			assign tx[l] = hScrollCounter[l][2:0];
+			assign ty[l] = vScrollCounter[l][2:0];
 		end
 	endgenerate
 
+	assign HA2 = h2[0];
+	assign HB2 = h2[1];
+	
 	always @(*) begin
 		if (LATCH) begin
 			if (!CA[1])
@@ -107,24 +132,79 @@ module CUS42(
 		end 
 	end	
 	
+	/*always @(negedge CLK_6M) begin
+		if (hScrollCounter[layer][1:0] == 2'b11) begin
+			td2[layer] = RD;
+			GA = { td2[layer][1:0], td1[layer], ty[layer], tx[layer][2] };
+			h2[layer] = 1;
+		end
+	end*/
+	
 	always @(posedge CLK_6M) begin
 		// handle pixel counters and resets
 		hsyncLast <= HSYNC;
 		vsyncLast <= VSYNC;
-		if (HSYNC != hsyncLast) begin
-			hCounter[layer] <= 0;
+		if (HSYNC && !hsyncLast) begin
+			hCounter <= 0;
 			vCounter <= vCounter + 1;
 		end else
-			hCounter[layer] <= hCounter[layer] + 1;
+			hCounter <= hCounter + 1;
 			
-		if (VSYNC != vsyncLast) begin
+		if (VSYNC && !vsyncLast) begin
 			vCounter <= 0;
 		end 
 		
-		if (hScrollCounter[layer][2:0] == 3'b001)
-			TD1 = RD;
-		else if (hScrollCounter[layer][2:0] == 3'b010)
-			TD2 = RD;
+		if (hScrollCounter[layer][1:0] == 2'b10) begin
+			td1[layer] <= RD;
+		end else if (hScrollCounter[layer][1:0] == 2'b11) begin
+			td2[layer] <= RD;
+		end
+	end
+	
+	reg clkLatched;
+	always @(*) begin
+		#5 clkLatched <= CLK_6M;
+	end
+	
+	always @(posedge clkLatched) begin
+		//HA2 = 0;
+		//HB2 = 0;
+		h2[0] = 0;
+		h2[1] = 0;
+		if (hScrollCounter[layer][1:0] == 2'b11) begin
+			GA <= { td2[layer][1:0], td1[layer], ty[layer], tx[layer][2] };
+			h2[layer] <= 1;
+		end
+		
+		/*if (hCounter[1:0] == 2'b00) begin
+			td2 = 0;//RD;
+			// possibly we have reversed nibbles so last 4 pixels are first
+			GA = 0;//{ td2, td1, vScrollCounter[0][2:0], hScrollCounter[0][2] };
+			//GA = { RD[1:0], td1, hScrollCounter[layer][2], vScrollCounter[layer][2:0] };
+			HB2 = 1;
+			
+			//RAOut = { 0, vScrollCounter[0][7:3], hScrollCounter[0][8:3], 0 };
+		end else if (hCounter[1:0] == 2'b01) begin
+			td1 = RD;
+			//RAOut = { 0, vScrollCounter[0][7:3], hScrollCounter[0][8:3], 1 };
+		end else if (hCounter[1:0] == 2'b10) begin
+			td2 = RD;
+
+			// possibly we have reversed nibbles so last 4 pixels are first
+			GA = { td2, td1, vScrollCounter[0][2:0], hScrollCounter[0][2] };
+			//GA = { RD[1:0], td1, hScrollCounter[layer][2], vScrollCounter[layer][2:0] };
+			HA2 = 1;
+			
+			//RAOut = { 1, vScrollCounter[1][7:3], hScrollCounter[1][8:3], 0 };
+		end else if (hCounter[1:0] == 2'b11) begin
+			td1 = 0;//RD;
+			//RAOut = 12'b1; //{ 1, vScrollCounter[1][7:3], hScrollCounter[1][8:3], 1 };		
+		end
+		*/
+		/*if (hCounter[2:0] == 3'b010) begin
+			//GA = { td2, td1, vScrollCounter[layer][2:0], hScrollCounter[layer][2] };
+			HA2 = 1;
+		end*/
 	end
 	
 	/*always @(negedge CLK_6M) begin
@@ -154,14 +234,19 @@ module CUS42(
 	end*/
 	
 	// assign outputs
-	assign RAOut = { layer, vScrollCounter[layer][7:3], hScrollCounter[layer][8:3], hScrollCounter[layer][0] };
-	assign RA = RCS ? CA : RAOut;
-	assign GA = { TD2[1:0], TD1, vScrollCounter[layer][2:0], hScrollCounter[layer][2] };	
+	//assign RAOut = { layer, row, column, ~hCounter[0] };
+	assign RA = RCS ? CA : RAOut[layer];
+	//assign GA = { td2[1:0], td1, vScrollCounter[layer][2:0], hScrollCounter[layer][2] };		
+	
+	// output the layer just processed
+	
+	//assign GA = layer ? { td2[1][1:0], td1[1], ty[1], tx[1][2] } : { td2[0][1:0], td1[0], ty[0], tx[0][2] };		
+	
 	assign RWE = RCS ? WE : 1'b0;
 	assign ROE = RCS ? !WE : 1'b1;
 	assign RD = RCS && WE ? CD : 8'bZ;
 	assign CD = RCS && !WE ? RD : 8'bZ;
-	assign HB2 = !layer && hScrollCounter[0][1:0] === 3'b10;	// 
-	assign HA2 = layer && hScrollCounter[1][1:0] === 3'b10;
+	//assign HA2 = layer && hScrollCounter[0][1:0] === 3'b10;	// 
+	//assign HB2 = !layer && hScrollCounter[1][1:0] === 3'b10;
 
 endmodule

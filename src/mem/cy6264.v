@@ -30,7 +30,7 @@ module CY6264(
 
 	parameter FILE_NAME = "";
 	// CY6264 timing and naming conventions (or thereabouts)
-	parameter tAA = 0:100:100;	// address access time
+	parameter tAA = 100:100:100;	// address access time
 	parameter tOHA = 10;			// output data hold time from address change
 	parameter tACE = 0:100:100;	// CE access time
 	parameter tLZCE = 10;			// CE to output low-Z
