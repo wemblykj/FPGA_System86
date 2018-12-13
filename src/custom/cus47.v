@@ -19,36 +19,39 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module CUS47(
-    input wire CLK_6M,
-	input wire CLK_2H,
-	input VBLK,
-	input WE,
-	input [15:10] A,
-	// RES is implied, by convention, as an 'input' on schematics but must logically be an output for watchdog functionality.
-	// ref: Pac-Mania CUS117:MRES, MAME namco86.cpp
-	output wire RES,	
-	output wire MQ,
-	output wire ME,
-	output wire SUBE,
-	output wire SUBQ,
+module CUS47
+    #(
+        // based on Atari watchdog based on LS197 decade
+        // this equates to about 4^2 V-blanks
+        parameter WATCHDOG_WIDTH = 4
+    )
+    (
+        input wire CLK_6M,
+        input wire CLK_2H,
+        input wire VBLK,
+        input wire WE,
+        input wire [15:10] A,
+        // RES is implied, by convention, as an 'input' on schematics but must logically be an output for watchdog functionality.
+        // ref: Pac-Mania CUS117:MRES, MAME namco86.cpp
+        output wire RES,	
+        output wire MQ,
+        output wire ME,
+        output wire SUBE,
+        output wire SUBQ,
         output reg IRQ,
-	output wire LTH2,
-	output wire LTH0,
-	output wire LTH1,
-	output wire SCR0,
-	output wire SCR1,
-	output wire SND,
-	output wire OBJ,
-	output wire BUFEN,
-	output wire BANK,
-	output wire SPGM,
-	output wire MPGM
+        output wire LTH2,
+        output wire LTH0,
+        output wire LTH1,
+        output wire SCR0,
+        output wire SCR1,
+        output wire SND,
+        output wire OBJ,
+        output wire BUFEN,
+        output wire BANK,
+        output wire SPGM,
+        output wire MPGM
     );
 
-	// based on Atari watchdog based on LS197 decade
-	// this equates to about 4^2 V-blanks
-	parameter WATCHDOG_WIDTH = 4;
 	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
 	
 	wire CKA;

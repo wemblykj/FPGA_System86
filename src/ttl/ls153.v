@@ -20,20 +20,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LS153(
-    input wire S0,
-    input wire S1,
-    input wire Ea,
-    input wire I0a,
-    input wire I1a,
-    input wire I2a,
-    input wire I3a,
-    input wire Eb,
-    input wire I0b,
-    input wire I1b,
-    input wire I2b,
-    input wire I3b,
-    output wire Za,
-    output wire Zb
+        input wire S0,
+        input wire S1,
+        input wire Ea,
+        input wire I0a,
+        input wire I1a,
+        input wire I2a,
+        input wire I3a,
+        input wire Eb,
+        input wire I0b,
+        input wire I1b,
+        input wire I2b,
+        input wire I3b,
+        output wire Za,
+        output wire Zb
     );
 
 	assign Za = Ea & ((I0a & ~S1 & ~S0) | (I1a & ~S1 & S0) | (I2a & S1 & ~S0) | (I3a & S1 & S0));

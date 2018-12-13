@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    21:51:42 07/02/2018 
-// Design Name: 
-// Module Name:    system86\mem\prom_7112 
+// Design Name:    MB7112
+// Module Name:    system86\mem\prom_7112.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -18,17 +18,19 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module PROM_7112(
-    input wire E,
-    input wire [4:0] A,
-    output wire [7:0] Q
+module PROM_7112
+    #(
+        parameter FILE_NAME = "",
+        // Type E (35ns) timings
+        parameter tAA = 15:15:35,
+        parameter tEN = 10:10:20,
+        parameter tDIS = 15:15:25
+    )
+    (
+        input wire E,
+        input wire [4:0] A,
+        output wire [7:0] Q
     );
-
-	parameter FILE_NAME = "";
-	// Type E (35ns) timings
-	parameter tAA = 15:15:35;
-	parameter tEN = 10:10:20;
-	parameter tDIS = 15:15:25;
 	
 	supply1 VCC;
 	

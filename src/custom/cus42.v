@@ -20,24 +20,24 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module CUS42(
-    input CLK_6M,
-    input CLK_2H,
-    input HSYNC,
-    input VSYNC,
-    input GCS,
-    input RCS,
-    input LATCH,
-    input FLIP,
-    input [13:0] CA,
-    input WE,
-    inout [7:0] CD,
-    inout [7:0] RD,
-    output [13:0] GA,
-    output [12:0] RA,
-    output RWE,
-    output ROE,
-    output HA2,
-    output HB2
+        input wire CLK_6M,
+        input wire CLK_2H,
+        input wire HSYNC,
+        input wire VSYNC,
+        input wire GCS,
+        input wire RCS,
+        input wire LATCH,
+        input wire FLIP,
+        input wire [13:0] CA,
+        input wire WE,
+        inout wire [7:0] CD,
+        inout wire [7:0] RD,
+        output wire [13:0] GA,
+        output wire [12:0] RA,
+        output wire RWE,
+        output wire ROE,
+        output wire HA2,
+        output wire HB2
     );
 
 	reg [7:0] DOut;

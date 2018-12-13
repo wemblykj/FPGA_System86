@@ -20,20 +20,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LS175(
-    input CLK,
-    input CLR,
-    input D1,
-    input D2,
-    input D3,
-    input D4,
-    output reg Q1,
-    output wire Q1_L,
-    output reg Q2,
-    output wire Q2_L,
-    output reg Q3,
-    output wire Q3_L,
-    output reg Q4,
-    output wire Q4_L
+        input wire CLK,
+        input wire CLR,
+        input wire D1,
+        input wire D2,
+        input wire D3,
+        input wire D4,
+        output reg Q1,
+        output wire Q1_L,
+        output reg Q2,
+        output wire Q2_L,
+        output reg Q3,
+        output wire Q3_L,
+        output reg Q4,
+        output wire Q4_L
     );
 
 	always @(posedge CLK) begin

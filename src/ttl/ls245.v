@@ -20,10 +20,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LS245(
-    input wire DIR,
-    input wire OE,
-    inout wire [7:0] A,
-    inout wire [7:0] B
+        input wire DIR,
+        input wire OE,
+        inout wire [7:0] A,
+        inout wire [7:0] B
     );
 
 	wire BToA = OE & ~DIR;

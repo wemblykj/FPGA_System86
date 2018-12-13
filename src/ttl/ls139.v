@@ -20,20 +20,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LS139(
-    input Ea,
-    input A0a,
-    input A1a,
-    input Eb,
-    input A0b,
-    input A1b,
-    output O0a,
-    output O1a,
-    output O2a,
-    output O3a,
-	 output O0b,
-    output O1b,
-    output O2b,
-    output O3b
+        input wire Ea,
+        input wire A0a,
+        input wire A1a,
+        input wire Eb,
+        input wire A0b,
+        input wire A1b,
+        output wire O0a,
+        output wire O1a,
+        output wire O2a,
+        output wire O3a,
+        output wire O0b,
+        output wire O1b,
+        output wire O2b,
+        output wire O3b
     );
 
 	assign O0a = Ea & (~A0a & ~A1a);

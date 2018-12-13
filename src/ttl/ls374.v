@@ -20,10 +20,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LS374(
-    input wire OC,
-    input wire CLK,
-    input wire [1:8] D,
-    output reg [1:8] Q
+        input wire OC,
+        input wire CLK,
+        input wire [1:8] D,
+        output reg [1:8] Q
     );
 
 	always @(posedge CLK) begin

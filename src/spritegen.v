@@ -9,7 +9,7 @@
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description: 
+// Description:    Sprite generation subsystem
 //
 // Dependencies: 
 //
@@ -20,17 +20,17 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module SPRITEGEN(
-    input CLK_6M,
-    input CLK_2H,
-    input OBJECT,
-    input VRESET,
-    input [2:0] SPR,
-    input BLANKING,
-    input [12:0] A,
-    input WE,
-    inout [7:0] D,
-    output [7:0] DOT,
-    output SRCWIN
+        input wire CLK_6M,
+        input wire CLK_2H,
+        input wire OBJECT,
+        input wire VRESET,
+        input wire [2:0] SPR,
+        input wire BLANKING,
+        input wire [12:0] A,
+        input wire WE,
+        inout wire [7:0] D,
+        output wire [7:0] DOT,
+        output wire SRCWIN
     );
 	 
 	 // == supply rails ==

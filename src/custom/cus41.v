@@ -19,43 +19,45 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module CUS41(
-	input [15:11] MA,
-	input MWE,
-	input VBLK,
-	input wire CLK_0,
-	input wire CLK_1,
-	input wire CLK_6M,
-	input wire SWE,
-	input wire SA15,
-	input wire SA14,
-	input wire SA13,
-	input wire SA12,
-	input wire SA11,
-	// MRESET is implied, by convention, as an 'input' on schematics but must logically be an output for watchdog functionality.
-	// ref: Pac-Mania CUS117:SUBRES, MAME namco86.cpp  
-	output wire MRESET,
-	output reg SINT,
-	output wire SROM,
-	output wire SCS4,
-	output wire SCS3,
-	output wire SCS2,
-	output wire SCS1,
-	output wire SCS0,
-	output wire Q,
-	output wire LTH0,
-	output wire LTH1,
-	output wire SND,
-	output wire MCS0,
-	output wire MCS1,
-	output wire MCS2,
-	output wire MCS3,
-	output wire MCS4,
-	output wire MROM
+module CUS41
+    #(
+        parameter WATCHDOG_WIDTH = 8
+    )
+    (
+        input wire [15:11] MA,
+        input wire MWE,
+        input wire VBLK,
+        input wire CLK_0,
+        input wire CLK_1,
+        input wire CLK_6M,
+        input wire SWE,
+        input wire SA15,
+        input wire SA14,
+        input wire SA13,
+        input wire SA12,
+        input wire SA11,
+        // MRESET is implied, by convention, as an 'input' on schematics but must logically be an output for watchdog functionality.
+        // ref: Pac-Mania CUS117:SUBRES, MAME namco86.cpp  
+        output wire MRESET,
+        output reg SINT,
+        output wire SROM,
+        output wire SCS4,
+        output wire SCS3,
+        output wire SCS2,
+        output wire SCS1,
+        output wire SCS0,
+        output wire Q,
+        output wire LTH0,
+        output wire LTH1,
+        output wire SND,
+        output wire MCS0,
+        output wire MCS1,
+        output wire MCS2,
+        output wire MCS3,
+        output wire MCS4,
+        output wire MROM
     );
 
-	parameter WATCHDOG_WIDTH = 8;
-	
 	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
 	
 	// 0000h - 1FFFh R/W	(sprite ram)

@@ -20,15 +20,15 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module system86(
-    input wire CLK_48M,
-    input wire RST,
-    inout wire [1:20] J5,
-    inout wire [1:40] J34P,
-    output wire [7:0] R,
-    output wire [7:0] G,
-    output wire [7:0] B,
-    output wire HSYNC,
-    output wire VSYNC
+        input wire CLK_48M,
+        input wire RST,
+        inout wire [1:20] J5,
+        inout wire [1:40] J34P,
+        output wire [7:0] R,
+        output wire [7:0] G,
+        output wire [7:0] B,
+        output wire HSYNC,
+        output wire VSYNC
     );
 
 	// == supply rails ==

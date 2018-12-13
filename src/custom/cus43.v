@@ -19,25 +19,25 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module CUS43(
-    input [2:0] PRI,
-    input [7:0] CLI,
-    input [2:0] DTI,
-    input [11:0] GDI,
-    input OE,			// hard to decipher text from schematics (held at logic high)
-    input [2:0] CA,
-    input WE,
-    input [7:0] MDI, // hard to decipher text from schematics
-    input [2:0] HA, 	// hard to decipher text from schematics
-    input CLK_6M,
-    input CLK_2H,
-    input LATCH,
-    input FLIP,
-    input HA2,
-    input HB2,
-    output [2:0] PRO,
-    output [7:0] CLO,
-    output [2:0] DTO,
-    output CLE			// hard to decipher text from schematics (not used)
+        input wire [2:0] PRI,
+        input wire [7:0] CLI,
+        input wire [2:0] DTI,
+        input wire [11:0] GDI,
+        input wire OE,			// hard to decipher text from schematics (held at logic high)
+        input wire [2:0] CA,
+        input wire WE,
+        input wire [7:0] MDI, // hard to decipher text from schematics
+        input wire [2:0] HA, 	// hard to decipher text from schematics
+        input wire CLK_6M,
+        input wire CLK_2H,
+        input wire LATCH,
+        input wire FLIP,
+        input wire HA2,
+        input wire HB2,
+        output wire [2:0] PRO,
+        output wire [7:0] CLO,
+        output wire [2:0] DTO,
+        output wire CLE			// hard to decipher text from schematics (not used)
     );
 
 	//reg [11:0] gdiLatched;

@@ -20,10 +20,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LS273(
-    input wire CLK,
-    input wire CLR,
-    input wire [7:0] D,
-    output reg [7:0] Q
+        input wire CLK,
+        input wire CLR,
+        input wire [7:0] D,
+        output reg [7:0] Q
     );
 
 	always @(posedge CLK) begin

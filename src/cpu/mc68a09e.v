@@ -19,22 +19,22 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module MC68A09E(
-    input E,
-    input Q,
-    input IRQ,
-    input FIRQ,
-    input NMI,
-    input HALT,
-    input RESET,
-    input DMABREQ,
-    inout [15:0] A,
-    inout [7:0] D,
-    output WE,
-    output BS,
-    output BA,
-    output AVMA,
-    output BUSY,
-    output LIC
+        input wire E,
+        input wire Q,
+        input wire IRQ,
+        input wire FIRQ,
+        input wire NMI,
+        input wire HALT,
+        input wire RESET,
+        input wire DMABREQ,
+        inout wire [15:0] A,
+        inout wire [7:0] D,
+        output wire WE,
+        output wire BS,
+        output wire BA,
+        output wire AVMA,
+        output wire BUSY,
+        output wire LIC
     );
 
 	wire [15:0] AOut;

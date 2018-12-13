@@ -19,26 +19,28 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module GENERIC_SRAM(
-    input wire CE,
-    input wire OE,	 
-    input wire WE,
-    input wire [ADDR_WIDTH-1:0] A,
-    inout wire [DATA_WIDTH-1:0] D
+module GENERIC_SRAM
+    #(
+        parameter ADDR_WIDTH = 0,
+        parameter DATA_WIDTH = 0,
+        parameter FILE_NAME = "",
+        // CY6264 timing and naming conventions (or thereabouts)
+        parameter tAA = "0",		// address access time
+        parameter tOHA = "0",   	// output data hold time from address change
+        parameter tACE = "0",	    // CE access time
+        parameter tLZCE = "0",	    // CE to output low-Z
+        parameter tHZCE = "0",	    // CE to output high-Z
+        parameter tDOE = "0",	    // OE access time
+        parameter tLZOE = "0",	    // OE to output low-Z
+        parameter tHZOE = "0"	    // OE to output high-Z
+    )
+    (
+        input wire CE,
+        input wire OE,	 
+        input wire WE,
+        input wire [ADDR_WIDTH-1:0] A,
+        inout wire [DATA_WIDTH-1:0] D
     );
-	 
-	parameter ADDR_WIDTH = 0;
-	parameter DATA_WIDTH = 0;
-	parameter FILE_NAME = "";
-	// CY6264 timing and naming conventions (or thereabouts)
-	parameter tAA = "0";		// address access time
-	parameter tOHA = "0";	// output data hold time from address change
-	parameter tACE = "0";	// CE access time
-	parameter tLZCE = "0";	// CE to output low-Z
-	parameter tHZCE = "0";	// CE to output high-Z
-	parameter tDOE = "0";	// OE access time
-	parameter tLZOE = "0";	// OE to output low-Z
-	parameter tHZOE = "0";	// OE to output high-Z
 	
 	reg [DATA_WIDTH-1:0] mem [1:(2**ADDR_WIDTH)];
 	reg [DATA_WIDTH-1:0] DOut;

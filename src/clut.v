@@ -9,7 +9,7 @@
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:    CLUT Subsystem - 8-bit to 12-bit (RGB) CLUT
+// Description:    CLUT subsystem - 8-bit to 12-bit (RGB) CLUT
 //
 // Dependencies: 
 //

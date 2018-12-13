@@ -4,12 +4,12 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    21:02:48 05/28/2018 
-// Design Name: 
-// Module Name:    tile_generator 
+// Design Name:    TILEGEN
+// Module Name:    system86/tilegen.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description: 
+// Description:    Tile generation subsystem
 //
 // Dependencies: 
 //
@@ -20,25 +20,25 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module TILEGEN(
-    input CLK_6M,
-    input CLK_2H,
-    input SCROLL0,
-    input SCROLL1,
-    input LATCH0,
-    input LATCH1,
-    input HSYNC,
-    input VSYNC,
-    input FLIP,
-    input SRCWIN,
-    input BANK,
-    input BACKCOLOR,
-    input [12:0] A,
-    input WE,
-    input [7:0] MD,
-    inout [7:0] D,
-    inout [20:1] J5,
-    output [2:0] SPR,
-    output [7:0] DOT
+    input wire CLK_6M,
+    input wire CLK_2H,
+    input wire SCROLL0,
+    input wire SCROLL1,
+    input wire LATCH0,
+    input wire LATCH1,
+    input wire HSYNC,
+    input wire VSYNC,
+    input wire FLIP,
+    input wire SRCWIN,
+    input wire BANK,
+    input wire BACKCOLOR,
+    input wire [12:0] A,
+    input wire WE,
+    input wire [7:0] MD,
+    inout wire [7:0] D,
+    inout wire [20:1] J5,
+    output wire [2:0] SPR,
+    output wire [7:0] DOT
     );
 
 	// == supply rails ==

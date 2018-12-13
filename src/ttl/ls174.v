@@ -20,10 +20,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LS174(
-    input wire CLK,
-    input wire CLR,
-    input wire [5:0] D,
-    output reg [5:0] Q
+        input wire CLK,
+        input wire CLR,
+        input wire [5:0] D,
+        output reg [5:0] Q
     );
 
 	always @(posedge CLK) begin

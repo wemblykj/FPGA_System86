@@ -20,18 +20,18 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module LS74(
-    input wire CLR1,
-    input wire CLR2,
-    input wire CLK1,
-    input wire CLK2,
-    input wire PRE1,
-    input wire PRE2,
-    input wire D1,
-    input wire D2,
-    output reg Q1,
-    output reg Q2,
-    output reg nQ1,
-    output reg nQ2
+        input wire CLR1,
+        input wire CLR2,
+        input wire CLK1,
+        input wire CLK2,
+        input wire PRE1,
+        input wire PRE2,
+        input wire D1,
+        input wire D2,
+        output reg Q1,
+        output reg Q2,
+        output reg nQ1,
+        output reg nQ2
     );
 
 	reg Q1Next = 0;

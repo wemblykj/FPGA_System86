@@ -7,7 +7,13 @@ The game I have chosen is Rolling Thunder release by U.S. Gold in 1986 and runni
 
 I was already aware that comprehensive schematics are available for this game and so it seemed to good to turn it down.
 
+Hardware Specs
+==============
+
 TODO: add hardware specs
+
+Objectives
+==========
 
 The objectives for this project are as follows:
 
@@ -55,3 +61,31 @@ TBD
 
 Feasability:
 - Simulate RAM and EEPROM access using SDRAM back end?
+
+
+Licenced Software
+=================
+
+6809 CPU core - TBD
+
+License
+=======
+
+I guess I need to license the work done here in so that I can get some kudos if ever it proves useful to anyone. 
+As I forsee no fundamental IP being produced and the work involved is heavily based upon ideas and research produced by third-parties, I shall apply a flexible Apache 2.0 licence.
+
+Copyright 2018 Paul Wightmore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+

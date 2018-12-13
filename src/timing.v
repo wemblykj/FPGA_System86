@@ -9,7 +9,7 @@
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:    Timing Subsystem
+// Description:    Timing subsystem
 //
 // Dependencies: 
 //

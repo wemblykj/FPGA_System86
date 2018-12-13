@@ -4,7 +4,7 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    21:51:42 07/02/2018 
-// Design Name: 
+// Design Name:    27256
 // Module Name:    system86\mem\eprom_27256.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
@@ -18,21 +18,23 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module EPROM_27256(
-    input wire E,
-    input wire G,
-    input wire [14:0] A,
-    output wire [7:0] Q
+module EPROM_27256
+    #(
+        parameter FILE_NAME = "",
+        // timings (250ns - blank, -25) 
+        parameter tAVQV = 250,
+        parameter tAXQX = 0,
+        parameter tELQV = 250,
+        parameter tEHQZ = 0:60:60,  // (using worst case for typical)
+        parameter tGLQV = 100,
+        parameter tGHQZ = 0:60:60  // (using worst case for typical)
+    )
+    (
+        input wire E,
+        input wire G,
+        input wire [14:0] A,
+        output wire [7:0] Q
     );
-
-	parameter FILE_NAME = "";
-	// timings (250ns - blank, -25) 
-	parameter tAVQV = 250;
-	parameter tAXQX = 0;
-	parameter tELQV = 250;
-	parameter tEHQZ = 0:60:60;  // (using worst case for typical)
-	parameter tGLQV = 100;
-	parameter tGHQZ = 0:60:60;  // (using worst case for typical)
 	
 	GENERIC_PROM #(15, 8, FILE_NAME, tAVQV, tAXQX, tELQV, tEHQZ, tGLQV, tGHQZ) fprom(
 		.E(E),

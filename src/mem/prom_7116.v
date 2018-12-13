@@ -18,17 +18,19 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module PROM_7116(
-    input wire E,
-    input wire [8:0] A,
-    output wire [3:0] Q
+module PROM_7116
+    #(
+        parameter FILE_NAME = "",
+        // Type E (45ns) timings
+        parameter tAA = 45,
+        parameter tEN = 30,
+        parameter tDIS = 30
+    )
+    (
+        input wire E,
+        input wire [8:0] A,
+        output wire [3:0] Q
     );
-
-	parameter FILE_NAME = "";
-	// Type E (45ns) timings
-	parameter tAA = 45;
-	parameter tEN = 30;
-	parameter tDIS = 30;
 	
 	supply1 VCC;
 	

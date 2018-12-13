@@ -20,25 +20,25 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module CUS27(
-    input wire CLK_48M_I,
-    input wire CLK_6M_I,
-    output wire CLK_24M_O,
-    output wire CLK_12M_O,
-    output wire CLK_6M_O,
-    output reg VSYNC,
-    output reg HSYNC,
-    output reg VBLANK,
-    output reg HBLANK,
-    output reg VRESET,
-    output reg HRESET,
-    output wire CLK_8V_O,
-    output wire CLK_4V_O,
-    output wire CLK_1V_O,
-    output wire CLK_4H_O,
-    output wire CLK_2H_O,
-    output wire CLK_1H_O,
-    output wire CLK_S1H_O,
-    output wire CLK_S2H_O
+        input wire CLK_48M_I,
+        input wire CLK_6M_I,
+        output wire CLK_24M_O,
+        output wire CLK_12M_O,
+        output wire CLK_6M_O,
+        output reg VSYNC,
+        output reg HSYNC,
+        output reg VBLANK,
+        output reg HBLANK,
+        output reg VRESET,
+        output reg HRESET,
+        output wire CLK_8V_O,
+        output wire CLK_4V_O,
+        output wire CLK_1V_O,
+        output wire CLK_4H_O,
+        output wire CLK_2H_O,
+        output wire CLK_1H_O,
+        output wire CLK_S1H_O,
+        output wire CLK_S2H_O
     );
 
 	reg [3:0] master_counter;
