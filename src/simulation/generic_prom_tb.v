@@ -23,11 +23,14 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module GENERIC_PROM_tb;
-
-	parameter ADDR_WIDTH = 15;
-	parameter DATA_WIDTH = 8;
-	parameter FILE_NAME = "roms/rt3_1b.9c";
+module GENERIC_PROM_tb
+#(
+    parameter ADDR_WIDTH = 15,
+    parameter DATA_WIDTH = 8,
+    parameter FILE_NAME = "roms/rt3_1b.9c"
+)
+( 
+);
 
 	// Inputs
 	reg [ADDR_WIDTH-1:0] A;

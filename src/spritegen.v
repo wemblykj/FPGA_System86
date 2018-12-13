@@ -193,7 +193,7 @@ module SPRITEGEN(
 		);
 		
 	wire [7:0] prom_5v_d;
-	FPROM_7138 #(10, 8, "roms/rt1-4.5v") PROM_5V(
+	PROM_7138 #(10, 8, "roms/rt1-4.5v") PROM_5V(
 		.E(BLANKING | ls85_7v_agtb), 
 		.A( { ls174_9v_q4, ls174_8v_q1, ls174_8v_q3, ls174_8v_q4, ls174_8v_q5, ls174_8v_q6, ls174_6v_q1, ls174_6v_q2, ls174_6v_q3, ls174_6v_q4 } ), 
 		.Q(prom_5v_d)

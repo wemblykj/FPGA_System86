@@ -23,10 +23,11 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module GENERIC_SRAM_tb;
-
-	parameter ADDR_WIDTH = 4;
-	parameter DATA_WIDTH = 8;
+module GENERIC_SRAM_tb
+#(
+    parameter ADDR_WIDTH = 4;
+    parameter DATA_WIDTH = 8;
+);
 
 	// Inputs
 	reg CE;

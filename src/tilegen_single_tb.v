@@ -153,13 +153,13 @@ module tilegen_single_tb(
 		
 	// tile address decoder (used at runtime) 0x1400 - 0x0020
 	// possibly similar functionality to system 1 functionality as described in Mame
-	FPROM_7112 #("roms/rt1-5.6u") EEPROM_6U(
+	PROM_7112 #("roms/rt1-5.6u") PROM_6U(
 		.E(VCC), 
 		.A( { CLK_2H, cus42_7k_ga[13:12], GND, GND } ), 
 		.Q(prom_6u_d));
 	
 	// tile map palette prom
-	FPROM_7138 #("roms/rt1-3.4v") PROM_4V(
+	PROM_7138 #("roms/rt1-3.4v") PROM_4V(
 		.E(VCC), //.CE(SCRWIN), 
 		.A( { CL, DT } ), 
 		.Q(prom_4v_d));

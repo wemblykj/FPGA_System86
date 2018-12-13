@@ -19,7 +19,17 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module CLUT(
+module CLUT 
+#(
+    parameter FILE_NAME_3R = "",
+    parameter FILE_NAME_3S = "",
+    parameter RM1 = 220,
+    parameter RM2 = 470,
+    parameter RM3 = 1000,
+    parameter RM4 = 2200,
+    parameter BPP = 8
+)
+(
     input CLK_6M,
     input CLR,
     input [7:0] D,
@@ -27,20 +37,14 @@ module CLUT(
     output wire [BPP-1:0] R,
     output wire [BPP-1:0] G,
     output wire [BPP-1:0] B
-    );
+);
 
 	// == supply rails ==
 	supply1 VCC;
 	supply0 GND;
 	
-	parameter FILE_NAME_3R = "";
-	parameter FILE_NAME_3S = "";
-	parameter RM1 = 220;
-	parameter RM2 = 470;
-	parameter RM3 = 1000;
-	parameter RM4 = 2200;
-	parameter BPP = 8;
 	
+
 	reg [BPP-1:0] intensity_tbl [0:15];
 	
 	integer i;
@@ -69,13 +73,13 @@ module CLUT(
 		end
 	end
 	
-	wire [3:0] r;
-	wire [3:0] g;
-	wire [3:0] b;
+	wire [3:0] prom_3r_r;
+	wire [3:0] prom_3r_g;
+	wire [3:0] prom_3s_b;
 	
-	assign R = intensity_tbl[r];
-	assign G = intensity_tbl[g];
-	assign B = intensity_tbl[b];
+	assign R = intensity_tbl[prom_3r_r];
+	assign G = intensity_tbl[prom_3r_g];
+	assign B = intensity_tbl[prom_3s_b];
 	
 	wire [7:0] ls273_4u_d;
 	LS273 LS273_4U(
@@ -85,16 +89,16 @@ module CLUT(
 		.Q(ls273_4u_d)
 		);
 		
-	FPROM_7124 #(FILE_NAME_3R) PROM_3R(
+	PROM_7124 #(FILE_NAME_3R) PROM_3R(
 		.E(VCC),
 		.A( {BANK, ls273_4u_d} ), 
-		.Q( {g, r} )
+		.Q( {prom_3r_g, prom_3r_r} )
 		);
 		
-	FPROM_7116 #(FILE_NAME_3S) PROM_3S(
+	PROM_7116 #(FILE_NAME_3S) PROM_3S(
 		.E(VCC),
 		.A( {BANK, ls273_4u_d} ), 
-		.Q(b)
+		.Q(prom_3r_b)
 		);
 		
 endmodule

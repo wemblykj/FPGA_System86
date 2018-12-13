@@ -81,7 +81,7 @@ module CUS43_tb(
 	wire [7:0] prom_4v_d;	
 	
 		// tile map palette prom
-	FPROM_7138 #("roms/rt1-3.4v") PROM_4V(
+	PROM_7138 #("roms/rt1-3.4v") PROM_4V(
 		.E(VCC), //.CE(SCRWIN), 
 		.A( { CL, DT } ), 
 		.Q(prom_4v_d));

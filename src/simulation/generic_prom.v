@@ -21,8 +21,8 @@
 module GENERIC_PROM(
     input wire E,
     input wire G,
-    input wire [ADDR_WIDTH-1:0] A,
-    output wire [DATA_WIDTH-1:0] Q
+    input A,
+    output Q
     );
 	 
 parameter ADDR_WIDTH = 0;
@@ -35,6 +35,9 @@ parameter tELQV = 0;
 parameter tEHQZ = 0;
 parameter tGLQV = 0;
 parameter tGHQZ = 0;
+
+wire [ADDR_WIDTH-1:0] A;
+wire [DATA_WIDTH-1:0] Q
 
 reg [DATA_WIDTH-1:0] mem [1:2**ADDR_WIDTH];
 reg [DATA_WIDTH-1:0] DOut;
