@@ -23,8 +23,10 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module tilegen_single_tb(
+`include "../roms/rthunder.vh"
 
+module tilegen_single_tb
+	(
 	);
 
 	// Inputs
@@ -44,7 +46,7 @@ module tilegen_single_tb(
 	wire CLK_2H;
 	
 	// Timing subsystem
-	TIMING TIMING(
+	TIMING timing(
 		.CLK_48M(clk_in),
 		.CLK_6M(CLK_6M),
 		.VSYNC(VSYNC),
@@ -153,13 +155,13 @@ module tilegen_single_tb(
 		
 	// tile address decoder (used at runtime) 0x1400 - 0x0020
 	// possibly similar functionality to system 1 functionality as described in Mame
-	PROM_7112 #("roms/rt1-5.6u") PROM_6U(
+	PROM_7112 #(`ROM_6U) PROM_6U(
 		.E(VCC), 
 		.A( { CLK_2H, cus42_7k_ga[13:12], GND, GND } ), 
 		.Q(prom_6u_d));
 	
 	// tile map palette prom
-	PROM_7138 #("roms/rt1-3.4v") PROM_4V(
+	PROM_7138 #(`ROM_4V) PROM_4V(
 		.E(VCC), //.CE(SCRWIN), 
 		.A( { CL, DT } ), 
 		.Q(prom_4v_d));
@@ -187,7 +189,7 @@ module tilegen_single_tb(
 		);
 	
 	// tile ram
-	CY6264 #("snapshot/rthunder_videoram1_2.bin") CY6264_7N(
+	CY6264 #("../snapshot/rthunder_videoram1_2.bin") CY6264_7N(
 		.CE1(VCC),
 		.CE2(VCC),
 		.WE(cus42_7k_rwe),
@@ -197,14 +199,14 @@ module tilegen_single_tb(
 		);
 	
 	// plane 1/2 0x00000 0x10000
-	EPROM_27512 #("roms/rt1_7.7r") EPROM_7R(
+	EPROM_27512 #(`ROM_7R) EPROM_7R(
 		.E(VCC), 
 		.G(VCC), 
 		.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:0] } ), 
 		.Q(prom_7r_d));
 		
 	// plane 3 0x10000 0x80000
-	EPROM_27256 #("roms/rt1_8.7s") EPROM_7S(
+	EPROM_27256 #(`ROM_7S) EPROM_7S(
 		.E(VCC), 
 		.G(VCC), 
 		.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:1] } ), 
@@ -238,7 +240,7 @@ module tilegen_single_tb(
 		.HB2(cus42_7k_hb2)
 		);
 		
-	CLUT #("roms/rt1-1.3r", "roms/rt1-2.3s") CLUT(
+	CLUT #(`ROM_3R, `ROM_3S) clut(
 		// input
 		.CLK_6M(CLK_6M), 
 		.CLR(GND), //.CLR(ls174_6v_q6), 

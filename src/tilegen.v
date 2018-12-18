@@ -19,26 +19,35 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module TILEGEN(
-    input wire CLK_6M,
-    input wire CLK_2H,
-    input wire SCROLL0,
-    input wire SCROLL1,
-    input wire LATCH0,
-    input wire LATCH1,
-    input wire HSYNC,
-    input wire VSYNC,
-    input wire FLIP,
-    input wire SRCWIN,
-    input wire BANK,
-    input wire BACKCOLOR,
-    input wire [12:0] A,
-    input wire WE,
-    input wire [7:0] MD,
-    inout wire [7:0] D,
-    inout wire [20:1] J5,
-    output wire [2:0] SPR,
-    output wire [7:0] DOT
+module TILEGEN
+	#(
+		parameter ROM_4R,
+		parameter ROM_4S,
+		parameter ROM_4V,
+		parameter ROM_6U,
+		parameter ROM_7R,
+		parameter ROM_7S
+	)
+	(
+		input wire CLK_6M,
+		input wire CLK_2H,
+		input wire SCROLL0,
+		input wire SCROLL1,
+		input wire LATCH0,
+		input wire LATCH1,
+		input wire HSYNC,
+		input wire VSYNC,
+		input wire FLIP,
+		input wire SRCWIN,
+		input wire BANK,
+		input wire BACKCOLOR,
+		input wire [12:0] A,
+		input wire WE,
+		input wire [7:0] MD,
+		inout wire [7:0] D,
+		inout wire [20:1] J5,
+		output wire [2:0] SPR,
+		output wire [7:0] DOT
     );
 
 	// == supply rails ==
@@ -131,71 +140,76 @@ module TILEGEN(
 	
 	// background color latch
 	LS374 LS374_8H(
-		.OC(~J5[5]),		// disable background color driver from auxillary driver over J5
-		.CLK(~BACKCOLOR),	// latches on negative edge
-		.D(MD),
-		.Q(ls374_8h_q)
+			.OC(~J5[5]),		// disable background color driver from auxillary driver over J5
+			.CLK(~BACKCOLOR),	// latches on negative edge
+			.D(MD),
+			.Q(ls374_8h_q)
 		);
 		
 	// tile address decoder (used at runtime) 0x1400 - 0x0020
 	// possibly similar functionality to system 1 functionality as described in Mame
-	PROM_7112 #("roms/rt1-5.6u") PROM_6U(
-		.E(VCC),
-		.A( { CLK_2H, cus42_7k_ga[13:12], cus42_5k_ga[13:12] } ), 
-		.Q(prom_6u_d));
+	PROM_7112 #(ROM_6U) PROM_6U(
+			.E(VCC),
+			.A( { CLK_2H, cus42_7k_ga[13:12], cus42_5k_ga[13:12] } ), 
+			.Q(prom_6u_d)
+		);
 	
 	// tile map palette prom
-	PROM_7138 #("roms/rt1-3.4v") PROM_4V(
-		.E(VCC), //.E(SCRWIN),
-		.A( { cus43_6n_clo, cus43_6n_dto } ), 
-		.Q(prom_4v_d));
+	PROM_7138 #(ROM_4V) PROM_4V(
+			.E(VCC), //.E(SCRWIN),
+			.A( { cus43_6n_clo, cus43_6n_dto } ), 
+			.Q(prom_4v_d)
+		);
 	
 	// == Layer 1 & 2 =
 	
 	CUS42 CUS42_7K(
-		// inputs
-		.CLK_6M(CLK_6M), 
-		.CLK_2H(CLK_2H), 
-		.RCS(SCROLL0),
-		.GCS(GND),	// held high (inactive) on schematics
-		.LATCH(LATCH0),
-		.CA( { GND, A[12:0] } ),
-		.WE(WE),
-		.CD(D),
-		// outputs
-		.GA(cus42_7k_ga),
-		.RA(cus42_7k_ra),
-		.RWE(cus42_7k_rwe),
-		.RD(cus42_7k_rd),
-		.ROE(cus42_7k_roe)
+			// inputs
+			.CLK_6M(CLK_6M), 
+			.CLK_2H(CLK_2H), 
+			.RCS(SCROLL0),
+			.GCS(GND),	// held high (inactive) on schematics
+			.LATCH(LATCH0),
+			.CA( { GND, A[12:0] } ),
+			.WE(WE),
+			.CD(D),
+			// outputs
+			.GA(cus42_7k_ga),
+			.RA(cus42_7k_ra),
+			.RWE(cus42_7k_rwe),
+			.RD(cus42_7k_rd),
+			.ROE(cus42_7k_roe)
 		);
 	
 	// tile ram
 	CY6264 CY6264_7N(
-		.CE(VCC),
-		.WE(cus42_7k_rwe),
-		.OE(cus42_7k_roe),
-		.A(cus42_7k_ra),
-		.D(cus42_7k_rd)
+			.CE1(VCC),
+			.CE2(VCC),
+			.WE(cus42_7k_rwe),
+			.OE(cus42_7k_roe),
+			.A(cus42_7k_ra),
+			.D(cus42_7k_rd)
 		);
 	
 	// plane 1/2 0x00000 0x10000
-	// documented as 27256 but wired up as 27512 (with Mame and rom sizes concurring with 27512)
-	EPROM_27256 #("roms/rt1_7.7r") EPROM_7R(
-		.E(VCC),
-		.G(VCC), 
-		.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:0] } ), 
-		.Q(prom_7r_d));
+	// documented as 27256 but wired up as 27512 (with Mame and rom sizes concurring with it being a 27512)
+	EPROM_27512 #(ROM_7R) EPROM_7R(
+			.E(VCC),
+			.G(VCC), 
+			.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:0] } ), 
+			.Q(prom_7r_d)
+		);
 		
 	LS158 ls158();
 	
 	// plane 3 0x10000 0x80000
 	// documented as 27128 but wired up as 27256 (with Mame and rom sizes concurring with 27256)
-	EPROM_27256 #("roms/rt1_8.7s") EPROM_7S(
-		.E(VCC),
-		.G(VCC), 
-		.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:1] } ), 
-		.Q(prom_7s_d));	
+	EPROM_27256 #(ROM_7S) EPROM_7S(
+			.E(VCC),
+			.G(VCC), 
+			.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:1] } ), 
+			.Q(prom_7s_d)
+		);	
 	
 	// auxillary select
 	wire [2:0] cus43_8n_pr_in;
@@ -210,78 +224,81 @@ module TILEGEN(
 	
 	// tile generator
 	CUS43 CUS43_8N(
-		.CLK_6M(CLK_6M),
-		.CLK_2H(CLK_2H),
-		.PRI( cus43_8n_pr_in ),
-		.CLI( cus43_8n_cl_in ),
-		.DTI( cus43_8n_dt_in ),
-		.CA(A[2:0]),
-		.WE(WE),
-		.LATCH(LATCH0),
-		.FLIP(FLIP),
-		.PRO(PR),
-		.CLO(CL),
-		.DTO(DT)
+			.CLK_6M(CLK_6M),
+			.CLK_2H(CLK_2H),
+			.PRI( cus43_8n_pr_in ),
+			.CLI( cus43_8n_cl_in ),
+			.DTI( cus43_8n_dt_in ),
+			.CA(A[2:0]),
+			.WE(WE),
+			.LATCH(LATCH0),
+			.FLIP(FLIP),
+			.PRO(PR),
+			.CLO(CL),
+			.DTO(DT)
 		);
 		
 	// == Layer 3 & 4 =
 	
 	// tile address generator
 	CUS42 CUS42_5K(
-		.CLK_6M(CLK_6M), 
-		.CLK_2H(CLK_2H), 
-		.HSYNC(HSYNC),
-		.VSYNC(VSYNC),
-		.GCS(GND),	// held high (inactive) on schematics
-		.RCS(SCROLL1),
-		.LATCH(LATCH1),
-		.CA( { GND, A[12:0] } ),
-		.WE(WE),
-		.CD(D),
-		.GA(cus42_5k_ga),
-		.RWE(cus42_5k_rwe),
-		.ROE(cus42_5k_roe),
-		.RA(cus42_5k_ra),
-		.RD(cus42_5k_rd)
+			.CLK_6M(CLK_6M), 
+			.CLK_2H(CLK_2H), 
+			.HSYNC(HSYNC),
+			.VSYNC(VSYNC),
+			.GCS(GND),	// held high (inactive) on schematics
+			.RCS(SCROLL1),
+			.LATCH(LATCH1),
+			.CA( { GND, A[12:0] } ),
+			.WE(WE),
+			.CD(D),
+			.GA(cus42_5k_ga),
+			.RWE(cus42_5k_rwe),
+			.ROE(cus42_5k_roe),
+			.RA(cus42_5k_ra),
+			.RD(cus42_5k_rd)
 		);
 		
 	// tile ram 1
 	CY6264 CY6264_4N(
-		.CE(VCC),
-		.WE(cus42_5k_rwe),
-		.OE(cus42_5k_roe),
-		.A(cus42_5k_ra),
-		.D(cus42_5k_rd)
+			.CE1(VCC),
+			.CE2(VCC),
+			.WE(cus42_5k_rwe),
+			.OE(cus42_5k_roe),
+			.A(cus42_5k_ra),
+			.D(cus42_5k_rd)
 		);
 	
 	// plane 1/2 0x00000 (0x08000)
-	EPROM_27256 #(15, 8, "roms/rt1_5.4r") EPROM_4R(
-		.E(VCC),
-		.G(VCC), 
-		.A( { prom_6u_d[7:5], cus42_5k_ga[11:0] } ), 
-		.Q(prom_4r_d));
+	EPROM_27256 #(15, 8, ROM_4R) EPROM_4R(
+			.E(VCC),
+			.G(VCC), 
+			.A( { prom_6u_d[7:5], cus42_5k_ga[11:0] } ), 
+			.Q(prom_4r_d)
+		);
 		
 	// plane 3 0x08000 (0x04000) 
-	EPROM_27128 #(14, 8, "roms/rt1_6.4s") EPROM_4S(
-		.E(VCC), 
-		.G(VCC),
-		.A( { prom_6u_d[7:5], cus42_5k_ga[11:1] } ), 
-		.Q(prom_4s_d));
+	EPROM_27128 #(14, 8, ROM_4S) EPROM_4S(
+			.E(VCC), 
+			.G(VCC),
+			.A( { prom_6u_d[7:5], cus42_5k_ga[11:1] } ), 
+			.Q(prom_4s_d)
+		);
 	
 	// tile generator
 	CUS43 CUS43_6N(
-		.CLK_6M(CLK_6M),
-		.CLK_2H(CLK_2H),
-		.PRI(PR),
-		.CLI(CL),
-		.DTI(DT),
-		.CA(A[2:0]),
-		.WE(WE),
-		.LATCH(LATCH1),
-		.FLIP(FLIP),
-		.PRO(cus43_6n_pro),
-		.CLO(cus43_6n_clo),
-		.DTO(cus43_6n_dto)
+			.CLK_6M(CLK_6M),
+			.CLK_2H(CLK_2H),
+			.PRI(PR),
+			.CLI(CL),
+			.DTI(DT),
+			.CA(A[2:0]),
+			.WE(WE),
+			.LATCH(LATCH1),
+			.FLIP(FLIP),
+			.PRO(cus43_6n_pro),
+			.CLO(cus43_6n_clo),
+			.DTO(cus43_6n_dto)
 		);
 	
 	// to auxillary color drivers over J5

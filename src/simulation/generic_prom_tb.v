@@ -23,14 +23,15 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
+`include "../roms/rthunder.vh"
+
 module GENERIC_PROM_tb
-#(
-    parameter ADDR_WIDTH = 15,
-    parameter DATA_WIDTH = 8,
-    parameter FILE_NAME = "roms/rt3_1b.9c"
-)
-( 
-);
+	#(
+		parameter ADDR_WIDTH = 15,
+		parameter DATA_WIDTH = 8
+	)
+	( 
+	);
 
 	// Inputs
 	reg [ADDR_WIDTH-1:0] A;
@@ -41,7 +42,7 @@ module GENERIC_PROM_tb
 	wire [DATA_WIDTH-1:0] Q;
 
 	// Instantiate the Unit Under Test (UUT)
-	GENERIC_PROM #(ADDR_WIDTH, DATA_WIDTH, FILE_NAME, 0, 0, 0, 0) uut (
+	GENERIC_PROM #(ADDR_WIDTH, DATA_WIDTH, `ROM_9C, 0, 0, 0, 0) uut (
 		.A(A), 
 		.Q(Q), 
 		.E(E), 
@@ -60,37 +61,39 @@ module GENERIC_PROM_tb
 		#10;
 
 		// Add stimulus here
-	  $monitor("%d, %d, 0x%x, 0x%x", E, G, A, Q);
-	  /*
-	  for (i=0; i<16; i=i+1) begin
+		$monitor("%d, %d, 0x%x, 0x%x", E, G, A, Q);
+		/*
+		for (i=0; i<16; i=i+1) begin
 			#4;
 			A = i;
-	  end
-	  
-	  OE = 1;
-	  for (i=0; i<16; i=i+1) begin
+		end
+
+		OE = 1;
+		for (i=0; i<16; i=i+1) begin
 			#4;
 			A = i;
-	  end
-	  
-	  OE = 0;
-	  CE = 1;
-	  for (i=0; i<16; i=i+1) begin
+		end
+
+		OE = 0;
+		CE = 1;
+		for (i=0; i<16; i=i+1) begin
 			#4;
 			A = i;
-	  end
-	  */  
-	  
-	  
-	  E = 1;
-	  #10 G = 1;
-	  #300
-	  for (i=0; i<4; i=i+1) begin
+		end
+		*/  
+
+
+		E = 1;
+		#10 G = 1;
+		#300
+		for (i=0; i<4; i=i+1) begin
 			A <= i;
 			#20;
-	  end
-	  G = 0;
-	  #200 E = 0;
+		end
+		G = 0;
+		#200 E = 0;
+		
+		$stop;
 	end
 	
 endmodule

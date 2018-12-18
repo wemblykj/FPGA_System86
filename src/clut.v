@@ -22,8 +22,8 @@
 
 module CLUT 
 #(
-    parameter FILE_NAME_3R = "",
-    parameter FILE_NAME_3S = "",
+    parameter ROM_3R = "",
+    parameter ROM_3S = "",
     parameter RM1 = 220,
     parameter RM2 = 470,
     parameter RM3 = 1000,
@@ -90,13 +90,13 @@ module CLUT
 		.Q(ls273_4u_d)
 		);
 		
-	PROM_7124 #(FILE_NAME_3R) PROM_3R(
+	PROM_7124 #(ROM_3R) PROM_3R(
 		.E(VCC),
 		.A( {BANK, ls273_4u_d} ), 
 		.Q( {prom_3r_g, prom_3r_r} )
 		);
 		
-	PROM_7116 #(FILE_NAME_3S) PROM_3S(
+	PROM_7116 #(ROM_3S) PROM_3S(
 		.E(VCC),
 		.A( {BANK, ls273_4u_d} ), 
 		.Q(prom_3s_b)

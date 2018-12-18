@@ -23,6 +23,8 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
+`include "../roms/rthunder.vh"
+
 module tilegen_tb;
 
 	// Inputs
@@ -50,26 +52,32 @@ module tilegen_tb;
 	wire [20:1] J5;
 
 	// Instantiate the Unit Under Test (UUT)
-	TILEGEN uut (
-		.CLK_6M(CLK_6M), 
-		.CLK_2H(CLK_2H), 
-		.SCROLL0(SCROLL0), 
-		.SCROLL1(SCROLL1), 
-		.LATCH0(LATCH0), 
-		.LATCH1(LATCH1), 
-		.HSYNC(HSYNC), 
-		.VSYNC(VSYNC), 
-		.FLIP(FLIP), 
-		.SRCWIN(SRCWIN), 
-		.BACKCOLOR(BACKCOLOR), 
-		.A(A), 
-		.WE(WE),
-		.MD(MD), 
-		.D(D), 
-		.J5(J5), 
-		.SPR(SPR), 
-		.DOT(DOT)
-	);
+	TILEGEN 
+		#(
+			`ROM_4R, `ROM_4S, `ROM_4V, `ROM_6U,
+			`ROM_7R, `ROM_7S
+		)
+		uut
+		(
+			.CLK_6M(CLK_6M), 
+			.CLK_2H(CLK_2H), 
+			.SCROLL0(SCROLL0), 
+			.SCROLL1(SCROLL1), 
+			.LATCH0(LATCH0), 
+			.LATCH1(LATCH1), 
+			.HSYNC(HSYNC), 
+			.VSYNC(VSYNC), 
+			.FLIP(FLIP), 
+			.SRCWIN(SRCWIN), 
+			.BACKCOLOR(BACKCOLOR), 
+			.A(A), 
+			.WE(WE),
+			.MD(MD), 
+			.D(D), 
+			.J5(J5), 
+			.SPR(SPR), 
+			.DOT(DOT)
+		);
 	
 	reg [2:0] counter = 0;
 	

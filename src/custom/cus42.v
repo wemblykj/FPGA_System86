@@ -32,7 +32,7 @@ module CUS42(
         input wire WE,
         inout wire [7:0] CD,
         inout wire [7:0] RD,
-        output wire [13:0] GA,
+        output reg [13:0] GA,
         output wire [12:0] RA,
         output wire RWE,
         output wire ROE,
@@ -57,7 +57,7 @@ module CUS42(
 	// 1-6  x-offset (6 bits)
 	// 0 - byte select
 	wire [12:0] RAOut[0:1];
-	reg [13:0] GA;
+	//reg [13:0] GA;
 	
 	reg hsyncLast = 0;
 	reg vsyncLast = 0;

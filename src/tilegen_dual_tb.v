@@ -6,7 +6,7 @@
 //
 // Create Date:    19:43:02 06/12/2018
 // Design Name:    TILEGEN
-// Module Name:    system86/tilegen_single_tb.v
+// Module Name:    system86/tilegen_dual_tb.v
 // Project Name:   Namco System86 simulation
 // Target Device:  
 // Tool versions:  
@@ -23,16 +23,18 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module tilegen_single_tb(
+`include "../roms/rthunder.vh"
 
-	// Inputs
-	input reg clk_in,
-	input reg rst,
-	output wire [7:0] R,
-	output wire [7:0] G,
-	output wire [7:0] B,
-	output wire HSYNC,
-	output wire VSYNC
+module tilegen_dual_tb
+	(
+		// Inputs
+		input reg clk_in,
+		input reg rst,
+		output wire [7:0] R,
+		output wire [7:0] G,
+		output wire [7:0] B,
+		output wire HSYNC,
+		output wire VSYNC
 	);
 
 	// == supply rails ==
@@ -43,7 +45,7 @@ module tilegen_single_tb(
 	wire CLK_2H;
 	
 	// Timing subsystem
-	TIMING TIMING(
+	TIMING timing(
 		.CLK_48M(clk_in),
 		.CLK_6M(CLK_6M),
 		.VSYNC(VSYNC),
@@ -81,25 +83,30 @@ module tilegen_single_tb(
 	integer rgb_fd;
 
 	// Instantiate the Unit Under Test (UUT)
-	TILEGEN uut (
-		.CLK_6M(CLK_6M), 
-		.CLK_2H(CLK_2H), 
-		.SCROLL0(SCROLL0), 
-		.SCROLL1(SCROLL1), 
-		.LATCH0(LATCH0), 
-		.LATCH1(LATCH1), 
-		.HSYNC(HSYNC), 
-		.VSYNC(VSYNC), 
-		.FLIP(FLIP), 
-		.SRCWIN(SRCWIN), 
-		.BACKCOLOR(BACKCOLOR), 
-		.A(A), 
-		.WE(WE), 
-		.MD(MD), 
-		.D(D), 
-		.J5(J5), 
-		.SPR(SPR), 
-		.DOT(DOT)
+	TILEGEN  
+		#(
+			`ROM_4R, `ROM_4S, `ROM_4V, `ROM_6U, `ROM_7R, `ROM_7S
+		)
+		uut
+		(
+			.CLK_6M(CLK_6M), 
+			.CLK_2H(CLK_2H), 
+			.SCROLL0(SCROLL0), 
+			.SCROLL1(SCROLL1), 
+			.LATCH0(LATCH0), 
+			.LATCH1(LATCH1), 
+			.HSYNC(HSYNC), 
+			.VSYNC(VSYNC), 
+			.FLIP(FLIP), 
+			.SRCWIN(SRCWIN), 
+			.BACKCOLOR(BACKCOLOR), 
+			.A(A), 
+			.WE(WE), 
+			.MD(MD), 
+			.D(D), 
+			.J5(J5), 
+			.SPR(SPR), 
+			.DOT(DOT)
 		);
 		
 	initial begin
