@@ -19,6 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
+
 module CLUT 
 #(
     parameter FILE_NAME_3R = "",
@@ -98,7 +99,7 @@ module CLUT
 	PROM_7116 #(FILE_NAME_3S) PROM_3S(
 		.E(VCC),
 		.A( {BANK, ls273_4u_d} ), 
-		.Q(prom_3r_b)
+		.Q(prom_3s_b)
 		);
 		
 endmodule

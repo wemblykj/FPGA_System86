@@ -23,6 +23,8 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
+`include "../roms/rthunder.vh"
+
 module CLUT_tb;
 
 	// Inputs
@@ -37,9 +39,9 @@ module CLUT_tb;
 	wire [7:0] B;
 
 	integer i = 0;
-	
+
 	// Instantiate the Unit Under Test (UUT)
-	CLUT #("roms/rt1-1.3r", "roms/rt1-2.3s") uut (
+	CLUT #(`ROM_3R, `ROM_3S) uut (
 		.CLK_6M(CLK_6M), 
 		.CLR(CLR), 
 		.D(D), 
@@ -65,6 +67,8 @@ module CLUT_tb;
 			D = i;
 			#1;
 		end
+
+		$stop;
 	end
       
 endmodule
