@@ -12,6 +12,9 @@ Hardware Specs
 
 TODO: add hardware specs
 
+2x Motorola 6089 CPUs
+Graphic: 384x288 
+
 Objectives
 ==========
 
@@ -67,6 +70,22 @@ Licenced Software
 =================
 
 6809 CPU core - TBD
+
+Links
+=====
+
+The following links have been useful in the development of this project:
+
+MAME System 86 Driver
+---------------------
+	System86 Driver - https://github.com/mamedev/mame/blob/master/src/mame/drivers/namcos86.cpp
+	System86 Driver - https://github.com/mamedev/mame/blob/master/src/mame/includes/namcos86.h
+	System86 Video Driver - https://github.com/mamedev/mame/blob/master/src/mame/video/namcos86.cpp
+	
+	
+VGA Simulator - https://ericeastwood.com/lab/vga-simulator/
+
+Namco CUS27 in FPGA (+CUS130 WIP) - http://www.ukvac.com/forum/namco-cus27-in-fpga-cus130-wip_topic362440.html
 
 License
 =======

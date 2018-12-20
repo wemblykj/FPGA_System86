@@ -189,7 +189,7 @@ module tilegen_single_tb
 		);
 	
 	// tile ram
-	CY6264 #("../snapshot/rthunder_videoram1_2.bin") CY6264_7N(
+	CY6264 #("../snapshots/rthunder_videoram1_2.bin") CY6264_7N(
 		.CE1(VCC),
 		.CE2(VCC),
 		.WE(cus42_7k_rwe),
@@ -275,7 +275,7 @@ module tilegen_single_tb
 		#40_000_000;
 		rst = 1;
 		$fclose(rgb_fd);
-		$finish;
+		$stop;
 
 	end
 	

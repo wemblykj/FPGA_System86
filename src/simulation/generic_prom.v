@@ -60,11 +60,11 @@ module GENERIC_PROM
     initial begin
 		fd = $fopen(FILE_NAME, "rb");
 		if (!fd) begin
-			$display("Failed to open prom image: %s\n", FILE_NAME);
+			$display("Failed to open PROM image: %s\n", FILE_NAME);
 			$stop;
 		end
 
-		$display("successfully read prom image: %s\n", FILE_NAME);
+		$display("successfully read PROM image: %s\n", FILE_NAME);
 		
 		count = 2**ADDR_WIDTH;
 		// works in isim but not modelsim

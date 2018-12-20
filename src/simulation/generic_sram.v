@@ -42,7 +42,7 @@ module GENERIC_SRAM
         inout wire [DATA_WIDTH-1:0] D
     );
 	
-	reg [DATA_WIDTH-1:0] mem [1:(2**ADDR_WIDTH)];
+	reg [DATA_WIDTH-1:0] mem [0:(2**ADDR_WIDTH)-1];
 	reg [DATA_WIDTH-1:0] DOut;
 	wire [ADDR_WIDTH-1:0] ACC;
 	
@@ -58,28 +58,45 @@ module GENERIC_SRAM
 	assign D = WE ? {(DATA_WIDTH){1'bZ}} : DV ? DOut : DLZ ? {(DATA_WIDTH){1'bX}} : {(DATA_WIDTH){1'bZ}};
 	
 	integer fd;
-	integer index;
-	integer read;
+    integer i;
+	integer count;
+    integer read;
 
+	reg [7:0] byte_read;
+	
 	initial begin
-		if (FILE_NAME != "") begin
-			fd = $fopen(FILE_NAME, "rb");
-			read = $fread(mem, fd, 0, 2**ADDR_WIDTH);
-			$fclose(fd);
+		fd = $fopen(FILE_NAME, "rb");
+		if (!fd) begin
+			$display("Failed to open ROM snapshot: %s\n", FILE_NAME);
+			$stop;
 		end
+
+		$display("successfully read ROM snapshot: %s\n", FILE_NAME);
+		
+		count = 2**ADDR_WIDTH;
+		// works in isim but not modelsim
+		//read = $fread(mem, fd, count);
+		
+		// reading individual bytes seems to work in modelsim
+		for (i=0; i < count; i=i+1) begin
+			read = $fread(byte_read, fd);
+			mem[i]=byte_read;
+		end
+		
+		$fclose(fd);
 	end
 
 	always @(A or D or ACE or WE or !WE) 
 	begin : MEM_WRITE
 		if (ACE && WE) begin
-			mem[A+1] = D;
+			mem[A] = D;
 		end
 	end
 
 	always @(*) 
 	begin : MEM_READ
 		if (!WE && DV) begin
-			DOut = mem[ACC+1];
+			DOut = mem[ACC];
 		end
 	end
 

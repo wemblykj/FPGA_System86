@@ -64,9 +64,15 @@ module CLUT
 			r1_1 = (i[0] * rm4_1) + (i[1] * rm3_1) + (i[2] * rm2_1) + (i[3] * rm1_1);
 			//r2_1 = (!i[0] * rm4_1) + (!i[1] * rm3_1) + (!i[2] * rm2_1) + (!i[3] * rm1_1);
 			r2_1 = (rm4_1 + rm3_1 + rm2_1 + rm1_1) - r1_1;
-			r1 = 1.0/r1_1;
-			r2 = 1.0/r2_1;
-			intensity = (saturation * (r2 / (r1 + r2)) /*+ 0.5*/);
+			if (r1_1 > 0) r1 = 1.0/r1_1; else r1 = 0.0;
+			if (r2_1 > 0) r2 = 1.0/r2_1; else r2 = 0.0;
+			//r1 = 1.0/r1_1;
+			//r2 = 1.0/r2_1;
+			
+			if ((r1+r2) > 0)
+				intensity = (saturation * (r2 / (r1 + r2)) /*+ 0.5*/);
+			else
+				intensity = 0.0;
 			
 			intensity_tbl[i] = (intensity < saturation) ? intensity : saturation;
 			

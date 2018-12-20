@@ -4,7 +4,7 @@
 
 `define RTHUNDER "rthunder"
 
-`define ROM_3R `MAKE_ROM_PATH(`RTHUNDER, "rtl-1.3r")
+`define ROM_3R `MAKE_ROM_PATH(`RTHUNDER, "rt1-1.3r")
 `define ROM_3S `MAKE_ROM_PATH(`RTHUNDER, "rt1-2.3s")
 
 
