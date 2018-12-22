@@ -98,79 +98,46 @@ module CUS43(
 		mdiBLatched = 0;
 	end
 	
+	reg haSig = 0;
 	reg haLast = 0;
+	reg hbSig = 0;
 	reg hbLast = 0;
 	
-	/*always @(posedge layer) begin
-		gdiLatched = GDI;
-		mdiLatched = MDI;
+	always @(HA2) begin
+		if (HA2) begin
+			mdiALatched <= MDI;
+			gdiALatched <= GDI;
+			haSig <= 0;
+		end else begin
+			haSig <= 1;
+		end
 	end
 	
-	always @(negedge layer) begin
-		gdiLatched = GDI;
-		mdiLatched = MDI;
-	end*/
-	
-	always @(posedge HA2) begin
-		gdiALatched = GDI;
-		mdiALatched = MDI;
-		/*haLast <= HA2;
-		if (HA2 && !haLast) begin
-			DT_A_PLANE0_BUFFER <= GDI[3:0];
-			DT_A_PLANE1_BUFFER <= GDI[7:4];
-			DT_A_PLANE2_BUFFER <= GDI[11:8];
-			CL_A <= MDI;
+	always @(HB2) begin
+		if (HB2) begin
+			mdiBLatched <= MDI;
+			gdiBLatched <= GDI;
+			hbSig <= 0;
 		end else begin
-			DT_A_PLANE0_BUFFER <= DT_A_PLANE0_BUFFER_NEXT;
-			DT_A_PLANE1_BUFFER <= DT_A_PLANE1_BUFFER_NEXT;
-			DT_A_PLANE2_BUFFER <= DT_A_PLANE2_BUFFER_NEXT;
-		end*/
+			hbSig <= 1;
+		end
 	end
 	
-	/*always @(posedge HB2) begin
-		gdiLatched[1] = GDI;
-		mdiLatched[1] = MDI;
-		/ *hbLast <= HB2;
-		if (HB2 && ! hbLast) begin
-			DT_B_PLANE0_BUFFER <= GDI[3:0];
-			DT_B_PLANE1_BUFFER <= GDI[7:4];
-			DT_B_PLANE2_BUFFER <= GDI[11:8];
-			CL_B <= MDI;
-		end else begin
-			DT_B_PLANE0_BUFFER <= DT_B_PLANE0_BUFFER_NEXT;
-			DT_B_PLANE1_BUFFER <= DT_B_PLANE1_BUFFER_NEXT;
-			DT_B_PLANE2_BUFFER <= DT_B_PLANE2_BUFFER_NEXT;
-		end* /
-	end*/
-	
-	always @(negedge CLK_6M) begin
-		/*DT_A_PLANE0_BUFFER_NEXT <= DT_A_PLANE0_BUFFER << 1;
-		DT_A_PLANE1_BUFFER_NEXT <= DT_A_PLANE1_BUFFER << 1;
-		DT_A_PLANE2_BUFFER_NEXT <= DT_A_PLANE2_BUFFER << 1;
+	always @(posedge CLK_6M) begin
+
+		haLast <= (haSig);
+		hbLast <= (hbSig);
 		
-		DT_B_PLANE0_BUFFER_NEXT <= DT_B_PLANE0_BUFFER << 1;
-		DT_B_PLANE1_BUFFER_NEXT <= DT_B_PLANE1_BUFFER << 1;
-		DT_B_PLANE2_BUFFER_NEXT <= DT_B_PLANE2_BUFFER << 1;*/
-		
-		// forever shift the low buffer shifting in the LSB from the high buffer
-		/*DT_A_PLANE0_BUFFER_L[3] = DT_A_PLANE0_BUFFER_H[0];
-		DT_A_PLANE1_BUFFER_L[3] = DT_A_PLANE1_BUFFER_H[0];
-		DT_A_PLANE2_BUFFER_L[3] = DT_A_PLANE2_BUFFER_H[0];
-		DT_A_PLANE0_BUFFER_L[2:0] <= DT_A_PLANE0_BUFFER_L[3:1];
-		DT_A_PLANE1_BUFFER_L[2:0] <= DT_A_PLANE1_BUFFER_L[3:1];
-		DT_A_PLANE2_BUFFER_L[2:0] <= DT_A_PLANE2_BUFFER_L[3:1];*/
-		haLast <= (HA2);
-		hbLast <= (HB2);
-		
-		if (HA2 && !haLast) begin
+		if (haSig && !haLast) begin
 			DT_A_PLANE0_BUFFER <= gdiALatched[3:0];
 			DT_A_PLANE1_BUFFER <= gdiALatched[7:4];
 			DT_A_PLANE2_BUFFER <= gdiALatched[11:8];
-			//DT_A_PLANE0_BUFFER <= GDI[3:0];//gdiLatched[0][3:0];
-			//DT_A_PLANE1_BUFFER <= GDI[7:4];//gdiLatched[0][7:4];
-			//DT_A_PLANE2_BUFFER <= GDI[11:8];//gdiLatched[0][11:8];
-			//CL_A <= MDI;
+
 			CL_A <= mdiALatched;
+		end else if (hbSig && !hbLast) begin
+			DT_A_PLANE0_BUFFER <= gdiBLatched[3:0];
+			DT_A_PLANE1_BUFFER <= gdiBLatched[7:4];
+			DT_A_PLANE2_BUFFER <= gdiBLatched[11:8];
 		end else begin
 			// when not loading we are forever shifting
 			// TODO: flip support
@@ -181,20 +148,7 @@ module CUS43(
 			DT_A_PLANE1_BUFFER <= DT_A_PLANE1_BUFFER << 1;
 			DT_A_PLANE2_BUFFER <= DT_A_PLANE2_BUFFER << 1;
 		end
-		
-		/*if (HB2 && !hbLast) begin
-			// load 4 x 3bpp values from bus
-			DT_B_PLANE0_BUFFER <= GDI[3:0];
-			DT_B_PLANE1_BUFFER <= GDI[7:4];
-			DT_B_PLANE2_BUFFER <= GDI[11:8];
-			CL_B <= MDI;
-		end else begin
-			// when not loading we are forever shifting
-			// TODO: flip support
-			DT_B_PLANE0_BUFFER <= DT_B_PLANE0_BUFFER << 1;
-			DT_B_PLANE1_BUFFER <= DT_B_PLANE1_BUFFER << 1;
-			DT_B_PLANE2_BUFFER <= DT_B_PLANE2_BUFFER << 1;	
-		end*/
+
 	end
 	
 	always @(LATCH or CA or MDI) begin

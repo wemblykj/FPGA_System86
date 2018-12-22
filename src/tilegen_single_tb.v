@@ -43,6 +43,7 @@ module tilegen_single_tb
 	supply0 GND;
 	
 	wire CLK_6M;
+	wire CLK_1H;
 	wire CLK_2H;
 	
 	// Timing subsystem
@@ -55,6 +56,7 @@ module tilegen_single_tb
 		.VBLANK(VBLANK),
 		.VRESET(VRESET),
 		.COMPSYNC(COMPSYNC),
+		.CLK_1H(CLK_1H),
 		.CLK_2H(CLK_2H)
 	);
 	
@@ -252,6 +254,8 @@ module tilegen_single_tb
 		.B(B)
 		);
 		
+	integer frame_count = 0;
+	
 	initial begin
 		// Initialize Inputs
 		clk_in = 0;
@@ -272,10 +276,8 @@ module tilegen_single_tb
 		rst = 0;
         
 		// Add stimulus here
-		#40_000_000;
-		rst = 1;
-		$fclose(rgb_fd);
-		$stop;
+		
+		
 
 	end
 	
@@ -286,6 +288,18 @@ module tilegen_single_tb
 	always @(posedge CLK_6M) begin
 		if (!rst) begin
 			$fwrite(rgb_fd, "%0d ns: %b %b %b %b %b\n", $time, HSYNC, VSYNC, R, G, B);
+		end
+	end
+	
+	always @(posedge VBLANK) begin
+		if (!rst) begin
+			frame_count <= frame_count + 1;
+			
+			if (frame_count > 9) begin
+				rst = 1;
+				$fclose(rgb_fd);
+				$stop;
+			end
 		end
 	end
 	

@@ -68,17 +68,17 @@ module CUS42(
 	// per layer inputs
 	
 	// scroll layer 1
-	reg [8:0] hScrollOffset[0:1];	// 2 layers 9 bits
-	reg [7:0] vScrollOffset[0:1];	// 2 layers 8 bits
+	reg [8:0] hScrollOffset;	// 2 layers 9 bits
+	reg [7:0] vScrollOffset;	// 2 layers 8 bits
 	
-	wire [8:0] hScrollCounter[0:1];	// 2 layers 9 bits 
-	wire [7:0] vScrollCounter[0:1]; // 2 layers 8 bits
+	wire [8:0] hScrollCounter;	// 2 layers 9 bits 
+	wire [7:0] vScrollCounter; // 2 layers 8 bits
 	
 	// priority layer 1 & 2, may not be used here (see CUS43)
-	reg [2:0] pri[0:1];						// 2 layers 3 bits
+	reg [2:0] pri;						// 2 layers 3 bits
 
-	reg [7:0] td1[0:1];
-	reg [7:0] td2[0:1];
+	reg [7:0] td1;
+	reg [7:0] td2;
 	
 	initial begin
         hScrollOffset = 0;
@@ -98,14 +98,14 @@ module CUS42(
 		if (LATCH) begin
 			if (!CA[1])
 				// set lower 8 bits
-				hScrollOffset[CA[2]][7:0] = CD;
+				hScrollOffset/*[CA[2]]*/[7:0] = CD;
 			else if (!CA[1:0] == 2'b01) begin
 				// set 9th bit
-				hScrollOffset[CA[2]][8] = CD[0];
+				hScrollOffset/*[CA[2]]*/[8] = CD[0];
 				pri[CA[2]] = CD[3:1];
 			end else if (!CA[1:0] == 2'b10)
 				// set all 8th bits
-				vScrollOffset[CA[2]][7:0] = CD;
+				vScrollOffset/*[CA[2]]*/[7:0] = CD;
 		end 
 	end	
 	
@@ -126,35 +126,40 @@ module CUS42(
 			
 		if (VSYNC && !vsyncLast) begin
 			vCounter <= 0;
+			hScrollOffset <= hScrollOffset + 1;
 		end 
 		
-        if (hScrollCounter[2:0] == 2'b000) begin
-            // request byte 1
-            RAOut = { 0, vScrollCounter[7:3], hScrollCounter[8:3], 0 };
-		end else if (hScrollCounter[2:0] == 2'b001) begin
-            // read byte 1
+		if (hScrollCounter[2:0] === 3'b000) begin
+			// request byte 1
+			//RAOut = { 0, vScrollCounter[7:3], hScrollCounter[8:3], 0 };
+		end else if (hScrollCounter[2:0] === 3'b001) begin
+			// read byte 1
 			td1 <= RD;
-        end else if (hScrollCounter[2:0] == 2'b010) begin
-            // request byte 2
-            RAOut = { 0, vScrollCounter[7:3], hScrollCounter[8:3], 1 };
-		end else if (hScrollCounter[2:0] == 2'b011) begin
-            // read byte 2
+		end else if (hScrollCounter[2:0] === 3'b010) begin
+			// request byte 2
+			//RAOut = { 0, vScrollCounter[7:3], hScrollCounter[8:3], 1 };
+		end else if (hScrollCounter[2:0] === 3'b011) begin
+			// read byte 2
 			td2 <= RD;	
-            // send first nibble
-            GAOut <= { td2[1:0], td1, vScrollCounter[2:0], 0 };
+			// send first nibble
+			//GAOut <= { td2[1:0], td1, vScrollCounter[2:0], 0 };
 			HAOut <= 1;
-		end else if (hScrollCounter[2:0] == 2'b111) begin
-            // send second nibble
-            GAOut <= { td2[1:0], td1, vScrollCounter[2:0], 1 };
+		end else if (hScrollCounter[2:0] === 3'b111) begin
+			// send second nibble
+			//GAOut <= { td2[1:0], td1, vScrollCounter[2:0], 1 };
 			HBOut <= 1;
 		end
 	end
 	
 	// assign outputs
-	assign RA = RCS ? CA : RAOut;
-	assign GA = GAOut;
-	assign HA2 = ha;
-	assign HB2 = hb;
+	//assign RA = RCS ? CA : RAOut;
+	//assign GA = GAOut;
+	
+	assign RA = { 1'b0 , vScrollCounter[7:3], hScrollCounter[8:3], hScrollCounter[1] };
+	assign GA = { td2[1:0], td1, vScrollCounter[2:0], hScrollCounter[2] };
+	
+	assign HA2 = HAOut;
+	assign HB2 = HBOut;
 	
 	assign RWE = RCS ? WE : 1'b0;
 	assign ROE = RCS ? !WE : 1'b1;
