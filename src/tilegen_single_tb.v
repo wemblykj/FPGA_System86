@@ -295,7 +295,7 @@ module tilegen_single_tb
 		if (!rst) begin
 			frame_count <= frame_count + 1;
 			
-			if (frame_count > 9) begin
+			if (frame_count > 12) begin
 				rst = 1;
 				$fclose(rgb_fd);
 				$stop;

@@ -141,9 +141,9 @@ module CUS43(
 		end else begin
 			// when not loading we are forever shifting
 			// TODO: flip support
-			//DT_A_PLANE0_BUFFER_H <= DT_A_PLANE0_BUFFER_H >> 1;
-			//DT_A_PLANE1_BUFFER_H <= DT_A_PLANE1_BUFFER_H >> 1;
-			//DT_A_PLANE2_BUFFER_H <= DT_A_PLANE2_BUFFER_H >> 1;
+			//DT_A_PLANE0_BUFFER <= DT_A_PLANE0_BUFFER >> 1;
+			//DT_A_PLANE1_BUFFER <= DT_A_PLANE1_BUFFER >> 1;
+			//DT_A_PLANE2_BUFFER <= DT_A_PLANE2_BUFFER >> 1;
 			DT_A_PLANE0_BUFFER <= DT_A_PLANE0_BUFFER << 1;
 			DT_A_PLANE1_BUFFER <= DT_A_PLANE1_BUFFER << 1;
 			DT_A_PLANE2_BUFFER <= DT_A_PLANE2_BUFFER << 1;

@@ -109,6 +109,8 @@ module CUS42(
 		end 
 	end	
 	
+	reg byte_select = 0;
+	
 	always @(posedge CLK_6M) begin
         HAOut <= 0;
 		HBOut <= 0;
@@ -131,13 +133,15 @@ module CUS42(
 		
 		if (hScrollCounter[2:0] === 3'b000) begin
 			// request byte 1
-			//RAOut = { 0, vScrollCounter[7:3], hScrollCounter[8:3], 0 };
+			//RAOut <= { 0, vScrollCounter[7:3], hScrollCounter[8:3], 0 };
+			byte_select <= 0;
 		end else if (hScrollCounter[2:0] === 3'b001) begin
 			// read byte 1
 			td1 <= RD;
 		end else if (hScrollCounter[2:0] === 3'b010) begin
 			// request byte 2
-			//RAOut = { 0, vScrollCounter[7:3], hScrollCounter[8:3], 1 };
+			//RAOut <= { 0, vScrollCounter[7:3], hScrollCounter[8:3], 1 };
+			byte_select <= 1;
 		end else if (hScrollCounter[2:0] === 3'b011) begin
 			// read byte 2
 			td2 <= RD;	
@@ -155,7 +159,7 @@ module CUS42(
 	//assign RA = RCS ? CA : RAOut;
 	//assign GA = GAOut;
 	
-	assign RA = { 1'b0 , vScrollCounter[7:3], hScrollCounter[8:3], hScrollCounter[1] };
+	assign RA = { 1'b0 , vScrollCounter[7:3], hScrollCounter[8:3], byte_select };
 	assign GA = { td2[1:0], td1, vScrollCounter[2:0], hScrollCounter[2] };
 	
 	assign HA2 = HAOut;
