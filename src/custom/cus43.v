@@ -40,12 +40,9 @@ module CUS43(
         output wire CLE			// hard to decipher text from schematics (not used)
     );
 
-	//reg [11:0] gdiLatched;
-	//reg [7:0] mdiLatched;
 	reg [11:0] gdiALatched;
 	reg [7:0] mdiALatched;
 	reg [11:0] gdiBLatched;
-	reg [7:0] mdiBLatched;
 	
 	// layer 1 (A)
 	reg [2:0] PR_A;
@@ -56,7 +53,9 @@ module CUS43(
 	reg [3:0] DT_A_PLANE2_BUFFER;
 
 	// first bit of each plane buffer
+	//wire [2:0] DT_A = { DT_A_PLANE2_BUFFER[0], DT_A_PLANE1_BUFFER[0], DT_A_PLANE0_BUFFER[0] };	
 	wire [2:0] DT_A = { DT_A_PLANE2_BUFFER[3], DT_A_PLANE1_BUFFER[3], DT_A_PLANE0_BUFFER[3] };	
+	
 	
 	// layer 2 (B)
 	reg [2:0] PR_B;
@@ -78,7 +77,7 @@ module CUS43(
 	assign {PRO, CLO, DTO } = { PR_A, CL_A, DT_A };
 	//assign {PRO, CLO, DTO } = { PR_B, CL_B, DT_B };
 	
-	wire layer = CLK_2H;
+	wire layer = 1'b0;//CLK_2H;
 
 	initial begin
 		PR_A = 3'b0;
@@ -88,14 +87,7 @@ module CUS43(
 		DT_A_PLANE2_BUFFER = 4'b0;
 		gdiALatched = 0;
 		mdiALatched = 0;
-		
-		PR_B = 3'b0;
-		CL_B = 3'b0;
-		DT_B_PLANE0_BUFFER = 4'b0;
-		DT_B_PLANE1_BUFFER = 4'b0;
-		DT_B_PLANE2_BUFFER = 4'b0;
 		gdiBLatched = 0;
-		mdiBLatched = 0;
 	end
 	
 	reg haSig = 0;
@@ -107,19 +99,18 @@ module CUS43(
 		if (HA2) begin
 			mdiALatched <= MDI;
 			gdiALatched <= GDI;
-			haSig <= 0;
-		end else begin
 			haSig <= 1;
+		end else begin
+			haSig <= 0;
 		end
 	end
 	
 	always @(HB2) begin
 		if (HB2) begin
-			mdiBLatched <= MDI;
 			gdiBLatched <= GDI;
-			hbSig <= 0;
-		end else begin
 			hbSig <= 1;
+		end else begin
+			hbSig <= 0;
 		end
 	end
 	

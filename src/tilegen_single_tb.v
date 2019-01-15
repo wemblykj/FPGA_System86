@@ -168,7 +168,7 @@ module tilegen_single_tb
 		.A( { CL, DT } ), 
 		.Q(prom_4v_d));
 	
-	CUS42 CUS42_7K(
+	CUS42_ALT CUS42_7K(
 		// inputs
 		.CLK_6M(CLK_6M), 
 		.CLK_2H(CLK_2H), 
