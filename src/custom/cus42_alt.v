@@ -66,7 +66,7 @@ module CUS42_ALT(
 	wire [4:0] tilemap_row;
 	assign tilemap_column = hScrollCounter[8:3];
 	assign tilemap_row = vScrollCounter[7:3];
-	
+	wire [11:0] tilemap_tile = (tilemap_row*8) + tilemap_column;
 	// tile space
 	wire [2:0] tile_row;		// the row of the tile
 	wire [2:0] tile_column;		// the row of the tile

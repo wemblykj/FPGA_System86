@@ -99,18 +99,18 @@ module CUS43(
 		if (HA2) begin
 			mdiALatched <= MDI;
 			gdiALatched <= GDI;
-			haSig <= 1;
-		end else begin
 			haSig <= 0;
+		end else begin
+			haSig <= 1;
 		end
 	end
 	
 	always @(HB2) begin
 		if (HB2) begin
 			gdiBLatched <= GDI;
-			hbSig <= 1;
-		end else begin
 			hbSig <= 0;
+		end else begin
+			hbSig <= 1;
 		end
 	end
 	

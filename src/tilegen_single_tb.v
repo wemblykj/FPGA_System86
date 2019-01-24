@@ -89,6 +89,7 @@ module tilegen_single_tb
 	
 	// == Layer 1 & 2 =
 	
+	wire layer = 1'b0;
 	wire [13:0] cus42_7k_ga;
 	wire cus42_7k_rwe;
 	wire cus42_7k_roe;
@@ -159,7 +160,7 @@ module tilegen_single_tb
 	// possibly similar functionality to system 1 functionality as described in Mame
 	PROM_7112 #(`ROM_6U) PROM_6U(
 		.E(VCC), 
-		.A( { CLK_2H, cus42_7k_ga[13:12], GND, GND } ), 
+		.A( { layer, cus42_7k_ga[13:12], GND, GND } ), 
 		.Q(prom_6u_d));
 	
 	// tile map palette prom
@@ -168,7 +169,7 @@ module tilegen_single_tb
 		.A( { CL, DT } ), 
 		.Q(prom_4v_d));
 	
-	CUS42_ALT CUS42_7K(
+	CUS42 CUS42_7K(
 		// inputs
 		.CLK_6M(CLK_6M), 
 		.CLK_2H(CLK_2H), 
@@ -295,7 +296,7 @@ module tilegen_single_tb
 		if (!rst) begin
 			frame_count <= frame_count + 1;
 			
-			if (frame_count > 12) begin
+			if (frame_count > 16) begin
 				rst = 1;
 				$fclose(rgb_fd);
 				$stop;
