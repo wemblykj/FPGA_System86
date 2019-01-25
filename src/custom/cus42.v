@@ -46,9 +46,10 @@ module CUS42(
 	// 7-11 y-offset (5 bits)
 	// 1-6  x-offset (6 bits)
 	// 0 - byte select
-	reg [12:0] RAOut;   // RAM addr bus
+	wire [12:0] RAOut [0:1];   // RAM addr bus
     
-    //reg [13:0] GAOut;   // PROM addr bus
+    wire [13:0] GAOut [0:1];   // PROM addr bus
+	
 	reg HAOut;          // ? nibble or layer specific signal
     reg HBOut;          // ? alternative nibble or layer specific signal
 	
@@ -61,7 +62,6 @@ module CUS42(
 	wire [5:0] screen_column = hCounter[8:3];
 	wire [4:0] screen_row = vCounter[7:3];
 	wire [11:0] screen_tile = (screen_row*8) + screen_column;
-	reg ra_byte_select = 0;
 	
 	// per layer inputs
 	
@@ -76,7 +76,6 @@ module CUS42(
 	reg [7:0] vScrollCounter; // 2 layers 8 bits
 	wire [5:0] tilemap_column;
 	wire [4:0] tilemap_row;
-	reg ga_nibble_select = 0;
 	
 	// tile space
 	wire [4:0] tile_row;		// the row of the tile
@@ -85,13 +84,14 @@ module CUS42(
 	// priority layer 1 & 2, may not be used here (see CUS43)
 	reg [2:0] pri;						// 2 layers 3 bits
 
-	reg [9:0] AS;
+	reg [9:0] AS [0:1];
 	
 	initial begin
         hScrollOffset = 0;
         vScrollOffset = 0;
         pri = 3'b0;
-        AS[9:0] = 0;
+        AS[0][9:0] = 0;
+		AS[1][9:0] = 0;
         HAOut = 0;
         HBOut = 0;
     end
@@ -146,13 +146,14 @@ module CUS42(
 			hScrollOffset <= hScrollOffset + 1;
 		end 
 		
+		// need to multiplex for each layer....???
 		if (hScrollCounter[2:0] === 3'b001) begin
 			// read byte 1
-			AS[7:0] <= RD;
+			AS[layer][7:0] <= RD;
 			
 		end else if (hScrollCounter[2:0] === 3'b011) begin
 			// read byte 2
-			AS[9:8] <= RD;
+			AS[layer][9:8] <= RD;
 		end	
 	end
 	
@@ -170,10 +171,22 @@ module CUS42(
 		end
 	end
 	
+	//wire [12:0] RAOut [0:1];
+	//wire [13:0] GAOut [0:1];
+	
+	assign RAOut[0] = { 1'b0, vScrollCounter[7:3], hScrollCounter[8:3], hScrollCounter[1] };
+	assign RAOut[1] = { 1'b1, vScrollCounter[7:3], hScrollCounter[8:3], hScrollCounter[1] };
+	
+	assign GAOut[0] = { AS[0], vScrollCounter[2:0], hScrollCounter[2] };
+	assign GAOut[1] = { AS[1], vScrollCounter[2:0], hScrollCounter[2] };
+	
 	//assign RA = { 1'b0 , vScrollCounter[7:3], hScrollCounter[8:3], ra_byte_select };
-	assign RA = { 1'b0 , vScrollCounter[7:3], hScrollCounter[8:3], hScrollCounter[1] };
+	//assign RA = { 1'b0 , vScrollCounter[7:3], hScrollCounter[8:3], hScrollCounter[1] };
 	//assign GA = { AS, vScrollCounter[2:0], ga_nibble_select };
-	assign GA = { AS, vScrollCounter[2:0], hScrollCounter[2] };
+	//assign GA = { AS, vScrollCounter[2:0], hScrollCounter[2] };
+	
+	assign RA = RAOut[layer];
+	assign GA = GAOut[layer];
 	
 	assign HA2 = HAOut;
 	assign HB2 = HBOut;

@@ -32,9 +32,13 @@ module tilegen_single_tb
 	// Inputs
 	reg clk_in;
 	reg rst;
-	wire [7:0] R;
-	wire [7:0] G;
-	wire [7:0] B;
+	wire [7:0] ROut;
+	wire [7:0] GOut;
+	wire [7:0] BOut;
+	
+	wire [3:0] R;
+	wire [3:0] G;
+	wire [3:0] B;
 	wire HSYNC;
 	wire VSYNC;
 	
@@ -58,6 +62,15 @@ module tilegen_single_tb
 		.COMPSYNC(COMPSYNC),
 		.CLK_1H(CLK_1H),
 		.CLK_2H(CLK_2H)
+	);
+	
+	VIDGEN vidgen(
+		.RIn(R),
+		.GIn(G),
+		.BIn(B),
+		.R(ROut),
+		.G(GOut),
+		.B(BOut)
 	);
 	
 	// Inputs
@@ -288,7 +301,7 @@ module tilegen_single_tb
       
 	always @(posedge CLK_6M) begin
 		if (!rst) begin
-			$fwrite(rgb_fd, "%0d ns: %b %b %b %b %b\n", $time, HSYNC, VSYNC, R, G, B);
+			$fwrite(rgb_fd, "%0d ns: %b %b %b %b %b\n", $time, HSYNC, VSYNC, ROut, GOut, BOut);
 		end
 	end
 	
