@@ -25,9 +25,9 @@ module EPROM_27512
         parameter tAVQV = 250,
         parameter tAXQX = 0,
         parameter tELQV = 250,
-        parameter tEHQZ = 0, //0:60:60,  // (using worst case for typical)
+        parameter tEHQZ = 0:60:60,  // (using worst case for typical)
         parameter tGLQV = 100,
-        parameter tGHQZ = 0 //0:60:60   // (using worst case for typical)
+        parameter tGHQZ = 0:60:60   // (using worst case for typical)
     )
     (
         input wire G,

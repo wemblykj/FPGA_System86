@@ -93,7 +93,7 @@ module GENERIC_SRAM
 		end
 	end
 
-	always @(*) 
+	always @(WE or DV or ACC) 
 	begin : MEM_READ
 		if (!WE && DV) begin
 			DOut = mem[ACC];

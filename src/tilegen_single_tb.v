@@ -42,6 +42,8 @@ module tilegen_single_tb
 	wire HSYNC;
 	wire VSYNC;
 	
+	reg [8:0] hScrollOffset = 0;
+	
 	// == supply rails ==
 	supply1 VCC;
 	supply0 GND;
@@ -91,7 +93,8 @@ module tilegen_single_tb
 	wire [7:0] DOT;
 
 	// Bidirs
-	wire [7:0] D;
+	reg [7:0] DIn;
+	wire [7:0] D = DIn;
 	
 	integer rgb_fd;
 
@@ -102,7 +105,7 @@ module tilegen_single_tb
 	
 	// == Layer 1 & 2 =
 	
-	wire layer = 1'b0;
+	wire layer = CLK_2H;
 	wire [13:0] cus42_7k_ga;
 	wire cus42_7k_rwe;
 	wire cus42_7k_roe;
@@ -308,6 +311,18 @@ module tilegen_single_tb
 	always @(posedge VBLANK) begin
 		if (!rst) begin
 			frame_count <= frame_count + 1;
+			
+			hScrollOffset = hScrollOffset + 1;
+			
+			DIn = hScrollOffset[7:0];
+			A = 0;
+			#10 LATCH0 = 1;
+			#10 LATCH0 = 0;
+			
+			DIn = { 7'b0, hScrollOffset[8] };
+			A = 1;
+			#10 LATCH0 = 1;
+			#10 LATCH0 = 0;
 			
 			if (frame_count > 16) begin
 				rst = 1;

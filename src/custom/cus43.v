@@ -40,6 +40,16 @@ module CUS43(
         output wire CLE			// hard to decipher text from schematics (not used)
     );
 
+	reg [7:0] mdi_latched [1:0];
+	reg	[7:0] plane0_latched [1:0];
+	reg	[7:0] plane1_latched [1:0];
+	reg	[7:0] plane2_latched [1:0];
+	
+	reg [7:0] mdi [1:0];
+	reg	[7:0] plane0_shift [1:0];
+	reg	[7:0] plane1_shift [1:0];
+	reg	[7:0] plane2_shift [1:0];
+	
 	reg [11:0] gdiALatched;
 	reg [7:0] mdiALatched;
 	reg [11:0] gdiBLatched;
@@ -54,7 +64,8 @@ module CUS43(
 
 	// first bit of each plane buffer
 	//wire [2:0] DT_A = { DT_A_PLANE2_BUFFER[0], DT_A_PLANE1_BUFFER[0], DT_A_PLANE0_BUFFER[0] };	
-	wire [2:0] DT_A = { DT_A_PLANE2_BUFFER[3], DT_A_PLANE1_BUFFER[3], DT_A_PLANE0_BUFFER[3] };	
+	wire [2:0] DT_A = { plane2_shift[0][7], plane1_shift[0][7], plane0_shift[0][7] };	
+	wire [2:0] DT_A_ref = { DT_A_PLANE2_BUFFER[3], DT_A_PLANE1_BUFFER[3], DT_A_PLANE0_BUFFER[3] };	
 	
 	
 	// layer 2 (B)
@@ -77,9 +88,17 @@ module CUS43(
 	assign {PRO, CLO, DTO } = { PR_A, CL_A, DT_A };
 	//assign {PRO, CLO, DTO } = { PR_B, CL_B, DT_B };
 	
-	wire layer = 1'b0;//CLK_2H;
+	wire layer = CLK_2H;
 
 	initial begin
+		mdi[0] = 0;
+		mdi[1] = 0;
+		plane0_latched[0] = 0;
+		plane1_latched[0] = 0;
+		plane2_latched[0] = 0;
+		plane0_latched[1] = 0;
+		plane1_latched[1] = 0;
+		plane2_latched[1] = 0;
 		PR_A = 3'b0;
 		CL_A = 3'b0;
 		DT_A_PLANE0_BUFFER = 4'b0;
@@ -94,6 +113,54 @@ module CUS43(
 	reg haLast = 0;
 	reg hbSig = 0;
 	reg hbLast = 0;
+	
+	/*always @(posedge layer, negedge layer) begin
+		mdi_latched[layer] <= MDI;
+		plane0_latched[layer][3:0] <= plane0_latched[layer][7:4];
+		plane1_latched[layer][3:0] <= plane1_latched[layer][7:4];
+		plane2_latched[layer][3:0] <= plane2_latched[layer][7:4];
+		plane0_latched[layer][7:4] <= GDI[3:0];
+		plane1_latched[layer][7:4] <= GDI[7:4];
+		plane2_latched[layer][7:4] <= GDI[11:8];
+	end*/
+	
+	reg l = 0;
+	always @(negedge CLK_6M) begin
+		l <= layer;
+		if (layer != l) begin
+			mdi_latched[layer] <= MDI;
+			plane0_latched[layer][3:0] <= plane0_latched[layer][7:4];
+			plane1_latched[layer][3:0] <= plane1_latched[layer][7:4];
+			plane2_latched[layer][3:0] <= plane2_latched[layer][7:4];
+			plane0_latched[layer][7:4] <= GDI[3:0];
+			plane1_latched[layer][7:4] <= GDI[7:4];
+			plane2_latched[layer][7:4] <= GDI[11:8];
+		end
+	end
+	
+	always @(posedge CLK_6M) begin
+		if (HA2) begin
+			mdi[0] <= mdi_latched[0];
+			plane0_shift[0] <= plane0_latched[0];
+			plane1_shift[0] <= plane1_latched[0];
+			plane2_shift[0] <= plane2_latched[0];
+		end else begin
+			plane0_shift[0] <= plane0_shift[0] << 1;
+			plane1_shift[0] <= plane1_shift[0] << 1;
+			plane2_shift[0] <= plane2_shift[0] << 1;
+		end
+		
+		if (HB2) begin
+			mdi[1] <= mdi_latched[1];
+			plane0_shift[1] <= plane0_latched[1];
+			plane1_shift[1] <= plane1_latched[1];
+			plane2_shift[1] <= plane2_latched[1];
+		end else begin
+			plane0_shift[1] <= plane0_shift[1] << 1;
+			plane1_shift[1] <= plane1_shift[1] << 1;
+			plane2_shift[1] <= plane2_shift[1] << 1;
+		end
+	end
 	
 	always @(HA2) begin
 		if (HA2) begin
