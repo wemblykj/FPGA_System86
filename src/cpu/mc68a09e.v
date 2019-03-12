@@ -4,8 +4,8 @@
 // Engineer: Paul Wightmore 
 // 
 // Create Date:    23:55:35 05/01/2018 
-// Design Name:    MC68A09
-// Module Name:    system86\src\cpu\mc68A09e.v
+// Design Name:    mc68a09e
+// Module Name:    system86\src\cpu\mc68a09e.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module MC68A09E(
+module mc68a09e(
         input wire E,
         input wire Q,
         input wire IRQ,

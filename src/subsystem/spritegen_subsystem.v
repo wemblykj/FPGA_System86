@@ -4,12 +4,13 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    20:12:52 06/10/2018 
-// Design Name:    SPRITEGEN 
-// Module Name:    system86/spritegen.v 
+// Design Name:    spritegen_subsystem 
+// Module Name:    system86/subsystem/spritegen_subsystem.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
 // Description:    Sprite generation subsystem
+//                 - Currently only provides sprite RAM functionality - required for CPU simulation of game ROMs
 //
 // Dependencies: 
 //
@@ -20,7 +21,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module SPRITEGEN
+`include "common/defines.vh"
+
+module spritegen_subsystem
 	#(
 		parameter ROM_5V
 	)

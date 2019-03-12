@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    11:16:41 05/12/2018 
-// Design Name:    CLUT
-// Module Name:    system86/clut.v 
+// Design Name:    clut_subsystem
+// Module Name:    system86/subsystem/clut_subsystem.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -20,7 +20,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module CLUT 
+`include "common/defines.vh"
+
+module clut_subsystem 
 #(
     parameter ROM_3R = "",
     parameter ROM_3S = ""
@@ -34,10 +36,6 @@ module CLUT
     output wire [3:0] G,
     output wire [3:0] B
 );
-
-	// == supply rails ==
-	supply1 VCC;
-	supply0 GND;
 	
 	wire [3:0] prom_3r_r;
 	wire [3:0] prom_3r_g;

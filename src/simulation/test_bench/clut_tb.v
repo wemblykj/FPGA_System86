@@ -5,8 +5,8 @@
 // Engineer:       Paul Wightmore
 //
 // Create Date:    10:40:07 05/13/2018
-// Design Name:    CLUT
-// Module Name:    system86/clut_tb.v
+// Design Name:    clut_tb
+// Module Name:    system86/simulation/test_bench/clut_tb.v
 // Project Name:   Namco System86 simulation
 // Target Device:  
 // Tool versions:  
@@ -25,7 +25,7 @@
 
 `include "../roms/rthunder.vh"
 
-module CLUT_tb;
+module clut_tb;
 
 	// Inputs
 	reg CLK_6M;

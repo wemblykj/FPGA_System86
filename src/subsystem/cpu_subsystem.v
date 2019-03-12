@@ -4,13 +4,17 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    20:18:35 04/12/2018 
-// Design Name: 
-// Module Name:    system86/cpu.v
+// Design Name:    cpu_subsystem
+// Module Name:    system86/subsystem/cpu_subsystem.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:    CPU sub-system
-//
+// Description:    Dual CPU sub-system
+//                 - CUS41 & CUS 47 address generators
+//                 - CPU buses
+//                 - CPU bus to master bus multiplexing
+//                 - CPU program roms
+//                 - Support TTL logic
 // Dependencies:   
 //
 // Revision: 
@@ -20,7 +24,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module CPU
+`include "common/defines.vh"
+
+module cpu_subsystem
     #(
         parameter ROM_9C,
         parameter ROM_9D,
@@ -150,7 +156,7 @@ module CPU
 	wire ls153_8f_2y;
 
 	// CPU 1
-	MC68A09E cpu1_9a
+	mc68a09e cpu1_9a
         (
 			.D(cpu1_9a_d), 
 			.A(cpu1_9a_a), 
@@ -261,7 +267,7 @@ module CPU
 			.MROM(cus41_8a_mrom)
 		);
 		
-	MC68A09E cpu2_11a
+	mc68a09e cpu2_11a
         (
 			.D(cpu2_11a_d), 
 			.A(cpu2_11a_a), 

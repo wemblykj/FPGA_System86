@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    21:02:48 05/28/2018 
-// Design Name:    TILEGEN
-// Module Name:    system86/tilegen.v
+// Design Name:    tilegen_subsystem
+// Module Name:    system86/subsystem/tilegen_subsystem.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -19,7 +19,10 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module TILEGEN
+
+`include "common/defines.vh"
+
+module tilegen_subsystem
 	#(
 		parameter ROM_4R,
 		parameter ROM_4S,
@@ -50,9 +53,6 @@ module TILEGEN
 		output wire [7:0] DOT
     );
 
-	// == supply rails ==
-	supply1 VCC;
-	supply0 GND;
 	
 	// CUS43 inter-connects
 	wire [2:0] PR;		// 'attr' in MAME - transparancy - default can be overridden from diagnosics P5?

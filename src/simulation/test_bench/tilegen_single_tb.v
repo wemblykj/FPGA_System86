@@ -5,8 +5,8 @@
 // Engineer:       Paul Wightmore
 //
 // Create Date:    19:43:02 06/12/2018
-// Design Name:    TILEGEN
-// Module Name:    system86/tilegen_single_tb.v
+// Design Name:    tilegen_single_tb
+// Module Name:    system86/simulation/test_bench/tilegen_single_tb.v
 // Project Name:   Namco System86 simulation
 // Target Device:  
 // Tool versions:  

@@ -5,7 +5,7 @@
 //
 // Create Date:    20:57:30 04/12/2018
 // Design Name:    system86_tb
-// Module Name:    system86/system86_tb.v
+// Module Name:    system86/simulation/test_bench/system86_tb.v
 // Project Name:   Namco System86 simulation
 // Target Device:  
 // Tool versions:  
@@ -22,7 +22,7 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module System86_tb;
+module system86_tb;
 
 	// Inputs
 	reg clk_in;

@@ -4,13 +4,15 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    11:16:41 05/12/2018 
-// Design Name:    VIDGEN
-// Module Name:    system86/clut.v 
+// Design Name:    video_dac
+// Module Name:    system86/simulation/video_dac.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:    Video generator 
-//
+// Description:    System 86 4-bit video DAC emulation
+//              
+//                  Currently a bit of a hack 
+//                  TODO:  need to use line impedence as part of a voltage divider calculation
 // Dependencies: 
 //
 // Revision: 
@@ -20,18 +22,29 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module VIDGEN
+`include "common/defines.vh"
+
+module video_dac
 #(
-    parameter RM1 = 220,
+    // Attributes of the display hardware
+    parameter LINE_IMPEDENCE = 75,      
+    
+    // == 4-bit DAC resiter network ==
+    parameter RM1 = 220,                
     parameter RM2 = 470,
     parameter RM3 = 1000,
     parameter RM4 = 2200,
+    
+    // == Output bit width ==
 	parameter DEST_WIDTH = 8
 )
 (
+    // == 4-bit RGB input ==
     input [3:0] RIn,
 	input [3:0] GIn,
 	input [3:0] BIn,
+    
+    // == n-bit RGB output ==
     output wire [DEST_WIDTH-1:0] R,
     output wire [DEST_WIDTH-1:0] G,
     output wire [DEST_WIDTH-1:0] B

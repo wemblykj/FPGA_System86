@@ -4,9 +4,9 @@
 // Company: 
 // Engineer:       Paul Wightmore
 //
-// Create Date:    18:27:25 05/30/2018
+// Create Date:    19:43:02 06/12/2018
 // Design Name:    TILEGEN
-// Module Name:    system86/tilegen_tb.v
+// Module Name:    system86/simulation/test_bench/tilegen_dual_tb.v
 // Project Name:   Namco System86 simulation
 // Target Device:  
 // Tool versions:  
@@ -25,18 +25,46 @@
 
 `include "../roms/rthunder.vh"
 
-module tilegen_tb;
+module tilegen_dual_tb
+	(
+		// Inputs
+		input reg clk_in,
+		input reg rst,
+		output wire [7:0] R,
+		output wire [7:0] G,
+		output wire [7:0] B,
+		output wire HSYNC,
+		output wire VSYNC
+	);
 
+	// == supply rails ==
+	supply1 VCC;
+	supply0 GND;
+	
+	wire CLK_6M;
+	wire CLK_2H;
+	
+	// Timing subsystem
+	TIMING timing(
+		.CLK_48M(clk_in),
+		.CLK_6M(CLK_6M),
+		.VSYNC(VSYNC),
+		.HSYNC(HSYNC),
+		.HBLANK(HBLANK),
+		.VBLANK(VBLANK),
+		.VRESET(VRESET),
+		.COMPSYNC(COMPSYNC),
+		.CLK_2H(CLK_2H)
+	);
+	
 	// Inputs
-	reg CLK_6M;
-	reg CLK_2H;
+	
 	reg SCROLL0;
 	reg SCROLL1;
 	reg LATCH0;
 	reg LATCH1;
-	reg HSYNC;
-	reg VSYNC;
-	reg FLIP;
+	reg FLIP;	
+
 	reg SRCWIN;
 	reg BACKCOLOR;
 	reg [12:0] A;
@@ -51,11 +79,13 @@ module tilegen_tb;
 	wire [7:0] D;
 	wire [20:1] J5;
 
+	reg [2:0] counter = 0;
+	integer rgb_fd;
+
 	// Instantiate the Unit Under Test (UUT)
-	TILEGEN 
+	TILEGEN  
 		#(
-			`ROM_4R, `ROM_4S, `ROM_4V, `ROM_6U,
-			`ROM_7R, `ROM_7S
+			`ROM_4R, `ROM_4S, `ROM_4V, `ROM_6U, `ROM_7R, `ROM_7S
 		)
 		uut
 		(
@@ -71,28 +101,17 @@ module tilegen_tb;
 			.SRCWIN(SRCWIN), 
 			.BACKCOLOR(BACKCOLOR), 
 			.A(A), 
-			.WE(WE),
+			.WE(WE), 
 			.MD(MD), 
 			.D(D), 
 			.J5(J5), 
 			.SPR(SPR), 
 			.DOT(DOT)
 		);
-	
-	reg [2:0] counter = 0;
-	
-	initial begin
-		counter = 0;
 		
+	initial begin
 		// Initialize Inputs
-		CLK_6M = 0;
-		CLK_2H = 0;
-		SCROLL0 = 0;
-		SCROLL1 = 0;
-		LATCH0 = 0;
-		LATCH1 = 0;
-		HSYNC = 0;
-		VSYNC = 0;
+		clk_in = 0;
 		FLIP = 0;
 		SRCWIN = 0;
 		BACKCOLOR = 0;
@@ -100,27 +119,26 @@ module tilegen_tb;
 		WE = 0;
 		MD = 0;
 
+		rgb_fd = $fopen("rgb.log", "w");
+
 		// Wait 100 ns for global reset to finish
 		#100;
         
 		// Add stimulus here
-		SCROLL0 = 1;
-		A = 0;
-		#162.760417
-		WE = 1;
-		#162.760417
-		WE = 0;
 
 	end
-    
-	always begin
-		#81.3802085 CLK_6M = ~CLK_6M;
-		
-		if (CLK_6M)
-				counter = counter + 1;
-		
-		CLK_2H = counter[1];
-	end
 	
+	always begin
+		#10.1725 clk_in = ~clk_in;
+		
+		if (!rst) begin
+			if (counter[2])
+				$fwrite(rgb_fd, "%0d ns: %b %b %b %b %b\n", $time, HSYNC, VSYNC, R, G, B);
+				
+			if (clk_in)
+				counter = counter + 1;
+		end
+	end
+      
 endmodule
 

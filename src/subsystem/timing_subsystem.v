@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    19:03:51 05/16/2018 
-// Design Name:    TIMING
-// Module Name:    system86\timing.v 
+// Design Name:    timing_subsystem
+// Module Name:    system86\subsystem\timing_subsystem.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module TIMING
+module timing_subsystem
 	(
 		input wire CLK_48M,
 		output wire CLK_24M,

@@ -5,8 +5,8 @@
 // 
 // Create Date:    20:18:35 04/12/2018 
 // Design Name: 
-// Module Name:    system86/system86.v
-// Project Name:   Namco System86 simulation
+// Module Name:    system86/simulation/system86.v
+// Project Name:   Namco System86 top-level simulation module
 // Target Devices: 
 // Tool versions: 
 // Description:    Top-level Namco System86 board simulation
@@ -20,29 +20,27 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
+`include "common/defines.vh"
+
 `include "../roms/rthunder.vh"
 
 module system86
 	(
         input wire CLK_48M,
         input wire RST,
-        inout wire [1:20] J5,
-        inout wire [1:40] J34P,
-        output wire [7:0] R,
-        output wire [7:0] G,
-        output wire [7:0] B,
+        
+        // == Native 4 bit RGB output and sync signals ==
+        output wire [3:0] R,
+        output wire [3:0] G,
+        output wire [3:0] B,
         output wire HSYNC,
         output wire VSYNC
-    );
+ 
+        // == External boards connectors
+        inout wire [1:20] J5,
+        inout wire [1:40] J34P,
 
-	// == supply rails ==
-	supply1 VCC;
-	supply0 GND;
-	
-	// == connectors ==
-	
-	//wire [1:20] J5;
-	//wire [1:40] J34P;
+    );
 	
 	// == global signals ==
 	wire RESET;
@@ -79,7 +77,8 @@ module system86
 	wire con_j5_15;	    // pull0
 	
 	// can this (8U) be moved into timing if not used elsewhere
-	LS74 ls74_8u(
+	LS74 
+        ls74_8u(
 			.PRE2(GND),
 			.CLK2(CLK_4H),
 			.CLR2(VBLANK),
@@ -88,7 +87,8 @@ module system86
 		);
 		
 	// Timing subsystem
-	TIMING timing(
+	timing_subsystem
+        timing_subsystem(
 			.CLK_48M(CLK_48M),
 			.CLK_6M(CLK_6M),
 			.CLK_6MD(CLK_6MD),	// secondary driver? in phase with 6M
@@ -106,8 +106,8 @@ module system86
 		);
 	
     // CPU sub-system
-    CPU #(`ROM_9C, `ROM_9D, `ROM_12C, `ROM_12D)
-        cpu 
+    cpu_subsystem #(`ROM_9C, `ROM_9D, `ROM_12C, `ROM_12D)
+        cpu_subsystem 
         (
             // inputs
             .CLK_6M(CLK_6M),
@@ -132,8 +132,8 @@ module system86
             .MD(MD)
         )
     
-	SPRITEGEN #(`ROM_5V)
-		spritegen
+	spritegen_subsystem #(`ROM_5V)
+		spritegen_subsystem
 		(
 			// input
 			.CLK_6M(CLK_6M),
@@ -151,12 +151,12 @@ module system86
 			.SRCWIN(SRCWIN)
 		);
 		
-	TILEGEN
+	tilegen_subsystem
 		#(
 			`ROM_4R, `ROM_4S, `ROM_4V, `ROM_6U,
 			`ROM_7R, `ROM_7S
 		)
-		tilegen
+		tilegen_subsystem
 		(
 			// input
 			.CLK_6M(CLK_6M),
@@ -182,8 +182,8 @@ module system86
 			.DOT(DOT)
 		);
 	
-	CLUT #(`ROM_3R, `ROM_3S) 
-		clut(
+	clut_subsystem #(`ROM_3R, `ROM_3S) 
+		clut_subsystem(
 			// input
 			.CLK_6M(CLK_6M), 
 			.CLR(GND), //.CLR(ls174_6v_q6), 
