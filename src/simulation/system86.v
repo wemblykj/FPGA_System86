@@ -76,17 +76,93 @@ module system86
 	wire con_j5_14;	    // pull0
 	wire con_j5_15;	    // pull0
 	
-	// can this (8U) be moved into timing if not used elsewhere
-	LS74 
-        ls74_8u(
-			.PRE2(GND),
-			.CLK2(CLK_4H),
-			.CLR2(VBLANK),
-			.D2(HBLANK),
-			.Q2(BLANKING)
+    // == PROMS ==
+    
+    wire [7:0] prom_5v_data;
+    wire [10:0] prom_5v_addr;
+    wire prom_5v_ce;
+    
+	PROM_7138 #('ROM_5V, 10, 8) PROM_5V(
+			.E(prom_5v_ce), 
+			.A( prom_5v_addr ), 
+			.Q(prom_5v_data)
+		);
+        
+    // == EEPROMS ==
+    
+    wire [7:0] eeprom_9c_data;
+    wire [14:0] eeprom_9c_addr;
+    wire eeprom_9c_ce;
+    
+    wire [7:0] eeprom_9d_data;
+    wire [14:0] eeprom_9d_addr;
+    wire eeprom_9d_ce;
+    
+    wire [7:0] eeprom_12c_data;
+    wire [14:0] eeprom_12c_addr;
+    wire eeprom_12c_ce;
+    
+    wire [7:0] eeprom_12d_data;
+    wire [14:0] eeprom_12d_addr;
+    wire eeprom_12d_ce;
+    
+    // EPROM 27256 - CPU 1 PROGRAM ROM 9C
+	EPROM_27256 #('ROM_9C) eprom_9c
+        (
+			.E(eeprom_9c_ce), 
+			.G(GND),	// negate to compensate for active low
+			.A(eeprom_9c_addr), 
+			.Q(eeprom_9c_data)
 		);
 		
-	// Timing subsystem
+	// EPROM 27256 - CPU 1 PROGRAM ROM 9D
+	EPROM_27256 #('ROM_9D) 
+        eprom_9d
+        (
+            .E(eeprom_9d_ce),
+            .G(GND), 
+            .A(eeprom_9d_addr), 
+            .Q(eeprom_9d_data)
+		);
+	
+    // EPROM 27256 - CPU 2 PROGRAM ROM 12C
+    EPROM_27256 #('ROM_12C) 
+        eprom_12c(
+			.E(eeprom_12c_ce),
+			.G(GND),
+			.A(eeprom_12c_addr), 
+			.Q(eeprom_12c_data)
+		);
+		
+    // EPROM 27256 - CPU 2 PROGRAM ROM 12D
+	EPROM_27256 #('ROM_12D) 
+        eprom_12d(
+			.E(eeprom_12d_ce), 
+			.G(GND),
+			.A(eeprom_12d_addr), 
+			.Q(eeprom_12d_data)
+		);
+        
+   		
+    // == SRAM ==
+    
+    wire [7:0] sram_10m_data;
+    wire [13:0] sram_10m_addr;
+    wire sram_10m_ce;
+    wire sram_10m_we;
+    wire sram_10m_oe;
+    
+    // sprite ram
+	CY6264 CY6264_10M(
+			.CE1(cus35_9m_cs1),
+			.CE2(VCC),
+			.WE(cus35_9m_rwe),
+			.OE(cus35_9m_roe),
+			.A( { ls32_6e_4y, ls32_6e_3y, A[11:1] } ),
+			.D(sram_10m_data)
+		);
+    
+	// == Timing subsystem ==
 	timing_subsystem
         timing_subsystem(
 			.CLK_48M(CLK_48M),
@@ -97,6 +173,7 @@ module system86
 			.HBLANK(HBLANK),
 			.VBLANK(VBLANK),
 			.VRESET(VRESET),
+            .BLANKING(BLANKING),
 			.COMPSYNC(COMPSYNC),
 			.CLK_1H(CLK_1H),
 			.CLK_S1H(CLK_S1H),	// secondary driver? in phase with 1H
@@ -106,7 +183,7 @@ module system86
 		);
 	
     // CPU sub-system
-    cpu_subsystem #(`ROM_9C, `ROM_9D, `ROM_12C, `ROM_12D)
+    cpu_subsystem
         cpu_subsystem 
         (
             // inputs
@@ -130,9 +207,24 @@ module system86
             .LATCH1(LATCH1),
             .BACKCOLOR(BACKCOLOR),
             .MD(MD)
+            
+            // == hardware abstraction - memory buses ==
+            .eeprom_9c_data(eeprom_9c_data),
+            .eeprom_9c_addr(eeprom_9c_addr),
+            .eeprom_9c_ce(eeprom_9c_ce),
+            .eeprom_9d_data(eeprom_9d_data),
+            .eeprom_9d_addr(eeprom_9d_addr),
+            .eeprom_9d_ce(eeprom_9d_ce),
+            .eeprom_12c_data(eeprom_12c_data),
+            .eeprom_12c_addr(eeprom_12c_addr),
+            .eeprom_12c_ce(eeprom_12c_ce),
+            .eeprom_12d_data(eeprom_12d_data),
+            .eeprom_12d_addr(eeprom_12d_addr),
+            .eeprom_12d_ce(eeprom_12d_ce)
+           
         )
     
-	spritegen_subsystem #(`ROM_5V)
+	spritegen_subsystem
 		spritegen_subsystem
 		(
 			// input
@@ -148,7 +240,17 @@ module system86
 			.D(D),
 			// output
 			.DOT(DOT),
-			.SRCWIN(SRCWIN)
+			.SRCWIN(SRCWIN),
+            
+            // == hardware abstraction - memory buses ==
+            .prom_5v_data(prom_5v_data),
+            .prom_5v_addr(prom_5v_addr),
+            .prom_5v_ce(prom_5v_ce),
+            .sram_10m_data(sram_10m_data),
+            .sram_10m_addr(sram_10m_addr),
+            .sram_10m_ce(sram_10m_ce),
+            .sram_10m_we(sram_10m_we),
+            .sram_10m_oe(sram_10m_oe)
 		);
 		
 	tilegen_subsystem

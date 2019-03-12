@@ -25,7 +25,6 @@
 
 module spritegen_subsystem
 	#(
-		parameter ROM_5V
 	)
 	(
         input wire CLK_6M,
@@ -38,13 +37,21 @@ module spritegen_subsystem
         input wire WE,
         inout wire [7:0] D,
         output wire [7:0] DOT,
-        output wire SRCWIN
+        output wire SRCWIN,
+        
+        // == hardware abstraction - memory buses ==
+        
+        input wire [7:0] prom_5v_data,
+        output wire [10:0] prom_5v_addr,
+        output wire prom_5v_ce,
+        
+        inout wire [7:0] sram_10m_data,
+        output wire [13:0] sram_10m_addr,
+        output wire sram_10m_ce,
+        output wire sram_10m_we,
+        output wire sram_10m_oe
     );
 	 
-	 // == supply rails ==
-	supply1 VCC;
-	supply0 GND;
-	
 	// 1H high == main CPU on bus
 	// 1H low == sub CPU on bus
 	
@@ -163,7 +170,7 @@ module spritegen_subsystem
 	wire cus35_9m_cs1;
 	wire cus35_9m_rwe;
 	wire cus35_9m_roe;
-	wire [7:0] cus35_9m_bi;
+	//wire [7:0] cus35_9m_bi;
 	wire [7:0] cus35_9m_bo;
 	
 	CUS35 CUS35_9M(
@@ -177,20 +184,18 @@ module spritegen_subsystem
 			.CS1(cus35_9m_cs1),
 			.ROE(cus35_9m_roe),
 			.RWE(cus35_9m_rwe),
-			.BI(cus35_9m_bi),
+			.BI(sram_10m_data), // cus35_9m_bi),
 			.BO(cus35_9m_bo)
 		);
-	
-	// sprite ram
-	CY6264 CY6264_10M(
-			.CE1(cus35_9m_cs1),
-			.CE2(VCC),
-			.WE(cus35_9m_rwe),
-			.OE(cus35_9m_roe),
-			.A( { ls32_6e_4y, ls32_6e_3y, A[11:1] } ),
-			.D(cus35_9m_bi)
-		);
-
+   
+   // this may need work once sprite implementation gets underway
+   // specifically the sram_10m_data assignment - currently assuming it is bidirectiona from looking at my original code and not the refering to the schematics at this time
+    assign sram_10m_addr = { ls32_6e_4y, ls32_6e_3y, A[11:1] };
+    assign sram_10m_data = sram_10m_ce & sram_10m_we ? cus35_9m_bo : 8'bZ;
+    assign sram_10m_ce = cus35_9m_cs1;
+    assign sram_10m_we = cus35_9m_rwe;
+    assign sram_10m_oe = cus35_9m_roe;
+    
 	LS85 LS85_7V(
 			.A( { ls10_7e_3y, ls174_9v_q1, ls174_9v_q2, ls174_9v_q3 } ),
 			.B( { VCC, SPR } ),
@@ -200,12 +205,8 @@ module spritegen_subsystem
 			.AgtBout(ls85_7v_agtb),
 			.AltBout(ls85_7v_altb)
 		);
-		
-	wire [7:0] prom_5v_d;
-	PROM_7138 #(ROM_5V, 10, 8) PROM_5V(
-			.E(BLANKING | ls85_7v_agtb), 
-			.A( { GND, ls174_9v_q4, ls174_8v_q1, ls174_8v_q3, ls174_8v_q4, ls174_8v_q5, ls174_8v_q6, ls174_6v_q1, ls174_6v_q2, ls174_6v_q3, ls174_6v_q4 } ), 
-			.Q(prom_5v_d)
-		);
-		
+	
+    assign prom_5v_addr = { GND, ls174_9v_q4, ls174_8v_q1, ls174_8v_q3, ls174_8v_q4, ls174_8v_q5, ls174_8v_q6, ls174_6v_q1, ls174_6v_q2, ls174_6v_q3, ls174_6v_q4 };
+    assign prom_5v_ce = BLANKING | ls85_7v_agtb;
+    	
 endmodule

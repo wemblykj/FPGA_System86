@@ -28,10 +28,6 @@
 
 module cpu_subsystem
     #(
-        parameter ROM_9C,
-        parameter ROM_9D,
-        parameter ROM_12C,
-        parameter ROM_12D
     )
 	(
         input wire CLK_6M,
@@ -51,12 +47,27 @@ module cpu_subsystem
         output wire LATCH0,
         output wire LATCH1,
         output wire BACKCOLOR,
-        output wire [7:0] MD	// master CPU data bus to backcolor latch
+        output wire [7:0] MD,	// master CPU data bus to backcolor latch
+        
+        // == hardware abstraction - memory buses ==
+        
+        input wire [7:0] eeprom_9c_data,
+        output wire [14:0] eeprom_9c_addr,
+        output wire eeprom_9c_ce,
+        
+        input wire [7:0] eeprom_9d_data,
+        output wire [14:0] eeprom_9d_addr,
+        output wire eeprom_9d_ce,
+        
+        input wire [7:0] eeprom_12c_data,
+        output wire [14:0] eeprom_12c_addr,
+        output wire eeprom_12c_ce,
+        
+        input wire [7:0] eeprom_12d_data,
+        output wire [14:0] eeprom_12d_addr,
+        output wire eeprom_12d_ce
     );
 
-	// == supply rails ==
-	supply1 VCC;
-	supply0 GND;
     
 	// == Master CPU system ==
 	
@@ -201,25 +212,6 @@ module cpu_subsystem
 			.MPGM(cus47_10C_mpmg)
 		);
 	
-	// EPROM 27256 - CPU 1 PROGRAM ROM 9C
-	EPROM_27256 #(ROM_9C) eprom_9c
-        (
-			.E(cus47_10C_mpmg), 
-			.G(~CLK_2H),	// negate to compensate for active low
-			.A(cpu1_9a_a[14:0]), 
-			.Q(cpu1_9a_d)
-		);
-		
-	// EPROM 27256 - CPU 1 PROGRAM ROM 9D
-	EPROM_27256 #(14, 8, ROM_9D) 
-        eprom_9d
-        (
-            .E(cus47_10C_spmg),
-            .G(~CLK_2H), 
-            .A(cpu1_9a_a[14:0]), 
-            .Q(cpu1_9a_d)
-		);
-	
 	LS139 ls139_7d
         (
 			.Eb(cpu1_9a_a[15]),
@@ -286,22 +278,6 @@ module cpu_subsystem
 			.RESET(RESET)
 		);	
 	
-	EPROM_27256 #(ROM_12C) 
-        eprom_12c(
-			.E(cus41_8a_mrom),
-			.G(~ls00_8d_2y),
-			.A(cpu2_11a_a[14:0]), 
-			.Q(cpu2_11a_d)
-		);
-		
-	EPROM_27256 #(ROM_12D) 
-        eprom_12d(
-			.E(cus41_8a_mcs4), 
-			.G(~ls00_8d_2y),
-			.A(cpu2_11a_a[14:0]), 
-			.Q(cpu2_11a_d)
-		);
-	
 	// == BUS MULTIPLEXER ==
 	
 	// to simplify HDL these are in reverse order of schematics [3:0] -> [4Y:1Y]
@@ -361,8 +337,30 @@ module cpu_subsystem
 			.B( {cus41_8a_latch0, cus41_8a_latch1, cpu2_11a_we, cpu2_11a_a[12]} ),
 			.Y(ls157_8c_y)
 		);
-		
-	// globals
+	
+    // == CPU 1 to program ROMs 9C and 9D
+    
+    assign eeprom_9c_addr = cpu1_9a_a[14:0];
+    assign eeprom_9c_ce = CLK_2H & cus47_10C_mpmg;
+    
+    assign eeprom_9d_addr = cpu1_9a_a[14:0];
+    assign eeprom_9d_ce = CLK_2H & cus47_10C_spmg;
+    
+    // Assign ROM data buses to CPU 1 bus if enabled
+    assign cpu1_9a_d = eeprom_9c_ce ? eeprom_9c_data : eeprom_9d_ce ? eeprom_9d_data : 8'bZ;
+    
+    // == CPU 2 to program ROMs 12C and 12D
+    
+    assign eeprom_12c_addr = cpu2_11a_a[14:0];
+    assign eeprom_12c_ce = ls00_8d_2y & cus41_8a_mrom;
+    
+    assign eeprom_12d_addr = cpu2_11a_a[14:0];
+    assign eeprom_12d_ce = ls00_8d_2y & cus41_8a_mcs4;
+    
+    // Assign ROM data buses to CPU 2 bus if enabled
+    assign cpu2_11a_d = eeprom_12c_ce ? eeprom_12c_data : eeprom_12d_ce ? eeprom_12d_data : 8'bZ;
+	
+	// == Global outputs ==
 	
 	assign A = { 
 		ls157_8c_y[0], 
@@ -386,6 +384,8 @@ module cpu_subsystem
 	assign BANK = cus47_10c_bank;
 	assign WE = ls157_8c_y[1];
 
+    
+    
 	initial begin
 	end
 	

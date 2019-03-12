@@ -32,6 +32,7 @@ module timing_subsystem
 		output wire HBLANK,
 		output wire HRESET,
 		output wire VRESET,
+        output wire BLANKING,
 		output wire COMPSYNC,
 		output wire CLK_8V,
 		output wire CLK_4V,
@@ -66,6 +67,17 @@ module timing_subsystem
 			.CLK_8V_O(CLK_8V)
 		);
 	
+        // == TTL glue logic
+    
+	LS74 
+        ls74_8u(
+			.PRE2(GND),
+			.CLK2(CLK_4H),
+			.CLR2(VBLANK),
+			.D2(HBLANK),
+			.Q2(BLANKING)
+		);
+
 	assign COMPSYNC = HSYNC || VSYNC;	// via LS08 (3H) and'ing of negated signals
 	
 	always @(*) begin
