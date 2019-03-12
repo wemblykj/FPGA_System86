@@ -37,12 +37,24 @@ The objectives for this project are as follows:
 - rudimentary GFX ram support (required for initial system test)
 - rudimentary sprite ram support (required for initial system test)
 
-1.1.2. Implement the tilemap pipeline for a single layer
+1.1.2.A Implement the tilemap pipeline for a single layer
 
 - CUS42 CPU#1 address generator
 - CUS43 CPU#1 address generator
 - Palette generation
 - RGB stream generation
+
+1.1.2.B (Side project) Prepare the project for targeting at different hardware
+
+- Reorganise source so that it can easily be targeted at different hardware; including
+-- Spartan 6 (I have just purchased my self a Digilent ATLYS board with embedded Xilinx XC6SLX45 and 128Mbytes of SDRAM)
+-- Create Xilinx ISE Design Studio compatible projects
+
+- Create top-level modules for supporting the AXI-4 [Lite] bus protocols
+-- This will hopefully provide:
+--- sufficent resources for all of the System86 ROM and RAM chips to talk to SDRAM over a shared bus
+--- centralised configuration and runtime management of the system via a Microblaze embedded CPU
+--- provide testbed functionality of EEPROMs over AXI bus (i.e. mimic SDRAM with all roms loaded in require locations)
 
 1.1.3. Extend the tilemap pipeline for all four layers
 
