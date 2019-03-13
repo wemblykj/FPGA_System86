@@ -24,8 +24,6 @@
 
 module clut_subsystem 
 #(
-    parameter ROM_3R = "",
-    parameter ROM_3S = ""
 )
 (
     input CLK_6M,
@@ -34,16 +32,22 @@ module clut_subsystem
     input BANK,
     output wire [3:0] R,
     output wire [3:0] G,
-    output wire [3:0] B
+    output wire [3:0] B,
+    
+    // == hardware abstraction - memory buses ==
+    
+    input wire [7:0] prom_3r_data,
+    output wire [8:0] prom_3r_addr,
+    output wire prom_3r_ce,
+    
+    input wire [3:0] prom_3s_data,
+    output wire [8:0] prom_3s_addr,
+    output wire prom_3s_ce,
 );
 	
-	wire [3:0] prom_3r_r;
-	wire [3:0] prom_3r_g;
-	wire [3:0] prom_3s_b;
-	
-	assign R = prom_3r_r;
-	assign G = prom_3r_g;
-	assign B = prom_3s_b;
+	assign R = prom_3r_data[3:0];
+	assign G = prom_3r_data[7:4];
+	assign B = prom_3s_data;
 	
 	wire [7:0] ls273_4u_d;
 	LS273 LS273_4U(
@@ -52,18 +56,14 @@ module clut_subsystem
 		.D(D),
 		.Q(ls273_4u_d)
 		);
-		
-	PROM_7124 #(ROM_3R) PROM_3R(
-		.E(VCC),
-		.A( {BANK, ls273_4u_d} ), 
-		.Q( {prom_3r_g, prom_3r_r} )
-		);
-		
-	PROM_7116 #(ROM_3S) PROM_3S(
-		.E(VCC),
-		.A( {BANK, ls273_4u_d} ), 
-		.Q(prom_3s_b)
-		);
-		
+	
+    // == hardware abstraction - memory buses ==
+    
+    assign prom_3r_addr = {BANK, ls273_4u_d};
+    assign prom_3r_ce = VCC;
+    
+    assign prom_3s_addr = {BANK, ls273_4u_d};
+    assign prom_3s_ce = VCC;
+    	
 endmodule
 

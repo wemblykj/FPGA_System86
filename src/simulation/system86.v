@@ -82,32 +82,73 @@ module system86
     wire [10:0] prom_5v_addr;
     wire prom_5v_ce;
     
-	PROM_7138 #('ROM_5V, 10, 8) PROM_5V(
+    PROM_7138 
+        #('ROM_5V, 10, 8) 
+        PROM_5V(
 			.E(prom_5v_ce), 
 			.A( prom_5v_addr ), 
 			.Q(prom_5v_data)
 		);
+    
+    wire [7:0] prom_3r_data;
+    wire [8:0] prom_3r_addr;
+    wire prom_3r_ce;
         
+    PROM_7124 
+        #('ROM_3R) 
+        PROM_3R(
+            .E(prom_3r_ce),
+            .A(prom_3r_addr), 
+            .Q(prom_3r_data)
+		);
+	
+    wire [3:0] prom_3s_data;
+    wire [8:0] prom_3s_addr;
+    wire prom_3s_ce;
+	
+	PROM_7116 
+        #('ROM_3S) 
+        PROM_3S(
+            .E(prom_3s_ce),
+            .A(prom_3s_addr), 
+            .Q(prom_3s_data)
+		);
+	
+    // tile address decoder
+    wire [7:0] prom_6u_data;
+    wire [4:0] prom_6u_addr;
+    wire prom_6u_ce;
+    
+	PROM_7112 
+        #('ROM_6U) 
+        PROM_6U(
+			.E(prom_6u_ce),
+			.A(prom_6u_addr), 
+			.Q(prom_6u_data)
+		);
+	
+	// tile map palette prom
+    wire [7:0] prom_4v_data;
+    wire [10:0] prom_4v_addr;
+    wire prom_4v_ce;
+    
+	PROM_7138 
+        #('ROM_4V) 
+        PROM_4V(
+			.E(prom_4v_ce), //.E(SCRWIN),
+			.A(prom_4v_addr), 
+			.Q(prom_4v_data)
+		);
+	
     // == EEPROMS ==
     
+    // EPROM 27256 - CPU 1 PROGRAM ROM 9C
     wire [7:0] eeprom_9c_data;
     wire [14:0] eeprom_9c_addr;
     wire eeprom_9c_ce;
-    
-    wire [7:0] eeprom_9d_data;
-    wire [14:0] eeprom_9d_addr;
-    wire eeprom_9d_ce;
-    
-    wire [7:0] eeprom_12c_data;
-    wire [14:0] eeprom_12c_addr;
-    wire eeprom_12c_ce;
-    
-    wire [7:0] eeprom_12d_data;
-    wire [14:0] eeprom_12d_addr;
-    wire eeprom_12d_ce;
-    
-    // EPROM 27256 - CPU 1 PROGRAM ROM 9C
-	EPROM_27256 #('ROM_9C) eprom_9c
+
+	EPROM_27256 
+        #('ROM_9C) eprom_9c
         (
 			.E(eeprom_9c_ce), 
 			.G(GND),	// negate to compensate for active low
@@ -116,7 +157,12 @@ module system86
 		);
 		
 	// EPROM 27256 - CPU 1 PROGRAM ROM 9D
-	EPROM_27256 #('ROM_9D) 
+    wire [7:0] eeprom_9d_data;
+    wire [14:0] eeprom_9d_addr;
+    wire eeprom_9d_ce;
+
+	EPROM_27256 
+        #('ROM_9D) 
         eprom_9d
         (
             .E(eeprom_9d_ce),
@@ -126,7 +172,12 @@ module system86
 		);
 	
     // EPROM 27256 - CPU 2 PROGRAM ROM 12C
-    EPROM_27256 #('ROM_12C) 
+    wire [7:0] eeprom_12c_data;
+    wire [14:0] eeprom_12c_addr;
+    wire eeprom_12c_ce;
+    
+    EPROM_27256 
+        #('ROM_12C) 
         eprom_12c(
 			.E(eeprom_12c_ce),
 			.G(GND),
@@ -135,33 +186,132 @@ module system86
 		);
 		
     // EPROM 27256 - CPU 2 PROGRAM ROM 12D
-	EPROM_27256 #('ROM_12D) 
+    wire [7:0] eeprom_12d_data;
+    wire [14:0] eeprom_12d_addr;
+    wire eeprom_12d_ce;
+    
+	EPROM_27256 
+        #('ROM_12D) 
         eprom_12d(
 			.E(eeprom_12d_ce), 
 			.G(GND),
 			.A(eeprom_12d_addr), 
 			.Q(eeprom_12d_data)
 		);
+    
+    // tile gfx roms
+    //
+    // possible optimization: the gfx roms could be preprocessed to combine RG + B and accessed
+    // via a single 12-bit memory read - however unless memory bandwidth proves a problem I'd rather go for
+    // authenticity of the original schematics
         
-   		
+    // tile gfx - layer 1/2 - red and green channels (4-bit per channel)
+	// documented as 27256 but wired up as 27512 (with Mame and rom sizes concurring with it being a 27512)
+    wire [7:0] eeprom_7r_data;
+    wire [16:0] eeprom_7r_addr;
+    wire eeprom_7r_ce;
+    
+	EPROM_27512 
+        #('ROM_7R) 
+        EPROM_7R(
+			.E(eeprom_7r_ce),
+			.G(VCC), 
+			.A(eeprom_7r_addr), 
+			.Q(eeprom_7r_data)
+		);
+    
+	// tile gfx - layer 1/2 - blue channel (4-bit per channel with two pixels per address)
+	// documented as 27128 but wired up as 27256 (with Mame and rom sizes concurring with 27256)
+    wire [7:0] eeprom_7s_data;
+    wire [15:0] eeprom_7s_addr;
+    wire eeprom_7s_ce;
+    
+	EPROM_27256 
+        #('ROM_7S) 
+        EPROM_7S(
+			.E(eeprom_7r_ce),
+			.G(VCC), 
+			.A(eeprom_7r_addr), 
+			.Q(eepprom_7s_data)
+		);	
+	
+    // tile gfx - layer 3/4 - blue channel (4-bit per channel with two pixels per address)
+    wire [7:0] eeprom_4r_data;
+    wire [15:0] eeprom_4r_addr;
+    wire eeprom_4r_ce;
+    
+	EPROM_27256 #('ROM_4R) EPROM_4R(
+			.E(eeprom_4r_ce),
+			.G(VCC), 
+			.A(eeprom_4r_addr), 
+			.Q(eeprom_4r_data)
+		);
+		
+	// tile gfx - layer 3/4 - blue channel (4-bit per channel with two pixels per address)
+    wire [7:0] eeprom_4s_data;
+    wire [14:0] eeprom_4s_addr;
+    wire eeprom_4s_ce;
+    
+	EPROM_27128 #('ROM_4S) EPROM_4S(
+			.E(eeprom_4s_ce), 
+			.G(VCC),
+			.A(eeprom_4s_addr), 
+			.Q(eeprom_4s_data)
+		);
+        
     // == SRAM ==
     
+    // sprite ram
     wire [7:0] sram_10m_data;
-    wire [13:0] sram_10m_addr;
+    wire [12:0] sram_10m_addr;
     wire sram_10m_ce;
     wire sram_10m_we;
     wire sram_10m_oe;
     
-    // sprite ram
-	CY6264 CY6264_10M(
-			.CE1(cus35_9m_cs1),
+	CY6264 
+        cy6264_10m(
+			.CE1(sram_10m_ce),
 			.CE2(VCC),
-			.WE(cus35_9m_rwe),
-			.OE(cus35_9m_roe),
-			.A( { ls32_6e_4y, ls32_6e_3y, A[11:1] } ),
+			.WE(sram_10m_we),
+			.OE(sram_10m_oe),
+			.A(sram_10m_addr),
 			.D(sram_10m_data)
 		);
     
+    // tile ram - layer 1/2
+    wire [7:0] sram_7n_data;
+    wire [12:0] sram_7n_addr;
+    wire sram_7n_ce;
+    wire sram_7n_we;
+    wire sram_7n_oe;
+    
+	CY6264 
+        cy6264_4n(
+			.CE1(sram_7n_ce),
+			.CE2(VCC),
+			.WE(sram_7n_we),
+			.OE(sram_7n_oe),
+			.A(sram_7n_addr),
+			.D(sram_7n_data)
+		);
+        
+    // tile ram - layer 3/4
+    wire [7:0] sram_4n_data;
+    wire [12:0] sram_4n_addr;
+    wire sram_4n_ce;
+    wire sram_4n_we;
+    wire sram_4n_oe;
+    
+	CY6264 
+        cy6264_4n(
+			.CE1(sram_4n_ce),
+			.CE2(VCC),
+			.WE(sram_4n_we),
+			.OE(sram_4n_oe),
+			.A(sram_4n_addr),
+			.D(sram_4n_data)
+		);
+        
 	// == Timing subsystem ==
 	timing_subsystem
         timing_subsystem(
@@ -209,6 +359,7 @@ module system86
             .MD(MD)
             
             // == hardware abstraction - memory buses ==
+            
             .eeprom_9c_data(eeprom_9c_data),
             .eeprom_9c_addr(eeprom_9c_addr),
             .eeprom_9c_ce(eeprom_9c_ce),
@@ -243,9 +394,11 @@ module system86
 			.SRCWIN(SRCWIN),
             
             // == hardware abstraction - memory buses ==
+            
             .prom_5v_data(prom_5v_data),
             .prom_5v_addr(prom_5v_addr),
             .prom_5v_ce(prom_5v_ce),
+            
             .sram_10m_data(sram_10m_data),
             .sram_10m_addr(sram_10m_addr),
             .sram_10m_ce(sram_10m_ce),
@@ -254,10 +407,6 @@ module system86
 		);
 		
 	tilegen_subsystem
-		#(
-			`ROM_4R, `ROM_4S, `ROM_4V, `ROM_6U,
-			`ROM_7R, `ROM_7S
-		)
 		tilegen_subsystem
 		(
 			// input
@@ -281,10 +430,48 @@ module system86
 			.J5(J5),
 			// output
 			.SPR(SPR),
-			.DOT(DOT)
+			.DOT(DOT),
+            
+            // == hardware abstraction - memory buses ==
+            
+            .eeprom_4r_addr(eeprom_4r_addr),
+            .eeprom_4r_data(eeprom_4r_data),
+            .eeprom_4r_ce(eeprom_4r_ce),
+            
+            .eeprom_4s_addr(eeprom_4s_addr),
+            .eeprom_4s_data(eeprom_4s_data),
+            .eeprom_4s_ce(eeprom_4s_ce),
+            
+            .prom_4v_addr(prom_4v_addr),
+            .prom_4v_data(prom_4v_data),
+            .prom_4v_ce(prom_4v_ce),
+            
+            .prom_6u_addr(prom_6u_addr),
+            .prom_6u_data(prom_6u_data),
+            .prom_6u_ce(prom_6u_ce),
+            
+            .eeprom_7r_addr(eeprom_7r_addr),
+            .eeprom_7r_data(eeprom_7r_data),
+            .eeprom_7r_ce(eeprom_7r_ce),
+            
+            .eeprom_7s_addr(eeprom_7s_addr),
+            .eeprom_7s_data(eeprom_7s_data),
+            .eeprom_7s_ce(eeprom_7s_ce),
+            
+            .sram_10m_data(sram_4n_data),
+            .sram_10m_addr(sram_4n_addr),
+            .sram_10m_ce(sram_4n_ce),
+            .sram_10m_we(sram_4n_we),
+            .sram_10m_oe(sram_4n_oe),
+            
+            .sram_10m_data(sram_7n_data),
+            .sram_10m_addr(sram_7n_addr),
+            .sram_10m_ce(sram_7n_ce),
+            .sram_10m_we(sram_7n_we),
+            .sram_10m_oe(sram_7n_oe)
 		);
 	
-	clut_subsystem #(`ROM_3R, `ROM_3S) 
+	clut_subsystem
 		clut_subsystem(
 			// input
 			.CLK_6M(CLK_6M), 
@@ -295,6 +482,8 @@ module system86
 			.R(R), 
 			.G(G), 
 			.B(B)
+            
+            // == hardware abstraction - memory buses ==
 		);
 		
 	

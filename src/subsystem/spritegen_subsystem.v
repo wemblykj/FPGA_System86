@@ -46,7 +46,7 @@ module spritegen_subsystem
         output wire prom_5v_ce,
         
         inout wire [7:0] sram_10m_data,
-        output wire [13:0] sram_10m_addr,
+        output wire [12:0] sram_10m_addr,
         output wire sram_10m_ce,
         output wire sram_10m_we,
         output wire sram_10m_oe
@@ -206,6 +206,8 @@ module spritegen_subsystem
 			.AltBout(ls85_7v_altb)
 		);
 	
+    // == hardware abstraction - memory buses ==
+    
     assign prom_5v_addr = { GND, ls174_9v_q4, ls174_8v_q1, ls174_8v_q3, ls174_8v_q4, ls174_8v_q5, ls174_8v_q6, ls174_6v_q1, ls174_6v_q2, ls174_6v_q3, ls174_6v_q4 };
     assign prom_5v_ce = BLANKING | ls85_7v_agtb;
     	

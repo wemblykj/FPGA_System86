@@ -24,12 +24,6 @@
 
 module tilegen_subsystem
 	#(
-		parameter ROM_4R,
-		parameter ROM_4S,
-		parameter ROM_4V,
-		parameter ROM_6U,
-		parameter ROM_7R,
-		parameter ROM_7S
 	)
 	(
 		input wire CLK_6M,
@@ -50,7 +44,45 @@ module tilegen_subsystem
 		inout wire [7:0] D,
 		inout wire [20:1] J5,
 		output wire [2:0] SPR,
-		output wire [7:0] DOT
+		output wire [7:0] DOT, 
+        
+        // == hardware abstraction - memory buses ==
+        
+        input wire [7:0] eeprom_4r_data,
+        output wire [15:0] eeprom_4r_addr,
+        output wire eeprom_4r_ce,
+        
+        input wire [7:0] eeprom_4s_data,
+        output wire [14:0] eeprom_4s_addr,
+        output wire eeprom_4s_ce,
+        
+        input wire [7:0] prom_4v_data,
+        output wire [10:0] prom_4v_addr,
+        output wire prom_4v_ce,
+        
+        input wire [7:0] prom_6u_data,
+        output wire [4:0] prom_6u_addr,
+        output wire prom_6u_ce,
+        
+        input wire [7:0] eeprom_7r_data,
+        output wire [16:0] eeprom_7r_addr,
+        output wire eeprom_7r_ce,
+        
+        input wire [7:0] eeprom_7s_data,
+        output wire [15:0] eeprom_7s_addr,
+        output wire eeprom_7s_ce,
+        
+        inout wire [7:0] sram_4n_data,
+        output wire [12:0] sram_4n_addr,
+        output wire sram_4n_ce,
+        output wire sram_4n_we,
+        output wire sram_4n_oe,
+        
+        inout wire [7:0] sram_7n_data,
+        output wire [12:0] sram_7n_addr,
+        output wire sram_7n_ce,
+        output wire sram_7n_we,
+        output wire sram_7n_oe
     );
 
 	
@@ -78,8 +110,7 @@ module tilegen_subsystem
 	// b0-3 - layer 1 & 2
 	//   b1-2 -  (tile offset in Mame)
 	//   b0 - disable the msb's of the 4 pixel nibble  (ignored in Mame)
-	
-	wire [7:0] prom_6u_d;
+	// wire [7:0] prom_6u_data;
 	
 	// plane 1 (bit 0) & 2 (bit 1)
 	// b7 - Pixel 4 bit 1
@@ -90,7 +121,7 @@ module tilegen_subsystem
 	// b2 - Pixel 3 bit 0
 	// b1 - Pixel 2 bit 0
 	// b0 - Pixel 1 bit 0
-	wire [7:0] prom_7r_d;
+	// wire [7:0] prom_7r_d;
 	
 	// plane 2 (bit 2)
 	// b7 - Pixel 8 bit 2
@@ -101,7 +132,7 @@ module tilegen_subsystem
 	// b2 - Pixel 3 bit 2
 	// b1 - Pixel 2 bit 2
 	// b0 - Pixel 1 bit 2
-	wire [7:0] prom_7s_d;
+    // wire [7:0] prom_7s_d;
 	
 	// background colour latch
 	wire [7:0] ls374_8h_q;
@@ -117,7 +148,8 @@ module tilegen_subsystem
 	// b2 - Pixel 3 bit 0
 	// b1 - Pixel 2 bit 0
 	// b0 - Pixel 1 bit 0
-	wire [7:0] prom_4r_d;	
+	//wire [7:0] prom_4r_d;	
+    
 	// plane 2 (bit 2)
 	// b7 - Pixel 8 bit 2
 	// b6 - Pixel 7 bit 2
@@ -127,9 +159,7 @@ module tilegen_subsystem
 	// b2 - Pixel 3 bit 2
 	// b1 - Pixel 2 bit 2
 	// b0 - Pixel 1 bit 2
-	wire [7:0] prom_4s_d;	
-	// tile map color index
-	wire [7:0] prom_4v_d;	
+	//wire [7:0] prom_4s_d;	
 	
 	// priority
 	wire [2:0] cus43_6n_pro;
@@ -145,22 +175,16 @@ module tilegen_subsystem
 			.D(MD),
 			.Q(ls374_8h_q)
 		);
-		
-	// tile address decoder (used at runtime) 0x1400 - 0x0020
-	// possibly similar functionality to system 1 functionality as described in Mame
-	PROM_7112 #(ROM_6U) PROM_6U(
-			.E(VCC),
-			.A( { CLK_2H, cus42_7k_ga[13:12], cus42_5k_ga[13:12] } ), 
-			.Q(prom_6u_d)
-		);
 	
-	// tile map palette prom
-	PROM_7138 #(ROM_4V) PROM_4V(
-			.E(VCC), //.E(SCRWIN),
-			.A( { cus43_6n_clo, cus43_6n_dto } ), 
-			.Q(prom_4v_d)
-		);
+    // tile address decoder (used at runtime) 0x1400 - 0x0020
+	// possibly similar functionality to system 1 functionality as described in Mame	
+    assign prom_6u_addr = { CLK_2H, cus42_7k_ga[13:12], cus42_5k_ga[13:12] };
+    assign prom_6u_ce = VCC;
 	
+    // tile map palette prom
+    assign prom_4v_addr = { cus43_6n_clo, cus43_6n_dto };
+    assign prom_4v_ce = VCC;  // SCRWIN
+    
 	// == Layer 1 & 2 =
 	
 	CUS42 CUS42_7K(
@@ -191,25 +215,15 @@ module tilegen_subsystem
 			.D(cus42_7k_rd)
 		);
 	
-	// plane 1/2 0x00000 0x10000
-	// documented as 27256 but wired up as 27512 (with Mame and rom sizes concurring with it being a 27512)
-	EPROM_27512 #(ROM_7R) EPROM_7R(
-			.E(VCC),
-			.G(VCC), 
-			.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:0] } ), 
-			.Q(prom_7r_d)
-		);
-		
-	LS158 ls158();
-	
-	// plane 3 0x10000 0x80000
-	// documented as 27128 but wired up as 27256 (with Mame and rom sizes concurring with 27256)
-	EPROM_27256 #(ROM_7S) EPROM_7S(
-			.E(VCC),
-			.G(VCC), 
-			.A( { BANK, prom_6u_d[3:1], cus42_7k_ga[11:1] } ), 
-			.Q(prom_7s_d)
-		);	
+    // layer 1/2 - red and green channels (4-bit per channel)
+	assign eeprom_7r_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:0] };
+    assign eeprom_7r_ce = VCC;
+    
+    // layer 1/2 - blue channel (4-bit per channel with two pixels per address)
+    assign eeprom_7s_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:1] };
+    assign eeprom_7s_ce = VCC;
+    
+    LS158 ls158();
 	
 	// auxillary select
 	wire [2:0] cus43_8n_pr_in;
@@ -269,22 +283,14 @@ module tilegen_subsystem
 			.D(cus42_5k_rd)
 		);
 	
-	// plane 1/2 0x00000 (0x08000)
-	EPROM_27256 #(15, 8, ROM_4R) EPROM_4R(
-			.E(VCC),
-			.G(VCC), 
-			.A( { prom_6u_d[7:5], cus42_5k_ga[11:0] } ), 
-			.Q(prom_4r_d)
-		);
-		
-	// plane 3 0x08000 (0x04000) 
-	EPROM_27128 #(14, 8, ROM_4S) EPROM_4S(
-			.E(VCC), 
-			.G(VCC),
-			.A( { prom_6u_d[7:5], cus42_5k_ga[11:1] } ), 
-			.Q(prom_4s_d)
-		);
-	
+    // layer 3/4 - red and green channels (4-bit per channel)
+	assign eeprom_4r_addr = { prom_6u_data[7:5], cus42_5k_ga[11:0] };
+    assign eeprom_4r_ce = VCC;
+    
+    // layer 3/4 - blue channel (4-bit per channel with two pixels per address)
+    assign eeprom_4s_addr = { prom_6u_data[7:5], cus42_5k_ga[11:1] };
+    assign eeprom_4s_ce = VCC;
+    
 	// tile generator
 	CUS43 CUS43_6N(
 			.CLK_6M(CLK_6M),

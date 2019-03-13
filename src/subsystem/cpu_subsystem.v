@@ -338,7 +338,9 @@ module cpu_subsystem
 			.Y(ls157_8c_y)
 		);
 	
-    // == CPU 1 to program ROMs 9C and 9D
+    // == hardware abstraction - memory buses ==
+    
+    // CPU 1 to program ROMs 9C and 9D
     
     assign eeprom_9c_addr = cpu1_9a_a[14:0];
     assign eeprom_9c_ce = CLK_2H & cus47_10C_mpmg;
@@ -349,7 +351,7 @@ module cpu_subsystem
     // Assign ROM data buses to CPU 1 bus if enabled
     assign cpu1_9a_d = eeprom_9c_ce ? eeprom_9c_data : eeprom_9d_ce ? eeprom_9d_data : 8'bZ;
     
-    // == CPU 2 to program ROMs 12C and 12D
+    // CPU 2 to program ROMs 12C and 12D
     
     assign eeprom_12c_addr = cpu2_11a_a[14:0];
     assign eeprom_12c_ce = ls00_8d_2y & cus41_8a_mrom;
