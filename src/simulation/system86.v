@@ -363,12 +363,15 @@ module system86
             .eeprom_9c_data(eeprom_9c_data),
             .eeprom_9c_addr(eeprom_9c_addr),
             .eeprom_9c_ce(eeprom_9c_ce),
+            
             .eeprom_9d_data(eeprom_9d_data),
             .eeprom_9d_addr(eeprom_9d_addr),
             .eeprom_9d_ce(eeprom_9d_ce),
+            
             .eeprom_12c_data(eeprom_12c_data),
             .eeprom_12c_addr(eeprom_12c_addr),
             .eeprom_12c_ce(eeprom_12c_ce),
+            
             .eeprom_12d_data(eeprom_12d_data),
             .eeprom_12d_addr(eeprom_12d_addr),
             .eeprom_12d_ce(eeprom_12d_ce)
