@@ -1,0 +1,11 @@
+-batch 
+-create system86 
+-ver 1.00.a 
+-dir C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\ 
+-lang vhdl 
+-bus axi4stream ms 
+-xps 
+-ise 
+-totalin 8
+-totalout 8
+-driver 

@@ -1,0 +1,36 @@
+##############################################################################
+## Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores/system86_v1_00_a/data/system86_v2_1_0.mpd
+## Description:       Microprocessor Peripheral Description
+## Date:              Sun Mar 17 10:55:45 2019 (by Create and Import Peripheral Wizard)
+##############################################################################
+
+BEGIN system86
+
+## Peripheral Options
+OPTION IPTYPE = PERIPHERAL
+OPTION IMP_NETLIST = TRUE
+OPTION HDL = VHDL
+OPTION LONG_DESC = Namco System86 board
+
+## Bus Interfaces
+BUS_INTERFACE BUS=M_AXIS, BUS_STD=AXIS, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=S_AXIS, BUS_STD=AXIS, BUS_TYPE=TARGET
+
+## Parameters
+PARAMETER C_S_AXIS_PROTOCOL = GENERIC, DT = string, TYPE = NON_HDL, ASSIGNMENT = CONSTANT, BUS = S_AXIS
+PARAMETER C_S_AXIS_TDATA_WIDTH = 32, DT = integer, TYPE = NON_HDL, ASSIGNMENT = CONSTANT, BUS = S_AXIS
+PARAMETER C_M_AXIS_PROTOCOL = GENERIC, DT = string, TYPE = NON_HDL, ASSIGNMENT = CONSTANT, BUS = M_AXIS
+PARAMETER C_M_AXIS_TDATA_WIDTH = 32, DT = integer, TYPE = NON_HDL, ASSIGNMENT = CONSTANT, BUS = M_AXIS
+## Peripheral ports
+PORT ACLK = "", DIR=I, SIGIS=CLK, BUS=M_AXIS:S_AXIS
+PORT ARESETN = ARESETN, DIR=I, BUS=M_AXIS:S_AXIS
+PORT S_AXIS_TREADY = TREADY, DIR=O, BUS=S_AXIS
+PORT S_AXIS_TDATA = TDATA, DIR=I, VEC=[31:0], BUS=S_AXIS
+PORT S_AXIS_TLAST = TLAST, DIR=I, BUS=S_AXIS
+PORT S_AXIS_TVALID = TVALID, DIR=I, BUS=S_AXIS
+PORT M_AXIS_TVALID = TVALID, DIR=O, BUS=M_AXIS
+PORT M_AXIS_TDATA = TDATA, DIR=O, VEC=[31:0], BUS=M_AXIS
+PORT M_AXIS_TLAST = TLAST, DIR=O, BUS=M_AXIS
+PORT M_AXIS_TREADY = TREADY, DIR=I, BUS=M_AXIS
+
+END

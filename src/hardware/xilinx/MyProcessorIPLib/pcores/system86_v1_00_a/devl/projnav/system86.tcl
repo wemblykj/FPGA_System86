@@ -1,0 +1,10 @@
+project new C:/Users/Wembly/Development/System86/src/hardware/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86.xise;
+project set family spartan6;
+project set device xc6slx45;
+project set package csg324;
+project set speed -3;
+project set top_level_module_type HDL;
+project set synthesis_tool "XST (VHDL/Verilog)";
+lib_vhdl new system86_v1_00_a;
+xfile add C:/Users/Wembly/Development/System86/src/hardware/xilinx/MyProcessorIPLib//pcores/system86_v1_00_a/hdl/vhdl/system86.vhd -lib_vhdl system86_v1_00_a;
+project close;
