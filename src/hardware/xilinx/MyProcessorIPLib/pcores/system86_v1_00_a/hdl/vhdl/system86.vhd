@@ -56,16 +56,19 @@ use ieee.numeric_std.all;
 --
 --
 -- Definition of Ports
--- ACLK              : Synchronous clock
--- ARESETN           : System reset, active low
--- S_AXIS_TREADY  : Ready to accept data in
--- S_AXIS_TDATA   :  Data in 
--- S_AXIS_TLAST   : Optional data in qualifier
--- S_AXIS_TVALID  : Data in is valid
--- M_AXIS_TVALID  :  Data out is valid
--- M_AXIS_TDATA   : Data Out
--- M_AXIS_TLAST   : Optional data out qualifier
--- M_AXIS_TREADY  : Connected slave device is ready to accept data out
+-- ACLK             : Synchronous clock
+-- ARESETN          : System reset, active low
+--
+-- M_AXIS_TVALID    : Data out is valid
+-- M_AXIS_TDATA     : Data Out
+-- M_AXIS_TLAST     : Optional data out qualifier
+-- M_AXIS_TREADY    : Connected slave device is ready to accept data out
+--
+-- S_AXIS_TREADY    : Ready to accept data in
+-- S_AXIS_TDATA     :  Data in 
+-- S_AXIS_TLAST     : Optional data in qualifier
+-- S_AXIS_TVALID    : Data in is valid
+--
 --
 -------------------------------------------------------------------------------
 
@@ -74,21 +77,129 @@ use ieee.numeric_std.all;
 ------------------------------------------------------------------------------
 
 entity system86 is
+    generic
+    (
+        -- Master AXI Stream Generics
+        C_M_AXIS_DATA_WIDTH     : integer range 32 to 256 := 32;
+    
+        -- Slave AXI Stream Generics
+        C_S_AXIS_DATA_WIDTH     : integer range 32 to 256 := 32
+        
+        -- Master AXI Generics
+        C_M_AXI_THREAD_ID_WIDTH : integer := 1;
+        C_M_AXI_ADDR_WIDTH      : integer := 32;
+        C_M_AXI_DATA_WIDTH      : integer := 32;
+        C_M_AXI_AWUSER_WIDTH    : integer := 1;
+        C_M_AXI_ARUSER_WIDTH    : integer := 1;
+        C_M_AXI_WUSER_WIDTH     : integer := 1;
+        C_M_AXI_RUSER_WIDTH     : integer := 1;
+        C_M_AXI_BUSER_WIDTH     : integer := 1;
+        
+        -- Slave AXI-Lite Generics
+        C_S_AXI_ADDR_WIDTH      : integer := 32;
+        C_S_AXI_DATA_WIDTH      : integer := 32;
+    )
 	port 
 	(
-		-- DO NOT EDIT BELOW THIS LINE ---------------------
-		-- Bus protocol ports, do not add or delete. 
+		-- Global Ports
 		ACLK	: in	std_logic;
 		ARESETN	: in	std_logic;
-		S_AXIS_TREADY	: out	std_logic;
-		S_AXIS_TDATA	: in	std_logic_vector(31 downto 0);
-		S_AXIS_TLAST	: in	std_logic;
-		S_AXIS_TVALID	: in	std_logic;
+        
+        -- Master Stream Ports
 		M_AXIS_TVALID	: out	std_logic;
-		M_AXIS_TDATA	: out	std_logic_vector(31 downto 0);
+		M_AXIS_TDATA	: out	std_logic_vector(C_M_AXIS_DATA_WIDTH-1 downto 0);
 		M_AXIS_TLAST	: out	std_logic;
 		M_AXIS_TREADY	: in	std_logic
-		-- DO NOT EDIT ABOVE THIS LINE ---------------------
+        
+        -- Slave Stream Ports
+		S_AXIS_TREADY	: out	std_logic;
+		S_AXIS_TDATA	: in	std_logic_vector(C_S_AXIS_DATA_WIDTH-1 downto 0);
+		S_AXIS_TLAST	: in	std_logic;
+		S_AXIS_TVALID	: in	std_logic;
+        
+        -- Master Interface Write Address
+        M_AXI_AWID    : out std_logic_vector(C_M_AXI_THREAD_ID_WIDTH-1 downto 0);
+        M_AXI_AWADDR  : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
+        M_AXI_AWLEN   : out std_logic_vector(8-1 downto 0);
+        M_AXI_AWSIZE  : out std_logic_vector(3-1 downto 0);
+        M_AXI_AWBURST : out std_logic_vector(2-1 downto 0);
+        M_AXI_AWLOCK  : out std_logic;
+        M_AXI_AWCACHE : out std_logic_vector(4-1 downto 0);
+        M_AXI_AWPROT  : out std_logic_vector(3-1 downto 0);
+        -- AXI3    M_AXI_AWREGION:out std_logic_vector(4-1 downto 0);
+        M_AXI_AWQOS   : out std_logic_vector(4-1 downto 0);
+        M_AXI_AWUSER  : out std_logic_vector(C_M_AXI_AWUSER_WIDTH-1 downto 0);
+        M_AXI_AWVALID : out std_logic;
+        M_AXI_AWREADY : in  std_logic;
+
+        -- Master Interface Write Data
+        -- AXI3   M_AXI_WID(C_M_AXI_THREAD_ID_WIDTH-1 downto 0);
+        M_AXI_WDATA  : out std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+        M_AXI_WSTRB  : out std_logic_vector(C_M_AXI_DATA_WIDTH/8-1 downto 0);
+        M_AXI_WLAST  : out std_logic;
+        M_AXI_WUSER  : out std_logic_vector(C_M_AXI_WUSER_WIDTH-1 downto 0);
+        M_AXI_WVALID : out std_logic;
+        M_AXI_WREADY : in  std_logic;
+
+        -- Master Interface Write Response
+        M_AXI_BID    : in  std_logic_vector(C_M_AXI_THREAD_ID_WIDTH-1 downto 0);
+        M_AXI_BRESP  : in  std_logic_vector(2-1 downto 0);
+        M_AXI_BUSER  : in  std_logic_vector(C_M_AXI_BUSER_WIDTH-1 downto 0);
+        M_AXI_BVALID : in  std_logic;
+        M_AXI_BREADY : out std_logic;
+
+        -- Master Interface Read Address
+        M_AXI_ARID    : out std_logic_vector(C_M_AXI_THREAD_ID_WIDTH-1 downto 0);
+        M_AXI_ARADDR  : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
+        M_AXI_ARLEN   : out std_logic_vector(8-1 downto 0);
+        M_AXI_ARSIZE  : out std_logic_vector(3-1 downto 0);
+        M_AXI_ARBURST : out std_logic_vector(2-1 downto 0);
+        M_AXI_ARLOCK  : out std_logic_vector(2-1 downto 0);
+        M_AXI_ARCACHE : out std_logic_vector(4-1 downto 0);
+        M_AXI_ARPROT  : out std_logic_vector(3-1 downto 0);
+        -- AXI3   M_AXI_ARREGION:out std_logic_vector(4-1 downto 0);
+        M_AXI_ARQOS   : out std_logic_vector(4-1 downto 0);
+        M_AXI_ARUSER  : out std_logic_vector(C_M_AXI_ARUSER_WIDTH-1 downto 0);
+        M_AXI_ARVALID : out std_logic;
+        M_AXI_ARREADY : in  std_logic;
+
+        -- Master Interface Read Data 
+        M_AXI_RID    : in  std_logic_vector(C_M_AXI_THREAD_ID_WIDTH-1 downto 0);
+        M_AXI_RDATA  : in  std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+        M_AXI_RRESP  : in  std_logic_vector(2-1 downto 0);
+        M_AXI_RLAST  : in  std_logic;
+        M_AXI_RUSER  : in  std_logic_vector(C_M_AXI_RUSER_WIDTH-1 downto 0);
+        M_AXI_RVALID : in  std_logic;
+        M_AXI_RREADY : out std_logic;
+        
+        -- Slave Interface Write Address Ports
+        S_AXI_AWADDR   : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+        S_AXI_AWPROT   : in  std_logic_vector(3-1 downto 0);
+        S_AXI_AWVALID  : in  std_logic;
+        S_AXI_AWREADY  : out std_logic;
+
+        -- Slave Interface Write Data Ports
+        S_AXI_WDATA  : in  std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+        S_AXI_WSTRB  : in  std_logic_vector(C_S_AXI_DATA_WIDTH/8-1 downto 0);
+        S_AXI_WVALID : in  std_logic;
+        S_AXI_WREADY : out std_logic;
+
+        -- Slave Interface Write Response Ports
+        S_AXI_BRESP  : out std_logic_vector(2-1 downto 0);
+        S_AXI_BVALID : out std_logic;
+        S_AXI_BREADY : in  std_logic;
+
+        -- Slave Interface Read Address Ports
+        S_AXI_ARADDR   : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+        S_AXI_ARPROT   : in  std_logic_vector(3-1 downto 0);
+        S_AXI_ARVALID  : in  std_logic;
+        S_AXI_ARREADY  : out std_logic;
+
+        -- Slave Interface Read Data Ports
+        S_AXI_RDATA  : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+        S_AXI_RRESP  : out std_logic_vector(2-1 downto 0);
+        S_AXI_RVALID : out std_logic;
+        S_AXI_RREADY : in  std_logic
 	);
 
 attribute SIGIS : string; 
