@@ -1,5 +1,5 @@
 -batch 
--create system86 
+-create axi_system86 
 -ver 1.00.a 
 -dir C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\ 
 -lang vhdl 

@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
--- system86 - entity/architecture pair
+-- axi_system86 - entity/architecture pair
 ------------------------------------------------------------------------------
 --
 -- ***************************************************************************
@@ -23,7 +23,7 @@
 -- ***************************************************************************
 --
 ------------------------------------------------------------------------------
--- Filename:          system86
+-- Filename:          axi_system86
 -- Version:           1.00.a
 -- Description:       Example Axi Streaming core (VHDL).
 -- Date:              Sun Mar 17 10:55:45 2019 (by Create and Import Peripheral Wizard)
@@ -76,7 +76,7 @@ use ieee.numeric_std.all;
 -- Entity Section
 ------------------------------------------------------------------------------
 
-entity system86 is
+entity axi_system86 is
     generic
     (
         -- Master AXI Stream Generics
@@ -205,13 +205,13 @@ entity system86 is
 attribute SIGIS : string; 
 attribute SIGIS of ACLK : signal is "Clk"; 
 
-end system86;
+end axi_system86;
 
 ------------------------------------------------------------------------------
 -- Architecture Section
 ------------------------------------------------------------------------------
 
--- In this section, we povide an example implementation of ENTITY system86
+-- In this section, we povide an example implementation of ENTITY axi_system86
 -- that does the following:
 --
 -- 1. Read all inputs
@@ -221,9 +221,9 @@ end system86;
 --    content of 'sum' into the output stream NUMBER_OF_OUTPUT_WORDS times
 --
 -- You will need to modify this example or implement a new architecture for
--- ENTITY system86 to implement your coprocessor
+-- ENTITY axi_system86 to implement your coprocessor
 
-architecture EXAMPLE of system86 is
+architecture EXAMPLE of axi_system86 is
 
    -- Total number of input data.
    constant NUMBER_OF_INPUT_WORDS  : natural := 8;
@@ -246,7 +246,7 @@ begin
    -- CAUTION:
    -- The sequence in which data are read in and written out should be
    -- consistent with the sequence they are written and read in the
-   -- driver's system86.c file
+   -- driver's axi_system86.c file
 
    S_AXIS_TREADY  <= '1'   when state = Read_Inputs   else '0';
    M_AXIS_TVALID <= '1' when state = Write_Outputs else '0';

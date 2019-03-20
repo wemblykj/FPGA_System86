@@ -1,10 +1,10 @@
 ##############################################################################
-## Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores/system86_v1_00_a/data/system86_v2_1_0.mpd
+## Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores/axi_system86_v1_00_a/data/system86_v2_1_0.mpd
 ## Description:       Microprocessor Peripheral Description
 ## Date:              Sun Mar 17 10:55:45 2019 (by Create and Import Peripheral Wizard)
 ##############################################################################
 
-BEGIN system86
+BEGIN axi_system86
 
 ## Peripheral Options
 OPTION IPTYPE = PERIPHERAL

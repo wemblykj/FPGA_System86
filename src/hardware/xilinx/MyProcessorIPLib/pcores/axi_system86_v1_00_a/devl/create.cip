@@ -2,7 +2,7 @@ CipWiz::SetVersion "14.7";
 CipWiz::SetFlow "CREATE";
 CipWiz::SetParameter "ProjectDir" "C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib";
 CipWiz::SetParameter "IpLongDescription" "Namco System86 board";
-CipWiz::SetParameter "IpName" "system86";
+CipWiz::SetParameter "IpName" "axi_system86";
 CipWiz::SetParameter "IpVersion" "1.00.a";
 CipWiz::SetParameter "HdlLanguage" "1";
 CipWiz::SetParameter "BusType" "1024";

@@ -12,7 +12,7 @@ Thank you for using Create and Import Peripheral Wizard!
 
 Peripheral summary
 
-  top name       : system86
+  top name       : axi_system86
   version        : 1.00.a
   type           : AXI4STREAM master slave
   features       : 
@@ -21,25 +21,25 @@ File Summary
 
   - HDL source -
 C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores
-\system86_v1_00_a\hdl\vhdl
-  top level      : system86.vhd
+\axi_system86_v1_00_a\hdl\vhdl
+  top level      : axi_system86.vhd
 
   - ISE project -
 C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores
-\system86_v1_00_a\devl\projnav
-  ise project    : system86.xise
-  tcl script     : system86.tcl
+\axi_system86_v1_00_a\devl\projnav
+  ise project    : axi_system86.xise
+  tcl script     : axi_system86.tcl
 
 
   - XST synthesis -
 C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores
-\system86_v1_00_a\devl\synthesis
-  xst script     : system86_xst.scr
-  xst project    : system86_xst.prj
+\axi_system86_v1_00_a\devl\synthesis
+  xst script     : axi_system86_xst.scr
+  xst project    : axi_system86_xst.prj
 
   - Misc file -
 C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores
-\system86_v1_00_a\devl
+\axi_system86_v1_00_a\devl
   help           : README.txt
   option         : ipwiz.opt
   log            : ipwiz.log

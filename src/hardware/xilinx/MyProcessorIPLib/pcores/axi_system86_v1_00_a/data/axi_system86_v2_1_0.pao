@@ -1,7 +1,7 @@
 ##############################################################################
-## Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores/system86_v1_00_a/data/system86_v2_1_0.pao
+## Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores/axi_system86_v1_00_a/data/axi_system86_v2_1_0.pao
 ## Description:       Peripheral Analysis Order
 ## Date:              Sun Mar 17 10:55:45 2019 (by Create and Import Peripheral Wizard)
 ##############################################################################
 
-lib system86_v1_00_a system86 vhdl
+lib axi_system86_v1_00_a axi_system86 vhdl

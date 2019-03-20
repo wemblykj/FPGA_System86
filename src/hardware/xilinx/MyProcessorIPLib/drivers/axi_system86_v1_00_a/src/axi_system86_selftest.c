@@ -1,12 +1,12 @@
 /*****************************************************************************
-* Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\drivers/system86_v1_00_a/src/system86_selftest.c
+* Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\drivers/axi_system86_v1_00_a/src/axi_system86_selftest.c
 * Version:           1.00.a
 * Description:       
 * Date:              Sun Mar 17 10:56:28 2019 (by Create and Import Peripheral Wizard)
 *****************************************************************************/
 
 #include "xparameters.h"
-#include "system86.h"
+#include "axi_system86.h"
 
 /* IMPORTANT:
 *  Slot ID is hard coded in this example to 0. Modify it if needs to connected to different slot.
@@ -14,7 +14,7 @@
 #define input_slot_id   0
 #define output_slot_id  0
 
-XStatus SYSTEM86_SelfTest()
+XStatus AXI_SYSTEM86_SelfTest()
 {
 	 unsigned int input_0[8];     
 	 unsigned int output_0[8];     
@@ -30,7 +30,7 @@ XStatus SYSTEM86_SelfTest()
 	 input_0[7] = 98760;     
 
 	 //Call the macro with instance specific slot IDs
-	 system86(
+	 axi_system86(
 		 input_slot_id,
 		 output_slot_id,
 		 input_0,      

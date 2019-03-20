@@ -1,0 +1,11 @@
+run
+-opt_level 2
+-opt_mode speed
+-ifmt mixed
+-ifn C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores/axi_system86_v1_00_a/devl/synthesis/axi_system86_xst.prj
+-top axi_system86
+-p virtex6
+-ofn C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores/axi_system86_v1_00_a/devl/synthesis/axi_system86_xst.ngc
+-iobuf NO
+-rtlview YES
+-hierarchy_separator /

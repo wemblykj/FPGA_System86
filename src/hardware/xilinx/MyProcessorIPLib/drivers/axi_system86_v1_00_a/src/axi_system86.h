@@ -1,12 +1,12 @@
 /*****************************************************************************
-* Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\drivers/system86_v1_00_a/src/system86.h
+* Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\drivers/axi_system86_v1_00_a/src/axi_system86.h
 * Version:           1.00.a
-* Description:       system86 () Driver Header File
+* Description:       axi_system86 () Driver Header File
 * Date:              Sun Mar 17 10:56:28 2019 (by Create and Import Peripheral Wizard)
 *****************************************************************************/
 
-#ifndef SYSTEM86_H
-#define SYSTEM86_H
+#ifndef AXI_SYSTEM86_H
+#define AXI_SYSTEM86_H
 
 #include "xstatus.h"
 
@@ -47,10 +47,10 @@
 *    specific driver function (not a macro) using the 
 *    macros defined in this file and the slot
 *    identifiers defined in xparameters.h .  Please see the
-*    example code (system86_selftest.c) for details.
+*    example code (axi_system86_selftest.c) for details.
 */
 
-#define  system86(\
+#define  axi_system86(\
 		 input_slot_id,\
 		 output_slot_id,\
 		 input_0,      \
@@ -70,6 +70,6 @@
    }\
 }
 
-XStatus SYSTEM86_SelfTest();
+XStatus AXI_SYSTEM86_SelfTest();
 
 #endif 
