@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE doc SYSTEM "../../ipdialog.dtd" [
+	<!ENTITY C_SLAVE_BASE_ADDR '
+	<widget id="C_SLAVE_BASE_ADDR">
+		<key>C_SLAVE_BASE_ADDR</key>
+		<label>The base address on the AXI4 bus to which SRAM requests will be mapped</label>
+		<tip></tip>
+	</widget>
+	'>
+
+]>
+
+<doc>
+	<view id="Config">
+		<display>Config</display>
+		<group id="All">
+			<display>All</display>
+            <item>&C_SLAVE_BASE_ADDR;</item>
+		</group>
+	</view>
+    <!-- view id="System">
+		<display>System</display>
+		<group id="Addresses">
+			<display>Addresses</display>
+			<item>&C_SLAVE_BASE_ADDR;</item>
+		</group>
+	</view -->
+</doc>

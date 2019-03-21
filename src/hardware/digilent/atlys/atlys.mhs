@@ -366,3 +366,8 @@ BEGIN axi_gpio
  PORT IP2INTC_Irpt = DIP_Switches_8Bits_IP2INTC_Irpt
 END
 
+BEGIN axi_lite_ram
+ PARAMETER INSTANCE = axi_lite_ram_0
+ PARAMETER HW_VER = 1.00.a
+END
+

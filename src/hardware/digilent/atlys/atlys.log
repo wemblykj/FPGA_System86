@@ -171,3 +171,77 @@ Done writing filter settings to:
 	C:\Users\Wembly\Development\System86\src\hardware\digilent\atlys\etc\atlys.filters
 Done writing Tab View settings to:
 	C:\Users\Wembly\Development\System86\src\hardware\digilent\atlys\etc\atlys.gui
+Xilinx Platform Studio (XPS)
+Xilinx EDK 14.7 Build EDK_P.20131013
+Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.
+
+The project file (XMP) has changed on disk.
+WARNING:EDK:1687 - Invalid path specified for ModuleSearchPath in XMP file. Please make sure that the directory specified exists.
+Writing filter settings....
+Done writing filter settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.filters
+Done writing Tab View settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.gui
+The project file (XMP) has changed on disk.
+Writing filter settings....
+Done writing filter settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.filters
+Done writing Tab View settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.gui
+ERROR:EDK:398 - Cannot find PAO file ttl_mem_bus_v1_00_a/data/ttl_mem_bus_v2_1_0.pao for IP ttl_mem_bus, Version 1.00.a referred to in another PAO file  (PAO file of the core axi_lite_ram_v1_00_a) 
+ERROR:EDK:4161 - No BUS_INTERFACE M_RAM found as specified for PORT chip_enable - /home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/../../xilinx/MyProcessorIPLib/pcores/axi_lite_ram_v1_00_a/data/axi_lite_ram_v2_1_0.mpd line 43 
+ERROR:EDK:4161 - No BUS_INTERFACE M_RAM found as specified for PORT write_enable - /home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/../../xilinx/MyProcessorIPLib/pcores/axi_lite_ram_v1_00_a/data/axi_lite_ram_v2_1_0.mpd line 44 
+ERROR:EDK:4161 - No BUS_INTERFACE M_RAM found as specified for PORT output_enable - /home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/../../xilinx/MyProcessorIPLib/pcores/axi_lite_ram_v1_00_a/data/axi_lite_ram_v2_1_0.mpd line 45 
+ERROR:EDK:4161 - No BUS_INTERFACE M_RAM found as specified for PORT addr - /home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/../../xilinx/MyProcessorIPLib/pcores/axi_lite_ram_v1_00_a/data/axi_lite_ram_v2_1_0.mpd line 46 
+ERROR:EDK:4161 - No BUS_INTERFACE M_RAM found as specified for PORT data - /home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/../../xilinx/MyProcessorIPLib/pcores/axi_lite_ram_v1_00_a/data/axi_lite_ram_v2_1_0.mpd line 47 
+ERROR:EDK:1848 - Mpd : Error in AssignDefaults/Check
+Assigned Driver generic 1.00.a for instance axi_lite_ram_0
+axi_lite_ram_0 has been added to the project
+Writing filter settings....
+Done writing filter settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.filters
+Done writing Tab View settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.gui
+Xilinx Platform Studio (XPS)
+Xilinx EDK 14.7 Build EDK_P.20131013
+Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.
+
+ERROR:EDK:3694 - Could not connect bus interface S_RAM to New Connection.
+axi_lite_ram_0 has been deleted from the project
+Assigned Driver generic 1.00.a for instance axi_lite_ram_0
+axi_lite_ram_0 has been added to the project
+ERROR:EDK:3694 - Could not connect bus interface S_RAM to New Connection.
+Writing filter settings....
+Done writing filter settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.filters
+Done writing Tab View settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.gui
+Writing filter settings....
+Done writing filter settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.filters
+Done writing Tab View settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.gui
+Xilinx Platform Studio (XPS)
+Xilinx EDK 14.7 Build EDK_P.20131013
+Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.
+
+Writing filter settings....
+Done writing filter settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.filters
+Done writing Tab View settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.gui
+Xilinx Platform Studio (XPS)
+Xilinx EDK 14.7 Build EDK_P.20131013
+Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.
+
+ERROR:EDK:3694 - Could not connect bus interface S_RAM to New Connection.
+Writing filter settings....
+Done writing filter settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.filters
+Done writing Tab View settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.gui
+Writing filter settings....
+Done writing filter settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.filters
+Done writing Tab View settings to:
+	/home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/etc/atlys.gui

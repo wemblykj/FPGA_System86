@@ -3,8 +3,8 @@ XmpVersion: 14.7
 VerMgmt: 14.7
 IntStyle: default
 Flow: ise
-ModuleSearchPath: C:/Users/Wembly/Downloads/atlys_bsb_support_v_3_7/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
-ModuleSearchPath: C:/Users/Wembly/Development/System86/src/hardware/xilinx
+ModuleSearchPath: /home/administrator/Downloads/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
+ModuleSearchPath: ../../xilinx
 MHS File: atlys.mhs
 Architecture: spartan6
 Device: xc6slx45

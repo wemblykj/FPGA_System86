@@ -1,0 +1,55 @@
+##############################################################################
+## Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores/system86_v1_00_a/data/system86_v2_1_0.mpd
+## Description:       Microprocessor Peripheral Description
+## Date:              Sun Mar 17 10:55:45 2019 (by Create and Import Peripheral Wizard)
+##############################################################################
+
+BEGIN system86
+
+## Peripheral Options
+OPTION IPTYPE = PERIPHERAL
+OPTION IMP_NETLIST = TRUE
+OPTION DESC = Xilinx Namco System86
+OPTION LONG_DESC = A generic Namco System86 System Board IP targeting Xilinx hardware
+OPTION HDL = MIXED
+
+#IO_INTERFACE IO_IF = EPROM_3R, IO_TYPE = TTL_MEM_BUS
+#IO_INTERFACE IO_IF = EPROM_3S, IO_TYPE = TTL_MEM_BUS
+
+## Bus Interfaces
+BUS_INTERFACE BUS=EPROM_3R, BUS_STD=ttl_mem_bus, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=EPROM_3S, BUS_STD=ttl_mem_bus, BUS_TYPE=INITIATOR
+
+## Parameters
+
+
+## Peripheral ports
+# Global ports
+PORT clk_48m = CLK_48M, DIR=I, SIGIS=CLK
+PORT rst = "", DIR=I
+# EPROM 3R
+PORT eprom_3r_ce = ChipEnable, DIR=I, BUS = EPROM_3R
+PORT eprom_3r_we = WriteEnable, DIR=I, BUS = EPROM_3R
+PORT eprom_3r_oe = OutputEnable, DIR=I, BUS = EPROM_3R
+PORT eprom_3r_addr = Addr, DIR=I, BUS = EPROM_3R
+PORT eprom_3r_data = DataWrite, DIR=IO, BUS = EPROM_3R
+PORT eprom_3r_data_i = DataWrite, DIR=I, BUS = EPROM_3R
+PORT eprom_3r_data_o = DataRead, DIR=O, BUS = EPROM_3R
+# EPROM 3S
+PORT eprom_3s_ce = ChipEnable, DIR=I, BUS = EPROM_3S
+PORT eprom_3s_we = WriteEnable, DIR=I, BUS = EPROM_3S
+PORT eprom_3s_oe = OutputEnable, DIR=I, BUS = EPROM_3S
+PORT eprom_3s_addr = Addr, DIR=I, BUS = EPROM_3S
+PORT eprom_3s_data = DataWrite, DIR=IO, BUS = EPROM_3S
+PORT eprom_3s_data_i = DataWrite, DIR=I, BUS = EPROM_3S
+PORT eprom_3s_data_o = DataRead, DIR=O, BUS = EPROM_3S
+#PORT eprom_3s_ce = , DIR=I, IO_IF = EPROM_3S, IO_IS = ChipEnable
+#PORT eprom_3s_we = , DIR=I, IO_IF = EPROM_3S, IO_IS = WriteEnable
+#PORT eprom_3s_oe = , DIR=I, IO_IF = EPROM_3S, IO_IS = OutputEnable
+#PORT eprom_3s_addr = "", DIR=I, IO_IF = EPROM_3S, IO_IS = Addr
+#PORT eprom_3s_data = "", DIR=IO, IO_IF = EPROM_3S, IO_IS = Data
+#PORT eprom_3s_data_i = "", DIR=I, IO_IF = EPROM_3S, IO_IS = DataWrite
+#PORT eprom_3s_data_o = "", DIR=O, IO_IF = EPROM_3S, IO_IS = DataRead
+
+
+END

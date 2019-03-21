@@ -1,0 +1,16 @@
+Xilinx Platform Studio (XPS)
+Xilinx EDK 14.7 Build EDK_P.20131013
+Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.
+
+ERROR:EDK:4124 - IPNAME: axi_lite_ram, INSTANCE: axi_lite_ram_inst, PARAMETER: C_BASEADDR - ASSIGNMENT=CONSTANT is defined in the MPD. The default value (0xC0000000) has been overwritten in the MHS. 
+Xilinx Platform Studio (XPS)
+Xilinx EDK 14.7 Build EDK_P.20131013
+Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.
+
+ERROR:EDK:4124 - IPNAME: axi_lite_ram, INSTANCE: axi_lite_ram_inst, PARAMETER: C_SLAVE_BASEADDR - ASSIGNMENT=CONSTANT is defined in the MPD. The default value (0xC0000000) has been overwritten in the MHS. 
+ERROR:EDK:4056 - INST:axi_lite_ram_inst BASEADDR-HIGHADDR:0x40000000-0x40000fff and INST:bfm_memory BASEADDR-HIGHADDR:0x40000000-0x4000ffff - address space overlap!
+Writing filter settings....
+Done writing filter settings to:
+	/home/administrator/Development/test_rig/pcores/axi_lite_ram_v1_00_a/devl/bfmsim/etc/bfm_system.filters
+Done writing Tab View settings to:
+	/home/administrator/Development/test_rig/pcores/axi_lite_ram_v1_00_a/devl/bfmsim/etc/bfm_system.gui
