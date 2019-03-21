@@ -1,0 +1,12 @@
+run
+-opt_level 2
+-opt_mode speed
+-ifmt mixed
+-ifn "/home/administrator/Development/test_rig/pcores/axi_lite_ram_v1_00_a/devl/synthesis/axi_lite_ram_xst.prj"
+-top axi_lite_ram
+-p virtex6
+-ofn "/home/administrator/Development/test_rig/pcores/axi_lite_ram_v1_00_a/devl/synthesis/axi_lite_ram_xst.ngc"
+-iobuf NO
+-rtlview YES
+-hierarchy_separator /
+-work_lib axi_lite_ram_v1_00_a

@@ -1,0 +1,12 @@
+-batch 
+-create axi_lite_ram 
+-ver 1.00.a 
+-dir "/home/administrator/Development/test_rig" 
+-lang vhdl 
+-bus axi4lite ms 
+-rst 
+-reg 6 
+-xps 
+-ise 
+-bfmsim all
+-driver 

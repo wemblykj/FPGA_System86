@@ -1,0 +1,2 @@
+ -p xc6vlx75tff484-3 -lang verilog$(PROJECT_SEARCHPATHOPT) $(GLOBAL_SEARCHPATHOPT) -msg __xps/ise/xmsgprops.lst
+

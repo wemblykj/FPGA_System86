@@ -77,38 +77,43 @@ use ieee.numeric_std.all;
 ------------------------------------------------------------------------------
 
 entity system86 is
-    generic
-    (
-	C_EPROM_7116_ADDR_WIDTH = 9;
-	C_EPROM_7116_DATA_WIDTH = 4;
-	C_EPROM_7124_ADDR_WIDTH = 9;
-	C_EPROM_7124_DATA_WIDTH = 8
-    )
-
+  generic
+  (
+		C_EPROM_7116_ADDR_WIDTH = 9;
+		C_EPROM_7116_DATA_WIDTH = 4;
+		C_EPROM_7124_ADDR_WIDTH = 9;
+		C_EPROM_7124_DATA_WIDTH = 8;
+		
+		C_SRAM_CY6462_ADDR_WIDTH = 13;
+		C_SRAM_CY6462_DATA_WIDTH = 8
+  )
 	port 
 	(
 		-- Global Ports
 		clk_48m	: in	std_logic;
 		rst	: in	std_logic;
-        
+    
+		-- SRAM 4r
+		sram_4r_ce     : in	std_logic;
+		sram_4r_we     : in	std_logic;
+		sram_4r_oe     : in	std_logic;
+		sram_4r_addr   : in	std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0);
+		sram_4r_data   : inout	std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0);
+		-- sram_4r_data_i : in	std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0);
+		-- sram_4r_data_o : out	std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0);
+		
 		-- EPROM 3R
 		eprom_3r_ce     : in	std_logic;
-		eprom_3r_we     : in	std_logic;
 		eprom_3r_oe     : in	std_logic;
 		eprom_3r_addr   : in	std_logic_vector(C_EPROM_7124_ADDR_WIDTH-1 downto 0);
-		eprom_3r_data   : inout	std_logic_vector(C_EPROM_7124_DATA_WIDTH-1 downto 0);
-		eprom_3r_data_i : in	std_logic_vector(C_EPROM_7124_DATA_WIDTH-1 downto 0);
-		eprom_3r_data_o : out	std_logic_vector(C_EPROM_7124_DATA_WIDTH-1 downto 0);
-
-		-- EPROM 3R
+		eprom_3r_data   : out	std_logic_vector(C_EPROM_7124_DATA_WIDTH-1 downto 0);
+		
+		-- EPROM 3S
 		eprom_3s_ce     : in	std_logic;
-		eprom_3s_we     : in	std_logic;
 		eprom_3s_oe     : in	std_logic;
 		eprom_3s_addr   : in	std_logic_vector(C_EPROM_7116_ADDR_WIDTH-1 downto 0);
-		eprom_3s_data   : inout	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0);
-		eprom_3s_data_i : in	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0);
-		eprom_3s_data_o : out	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0);
-
+		eprom_3s_data   : out	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0);
+		
 	);
 
 attribute SIGIS : string; 
