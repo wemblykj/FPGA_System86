@@ -79,6 +79,8 @@ use ieee.numeric_std.all;
 entity system86 is
   generic
   (
+		C_USE_HARDWARE_CLOCKS = 1;
+		
 		C_EPROM_7116_ADDR_WIDTH = 9;
 		C_EPROM_7116_DATA_WIDTH = 4;
 		C_EPROM_7124_ADDR_WIDTH = 9;
@@ -91,7 +93,13 @@ entity system86 is
 	(
 		-- Global Ports
 		clk_48m	: in	std_logic;
-		rst	: in	std_logic;
+		if C_USE_HARDWARE_CLOCKS = 1 generate
+			clk_24m	: in	std_logic;
+			clk_12m	: in	std_logic;
+			clk_6m	: in	std_logic;
+		end generate
+end
+		reset	: in	std_logic;
     
 		-- SRAM 4r
 		sram_4r_ce     : in	std_logic;
@@ -99,8 +107,6 @@ entity system86 is
 		sram_4r_oe     : in	std_logic;
 		sram_4r_addr   : in	std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0);
 		sram_4r_data   : inout	std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0);
-		-- sram_4r_data_i : in	std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0);
-		-- sram_4r_data_o : out	std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0);
 		
 		-- EPROM 3R
 		eprom_3r_ce     : in	std_logic;
@@ -117,7 +123,13 @@ entity system86 is
 	);
 
 attribute SIGIS : string; 
-attribute SIGIS of CLK_48M : signal is "Clk"; 
+attribute SIGIS of clk_48m : signal is "Clk"; 
+if C_USE_HARDWARE_CLOCKS = 1 generate
+	attribute SIGIS of clk_24m : signal is "Clk"; 
+	attribute SIGIS of clk_12m : signal is "Clk"; 
+	attribute SIGIS of clk_6m : signal is "Clk"; 
+end generate
+attribute SIGIS of reset : signal is "Rst"; 
 
 end system86;
 

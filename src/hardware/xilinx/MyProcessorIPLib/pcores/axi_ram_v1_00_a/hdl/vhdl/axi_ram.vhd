@@ -73,8 +73,8 @@ use ieee.std_logic_unsigned.all;
 library axi_master_lite_v1_00_a;
 use axi_master_lite_v1_00_a.axi_master_lite;
 
--- library axi_ram_v1_00_a;
--- use axi_ram_v1_00_a.user_logic;
+-- library ttl_lib;
+-- use ttl_lib.;
 
 ------------------------------------------------------------------------------
 -- Entity section
@@ -187,7 +187,7 @@ entity axi_ram is
   attribute MAX_FANOUT of m_axi_lite_aresetn       : signal is "10000";
   attribute SIGIS of m_axi_lite_aclk       : signal is "Clk";
   attribute SIGIS of m_axi_lite_aresetn       : signal is "Rst";
-end entity axi_lite_ram;
+end entity axi_ram;
 
 ------------------------------------------------------------------------------
 -- Architecture section

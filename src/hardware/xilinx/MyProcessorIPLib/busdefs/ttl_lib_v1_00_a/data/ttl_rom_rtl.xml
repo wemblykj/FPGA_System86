@@ -4,13 +4,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4 http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/index.xsd">
 	<spirit:vendor>pwightmore</spirit:vendor>
-	<spirit:library>ttl_lib.busdefs</spirit:library>
+	<spirit:library>ttl_lib.rtl_busdefs</spirit:library>
 	<spirit:name>ttl_rom_rtl</spirit:name>
 	<spirit:version>1.0</spirit:version>
 	<spirit:busType spirit:vendor="pwightmore" spirit:library="ttl_lib.busdefs"
 		spirit:name="ttl_rom" spirit:version="1.0" />
-	<spirit:extends spirit:vendor="pwightmore" spirit:library="ttl_lib.busdefs"
-		spirit:name="ttl_rom_rtl" spirit:version="1.0" />
 	<spirit:ports>
 		<spirit:port>
 			<spirit:logicalName>ChipEnable</spirit:logicalName>
@@ -56,7 +54,7 @@
 			</spirit:wire>
 		</spirit:port>
 		<spirit:port>
-			<spirit:logicalName>DataRead</spirit:logicalName>
+			<spirit:logicalName>Data</spirit:logicalName>
 			<spirit:description>Data read</spirit:description>
 			<spirit:wire>
 				<spirit:qualifier>
