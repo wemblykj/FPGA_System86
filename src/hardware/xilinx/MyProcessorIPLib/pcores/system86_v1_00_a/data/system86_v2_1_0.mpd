@@ -12,13 +12,17 @@ OPTION IMP_NETLIST = TRUE
 OPTION DESC = Xilinx Namco System86
 OPTION LONG_DESC = A generic Namco System86 System Board IP targeting Xilinx hardware
 OPTION HDL = MIXED
-OPTION IP_GROUP = Wembly:System86
+OPTION IP_GROUP = WemblyKJ:Arcade:System86
 OPTION USAGE_LEVEL = BASE_USER
 
+IO_INTERFACE IO_IF = VID_OUT, IO_TYPE = video_out
+
 ## Bus Interfaces
-BUS_INTERFACE BUS=EPROM_3R, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
-BUS_INTERFACE BUS=EPROM_3S, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
-BUS_INTERFACE BUS=SRAM_4R, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=CONN_J4, BUS_STD=conn_j4, BUS_TYPE=TARGET
+BUS_INTERFACE BUS=CONN_J5, BUS_STD=conn_j5, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=M_ROM, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=M_ROM, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=M_RAM, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
 
 ## Parameters
 PARAMETER C_USE_HARDWARE_CLOCKS = 1, DT = INTEGER, PERMIT = BASE_USER, RANGE=(0:1)
@@ -33,22 +37,39 @@ PORT clk_6m = "", DIR=I, SIGIS=CLK, ISVALID=(C_USE_HARDWARE_CLOCKS == 1)
 
 PORT reset = "", DIR=I, SIGIS=RST
 
+# Component video
+PORT red_component = "", DIR = O, IO_IF = VID_OUT, IO_IS = RedComponent
+PORT green_component = "", DIR = O, IO_IF = VID_OUT, IO_IS = GreenComponent
+PORT blue_component = "", DIR = O, IO_IF = VID_OUT, IO_IS = BlueComponent
+PORT composite_sync = "", DIR = O, IO_IF = VID_OUT, IO_IS = CompositeSync
+PORT horizontal_sync = "", DIR = O, IO_IF = VID_OUT, IO_IS = HorizontalSync
+PORT vertical_sync = "", DIR = O, IO_IF = VID_OUT, IO_IS = VerticalSync
+
+# J4
+PORT conn_j4_reset = Reset, DIR=O, BUS = CONN_J4
+PORT conn_j4_ce = ChipEnable, DIR=O, BUS = CONN_J4
+PORT conn_j4_oe = OutputEnable, DIR=O, BUS = CONN_J4
+PORT conn_j4_we = WriteEnable, DIR=O, BUS = CONN_J4
+PORT conn_j4_addr = Addr, DIR=O, BUS = CONN_J4
+PORT conn_j4_data = Data, DIR=O, BUS = CONN_J4
+PORT conn_j4_voice = Voice, DIR=I, BUS = CONN_J4
+
 # EPROM 3R
-PORT eprom_3r_ce = ChipEnable, DIR=I, BUS = EPROM_3R
-PORT eprom_3r_oe = OutputEnable, DIR=I, BUS = EPROM_3R
-PORT eprom_3r_addr = Addr, DIR=I, BUS = EPROM_3R
-PORT eprom_3r_data = Data, DIR=O, BUS = EPROM_3R
+PORT eprom_3r_ce = ChipEnable, DIR=I, BUS = M_ROM
+PORT eprom_3r_oe = OutputEnable, DIR=I, BUS = M_ROM
+PORT eprom_3r_addr = Addr, DIR=I, BUS = M_ROM
+PORT eprom_3r_data = Data, DIR=O, BUS = M_ROM
 # EPROM 3S
-PORT eprom_3s_ce = ChipEnable, DIR=I, BUS = EPROM_3S
-PORT eprom_3s_oe = OutputEnable, DIR=I, BUS = EPROM_3S
-PORT eprom_3s_addr = Addr, DIR=I, BUS = EPROM_3S
-PORT eprom_3s_data = Data, DIR=O, BUS = EPROM_3S
+PORT eprom_3s_ce = ChipEnable, DIR=I, BUS = M_ROM
+PORT eprom_3s_oe = OutputEnable, DIR=I, BUS = M_ROM
+PORT eprom_3s_addr = Addr, DIR=I, BUS = M_ROM
+PORT eprom_3s_data = Data, DIR=O, BUS = M_ROM
 #
-PORT sram_4r_ce = ChipEnable, DIR=I, BUS = SRAM_4R
-PORT sram_4r_we = WriteEnable, DIR=I, BUS = SRAM_4R
-PORT sram_4r_oe = OutputEnable, DIR=I, BUS = SRAM_4R
-PORT sram_4r_addr = Addr, DIR=I, BUS = SRAM_4R
-PORT sram_4r_data = Data, DIR=IO, BUS = SRAM_4R
+PORT sram_4r_ce = ChipEnable, DIR=I, BUS = M_RAM
+PORT sram_4r_we = WriteEnable, DIR=I, BUS = M_RAM
+PORT sram_4r_oe = OutputEnable, DIR=I, BUS = M_RAM
+PORT sram_4r_addr = Addr, DIR=I, BUS = M_RAM
+PORT sram_4r_data = Data, DIR=IO, BUS = M_RAM
 
 
 END

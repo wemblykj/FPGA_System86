@@ -12,6 +12,8 @@ OPTION IMP_NETLIST = TRUE
 OPTION DESC = AXI Namco System86
 OPTION LONG_DESC = An AXI interfacing Namco System86 System Board
 OPTION HDL = MIXED
+OPTION IP_GROUP = WemblyKJ:Arcade:System86
+OPTION USAGE_LEVEL = BASE_USER
 
 ## Bus Interfaces
 # Master AXI Stream

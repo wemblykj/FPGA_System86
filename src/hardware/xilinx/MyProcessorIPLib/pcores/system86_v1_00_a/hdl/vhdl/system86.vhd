@@ -112,13 +112,13 @@ entity system86 is
 		vertical_sync    : out    std_logic;
 
 		-- J4 connector to sub PCB (34 pin)
+		conn_j4_reset    : out    std_logic;				-- pin 18 - system reset
 		conn_j4_ce 	 : out    std_logic;				-- pin 4  - sub PCB bus 'chip enable'
 		conn_j4_oe       : out    std_logic;				-- pin 14 - output enable (pixel clock x2)
 		conn_j4_we       : out    std_logic;				-- pin 33 - r/w
 		conn_j4_addr	 : out    std_logic_vector(14 downto 0);	-- address bus
 		conn_j4_data	 : out    std_logic_vector(7 downto 0);		-- data bus
 		conn_j4_voice    : in     std_logic;				-- pin 1  - audio
-		conn_j4_reset    : out    std_logic;				-- pin 18 -system reset
 
 		-- J5 connector (20 pin, tile layer expansion?)
 		conn_j5_clk_6m        : out    std_logic;
@@ -130,9 +130,8 @@ entity system86 is
 		conn_j5_dt            : inout  std_logic_vector(2 downto 0);
 		conn_j5_backcolor     : out    std_logic;
 		conn_j5_backcolor_t   : in     std_logic;			-- disable backcolor buffer
-		
-
 		conn_j5_clk_6m        : out    std_logic;
+		
 		-- SRAM 4r
 		sram_4r_ce     : in	std_logic;
 		sram_4r_we     : in	std_logic;
