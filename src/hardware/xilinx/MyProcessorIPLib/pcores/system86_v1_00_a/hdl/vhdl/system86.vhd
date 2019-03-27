@@ -110,6 +110,7 @@ entity system86 is
 		composite_sync   : out    std_logic;
 		horizontal_sync  : out    std_logic;
 		vertical_sync    : out    std_logic;
+		vertical_blank   : out    std_logic;
 
 		-- J4 connector to sub PCB (34 pin)
 		conn_j4_reset    : out    std_logic;				-- pin 18 - system reset

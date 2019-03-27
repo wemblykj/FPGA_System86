@@ -9,13 +9,13 @@ BEGIN system86
 ## Peripheral Options
 OPTION IPTYPE = PERIPHERAL
 OPTION IMP_NETLIST = TRUE
-OPTION DESC = Xilinx Namco System86
-OPTION LONG_DESC = A generic Namco System86 System Board IP targeting Xilinx hardware
+OPTION DESC = Wembly's Namco System86 Replication
+OPTION LONG_DESC = A generic FPGA implementation of the Namco System86 arcade board
 OPTION HDL = MIXED
-OPTION IP_GROUP = WemblyKJ:Arcade:System86
+OPTION IP_GROUP = Arcade:System86
 OPTION USAGE_LEVEL = BASE_USER
 
-IO_INTERFACE IO_IF = VID_OUT, IO_TYPE = video_out
+IO_INTERFACE IO_IF = VIDEO_OUT, IO_TYPE = video_out
 
 ## Bus Interfaces
 BUS_INTERFACE BUS=CONN_J4, BUS_STD=conn_j4, BUS_TYPE=TARGET
@@ -26,6 +26,7 @@ BUS_INTERFACE BUS=M_RAM, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
 
 ## Parameters
 PARAMETER C_USE_HARDWARE_CLOCKS = 1, DT = INTEGER, PERMIT = BASE_USER, RANGE=(0:1)
+PARAMETER C_USE_VIDEO_IF = 0, DT = INTEGER, PERMIT = BASE_USER, RANGE=(0:1)
 
 ## Peripheral ports
 # Global ports
@@ -38,12 +39,20 @@ PORT clk_6m = "", DIR=I, SIGIS=CLK, ISVALID=(C_USE_HARDWARE_CLOCKS == 1)
 PORT reset = "", DIR=I, SIGIS=RST
 
 # Component video
-PORT red_component = "", DIR = O, IO_IF = VID_OUT, IO_IS = RedComponent
-PORT green_component = "", DIR = O, IO_IF = VID_OUT, IO_IS = GreenComponent
-PORT blue_component = "", DIR = O, IO_IF = VID_OUT, IO_IS = BlueComponent
-PORT composite_sync = "", DIR = O, IO_IF = VID_OUT, IO_IS = CompositeSync
-PORT horizontal_sync = "", DIR = O, IO_IF = VID_OUT, IO_IS = HorizontalSync
-PORT vertical_sync = "", DIR = O, IO_IF = VID_OUT, IO_IS = VerticalSync
+PORT red_component = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = RedComponent, ISVALID=(C_USE_VIDEO_IF == 1)
+PORT green_component = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = GreenComponent, ISVALID=(C_USE_VIDEO_IF == 1)
+PORT blue_component = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = BlueComponent, ISVALID=(C_USE_VIDEO_IF == 1)
+PORT composite_sync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = CompositeSync, ISVALID=(C_USE_VIDEO_IF == 1)
+PORT horizontal_sync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = HorizontalSync, ISVALID=(C_USE_VIDEO_IF == 1)
+PORT vertical_sync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = VerticalSync, ISVALID=(C_USE_VIDEO_IF == 1)
+PORT vertical_blank = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = VerticalSync, ISVALID=(C_USE_VIDEO_IF == 1)
+PORT red_component = "", DIR = O, IO_IF = VIDEO_OUT, ISVALID=(C_USE_VIDEO_IF == 0)
+PORT green_component = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
+PORT blue_component = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
+PORT composite_sync = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
+PORT horizontal_sync = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
+PORT vertical_sync = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
+PORT vertical_blank = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
 
 # J4
 PORT conn_j4_reset = Reset, DIR=O, BUS = CONN_J4
