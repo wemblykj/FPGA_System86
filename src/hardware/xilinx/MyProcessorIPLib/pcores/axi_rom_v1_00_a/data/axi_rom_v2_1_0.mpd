@@ -15,7 +15,7 @@ OPTION HDL = VHDL
 OPTION DESC = AXI TTL ROM Emulation
 OPTION LONG_DESC = AXI4 TTL ROM Emulation over AXI4 bus
 OPTION ARCH_SUPPORT_MAP = (others=DEVELOPMENT)
-OPTION IP_GROUP = WemblyKJ:Arcade:Memory
+OPTION IP_GROUP = Arcade:Memory
 OPTION USAGE_LEVEL = BASE_USER
 
 ## Bus Interfaces
@@ -44,7 +44,6 @@ PORT chip_enable = ChipEnable, DIR = I, BUS = S_ROM
 PORT output_enable = OutputEnable, DIR = I, BUS = S_ROM
 PORT addr = Addr, DIR = I, BUS = S_ROM
 PORT data = Data, DIR = O, BUS = S_ROM
-
 # Slave
 PORT slave_addr_offset = SLAVE_ADDR_OFFSET, DIR = I, VEC = [(C_M_AXI_LITE_ADDR_WIDTH-1):0], ENDIAN = LITTLE, INITIALVAL = GND
 # AXI

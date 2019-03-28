@@ -104,13 +104,16 @@ entity system86 is
 		end generate
     
 		-- Component Video
-		red_component    : out    std:logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		green_component  : out    std:logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		blue_component   : out    std:logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		composite_sync   : out    std_logic;
-		horizontal_sync  : out    std_logic;
-		vertical_sync    : out    std_logic;
-		vertical_blank   : out    std_logic;
+		vid_clk		: out    std_logic;
+		vid_data	: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
+		vid_red		: out    std:logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_green	: out    std:logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_blue	: out    std:logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_hblank	: out    std_logic;
+		vid_vblank	: out    std_logic;
+		vid_csync	: out    std_logic;
+		vid_hsync	: out    std_logic;
+		vid_vsync	: out    std_logic;
 
 		-- J4 connector to sub PCB (34 pin)
 		conn_j4_reset    : out    std_logic;				-- pin 18 - system reset
@@ -162,6 +165,7 @@ if C_USE_HARDWARE_CLOCKS = 1 generate
 	attribute SIGIS of clk_6m : signal is "Clk"; 
 end generate
 attribute SIGIS of reset : signal is "Rst"; 
+attribute SIGIS of vid_clk : signal is "Clk"; 
 
 end system86;
 

@@ -26,7 +26,7 @@ BUS_INTERFACE BUS=M_RAM, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
 
 ## Parameters
 PARAMETER C_USE_HARDWARE_CLOCKS = 1, DT = INTEGER, PERMIT = BASE_USER, RANGE=(0:1)
-PARAMETER C_USE_VIDEO_IF = 0, DT = INTEGER, PERMIT = BASE_USER, RANGE=(0:1)
+PARAMETER C_VIDEO_COMPONENT_DEPTH = 8, DT = INTEGER, PERMIT = BASE_USER, RANGE=(4,8)
 
 ## Peripheral ports
 # Global ports
@@ -39,20 +39,16 @@ PORT clk_6m = "", DIR=I, SIGIS=CLK, ISVALID=(C_USE_HARDWARE_CLOCKS == 1)
 PORT reset = "", DIR=I, SIGIS=RST
 
 # Component video
-PORT red_component = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = RedComponent, ISVALID=(C_USE_VIDEO_IF == 1)
-PORT green_component = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = GreenComponent, ISVALID=(C_USE_VIDEO_IF == 1)
-PORT blue_component = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = BlueComponent, ISVALID=(C_USE_VIDEO_IF == 1)
-PORT composite_sync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = CompositeSync, ISVALID=(C_USE_VIDEO_IF == 1)
-PORT horizontal_sync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = HorizontalSync, ISVALID=(C_USE_VIDEO_IF == 1)
-PORT vertical_sync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = VerticalSync, ISVALID=(C_USE_VIDEO_IF == 1)
-PORT vertical_blank = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = VerticalSync, ISVALID=(C_USE_VIDEO_IF == 1)
-PORT red_component = "", DIR = O, IO_IF = VIDEO_OUT, ISVALID=(C_USE_VIDEO_IF == 0)
-PORT green_component = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
-PORT blue_component = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
-PORT composite_sync = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
-PORT horizontal_sync = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
-PORT vertical_sync = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
-PORT vertical_blank = "", DIR = O, ISVALID=(C_USE_VIDEO_IF == 0)
+PORT vid_clk = "", DIR = O, SIGIS=CLK, IO_IF = VIDEO_OUT, IO_IS = Clk
+PORT vid_data = "", DIR = O, VEC = [((3*C_VIDEO_COMPONENT_DEPTH)-1):0], IO_IF = VIDEO_OUT, IO_IS = Data
+PORT vid_red = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = Red
+PORT vid_green = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = Green
+PORT vid_blue = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = Blue
+PORT vid_hblank = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = HorizontalBlank
+PORT vid_vblank = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = VerticalBlank
+PORT vid_csync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = CompositeSync
+PORT vid_hsync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = HorizontalSync
+PORT vid_vsync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = VerticalSync
 
 # J4
 PORT conn_j4_reset = Reset, DIR=O, BUS = CONN_J4

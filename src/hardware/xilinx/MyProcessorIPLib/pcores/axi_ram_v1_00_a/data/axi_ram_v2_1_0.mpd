@@ -13,9 +13,9 @@ OPTION IPTYPE = PERIPHERAL
 OPTION IMP_NETLIST = TRUE
 OPTION HDL = VHDL
 OPTION DESC = AXI TTL RAM Emulation
-OPTION LONG_DESC = AXI4 TTL RAM Emulation over AXI4 bus
+OPTION LONG_DESC = TTL RAM Emulation over AXI4 bus
 OPTION ARCH_SUPPORT_MAP = (others=DEVELOPMENT)
-OPTION IP_GROUP = WemblyKJ:Arcade:Memory
+OPTION IP_GROUP = Arcade:Memory
 OPTION USAGE_LEVEL = BASE_USER
 
 ## Bus Interfaces
@@ -45,7 +45,6 @@ PORT write_enable = WriteEnable, DIR = I, BUS = S_RAM
 PORT output_enable = OutputEnable, DIR = I, BUS = S_RAM
 PORT addr = Addr, DIR = I, BUS = S_RAM
 PORT data = Data, DIR = IO, BUS = S_RAM
-
 # Slave
 PORT slave_addr_offset = SLAVE_ADDR_OFFSET, DIR = I, VEC = [(C_M_AXI_LITE_ADDR_WIDTH-1):0], ENDIAN = LITTLE, INITIALVAL = GND, ISVALID=(C_USE_DYNAMIC_ADDR_OFFSET == 1)
 # AXI
