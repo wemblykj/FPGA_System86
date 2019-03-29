@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE doc SYSTEM "../../ipdialog.dtd" [
+	<!ENTITY C_USE_HARDWARE_CLOCKS '
+	<widget id="C_USE_HARDWARE_CLOCKS">
+		<key>C_USE_HARDWARE_CLOCKS</key>
+		<label>Expose the individual clock lines so that they can be driven directly by externally generated clock signals</label>
+		<tip></tip>
+	</widget>
+	'>
+	<!ENTITY C_VIDEO_COMPONENT_DEPTH '
+	<widget id="C_VIDEO_COMPONENT_DEPTH">
+		<key>C_VIDEO_COMPONENT_DEPTH</key>
+		<label>Defines the bit width of the output video components. The choices are wither the native 4-bit wide components or an 8-bit expanded width for compatability with external IP that will generally require an 8-bit signal as a minimum</label>
+		<tip></tip>
+	</widget>
+	'>
+
+]>
+
+<doc>
+	<view id="Config">
+		<display>Config</display>
+		<group id="All">
+			<display>All</display>
+		        <item>&C_USE_HARDWARE_CLOCKS;</item>
+		        <item>&C_VIDEO_COMPONENT_DEPTH;</item>
+		</group>
+	</view>
+    	<view id="System">
+		<display>System</display>
+		<group id="Timing">
+			<display>System timing options/display>
+			<item>&C_USE_HARDWARE_CLOCKS;</item>
+		</group>
+		<group id="Video">
+			<display>Video generation options</display>
+			<item>&C_VIDEO_COMPONENT_DEPTH;</item>
+		</group>
+	</view>
+</doc>

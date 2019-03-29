@@ -57,6 +57,10 @@
  PORT Digilent_Usb_Epp_PKTEND_pin = Digilent_Usb_Epp_PKTEND, DIR = O
  PORT Digilent_Usb_Epp_EPPRST_pin = Digilent_Usb_Epp_EPPRST, DIR = I
  PORT Digilent_Usb_Epp_DB_pin = Digilent_Usb_Epp_DB, DIR = IO, VEC = [7:0]
+ PORT clkext_Port_24_0000MHz = clkext_Net_24_0000MHzclkext_Port_24_0000MHz, DIR = I, SIGIS = CLK, CLK_FREQ = 24000000
+ PORT clkext_Port_6_0000MHz = clkext_Net_6_0000MHzclkext_Port_6_0000MHz, DIR = I, SIGIS = CLK, CLK_FREQ = 6000000
+ PORT clkext_Port_12_0000MHz = clkext_Net_12_0000MHzclkext_Port_12_0000MHz, DIR = I, SIGIS = CLK, CLK_FREQ = 12000000
+ PORT clkext_Port_48_0000MHz_nobuf = clkext_Net_48_0000MHz_nobufclkext_Port_48_0000MHz_nobuf, DIR = I, SIGIS = CLK, CLK_FREQ = 48000000
 
 
 BEGIN proc_sys_reset
@@ -177,6 +181,12 @@ BEGIN clock_generator
  PARAMETER C_CLKOUT1_BUF = FALSE
  PARAMETER C_CLKOUT2_FREQ = 100000000
  PARAMETER C_CLKOUT2_GROUP = PLL0
+ PARAMETER C_CLKOUT0_DUTY_CYCLE = 0.500000
+ PARAMETER C_CLKOUT0_PHASE = 0
+ PARAMETER C_CLKOUT1_DUTY_CYCLE = 0.500000
+ PARAMETER C_CLKOUT2_BUF = TRUE
+ PARAMETER C_CLKOUT2_DUTY_CYCLE = 0.500000
+ PARAMETER C_CLKOUT2_PHASE = 0
  PORT LOCKED = proc_sys_reset_0_Dcm_locked
  PORT CLKOUT2 = clk_100_0000MHzPLL0
  PORT RST = RESET
@@ -369,6 +379,28 @@ END
 BEGIN system86
  PARAMETER INSTANCE = system86_0
  PARAMETER HW_VER = 1.00.a
- PARAMETER C_USE_VIDEO_IF = 0
+ PORT clk_48m = clkext_Net_48_0000MHz_nobufclkext_Port_48_0000MHz_nobuf
+ PORT reset = proc_sys_reset_0_MB_Reset
+ PORT clk_12m = clkext_Net_12_0000MHzclkext_Port_12_0000MHz
+ PORT clk_24m = clkext_Net_24_0000MHzclkext_Port_24_0000MHz
+ PORT clk_6m = clkext_Net_6_0000MHzclkext_Port_6_0000MHz
+ PORT vid_clk_6m = system86_0_vid_clk_6m
+ PORT vid_data = system86_0_vid_data
+ PORT vid_hblank = system86_0_vid_hblank
+ PORT vid_vblank = system86_0_vid_vblank
+ PORT vid_hsync = system86_0_vid_hsync
+ PORT vid_vsync = system86_0_vid_vsync
+END
+
+BEGIN v_vid_in_axi4s
+ PARAMETER INSTANCE = v_vid_in_axi4s_0
+ PARAMETER HW_VER = 2.01.a
+ PARAMETER RAM_ADDR_BITS = 5
+ PORT vid_in_clk = system86_0_vid_clk_6m
+ PORT vid_vblank = system86_0_vid_vblank
+ PORT vid_hblank = system86_0_vid_hblank
+ PORT vid_vsync = system86_0_vid_vsync
+ PORT vid_hsync = system86_0_vid_hsync
+ PORT vid_data = system86_0_vid_data
 END
 
