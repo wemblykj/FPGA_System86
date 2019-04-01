@@ -20,72 +20,70 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module timing_subsystem
-	#(
-		C_USE_HARDWARE_CLOCKS = 0
-	)
-	(
-generate
-	if (C_USE_HARDWARE_CLOCKS = 1) begin
-		input wire clk_6m,
-	else
+#(
+	parameter C_USE_HARDWARE_CLOCKS = 0
+)
+(
+	if (C_USE_HARDWARE_CLOCKS == 0) generate	
 		input wire CLK_48M,
-		output wire CLK_24M,
-		output wire CLK_12M,
-		output wire CLK_6M,
-		output wire CLK_6MD,
+		output wire CLK_24M_O,
+		output wire CLK_12M_O,
+		output wire CLK_6M_O,
+		output wire CLK_6MD_O,
 	end	
 endgenerate
-		output wire VSYNC,
-		output wire HSYNC,
-		output wire VBLANK,
-		output wire HBLANK,
-		output wire HRESET,
-		output wire VRESET,
- 		output wire BLANKING,
-		output wire COMPSYNC,
-		output wire CLK_8V,
-		output wire CLK_4V,
-		output wire CLK_1V,
-		output wire CLK_4H,
-		output wire CLK_2H,
-		output wire CLK_1H,
-		output wire CLK_S1H,
-		output wire CLK_S2H
-    );
+	input wire CLK_6M,
+	output wire VSYNC,
+	output wire HSYNC,
+	output wire VBLANK,
+	output wire HBLANK,
+	output wire HRESET,
+	output wire VRESET,
+	output wire BLANKING,
+	output wire COMPSYNC,
+	output wire CLK_8V_O,
+	output wire CLK_4V_O,
+	output wire CLK_1V_O,
+	output wire CLK_4H_O,
+	output wire CLK_2H_O,
+	output wire CLK_1H_O,
+	output wire CLK_S2H_O,
+	output wire CLK_S1H_O
+);
 
 	reg cus27_9p_6m_latched;
 	
 	// CUS27 - CLOCK DIVIDER
-	CUS27 CUS_27_CLKDIV_9P(
-generate
-	if (C_USE_HARDWARE_CLOCKS = 1) begin
-			.CLK_6M_I(clk_6m), 
-	else begin
-			.CLK_48M_I(CLK_48M), 
-			.CLK_6M_O(CLK_6M),
-			.CLK_6M_I(cus27_9p_6m_latched), 
-	end	
-endgenerate
+	CUS27 
+		CUS_27_CLKDIV_9P(
+			if (C_USE_HARDWARE_CLOCKS == 0) generate
+				.CLK_48M(CLK_48M), 
+				.CLK_24M_O(CLK_24M_O),
+				.CLK_12M_O(CLK_12M_O),
+				.CLK_6M_O(CLK_6M_O),
+			endgenerate
+			//.CLK_6M(cus27_9p_6m_latched),
+			.CLK_6M(CLK_6M_O),
 			.VSYNC(VSYNC),
 			.HSYNC(HSYNC),
 			.HBLANK(HBLANK),
 			.VBLANK(VBLANK),
 			.HRESET(HRESET),
 			.VRESET(VRESET),
-			.CLK_1H_O(CLK_1H),
-			.CLK_S1H_O(CLK_S1H),
-			.CLK_2H_O(CLK_2H),
-			.CLK_S2H_O(CLK_S2H),
-			.CLK_4H_O(CLK_4H),
-			.CLK_1V_O(CLK_1V),
-			.CLK_4V_O(CLK_4V),
-			.CLK_8V_O(CLK_8V)
+			.CLK_8V_O(CLK_8V_O),
+			.CLK_4V_O(CLK_4V_O),
+			.CLK_1V_O(CLK_1V_O),
+			.CLK_4H_O(CLK_4H_O),
+			.CLK_2H_O(CLK_2H_O),
+			.CLK_1H_O(CLK_1H_O),
+			.CLK_S2H_O(CLK_S2H_O),
+			.CLK_S1H_O(CLK_S1H_O)
 		);
-	
-        // == TTL glue logic
+
+	// == TTL glue logic
     
 	LS74 
-        ls74_8u(
+		ls74_8u(
 			.PRE2(GND),
 			.CLK2(CLK_4H),
 			.CLR2(VBLANK),
@@ -95,13 +93,12 @@ endgenerate
 
 	assign COMPSYNC = HSYNC || VSYNC;	// via LS08 (3H) and'ing of negated signals
 	
-generate
-	if (C_USE_HARDWARE_CLOCKS = 1) begin
+
+	if (C_USE_HARDWARE_CLOCKS == 0) generate
 		always @(*) begin
 			// Timing hack - is this still required?
-			cus27_9p_6m_latched = CLK_6M;
+			cus27_9p_6m_latched = CLK_6M_O;
 		end
-	end	
-endgenerate
+	endgenerate
 	
 endmodule
