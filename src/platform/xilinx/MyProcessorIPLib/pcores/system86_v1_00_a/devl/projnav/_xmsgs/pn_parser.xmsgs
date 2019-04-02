@@ -8,7 +8,13 @@
 <!-- Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.    -->
 
 <messages>
-<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;C:/Users/Wembly/Development/System86/src/hardware/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/hdl/vhdl/system86.vhd&quot; into library system86_v1_00_a</arg>
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;/home/administrator/Development/fpga/system86/src/lib/system86/hdl/custom/cus27.vhd&quot; into library system86</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;/home/administrator/Development/fpga/system86/src/lib/system86/hdl/system86.vhd&quot; into library system86</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1061" ><arg fmt="%s" index="1">Parsing VHDL file &quot;/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/hdl/vhdl/system86.vhd&quot; into library system86_v1_00_a</arg>
 </msg>
 
 </messages>

@@ -21,7 +21,7 @@ INTSTYLE = default
 
 XPS_HDL_LANG = vhdl
 GLOBAL_SEARCHPATHOPT = 
-PROJECT_SEARCHPATHOPT =  -lp /home/administrator/Downloads/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib/ -lp /home/administrator/Development/fpga/system86/src/hardware/xilinx/
+PROJECT_SEARCHPATHOPT =  -lp /home/administrator/Development/fpga/system86/src/platform/xilinx/ -lp /home/administrator/Downloads/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib/
 
 SEARCHPATHOPT = $(PROJECT_SEARCHPATHOPT) $(GLOBAL_SEARCHPATHOPT)
 
@@ -80,7 +80,8 @@ implementation/atlys_leds_8bits_wrapper.ngc \
 implementation/atlys_digilent_usb_epp_wrapper.ngc \
 implementation/atlys_digilent_ac97_cntlr_wrapper.ngc \
 implementation/atlys_dip_switches_8bits_wrapper.ngc \
-implementation/atlys_system86_0_wrapper.ngc
+implementation/atlys_system86_0_wrapper.ngc \
+implementation/atlys_v_vid_in_axi4s_0_wrapper.ngc
 
 POSTSYN_NETLIST = implementation/$(SYSTEM).ngc
 

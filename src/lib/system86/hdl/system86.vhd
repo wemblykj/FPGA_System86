@@ -1,11 +1,7 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
 entity system86 is
-	generic
-	(
-	)
-	port
-	(
-	
-	);
 
 end system86;
 

@@ -4,7 +4,7 @@
   <IDENTIFICATION VERSION="1.2" XTLVERSION="1.2"/>
 
   <SET CLASS="PROJECT" DISPLAYMODE="TREE" VIEW_ID="BUSINTERFACE">
-    <HEADERS HSCROLL="0" VSCROLL="268">
+    <HEADERS HSCROLL="0" VSCROLL="332">
       <VARIABLE COL_INDEX="0" COL_WIDTH="228" IS_VISIBLE="TRUE" VIEWDISP="Name" VIEWTYPE="HEADER"/>
       <VARIABLE COL_INDEX="1" COL_WIDTH="100" IS_VISIBLE="TRUE" VIEWDISP="Bus Name" VIEWTYPE="HEADER"/>
       <VARIABLE COL_INDEX="2" COL_WIDTH="157" IS_VISIBLE="TRUE" VIEWDISP="Bus Standard" VIEWTYPE="HEADER"/>
@@ -16,13 +16,14 @@
     <SPLITTERS COLLAPSIBLE="1" HANDLEWIDTH="4" MARKER="255" ORIENTATION="1" RESIZE="1" SIZES="180,450,200" VERSION="0"/>
     <SET ID="microblaze_0" IS_EXPANDED="TRUE"/>
     <SET ID="MCB_DDR2" IS_EXPANDED="TRUE"/>
+    <SET ID="system86_0" IS_EXPANDED="TRUE"/>
     <STATUS>
       <SELECTIONS>
-        <VARIABLE ID="system86_clock_generator"/>
+        <VARIABLE ID="system86_0"/>
       </SELECTIONS>
     </STATUS>
     <SEQUENCES IS_DEF_SEQUENCES="TRUE">
-      <VARIABLE ID="proc_sys_reset_0" ROW_INDEX="20"/>
+      <VARIABLE ID="proc_sys_reset_0" ROW_INDEX="21"/>
       <VARIABLE ID="microblaze_0_intc" ROW_INDEX="11"/>
       <VARIABLE ID="microblaze_0_ilmb" ROW_INDEX="3"/>
       <VARIABLE ID="microblaze_0_i_bram_ctrl" ROW_INDEX="7"/>
@@ -31,7 +32,7 @@
       <VARIABLE ID="microblaze_0_bram_block" ROW_INDEX="5"/>
       <VARIABLE ID="microblaze_0" IS_EXPANDED="TRUE" ROW_INDEX="4"/>
       <VARIABLE ID="debug_module" ROW_INDEX="10"/>
-      <VARIABLE ID="clock_generator_0" ROW_INDEX="19"/>
+      <VARIABLE ID="clock_generator_0" ROW_INDEX="20"/>
       <VARIABLE ID="axi4lite_0" ROW_INDEX="1"/>
       <VARIABLE ID="axi4_0" ROW_INDEX="0"/>
       <VARIABLE ID="RS232_Uart_1" ROW_INDEX="15"/>
@@ -42,8 +43,8 @@
       <VARIABLE ID="Digilent_Usb_Epp" ROW_INDEX="17"/>
       <VARIABLE ID="Digilent_AC97_Cntlr" ROW_INDEX="16"/>
       <VARIABLE ID="DIP_Switches_8Bits" ROW_INDEX="12"/>
-      <VARIABLE ID="system86_0" ROW_INDEX="18"/>
-      <VARIABLE ID="v_vid_in_axi4s_0" ROW_INDEX="21"/>
+      <VARIABLE ID="system86_0" IS_EXPANDED="TRUE" ROW_INDEX="18"/>
+      <VARIABLE ID="v_vid_in_axi4s_0" ROW_INDEX="19"/>
     </SEQUENCES>
   </SET>
 
@@ -116,9 +117,7 @@
     </SET>
     <SET ID="v_vid_in_axi4s_0" IS_EXPANDED="TRUE"/>
     <STATUS>
-      <SELECTIONS>
-        <VARIABLE ID="vid_data" PARENT="v_vid_in_axi4s_0"/>
-      </SELECTIONS>
+      <SELECTIONS/>
     </STATUS>
     <SEQUENCES IS_DEF_SEQUENCES="TRUE">
       <VARIABLE ID="ExternalPorts" ROW_INDEX="0"/>

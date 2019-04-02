@@ -52,6 +52,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library system86;
+use system86.cus27.all;
+
 -------------------------------------------------------------------------------------
 --
 --
@@ -77,19 +80,19 @@ use ieee.numeric_std.all;
 ------------------------------------------------------------------------------
 
 entity system86 is
-  generic
-  (
-		C_USE_HARDWARE_CLOCKS = 1;
-		C_VIDEO_COMPONENT_DEPTH = 8;
+	generic
+	(
+		C_USE_HARDWARE_CLOCKS 		: integer	:= 1;
+		C_VIDEO_COMPONENT_DEPTH		: integer	:= 8;
 		
-		C_EPROM_7116_ADDR_WIDTH = 9;
-		C_EPROM_7116_DATA_WIDTH = 4;
-		C_EPROM_7124_ADDR_WIDTH = 9;
-		C_EPROM_7124_DATA_WIDTH = 8;
+		C_EPROM_7116_ADDR_WIDTH 	: integer	:= 9;
+		C_EPROM_7116_DATA_WIDTH 	: integer	:= 4;
+		C_EPROM_7124_ADDR_WIDTH 	: integer	:= 9;
+		C_EPROM_7124_DATA_WIDTH 	: integer	:= 8;
 		
-		C_SRAM_CY6462_ADDR_WIDTH = 13;
-		C_SRAM_CY6462_DATA_WIDTH = 8
-  )
+		C_SRAM_CY6462_ADDR_WIDTH 	: integer	:= 13;
+		C_SRAM_CY6462_DATA_WIDTH 	: integer	:= 8
+	);
 	port 
 	(
 		-- Global Ports
@@ -97,18 +100,18 @@ entity system86 is
 		reset	: in	std_logic;
 
 		clk_48m	: in	std_logic;
-		if C_USE_HARDWARE_CLOCKS = 1 generate
+		--gen1: if C_USE_HARDWARE_CLOCKS = 0 generate
 			clk_24m	: in	std_logic;
 			clk_12m	: in	std_logic;
 			clk_6m	: in	std_logic;
-		end generate
+		--end generate;
     
 		-- Component Video
 		vid_clk		: out    std_logic;
-		vid_data	: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
-		vid_red		: out    std:logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		vid_green	: out    std:logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		vid_blue	: out    std:logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_data		: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
+		vid_red		: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_green	: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_blue		: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
 		vid_hblank	: out    std_logic;
 		vid_vblank	: out    std_logic;
 		vid_csync	: out    std_logic;
@@ -117,7 +120,7 @@ entity system86 is
 
 		-- J4 connector to sub PCB (34 pin)
 		conn_j4_reset    : out    std_logic;				-- pin 18 - system reset
-		conn_j4_ce 	 : out    std_logic;				-- pin 4  - sub PCB bus 'chip enable'
+		conn_j4_ce		: out    std_logic;				-- pin 4  - sub PCB bus 'chip enable'
 		conn_j4_oe       : out    std_logic;				-- pin 14 - output enable (pixel clock x2)
 		conn_j4_we       : out    std_logic;				-- pin 33 - r/w
 		conn_j4_addr	 : out    std_logic_vector(14 downto 0);	-- address bus
@@ -153,17 +156,17 @@ entity system86 is
 		eprom_3s_ce     : in	std_logic;
 		eprom_3s_oe     : in	std_logic;
 		eprom_3s_addr   : in	std_logic_vector(C_EPROM_7116_ADDR_WIDTH-1 downto 0);
-		eprom_3s_data   : out	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0);
+		eprom_3s_data   : out	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0)
 		
 	);
 
 attribute SIGIS : string; 
 attribute SIGIS of clk_48m : signal is "Clk"; 
-if C_USE_HARDWARE_CLOCKS = 1 generate
+--gen2: if C_USE_HARDWARE_CLOCKS = 0 generate
 	attribute SIGIS of clk_24m : signal is "Clk"; 
 	attribute SIGIS of clk_12m : signal is "Clk"; 
 	attribute SIGIS of clk_6m : signal is "Clk"; 
-end generate
+--end generate;
 attribute SIGIS of reset : signal is "Rst"; 
 attribute SIGIS of vid_clk : signal is "Clk"; 
 
@@ -187,6 +190,24 @@ end system86;
 
 architecture EXAMPLE of system86 is
 
+
 begin
-   
+	Inst_Cus27: cus27_t
+   generic map
+	(
+		C_USE_HARDWARE_CLOCKS	=> C_USE_HARDWARE_CLOCKS
+	)
+	port map
+	(
+		rst			=> rst,
+		clk_48m		=> clk_48m,
+		clk_6m		=> clk_6m,
+--USE_HARDWARE_CLOCKS: if C_USE_HARDWARE_CLOCKS = 0 generate
+		clk_24m_o	=> clk_24m_o,
+		clk_12m_o	=> clk_12m_o,
+		clk_6m_o		=> clk_6m_o,
+--end generate
+		clk_S2h_o	=> clk_S2h_o
+	);
+	
 end architecture EXAMPLE;
