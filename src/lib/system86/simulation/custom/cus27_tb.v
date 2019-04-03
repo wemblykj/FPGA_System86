@@ -82,7 +82,7 @@ module cus27_tb;
 		// Add stimulus here
 		rst = 0;
 		
-		#2211840;	// one full frame
+		#61440;	// one full line
 		$finish;
 	end
       
