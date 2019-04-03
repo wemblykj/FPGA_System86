@@ -52,9 +52,6 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-library system86;
-use system86.cus27.all;
-
 -------------------------------------------------------------------------------------
 --
 --
@@ -82,7 +79,7 @@ use system86.cus27.all;
 entity system86 is
 	generic
 	(
-		C_USE_HARDWARE_CLOCKS 		: integer	:= 1;
+		C_USE_HARDWARE_CLOCKS 		: integer	:= 0;
 		C_VIDEO_COMPONENT_DEPTH		: integer	:= 8;
 		
 		C_EPROM_7116_ADDR_WIDTH 	: integer	:= 9;
@@ -97,15 +94,14 @@ entity system86 is
 	(
 		-- Global Ports
 
-		reset	: in	std_logic;
-
-		clk_48m	: in	std_logic;
-		--gen1: if C_USE_HARDWARE_CLOCKS = 0 generate
-			clk_24m	: in	std_logic;
-			clk_12m	: in	std_logic;
-			clk_6m	: in	std_logic;
-		--end generate;
-    
+		rst			: in	std_logic;
+		clk_48m		: in	std_logic;
+		
+		-- hardware generated clocks
+		clk_24m_i	: in	std_logic;
+		clk_12m_i	: in	std_logic;
+		clk_6m_i		: in	std_logic;
+		
 		-- Component Video
 		vid_clk		: out    std_logic;
 		vid_data		: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
@@ -137,7 +133,6 @@ entity system86 is
 		conn_j5_dt            : inout  std_logic_vector(2 downto 0);
 		conn_j5_backcolor     : out    std_logic;
 		conn_j5_backcolor_t   : in     std_logic;			-- disable backcolor buffer
-		conn_j5_clk_6m        : out    std_logic;
 		
 		-- SRAM 4r
 		sram_4r_ce     : in	std_logic;
@@ -161,13 +156,13 @@ entity system86 is
 	);
 
 attribute SIGIS : string; 
+attribute SIGIS of rst : signal is "Rst"; 
+
 attribute SIGIS of clk_48m : signal is "Clk"; 
---gen2: if C_USE_HARDWARE_CLOCKS = 0 generate
-	attribute SIGIS of clk_24m : signal is "Clk"; 
-	attribute SIGIS of clk_12m : signal is "Clk"; 
-	attribute SIGIS of clk_6m : signal is "Clk"; 
---end generate;
-attribute SIGIS of reset : signal is "Rst"; 
+attribute SIGIS of clk_24m_i : signal is "Clk"; 
+attribute SIGIS of clk_12m_i : signal is "Clk"; 
+attribute SIGIS of clk_6m_i : signal is "Clk"; 
+
 attribute SIGIS of vid_clk : signal is "Clk"; 
 
 end system86;
@@ -188,26 +183,102 @@ end system86;
 -- You will need to modify this example or implement a new architecture for
 -- ENTITY system86 to implement your coprocessor
 
-architecture EXAMPLE of system86 is
+architecture rtl of system86 is
 
+-- system clocks
+signal clk_24m		: std_logic;
+signal clk_12m		: std_logic;
+signal clk_6m		: std_logic;
 
+-- cus27 outputs
+signal cus27_clk_48m		: std_logic;
+signal cus27_clk_24m		: std_logic;
+signal cus27_clk_12m		: std_logic;
+signal cus27_clk_6m		: std_logic;
+signal cus27_pclk_8v		: std_logic;
+signal cus27_pclk_4v		: std_logic;
+signal cus27_pclk_1v		: std_logic;
+signal cus27_pclk_4h		: std_logic;
+signal cus27_pclk_2h		: std_logic;
+signal cus27_pclk_1h		: std_logic;
+signal cus27_pclk_s2h	: std_logic;
+signal cus27_pclk_s1h	: std_logic;
+
+component cus27
+generic(
+	C_USE_HARDWARE_CLOCKS	: integer := 0
+);
+port(
+	-- global reset
+	rst 			: in std_logic;
+	-- input clocks
+	clk_48m 		: in std_logic;
+	clk_6m 		: in std_logic;
+	-- soft generated clocks
+	clk_24m_o	: out std_logic;
+	clk_12m_o	: out std_logic;
+	clk_6m_o 	: out std_logic;
+	-- video synchronisation
+	vsync			: out std_logic;
+	hsync			: out std_logic;
+	vblank		: out std_logic;
+	hblank		: out std_logic;
+	vreset		: out std_logic;
+	hreset		: out std_logic;
+	-- pixel clocks
+	pclk_8v_o	: out std_logic;
+	pclk_4v_o	: out std_logic;
+	pclk_1v_o	: out std_logic;
+	pclk_4h_o	: out std_logic;
+	pclk_2h_o	: out std_logic;
+	pclk_1h_o	: out std_logic;
+	pclk_s2h_o	: out std_logic;
+	pclk_s1h_o	: out std_logic
+);
+end component;
+	
 begin
-	Inst_Cus27: cus27_t
+
+	NO_HARDWARE_CLOCKS: if C_USE_HARDWARE_CLOCKS = 0 generate
+		clk_24m <= cus27_clk_24m;
+		clk_12m <= cus27_clk_12m;
+		clk_6m <= cus27_clk_6m;
+	end generate;
+	
+	HARDWARE_CLOCKS: if C_USE_HARDWARE_CLOCKS = 1 generate
+		clk_24m <= clk_24m_i;
+		clk_12m <= clk_12m_i;
+		clk_6m <= clk_6m_i;
+	end generate;
+
+	-- video generation
+	vid_clk <= clk_6m;
+	
+	Inst_Cus27: cus27
    generic map
 	(
 		C_USE_HARDWARE_CLOCKS	=> C_USE_HARDWARE_CLOCKS
 	)
 	port map
 	(
+		-- global reset
 		rst			=> rst,
+		-- input clocks
 		clk_48m		=> clk_48m,
 		clk_6m		=> clk_6m,
---USE_HARDWARE_CLOCKS: if C_USE_HARDWARE_CLOCKS = 0 generate
-		clk_24m_o	=> clk_24m_o,
-		clk_12m_o	=> clk_12m_o,
-		clk_6m_o		=> clk_6m_o,
---end generate
-		clk_S2h_o	=> clk_S2h_o
+		-- soft generated clocks
+		clk_24m_o	=> cus27_clk_24m,
+		clk_12m_o	=> cus27_clk_12m,
+		clk_6m_o		=> cus27_clk_6m,
+		-- pixel clocks
+		pclk_8v_o	=> cus27_pclk_8v,
+		pclk_4v_o	=> cus27_pclk_4v,
+		pclk_1v_o	=> cus27_pclk_1v,
+		pclk_4h_o	=> cus27_pclk_4h,
+		pclk_2h_o	=> cus27_pclk_2h,
+		pclk_1h_o	=> cus27_pclk_1h,
+		pclk_s2h_o	=> cus27_pclk_s2h,
+		pclk_s1h_o	=> cus27_pclk_s1h
 	);
 	
-end architecture EXAMPLE;
+end architecture rtl;
