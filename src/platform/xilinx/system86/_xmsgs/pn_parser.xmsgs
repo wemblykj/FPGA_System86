@@ -8,6 +8,9 @@
 <!-- Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.    -->
 
 <messages>
+<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;/home/administrator/Development/fpga/system86/src/lib/system86/rtl/custom/cus27.v&quot; into library work</arg>
+</msg>
+
 <msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;/home/administrator/Development/fpga/system86/src/lib/system86/rtl/system86.v&quot; into library work</arg>
 </msg>
 
@@ -15,9 +18,6 @@
 </msg>
 
 <msg type="error" file="ProjectMgmt" num="806" >&quot;<arg fmt="%s" index="1">/home/administrator/Development/fpga/system86/src/lib/system86/rtl/system86.v</arg>&quot; Line <arg fmt="%d" index="2">40</arg>. <arg fmt="%s" index="3">Syntax error near &quot;inout&quot;.</arg>
-</msg>
-
-<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;/home/administrator/Development/fpga/system86/src/lib/system86/simulation/custom/cus27_tb.v&quot; into library work</arg>
 </msg>
 
 </messages>

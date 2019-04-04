@@ -41,31 +41,33 @@ module cus27
 	output reg vreset,
 	output reg hreset,
 	// pixel clocks
-	output wire pclk_8v_o,
-	output wire pclk_4v_o,
-	output wire pclk_1v_o,
-	output wire pclk_4h_o,
-	output wire pclk_2h_o,
-	output wire pclk_1h_o,
-	output wire pclk_s1h_o,
-	output wire pclk_s2h_o
+	output reg pclk_8v_o,
+	output reg pclk_4v_o,
+	output reg pclk_1v_o,
+	output reg pclk_4h_o,
+	output reg pclk_2h_o,
+	output reg pclk_1h_o,
+	output reg pclk_s1h_o,
+	output reg pclk_s2h_o
 );
 
 	reg [8:0] horizontal_counter = 0;
 	reg [8:0] vertical_counter = 0;
 	
-	reg h_latch = 0;
-	reg vresetH;
 	
-	initial begin
-		vsync = 0;
-		hsync = 0;
-		vblank = 0;
-		hblank = 0;
-		vresetH = 0;
-		vreset = 0;
-		hreset = 0;
-	end	
+	reg vresetH = 0;
+	
+	reg h_latch = 0;
+	reg h_latch_next = 0;
+	reg [8:0] horizontal_counter_next = 0;
+	reg hsync_next = 0;
+	reg hblank_next = 0;
+	reg hreset_next = 0;
+	
+	reg [8:0] vertical_counter_next = 0;
+	reg vsync_next = 0;
+	reg vblank_next = 0;
+	reg vreset_next = 0;
 	
 	generate
 		if (C_USE_HARDWARE_CLOCKS == 0) begin
@@ -89,78 +91,105 @@ module cus27
 		end
 	endgenerate
 	
-	// inspired by information found @ http://www.ukvac.com/forum/namco-cus27-in-fpga-cus130-wip_topic362440.html
-	always @(posedge clk_6m) begin
+	always @(*) begin
 		if (rst) begin
-			h_latch <= 0;
 			horizontal_counter <= 0;
+			horizontal_counter_next = 0;
 			hsync <= 0;
+			hsync_next <= 0;
 			hblank <= 0;
-			vresetH <= 0;
-		end else begin	
-			// increment h counter with one clock delay
-			horizontal_counter[8:1] <= horizontal_counter[8:1] + horizontal_counter[0];
-			horizontal_counter[0] <= h_latch;
-			h_latch <= ~h_latch;
-		
-			if (horizontal_counter[8:3] === 6'b110000) 	// ~384
-				horizontal_counter <= 0;
-		
-			// hsync & vresetH
-			if (horizontal_counter[8:0] === 9'b100110011) begin
-				hsync <= 1;	// ~304
-				vresetH <= 1;
-			end else
-				vresetH <= 0;
-			
-			if (horizontal_counter[8:3] === 6'b100110) hsync <= 0;	// ~336
-		
-			// hreset
-			hreset <= (horizontal_counter[8:0] === 9'b000001111) ? 1'b1 : 1'b0;	// ~15
-		end
-	end
-	
-	always @(posedge hsync) begin		// input is negated
-		if (rst) begin
-				vertical_counter <= 0;
-				vsync <= 0;
-				vblank <= 0;
-				vreset <= 0;
+			hblank_next <= 0;
+			hreset <= 0;
+			hreset_next <= 0;
 		end else begin
-			vertical_counter <= vertical_counter + 1;
-		
-			if (vertical_counter[8:3] === 6'b100001)	// ~264
-				vertical_counter <= 0;
-		
-			// vsync
-			if (vertical_counter[8:3] === 6'b011111) //	~248
-				vsync <= 1;
-			
-			if (vertical_counter[8:3] === 6'b000000) // ~336	
-				// reset vsync at start of first line
-				vsync <= 0;	
-			
-			// vblank
-			if (vertical_counter[8:3] === 6'b011110) //	~240
-				vblank <= 1;
-			
-			if (vertical_counter[8:3] === 6'b000010) // ~16	
-				vblank <= 0;	
-		
-			// vreset when back to start of line 0
-			vreset <= (vresetH && (vertical_counter[8:0] === 9'b000000000)) ? 1'b1 : 1'b0;
+			horizontal_counter <= horizontal_counter_next;
+			hsync <= hsync_next;
+			hblank <= hblank_next;
+			hreset <= hreset_next;
 		end
 	end
 	
-	assign pclk_1h_o = horizontal_counter[0];	// 3.0 Mhz
-	assign pclk_s1h_o = horizontal_counter[0];	// is this in phase?
-	assign pclk_2h_o = horizontal_counter[1];	// 1.5 Mhz
-	assign pclk_s2h_o = horizontal_counter[1];	// is this in phase?
-	assign pclk_4h_o = horizontal_counter[2];	// 0.75 Mhz
+	always @(*) begin
+		if (rst) begin
+			//vresetH <= 0;
+			vertical_counter <= 0;
+			vertical_counter_next <= 0;
+			vsync <= 0;
+			vsync_next <= 0;
+			vblank <= 0;
+			vblank_next <= 0;
+			vreset <= 0;
+			vreset_next <= 0;
+		end else begin
+			vertical_counter <= vertical_counter_next;
+			vsync <= vsync_next;
+			vblank <= vblank_next;
+			vreset <= vreset_next;
+		end
+	end
 	
-	assign pclk_1v_o = vertical_counter[0];
-	assign pclk_4v_o = vertical_counter[3];
-	assign pclk_8v_o = vertical_counter[7];
+	// inspired by information found @ http://www.ukvac.com/forum/namco-cus27-in-fpga-cus130-wip_topic362440.html
+	always @(negedge clk_6m) begin
+		horizontal_counter_next <= horizontal_counter + 1;
+	end
+		
+	always @(posedge clk_6m) begin
+		if (horizontal_counter[8:3] === 6'b110000) 	// ~384
+			horizontal_counter <= 0;
+	
+		// hsync
+		if (horizontal_counter[8:0] === 9'b100110000)
+			hsync_next <= 1;	// ~304
+		
+		if (horizontal_counter[8:3] === 6'b101010) 
+			hsync_next <= 0;	// ~336
+	
+		// hblank
+		if (horizontal_counter[8:3] === 6'b100010)
+			hblank_next <= 1;	// ~272
+		
+		if (horizontal_counter[8:3] === 6'b101110) 
+			hblank_next <= 0;	// ~368
+			
+		// hreset
+		hreset_next <= (horizontal_counter[8:0] === 9'b000001111) ? 1'b1 : 1'b0;	// ~15
+		
+		pclk_1h_o <= horizontal_counter[0];	// 3.0 Mhz
+		pclk_s1h_o <= horizontal_counter[0];	// is this in phase?
+		pclk_2h_o <= horizontal_counter[1];	// 1.5 Mhz
+		pclk_s2h_o <= horizontal_counter[1];	// is this in phase?
+		pclk_4h_o <= horizontal_counter[2];	// 0.75 Mhz
+	end
+	
+	always @(posedge hsync) begin
+		vertical_counter_next <= vertical_counter + 1;
+		
+		// vreset when back to start of line 0
+		vreset_next <= (vresetH && (vertical_counter[8:0] === 9'b000000000)) ? 1'b1 : 1'b0;
+	end
+	
+	always @(negedge hsync) begin
+		if (vertical_counter[8:3] === 6'b100001)	// ~264
+			vertical_counter <= 0;
+	
+		// vsync
+		if (vertical_counter[8:3] === 6'b011111) //	~248
+			vsync_next <= 1;
+		
+		if (vertical_counter[8:3] === 6'b000000) // ~336	
+			vsync_next <= 0;	
+		
+		// vblank
+		if (vertical_counter[8:3] === 6'b011110) //	~240
+			vblank_next <= 1;
+		
+		if (vertical_counter[8:3] === 6'b000010) // ~16	
+			vblank_next <= 0;			
+			
+		pclk_1v_o <= vertical_counter[0];
+		pclk_4v_o <= vertical_counter[3];
+		pclk_8v_o <= vertical_counter[7];
+	end
 	
 endmodule
 
