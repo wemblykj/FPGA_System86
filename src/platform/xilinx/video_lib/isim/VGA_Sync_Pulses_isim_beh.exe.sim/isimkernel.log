@@ -1,0 +1,29 @@
+Command line:
+   VGA_Sync_Pulses_isim_beh.exe
+     -simmode  gui
+     -simrunnum  0
+     -socket  45035
+
+Thu Apr  4 17:11:45 2019
+
+
+ Elaboration Time: 0.01 sec
+
+ Current Memory Usage: 234 Meg
+
+ Total Signals          : 16
+ Total Nets             : 36
+ Total Signal Drivers   : 9
+ Total Blocks           : 2
+ Total Primitive Blocks : 2
+ Total Processes        : 11
+ Total Traceable Variables  : 24
+ Total Scalar Nets and Variables : 264
+Total Line Count : 25
+
+ Total Simulation Time: 0.07 sec
+
+ Current Memory Usage: 309.502 Meg
+
+Thu Apr  4 17:12:05 2019
+

@@ -1,0 +1,1088 @@
+$date
+   Thu Apr  4 17:12:16 2019
+$end
+$version
+  P.20131013
+$end
+$timescale
+  1ps
+$end
+$scope module VGA_Test_Pattterns_TB $end
+$var wire 1 ! w_Red_Video_TP [2] $end
+$var wire 1 " w_Red_Video_TP [1] $end
+$var wire 1 # w_Red_Video_TP [0] $end
+$var wire 1 $ w_Grn_Video_TP [2] $end
+$var wire 1 % w_Grn_Video_TP [1] $end
+$var wire 1 & w_Grn_Video_TP [0] $end
+$var wire 1 ' w_Blu_Video_TP [2] $end
+$var wire 1 ( w_Blu_Video_TP [1] $end
+$var wire 1 ) w_Blu_Video_TP [0] $end
+$var wire 1 5" w_HSync_Start $end
+$var wire 1 6" w_VSync_Start $end
+$var wire 1 , w_HSync_TP $end
+$var wire 1 - w_VSync_TP $end
+$var reg 1 . r_Clk $end
+$scope module VGA_Sync_Pulses_Inst $end
+$var wire 1 / i_Clk $end
+$var wire 1 5" o_HSync $end
+$var wire 1 6" o_VSync $end
+$var reg 10 2 o_Col_Count [9:0] $end
+$var reg 10 3 o_Row_Count [9:0] $end
+$upscope $end
+$scope module Test_Pattern_Gen_Inst $end
+$var wire 1 4" i_Clk $end
+$var wire 1 5 i_Pattern [3] $end
+$var wire 1 6 i_Pattern [2] $end
+$var wire 1 7 i_Pattern [1] $end
+$var wire 1 8 i_Pattern [0] $end
+$var wire 1 5" i_HSync $end
+$var wire 1 6" i_VSync $end
+$var wire 1 ; w_VSync $end
+$var wire 1 < w_HSync $end
+$var wire 1 = Pattern_Red [47] $end
+$var wire 1 > Pattern_Red [46] $end
+$var wire 1 ? Pattern_Red [45] $end
+$var wire 1 @ Pattern_Red [44] $end
+$var wire 1 A Pattern_Red [43] $end
+$var wire 1 B Pattern_Red [42] $end
+$var wire 1 C Pattern_Red [41] $end
+$var wire 1 D Pattern_Red [40] $end
+$var wire 1 E Pattern_Red [39] $end
+$var wire 1 F Pattern_Red [38] $end
+$var wire 1 G Pattern_Red [37] $end
+$var wire 1 H Pattern_Red [36] $end
+$var wire 1 I Pattern_Red [35] $end
+$var wire 1 J Pattern_Red [34] $end
+$var wire 1 K Pattern_Red [33] $end
+$var wire 1 L Pattern_Red [32] $end
+$var wire 1 M Pattern_Red [31] $end
+$var wire 1 N Pattern_Red [30] $end
+$var wire 1 O Pattern_Red [29] $end
+$var wire 1 P Pattern_Red [28] $end
+$var wire 1 Q Pattern_Red [27] $end
+$var wire 1 R Pattern_Red [26] $end
+$var wire 1 S Pattern_Red [25] $end
+$var wire 1 T Pattern_Red [24] $end
+$var wire 1 U Pattern_Red [23] $end
+$var wire 1 V Pattern_Red [22] $end
+$var wire 1 W Pattern_Red [21] $end
+$var wire 1 X Pattern_Red [20] $end
+$var wire 1 Y Pattern_Red [19] $end
+$var wire 1 Z Pattern_Red [18] $end
+$var wire 1 [ Pattern_Red [17] $end
+$var wire 1 \ Pattern_Red [16] $end
+$var wire 1 ] Pattern_Red [15] $end
+$var wire 1 ^ Pattern_Red [14] $end
+$var wire 1 _ Pattern_Red [13] $end
+$var wire 1 ` Pattern_Red [12] $end
+$var wire 1 a Pattern_Red [11] $end
+$var wire 1 b Pattern_Red [10] $end
+$var wire 1 c Pattern_Red [9] $end
+$var wire 1 d Pattern_Red [8] $end
+$var wire 1 e Pattern_Red [7] $end
+$var wire 1 f Pattern_Red [6] $end
+$var wire 1 g Pattern_Red [5] $end
+$var wire 1 h Pattern_Red [4] $end
+$var wire 1 i Pattern_Red [3] $end
+$var wire 1 j Pattern_Red [2] $end
+$var wire 1 k Pattern_Red [1] $end
+$var wire 1 l Pattern_Red [0] $end
+$var wire 1 m Pattern_Grn [47] $end
+$var wire 1 n Pattern_Grn [46] $end
+$var wire 1 o Pattern_Grn [45] $end
+$var wire 1 p Pattern_Grn [44] $end
+$var wire 1 q Pattern_Grn [43] $end
+$var wire 1 r Pattern_Grn [42] $end
+$var wire 1 s Pattern_Grn [41] $end
+$var wire 1 t Pattern_Grn [40] $end
+$var wire 1 u Pattern_Grn [39] $end
+$var wire 1 v Pattern_Grn [38] $end
+$var wire 1 w Pattern_Grn [37] $end
+$var wire 1 x Pattern_Grn [36] $end
+$var wire 1 y Pattern_Grn [35] $end
+$var wire 1 z Pattern_Grn [34] $end
+$var wire 1 { Pattern_Grn [33] $end
+$var wire 1 | Pattern_Grn [32] $end
+$var wire 1 } Pattern_Grn [31] $end
+$var wire 1 ~ Pattern_Grn [30] $end
+$var wire 1 !! Pattern_Grn [29] $end
+$var wire 1 "! Pattern_Grn [28] $end
+$var wire 1 #! Pattern_Grn [27] $end
+$var wire 1 $! Pattern_Grn [26] $end
+$var wire 1 %! Pattern_Grn [25] $end
+$var wire 1 &! Pattern_Grn [24] $end
+$var wire 1 '! Pattern_Grn [23] $end
+$var wire 1 (! Pattern_Grn [22] $end
+$var wire 1 )! Pattern_Grn [21] $end
+$var wire 1 *! Pattern_Grn [20] $end
+$var wire 1 +! Pattern_Grn [19] $end
+$var wire 1 ,! Pattern_Grn [18] $end
+$var wire 1 -! Pattern_Grn [17] $end
+$var wire 1 .! Pattern_Grn [16] $end
+$var wire 1 /! Pattern_Grn [15] $end
+$var wire 1 0! Pattern_Grn [14] $end
+$var wire 1 1! Pattern_Grn [13] $end
+$var wire 1 2! Pattern_Grn [12] $end
+$var wire 1 3! Pattern_Grn [11] $end
+$var wire 1 4! Pattern_Grn [10] $end
+$var wire 1 5! Pattern_Grn [9] $end
+$var wire 1 6! Pattern_Grn [8] $end
+$var wire 1 7! Pattern_Grn [7] $end
+$var wire 1 8! Pattern_Grn [6] $end
+$var wire 1 9! Pattern_Grn [5] $end
+$var wire 1 :! Pattern_Grn [4] $end
+$var wire 1 ;! Pattern_Grn [3] $end
+$var wire 1 <! Pattern_Grn [2] $end
+$var wire 1 =! Pattern_Grn [1] $end
+$var wire 1 >! Pattern_Grn [0] $end
+$var wire 1 ?! Pattern_Blu [47] $end
+$var wire 1 @! Pattern_Blu [46] $end
+$var wire 1 A! Pattern_Blu [45] $end
+$var wire 1 B! Pattern_Blu [44] $end
+$var wire 1 C! Pattern_Blu [43] $end
+$var wire 1 D! Pattern_Blu [42] $end
+$var wire 1 E! Pattern_Blu [41] $end
+$var wire 1 F! Pattern_Blu [40] $end
+$var wire 1 G! Pattern_Blu [39] $end
+$var wire 1 H! Pattern_Blu [38] $end
+$var wire 1 I! Pattern_Blu [37] $end
+$var wire 1 J! Pattern_Blu [36] $end
+$var wire 1 K! Pattern_Blu [35] $end
+$var wire 1 L! Pattern_Blu [34] $end
+$var wire 1 M! Pattern_Blu [33] $end
+$var wire 1 N! Pattern_Blu [32] $end
+$var wire 1 O! Pattern_Blu [31] $end
+$var wire 1 P! Pattern_Blu [30] $end
+$var wire 1 Q! Pattern_Blu [29] $end
+$var wire 1 R! Pattern_Blu [28] $end
+$var wire 1 S! Pattern_Blu [27] $end
+$var wire 1 T! Pattern_Blu [26] $end
+$var wire 1 U! Pattern_Blu [25] $end
+$var wire 1 V! Pattern_Blu [24] $end
+$var wire 1 W! Pattern_Blu [23] $end
+$var wire 1 X! Pattern_Blu [22] $end
+$var wire 1 Y! Pattern_Blu [21] $end
+$var wire 1 Z! Pattern_Blu [20] $end
+$var wire 1 [! Pattern_Blu [19] $end
+$var wire 1 \! Pattern_Blu [18] $end
+$var wire 1 ]! Pattern_Blu [17] $end
+$var wire 1 ^! Pattern_Blu [16] $end
+$var wire 1 _! Pattern_Blu [15] $end
+$var wire 1 `! Pattern_Blu [14] $end
+$var wire 1 a! Pattern_Blu [13] $end
+$var wire 1 b! Pattern_Blu [12] $end
+$var wire 1 c! Pattern_Blu [11] $end
+$var wire 1 d! Pattern_Blu [10] $end
+$var wire 1 e! Pattern_Blu [9] $end
+$var wire 1 f! Pattern_Blu [8] $end
+$var wire 1 g! Pattern_Blu [7] $end
+$var wire 1 h! Pattern_Blu [6] $end
+$var wire 1 i! Pattern_Blu [5] $end
+$var wire 1 j! Pattern_Blu [4] $end
+$var wire 1 k! Pattern_Blu [3] $end
+$var wire 1 l! Pattern_Blu [2] $end
+$var wire 1 m! Pattern_Blu [1] $end
+$var wire 1 n! Pattern_Blu [0] $end
+$var wire 1 o! w_Col_Count [9] $end
+$var wire 1 p! w_Col_Count [8] $end
+$var wire 1 q! w_Col_Count [7] $end
+$var wire 1 r! w_Col_Count [6] $end
+$var wire 1 s! w_Col_Count [5] $end
+$var wire 1 t! w_Col_Count [4] $end
+$var wire 1 u! w_Col_Count [3] $end
+$var wire 1 v! w_Col_Count [2] $end
+$var wire 1 w! w_Col_Count [1] $end
+$var wire 1 x! w_Col_Count [0] $end
+$var wire 1 y! w_Row_Count [9] $end
+$var wire 1 z! w_Row_Count [8] $end
+$var wire 1 {! w_Row_Count [7] $end
+$var wire 1 |! w_Row_Count [6] $end
+$var wire 1 }! w_Row_Count [5] $end
+$var wire 1 ~! w_Row_Count [4] $end
+$var wire 1 !" w_Row_Count [3] $end
+$var wire 1 "" w_Row_Count [2] $end
+$var wire 1 #" w_Row_Count [1] $end
+$var wire 1 $" w_Row_Count [0] $end
+$var wire 1 %" w_Bar_Width [6] $end
+$var wire 1 &" w_Bar_Width [5] $end
+$var wire 1 '" w_Bar_Width [4] $end
+$var wire 1 (" w_Bar_Width [3] $end
+$var wire 1 )" w_Bar_Width [2] $end
+$var wire 1 *" w_Bar_Width [1] $end
+$var wire 1 +" w_Bar_Width [0] $end
+$var wire 1 ," w_Bar_Select [2] $end
+$var wire 1 -" w_Bar_Select [1] $end
+$var wire 1 ." w_Bar_Select [0] $end
+$var reg 1 /" o_HSync $end
+$var reg 1 0" o_VSync $end
+$var reg 3 1" o_Red_Video [2:0] $end
+$var reg 3 2" o_Grn_Video [2:0] $end
+$var reg 3 3" o_Blu_Video [2:0] $end
+$scope module UUT $end
+$var wire 1 4" i_Clk $end
+$var wire 1 5" i_HSync $end
+$var wire 1 6" i_VSync $end
+$var wire 1 7" w_Frame_Start $end
+$var reg 1 8" o_HSync $end
+$var reg 1 9" o_VSync $end
+$var reg 10 :" o_Col_Count [9:0] $end
+$var reg 10 ;" o_Row_Count [9:0] $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+x#
+x"
+x!
+x&
+x%
+x$
+0/
+04"
+0.
+x)
+x(
+x'
+15"
+16"
+18
+07
+16
+05
+0,
+0-
+b0 2
+b0 3
+0/"
+00"
+bx 1"
+bx 2"
+bx 3"
+0;
+0<
+zl
+zk
+zj
+zi
+zh
+zg
+zf
+ze
+zd
+zc
+zb
+za
+z`
+z_
+z^
+z]
+z\
+z[
+zZ
+zY
+zX
+zW
+zV
+zU
+zT
+zS
+zR
+1Q
+1P
+1O
+0N
+0M
+0L
+0K
+0J
+0I
+0H
+0G
+0F
+0E
+0D
+0C
+1B
+1A
+1@
+0?
+0>
+0=
+z>!
+z=!
+z<!
+z;!
+z:!
+z9!
+z8!
+z7!
+z6!
+z5!
+z4!
+z3!
+z2!
+z1!
+z0!
+z/!
+z.!
+z-!
+z,!
+z+!
+z*!
+z)!
+z(!
+z'!
+z&!
+z%!
+z$!
+1#!
+1"!
+1!!
+0~
+0}
+0|
+0{
+0z
+0y
+0x
+0w
+0v
+1u
+1t
+1s
+0r
+0q
+0p
+0o
+0n
+0m
+zn!
+zm!
+zl!
+zk!
+zj!
+zi!
+zh!
+zg!
+zf!
+ze!
+zd!
+zc!
+zb!
+za!
+z`!
+z_!
+z^!
+z]!
+z\!
+z[!
+zZ!
+zY!
+zX!
+zW!
+zV!
+zU!
+zT!
+1S!
+1R!
+1Q!
+0P!
+0O!
+0N!
+0M!
+0L!
+0K!
+1J!
+1I!
+1H!
+0G!
+0F!
+0E!
+0D!
+0C!
+0B!
+0A!
+0@!
+0?!
+0x!
+0w!
+0v!
+0u!
+0t!
+0s!
+0r!
+0q!
+0p!
+0o!
+0$"
+0#"
+0""
+0!"
+0~!
+0}!
+0|!
+0{!
+0z!
+0y!
+1+"
+0*"
+0)"
+0("
+0'"
+0&"
+0%"
+0."
+0-"
+0,"
+08"
+09"
+b0 :"
+b0 ;"
+17"
+$end
+#20000
+0#
+0"
+0!
+0&
+0%
+0$
+1/
+14"
+1.
+0)
+0(
+0'
+b1 2
+b0 1"
+b0 2"
+b0 3"
+1;
+1<
+18"
+19"
+07"
+#40000
+0/
+04"
+0.
+#60000
+1/
+14"
+1.
+1,
+1-
+b10 2
+1/"
+10"
+1P!
+1O!
+1N!
+1x!
+1."
+b1 :"
+#80000
+0/
+04"
+0.
+#100000
+1/
+14"
+1.
+1)
+1(
+1'
+b11 2
+b111 3"
+1~
+1}
+1|
+0P!
+0O!
+0N!
+0x!
+1w!
+0."
+1-"
+b10 :"
+#120000
+0/
+04"
+0.
+#140000
+1&
+1%
+1$
+1/
+14"
+1.
+0)
+0(
+0'
+b100 2
+b111 2"
+b0 3"
+1P!
+1O!
+1N!
+1x!
+1."
+b11 :"
+#160000
+0/
+04"
+0.
+#180000
+1/
+14"
+1.
+1)
+1(
+1'
+b101 2
+b111 3"
+1N
+1M
+1L
+0~
+0}
+0|
+0P!
+0O!
+0N!
+0x!
+0w!
+1v!
+0."
+0-"
+1,"
+b100 :"
+#200000
+0/
+04"
+0.
+#220000
+1#
+1"
+1!
+0&
+0%
+0$
+1/
+14"
+1.
+0)
+0(
+0'
+b110 2
+b111 1"
+b0 2"
+b0 3"
+1P!
+1O!
+1N!
+1x!
+1."
+b101 :"
+#240000
+0/
+04"
+0.
+#260000
+1/
+14"
+1.
+1)
+1(
+1'
+b111 2
+b111 3"
+1~
+1}
+1|
+0P!
+0O!
+0N!
+0x!
+1w!
+0."
+1-"
+b110 :"
+#280000
+0/
+04"
+0.
+#300000
+1&
+1%
+1$
+1/
+14"
+1.
+0)
+0(
+0'
+05"
+b1000 2
+b111 2"
+b0 3"
+1P!
+1O!
+1N!
+1x!
+1."
+b111 :"
+#320000
+0/
+04"
+0.
+#340000
+1/
+14"
+1.
+1)
+1(
+1'
+b1001 2
+b111 3"
+0<
+0B
+0A
+0@
+0u
+0t
+0s
+0J!
+0I!
+0H!
+0x!
+0w!
+0v!
+1u!
+08"
+b1000 :"
+#360000
+0/
+04"
+0.
+#380000
+1/
+14"
+1.
+15"
+0,
+b0 2
+b1 3
+0/"
+1x!
+b1001 :"
+#400000
+0/
+04"
+0.
+#420000
+1/
+14"
+1.
+b1 2
+1<
+0N
+0M
+0L
+1B
+1A
+1@
+0~
+0}
+0|
+1u
+1t
+1s
+0P!
+0O!
+0N!
+1J!
+1I!
+1H!
+0x!
+0u!
+1$"
+0."
+0-"
+0,"
+18"
+b0 :"
+b1 ;"
+#440000
+0/
+04"
+0.
+#460000
+0#
+0"
+0!
+0&
+0%
+0$
+1/
+14"
+1.
+0)
+0(
+0'
+1,
+b10 2
+1/"
+b0 1"
+b0 2"
+b0 3"
+1P!
+1O!
+1N!
+1x!
+1."
+b1 :"
+#480000
+0/
+04"
+0.
+#500000
+1/
+14"
+1.
+1)
+1(
+1'
+b11 2
+b111 3"
+1~
+1}
+1|
+0P!
+0O!
+0N!
+0x!
+1w!
+0."
+1-"
+b10 :"
+#520000
+0/
+04"
+0.
+#540000
+1&
+1%
+1$
+1/
+14"
+1.
+0)
+0(
+0'
+b100 2
+b111 2"
+b0 3"
+1P!
+1O!
+1N!
+1x!
+1."
+b11 :"
+#560000
+0/
+04"
+0.
+#580000
+1/
+14"
+1.
+1)
+1(
+1'
+b101 2
+b111 3"
+1N
+1M
+1L
+0~
+0}
+0|
+0P!
+0O!
+0N!
+0x!
+0w!
+1v!
+0."
+0-"
+1,"
+b100 :"
+#600000
+0/
+04"
+0.
+#620000
+1#
+1"
+1!
+0&
+0%
+0$
+1/
+14"
+1.
+0)
+0(
+0'
+b110 2
+b111 1"
+b0 2"
+b0 3"
+1P!
+1O!
+1N!
+1x!
+1."
+b101 :"
+#640000
+0/
+04"
+0.
+#660000
+1/
+14"
+1.
+1)
+1(
+1'
+b111 2
+b111 3"
+1~
+1}
+1|
+0P!
+0O!
+0N!
+0x!
+1w!
+0."
+1-"
+b110 :"
+#680000
+0/
+04"
+0.
+#700000
+1&
+1%
+1$
+1/
+14"
+1.
+0)
+0(
+0'
+05"
+b1000 2
+b111 2"
+b0 3"
+1P!
+1O!
+1N!
+1x!
+1."
+b111 :"
+#720000
+0/
+04"
+0.
+#740000
+1/
+14"
+1.
+1)
+1(
+1'
+b1001 2
+b111 3"
+0<
+0B
+0A
+0@
+0u
+0t
+0s
+0J!
+0I!
+0H!
+0x!
+0w!
+0v!
+1u!
+08"
+b1000 :"
+#760000
+0/
+04"
+0.
+#780000
+1/
+14"
+1.
+15"
+0,
+b0 2
+b10 3
+0/"
+1x!
+b1001 :"
+#800000
+0/
+04"
+0.
+#820000
+1/
+14"
+1.
+b1 2
+1<
+0N
+0M
+0L
+1B
+1A
+1@
+0~
+0}
+0|
+1u
+1t
+1s
+0P!
+0O!
+0N!
+1J!
+1I!
+1H!
+0x!
+0u!
+0$"
+1#"
+0."
+0-"
+0,"
+18"
+b0 :"
+b10 ;"
+#840000
+0/
+04"
+0.
+#860000
+0#
+0"
+0!
+0&
+0%
+0$
+1/
+14"
+1.
+0)
+0(
+0'
+1,
+b10 2
+1/"
+b0 1"
+b0 2"
+b0 3"
+1P!
+1O!
+1N!
+1x!
+1."
+b1 :"
+#880000
+0/
+04"
+0.
+#900000
+1/
+14"
+1.
+1)
+1(
+1'
+b11 2
+b111 3"
+1~
+1}
+1|
+0P!
+0O!
+0N!
+0x!
+1w!
+0."
+1-"
+b10 :"
+#920000
+0/
+04"
+0.
+#940000
+1&
+1%
+1$
+1/
+14"
+1.
+0)
+0(
+0'
+b100 2
+b111 2"
+b0 3"
+1P!
+1O!
+1N!
+1x!
+1."
+b11 :"
+#960000
+0/
+04"
+0.
+#980000
+1/
+14"
+1.
+1)
+1(
+1'
+b101 2
+b111 3"
+1N
+1M
+1L
+0~
+0}
+0|
+0P!
+0O!
+0N!
+0x!
+0w!
+1v!
+0."
+0-"
+1,"
+b100 :"
+#1000000
+0/
+04"
+0.

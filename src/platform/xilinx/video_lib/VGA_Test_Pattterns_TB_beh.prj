@@ -1,0 +1,4 @@
+verilog work "../../../lib/video_lib/rtl/VGA_Sync_Pulses.v"
+verilog work "../../../lib/video_lib/rtl/Test_Pattern_Gen.v"
+verilog work "../../../lib/video_lib/simulation/VGA_Test_Patterns_TB.v"
+verilog work "/opt/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v"

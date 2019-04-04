@@ -195,6 +195,10 @@ signal cus27_clk_48m		: std_logic;
 signal cus27_clk_24m		: std_logic;
 signal cus27_clk_12m		: std_logic;
 signal cus27_clk_6m		: std_logic;
+
+signal cus27_hsync		: std_logic;
+signal cus27_vsync		: std_logic;
+
 signal cus27_pclk_8v		: std_logic;
 signal cus27_pclk_4v		: std_logic;
 signal cus27_pclk_1v		: std_logic;
@@ -203,6 +207,8 @@ signal cus27_pclk_2h		: std_logic;
 signal cus27_pclk_1h		: std_logic;
 signal cus27_pclk_s2h	: std_logic;
 signal cus27_pclk_s1h	: std_logic;
+
+signal vid_pattern		: std_logic_vector(3 downto 0) := "0000";
 
 component cus27
 generic(
@@ -237,6 +243,27 @@ port(
 );
 end component;
 	
+component Test_Pattern_Gen
+generic(
+	VIDEO_WIDTH 	: integer := 3;
+   TOTAL_COLS  	: integer := 384;
+   TOTAL_ROWS   	: integer := 288;
+   ACTIVE_COLS  	: integer := 304;
+   ACTIVE_ROWS  	: integer := 288
+);
+port (
+	i_Clk : in std_logic;
+   i_Pattern : in std_logic_vector(3 downto 0);
+   i_HSync : in std_logic;
+   i_VSync : in std_logic;
+   o_HSync : out std_logic;
+   o_VSync : out std_logic;
+   o_Red_Video  : out std_logic_vector(VIDEO_WIDTH-1 downto 0);
+   o_Grn_Video  : out std_logic_vector(VIDEO_WIDTH-1 downto 0);
+   o_Blu_Video  : out std_logic_vector(VIDEO_WIDTH-1 downto 0)
+);
+
+end component;
 begin
 
 	NO_HARDWARE_CLOCKS: if C_USE_HARDWARE_CLOCKS = 0 generate
@@ -270,6 +297,9 @@ begin
 		clk_24m_o	=> cus27_clk_24m,
 		clk_12m_o	=> cus27_clk_12m,
 		clk_6m_o		=> cus27_clk_6m,
+		-- video synchronisation
+		hsync 		=> cus27_hsync,
+		vsync 		=> cus27_vsync,
 		-- pixel clocks
 		pclk_8v_o	=> cus27_pclk_8v,
 		pclk_4v_o	=> cus27_pclk_4v,
@@ -279,6 +309,28 @@ begin
 		pclk_1h_o	=> cus27_pclk_1h,
 		pclk_s2h_o	=> cus27_pclk_s2h,
 		pclk_s1h_o	=> cus27_pclk_s1h
+	);
+	
+	Inst_Test_Pattern_Gen: Test_Pattern_Gen
+	generic map
+	(
+		VIDEO_WIDTH 	=> 4,
+		TOTAL_COLS  	=> 384,
+		TOTAL_ROWS   	=> 288,
+		ACTIVE_COLS  	=> 304,
+		ACTIVE_ROWS  	=> 288
+	)
+	port map
+	(
+		i_Clk 			=> clk_6m,
+		i_Pattern 		=> vid_pattern,
+		i_HSync 			=> cus27_hsync,
+		i_VSync 			=> cus27_vsync,
+		o_HSync 			=> vid_hsync,
+		o_VSync 			=> vid_vsync,
+		o_Red_Video  	=> vid_red(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
+		o_Grn_Video  	=> vid_green(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
+		o_Blu_Video		=> vid_blue(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4)
 	);
 	
 end architecture rtl;
