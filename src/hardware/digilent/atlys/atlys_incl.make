@@ -81,7 +81,10 @@ implementation/atlys_digilent_usb_epp_wrapper.ngc \
 implementation/atlys_digilent_ac97_cntlr_wrapper.ngc \
 implementation/atlys_dip_switches_8bits_wrapper.ngc \
 implementation/atlys_system86_0_wrapper.ngc \
-implementation/atlys_v_vid_in_axi4s_0_wrapper.ngc
+implementation/atlys_v_vid_in_axi4s_0_wrapper.ngc \
+implementation/atlys_v_scaler_0_wrapper.ngc \
+implementation/atlys_axi_hdmi_0_wrapper.ngc \
+implementation/atlys_v_tc_0_wrapper.ngc
 
 POSTSYN_NETLIST = implementation/$(SYSTEM).ngc
 
