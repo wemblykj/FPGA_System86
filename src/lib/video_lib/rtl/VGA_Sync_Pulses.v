@@ -27,7 +27,7 @@ module VGA_Sync_Pulses
       
   end
 	  
-  assign o_HSync = o_Col_Count < ACTIVE_COLS ? 1'b1 : 1'b0;
-  assign o_VSync = o_Row_Count < ACTIVE_ROWS ? 1'b1 : 1'b0;
+  assign o_HSync = o_Col_Count < ACTIVE_COLS ? 1'b0 : 1'b1;
+  assign o_VSync = o_Row_Count < ACTIVE_ROWS ? 1'b0 : 1'b1;
   
 endmodule

@@ -2,28 +2,9 @@ Command line:
    VGA_Test_Pattterns_TB_isim_beh.exe
      -simmode  gui
      -simrunnum  0
-     -socket  48027
+     -socket  37999
 
-Thu Apr  4 17:12:15 2019
+Tue Apr  9 15:00:44 2019
 
 
  Elaboration Time: 0.02 sec
-
- Current Memory Usage: 234.025 Meg
-
- Total Signals          : 40
- Total Nets             : 229
- Total Signal Drivers   : 45
- Total Blocks           : 5
- Total Primitive Blocks : 3
- Total Processes        : 54
- Total Traceable Variables  : 46
- Total Scalar Nets and Variables : 875
-Total Line Count : 118
-
- Total Simulation Time: 0.09 sec
-
- Current Memory Usage: 309.527 Meg
-
-Thu Apr  4 17:12:34 2019
-

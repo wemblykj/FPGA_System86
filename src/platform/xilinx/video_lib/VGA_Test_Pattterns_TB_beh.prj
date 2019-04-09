@@ -1,3 +1,4 @@
+verilog work "../../../lib/video_lib/simulation/vga_logger.v"
 verilog work "../../../lib/video_lib/rtl/VGA_Sync_Pulses.v"
 verilog work "../../../lib/video_lib/rtl/Test_Pattern_Gen.v"
 verilog work "../../../lib/video_lib/simulation/VGA_Test_Patterns_TB.v"

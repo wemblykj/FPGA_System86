@@ -3,23 +3,25 @@ ISim P.20131013 (signature 0xfbc00daa)
 Number of CPUs detected in this system: 2
 Turning on mult-threading, number of parallel sub-compilation jobs: 4 
 Determining compilation order of HDL files
+Analyzing Verilog file "/home/administrator/Development/fpga/system86/src/platform/xilinx/video_lib/../../../lib/video_lib/simulation/vga_logger.v" into library work
 Analyzing Verilog file "/home/administrator/Development/fpga/system86/src/platform/xilinx/video_lib/../../../lib/video_lib/rtl/VGA_Sync_Pulses.v" into library work
 Analyzing Verilog file "/home/administrator/Development/fpga/system86/src/platform/xilinx/video_lib/../../../lib/video_lib/rtl/Test_Pattern_Gen.v" into library work
 Analyzing Verilog file "/home/administrator/Development/fpga/system86/src/platform/xilinx/video_lib/../../../lib/video_lib/simulation/VGA_Test_Patterns_TB.v" into library work
 Analyzing Verilog file "/opt/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v" into library work
 Starting static elaboration
 Completed static elaboration
-Fuse Memory Usage: 94944 KB
-Fuse CPU Usage: 1000 ms
-Compiling module VGA_Sync_Pulses(TOTAL_COLS=10,TO...
-Compiling module Sync_To_Count(TOTAL_COLS=10,TOTA...
+Fuse Memory Usage: 94964 KB
+Fuse CPU Usage: 940 ms
+Compiling module VGA_Sync_Pulses(TOTAL_COLS=384,T...
+Compiling module Sync_To_Count(TOTAL_COLS=384,TOT...
 Compiling module Test_Pattern_Gen(VIDEO_WIDTH=3,T...
+Compiling module vga_logger(C_COMPONENT_DEPTH=3)
 Compiling module VGA_Test_Pattterns_TB
 Compiling module glbl
-Time Resolution for simulation is 1ps.
-Waiting for 2 sub-compilation(s) to finish...
-Compiled 5 Verilog Units
+Time Resolution for simulation is 1fs.
+Waiting for 3 sub-compilation(s) to finish...
+Compiled 6 Verilog Units
 Built simulation executable /home/administrator/Development/fpga/system86/src/platform/xilinx/video_lib/VGA_Test_Pattterns_TB_isim_beh.exe
-Fuse Memory Usage: 393320 KB
-Fuse CPU Usage: 1010 ms
-GCC CPU Usage: 440 ms
+Fuse Memory Usage: 393344 KB
+Fuse CPU Usage: 960 ms
+GCC CPU Usage: 470 ms

@@ -102,7 +102,6 @@
       <status xil_pn:value="AbortedRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <status xil_pn:value="OutOfDateForProperties"/>
-      <status xil_pn:value="OutOfDateForPredecessor"/>
       <status xil_pn:value="OutOfDateForced"/>
       <outfile xil_pn:name="cus27_isim_beh.wdb"/>
       <outfile xil_pn:name="isim.cmd"/>

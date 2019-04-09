@@ -5,10 +5,10 @@ WARNING: A WEBPACK license was found.
 WARNING: Please use Xilinx License Configuration Manager to check out a full ISim license.
 WARNING: ISim will run in Lite mode. Please refer to the ISim documentation for more information on the differences between the Lite and the Full version.
 This is a Lite version of ISim.
-Time resolution is 1 ps
+Time resolution is 1 fs
 # onerror resume
 # wave add /
-# run 1000 ns
+# run 18000 ns
 Simulator is doing circuit initialization process.
 Finished circuit initialization process.
-# exit 0
+Stopped at time : 18 us : File "/home/administrator/Development/fpga/system86/src/lib/video_lib/simulation/VGA_Test_Patterns_TB.v" Line 74
