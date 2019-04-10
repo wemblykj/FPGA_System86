@@ -95,8 +95,8 @@ module cus27
 		if (rst) begin
 			horizontal_counter <= 0;
 			horizontal_counter_next = 0;
-			hsync <= 0;
-			hsync_next <= 0;
+			hsync <= 1;
+			hsync_next <= 1;
 			hblank <= 0;
 			hblank_next <= 0;
 			hreset <= 0;
@@ -114,8 +114,8 @@ module cus27
 			//vresetH <= 0;
 			vertical_counter <= 0;
 			vertical_counter_next <= 0;
-			vsync <= 0;
-			vsync_next <= 0;
+			vsync <= 1;
+			vsync_next <= 1;
 			vblank <= 0;
 			vblank_next <= 0;
 			vreset <= 0;
@@ -139,10 +139,10 @@ module cus27
 	
 		// hsync
 		if (horizontal_counter[8:0] === 9'b100110000)
-			hsync_next <= 1;	// ~304
+			hsync_next <= 0;	// ~304
 		
 		if (horizontal_counter[8:3] === 6'b101010) 
-			hsync_next <= 0;	// ~336
+			hsync_next <= 1;	// ~336
 	
 		// hblank
 		if (horizontal_counter[8:3] === 6'b100010)
@@ -174,10 +174,10 @@ module cus27
 	
 		// vsync
 		if (vertical_counter[8:3] === 6'b011111) //	~248
-			vsync_next <= 1;
+			vsync_next <= 0;
 		
 		if (vertical_counter[8:3] === 6'b000000) // ~336	
-			vsync_next <= 0;	
+			vsync_next <= 1;	
 		
 		// vblank
 		if (vertical_counter[8:3] === 6'b011110) //	~240

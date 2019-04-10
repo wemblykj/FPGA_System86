@@ -24,36 +24,59 @@
 
 module system86_tb;
 
+	parameter C_VIDEO_COMPONENT_DEPTH = 4;
+
 	// Inputs
-	reg clk_in;
+	reg clk_48m;
 	reg rst;
-	wire [7:0] R;
-	wire [7:0] G;
-	wire [7:0] B;
-	wire HSYNC;
-	wire VSYNC;
+
+	wire vid_clk;
+	wire [3:0] vid_red;
+	wire [3:0] vid_green;
+	wire [3:0] vid_blue;
+	wire hsync;
+	wire hblank;
+	wire vsync;
+	wire vblank;
 	
 	// Instantiate the Unit Under Test (UUT)
-	system86 uut (
-		.CLK_48M(clk_in), 
-		.RST(rst),
-		.R(R),
-		.G(G),
-		.B(B),
-		.HSYNC(HSYNC),
-		.VSYNC(VSYNC)
-	);
+	system86 
+		#(
+			.C_USE_HARDWARE_CLOCKS(0),
+			.C_VIDEO_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
+		)
+		uut (
+			.clk_48m(clk_in), 
+			.rst(rst),
+			.vid_clk(vid_clk),
+			.vid_red(vid_red),
+			.vid_green(vid_green),
+			.vid_blue(vid_blue),
+			.hsync(hsync),
+			.hblank(hblank),
+			.vsync(vsync),
+			.vblank(vblank)
+		);
 
-	integer rgb_fd;
-	reg [2:0] counter = 0;
+	vga_logger
+		#(
+			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
+		)
+		logger (
+			.pixel_clk(vid_clk),
+			.output_enable(~rst),
+			.red(vid_red),
+			.green(vid_green),
+			.blue(vid_blue),
+			.hsync(hsync),
+			.vsync(vsync)
+		);
+		
 	initial begin
 		// Initialize Inputs
-		clk_in = 0;
+		clk_48m = 0;
 		rst = 1;
 
-		#10
-		rgb_fd = $fopen("tilemap_single_rgb.log", "w");
-		
 		// Wait 1000 ns for global reset to finish
 		#100;
         
@@ -61,17 +84,7 @@ module system86_tb;
 		rst = 0;
 	end
       
-	always begin
-		#10.1725 clk_in = ~clk_in;
-		
-		if (!rst) begin
-			if (counter[2])
-				$fwrite(rgb_fd, "%0d ns: %b %b %b %b %b\n", $time, HSYNC, VSYNC, R, G, B);
-				
-			if (clk_in)
-				counter = counter + 1;
-		end
-	end
+	always #10.1725 clk_48m = ~clk_48m;
 	
 endmodule
 
