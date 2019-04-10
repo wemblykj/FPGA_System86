@@ -69,6 +69,16 @@
  PORT axi_hdmi_0_TMDS_TX_1_N_pin = axi_hdmi_0_TMDS_TX_1_N, DIR = O
  PORT axi_hdmi_0_TMDS_TX_0_P_pin = axi_hdmi_0_TMDS_TX_0_P, DIR = O
  PORT axi_hdmi_0_TMDS_TX_0_N_pin = axi_hdmi_0_TMDS_TX_0_N, DIR = O
+ PORT axi_hdmi_0_TMDS_RX_CLK_P_pin = axi_hdmi_0_TMDS_RX_CLK_P, DIR = I
+ PORT axi_hdmi_0_TMDS_RX_CLK_N_pin = axi_hdmi_0_TMDS_RX_CLK_N, DIR = I
+ PORT axi_hdmi_0_TMDS_RX_2_P_pin = axi_hdmi_0_TMDS_RX_2_P, DIR = I
+ PORT axi_hdmi_0_TMDS_RX_2_N_pin = axi_hdmi_0_TMDS_RX_2_N, DIR = I
+ PORT axi_hdmi_0_TMDS_RX_1_P_pin = axi_hdmi_0_TMDS_RX_1_P, DIR = I
+ PORT axi_hdmi_0_TMDS_RX_1_N_pin = axi_hdmi_0_TMDS_RX_1_N, DIR = I
+ PORT axi_hdmi_0_TMDS_RX_0_P_pin = axi_hdmi_0_TMDS_RX_0_P, DIR = I
+ PORT axi_hdmi_0_TMDS_RX_0_N_pin = axi_hdmi_0_TMDS_RX_0_N, DIR = I
+ PORT axi_hdmi_0_TMDS_RX_SCL_pin = axi_hdmi_0_TMDS_RX_SCL, DIR = I
+ PORT axi_hdmi_0_TMDS_RX_SDA_pin = axi_hdmi_0_TMDS_RX_SDA, DIR = IO
 
 
 BEGIN proc_sys_reset
@@ -405,6 +415,7 @@ BEGIN v_vid_in_axi4s
  PARAMETER HW_VER = 2.01.a
  PARAMETER RAM_ADDR_BITS = 5
  BUS_INTERFACE VTIMING_OUT = v_vid_in_axi4s_0_VTIMING_OUT
+ BUS_INTERFACE M_AXIS_VIDEO = v_vid_in_axi4s_0_M_AXIS_VIDEO
  PORT vid_in_clk = system86_0_vid_clk_6m
  PORT vid_vblank = system86_0_vid_vblank
  PORT vid_hblank = system86_0_vid_hblank
@@ -421,6 +432,7 @@ BEGIN v_scaler
  PARAMETER C_CHROMA_FORMAT = 3
  PARAMETER C_SOURCE_H_SIZE = 384
  PARAMETER C_SOURCE_V_SIZE = 288
+ BUS_INTERFACE S_AXIS_VIDEO = v_vid_in_axi4s_0_M_AXIS_VIDEO
  BUS_INTERFACE M_AXIS_VIDEO = v_scaler_0_M_AXIS_VIDEO
  PORT core_clk = clk_100_0000MHzPLL0
  PORT core_aresetn = proc_sys_reset_0_Interconnect_aresetn
@@ -432,6 +444,7 @@ BEGIN axi_hdmi
  PARAMETER C_USE_HDMI_RECEIVER = 0
  PARAMETER C_BASEADDR = 0x7e200000
  PARAMETER C_HIGHADDR = 0x7e20ffff
+ PARAMETER C_AXI_STREAM_DATA_WIDTH = 24
  BUS_INTERFACE S_AXI = axi4lite_0
  BUS_INTERFACE S_AXIS_MM2S = v_scaler_0_M_AXIS_VIDEO
  PORT S_AXI_ACLK = clk_100_0000MHzPLL0
@@ -444,6 +457,16 @@ BEGIN axi_hdmi
  PORT TMDS_TX_0_P = axi_hdmi_0_TMDS_TX_0_P
  PORT TMDS_TX_0_N = axi_hdmi_0_TMDS_TX_0_N
  PORT ACLK = clk_100_0000MHzPLL0
+ PORT TMDS_RX_CLK_P = axi_hdmi_0_TMDS_RX_CLK_P
+ PORT TMDS_RX_CLK_N = axi_hdmi_0_TMDS_RX_CLK_N
+ PORT TMDS_RX_2_P = axi_hdmi_0_TMDS_RX_2_P
+ PORT TMDS_RX_2_N = axi_hdmi_0_TMDS_RX_2_N
+ PORT TMDS_RX_1_P = axi_hdmi_0_TMDS_RX_1_P
+ PORT TMDS_RX_1_N = axi_hdmi_0_TMDS_RX_1_N
+ PORT TMDS_RX_0_P = axi_hdmi_0_TMDS_RX_0_P
+ PORT TMDS_RX_0_N = axi_hdmi_0_TMDS_RX_0_N
+ PORT TMDS_RX_SCL = axi_hdmi_0_TMDS_RX_SCL
+ PORT TMDS_RX_SDA = axi_hdmi_0_TMDS_RX_SDA
 END
 
 BEGIN v_tc
@@ -453,6 +476,7 @@ BEGIN v_tc
  PARAMETER C_DETECT_EN = 1
  PARAMETER C_BASEADDR = 0x7b400000
  PARAMETER C_HIGHADDR = 0x7b40ffff
+ PARAMETER C_GEN_VIDEO_FORMAT = 2
  BUS_INTERFACE S_AXI = axi4lite_0
  BUS_INTERFACE VTIMING_IN = v_vid_in_axi4s_0_VTIMING_OUT
  PORT s_axi_aclk = clk_100_0000MHzPLL0

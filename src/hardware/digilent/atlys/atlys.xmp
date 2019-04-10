@@ -3,9 +3,10 @@ XmpVersion: 14.7
 VerMgmt: 14.7
 IntStyle: default
 Flow: ise
+ModuleSearchPath: C:/Users/Wembly/Development/System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/../../../
+ModuleSearchPath: C:/Xilinx/atlys_bsb_support_v_3_7/Atlys_AXI_BSB_Support/lib/Digilent/pcores/d_usb_epp_dstm_axi_v1_00_a/../../../
 ModuleSearchPath: /home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/../../../
 ModuleSearchPath: /home/administrator/Downloads/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
-ModuleSearchPath: ../../xilinx
 MHS File: atlys.mhs
 Architecture: spartan6
 Device: xc6slx45

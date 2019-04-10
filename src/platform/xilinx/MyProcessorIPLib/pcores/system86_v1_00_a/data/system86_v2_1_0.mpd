@@ -73,7 +73,8 @@ PORT sram_4r_ce = ChipEnable, DIR=I, BUS = M_RAM
 PORT sram_4r_we = WriteEnable, DIR=I, BUS = M_RAM
 PORT sram_4r_oe = OutputEnable, DIR=I, BUS = M_RAM
 PORT sram_4r_addr = Addr, DIR=I, BUS = M_RAM
-PORT sram_4r_data = Data, DIR=IO, BUS = M_RAM
-
+#PORT sram_4r_data = Data, TRI_O = sram_4r_data_i, TRI_T = sram_4r_we, DIR = IO, TRI_I = sram_4r_data_o, THREE_STATE = TRUE, BUS = M_RAM
+PORT sram_4r_data_i = DataWrite, DIR=I, BUS = M_RAM
+PORT sram_4r_data_o = DataRead, DIR=O, BUS = M_RAM
 
 END
