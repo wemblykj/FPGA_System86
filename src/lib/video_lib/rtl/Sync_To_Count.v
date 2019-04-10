@@ -54,6 +54,6 @@ module Sync_To_Count
   
     
   // Look for rising edge on Vertical Sync to reset the counters
-  assign w_Frame_Start = (o_VSync & i_VSync);
+  assign w_Frame_Start = (~o_VSync & i_VSync);
 
 endmodule

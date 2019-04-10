@@ -1,10 +1,10 @@
-`timescale 1ps/1fs
+`timescale 1ns/1ns
 
 module vga_logger
 #
 (
 	parameter C_COMPONENT_DEPTH = 8,
-	parameter C_FILE_NAME = "vga.log"	
+	parameter C_FILE_NAME = "vga.txt"	
 )
 (
 	input wire pixel_clk,
@@ -23,7 +23,7 @@ end
 
 always @(posedge pixel_clk) begin
 	if ((rgb_fd !== -1) & output_enable) begin
-		$fwrite(rgb_fd, "%d ps: %b %b %b %b %b\n", $time, hsync, vsync, red, green, blue);
+		$fwrite(rgb_fd, "%0t ns: %b %b %b %b %b\n", $time, hsync, vsync, red, green, blue);
 	end
 end
 

@@ -1,4 +1,4 @@
-`timescale 1ps/1fs
+`timescale 1ns/1ps
 
 // Testbench for VGA_Sync_Pulses module
 //`include "VGA_Sync_Pulses.v"
@@ -70,7 +70,7 @@ module VGA_Test_Pattterns_TB;
 		
   initial
   begin
-    #18000000;
+    #36000000;
     $finish();
   end
     

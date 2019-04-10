@@ -2,9 +2,9 @@ Command line:
    VGA_Test_Pattterns_TB_isim_beh.exe
      -simmode  gui
      -simrunnum  0
-     -socket  37999
+     -socket  52313
 
-Tue Apr  9 15:00:44 2019
+Wed Apr 10 13:45:50 2019
 
 
- Elaboration Time: 0.02 sec
+ Elaboration Time: 0.03 sec
