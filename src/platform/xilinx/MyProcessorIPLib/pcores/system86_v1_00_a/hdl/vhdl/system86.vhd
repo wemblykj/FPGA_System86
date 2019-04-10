@@ -80,7 +80,7 @@ entity system86 is
 	generic
 	(
 		C_USE_HARDWARE_CLOCKS 		: integer	:= 0;
-		C_VIDEO_COMPONENT_DEPTH		: integer	:= 8;
+		C_VIDEO_COMPONENT_DEPTH		: integer	:= 4;
 		
 		C_EPROM_7116_ADDR_WIDTH 	: integer	:= 9;
 		C_EPROM_7116_DATA_WIDTH 	: integer	:= 4;
@@ -317,8 +317,8 @@ begin
 		VIDEO_WIDTH 	=> 4,
 		TOTAL_COLS  	=> 384,
 		TOTAL_ROWS   	=> 288,
-		ACTIVE_COLS  	=> 304,
-		ACTIVE_ROWS  	=> 288
+		ACTIVE_COLS  	=> 288,
+		ACTIVE_ROWS  	=> 224
 	)
 	port map
 	(

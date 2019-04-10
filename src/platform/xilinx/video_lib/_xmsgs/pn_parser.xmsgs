@@ -8,5 +8,18 @@
 <!-- Copyright (c) 1995-2013 Xilinx, Inc.  All rights reserved.    -->
 
 <messages>
+<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;/home/administrator/Development/fpga/system86/src/lib/video_lib/rtl/Test_Pattern_Gen.v&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1065" >&quot;<arg fmt="%s" index="1">/home/administrator/Development/fpga/system86/src/lib/video_lib/rtl/Test_Pattern_Gen.v</arg>&quot; Line <arg fmt="%d" index="2">19</arg>. <arg fmt="%s" index="3">Include file found: &apos;/home/administrator/Development/fpga/system86/src/lib/video_lib/rtl/Sync_To_Count.v&apos; in file &quot;/home/administrator/Development/fpga/system86/src/lib/video_lib/rtl/Test_Pattern_Gen.v&quot; line 19
+</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;/home/administrator/Development/fpga/system86/src/lib/video_lib/rtl/VGA_Sync_Porch.v&quot; into library work</arg>
+</msg>
+
+<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;/home/administrator/Development/fpga/system86/src/lib/video_lib/rtl/VGA_Sync_Pulses.v&quot; into library work</arg>
+</msg>
+
 </messages>
 

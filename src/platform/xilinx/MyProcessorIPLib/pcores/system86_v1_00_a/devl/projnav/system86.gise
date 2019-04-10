@@ -55,6 +55,7 @@
     <file xil_pn:branch="Implementation" xil_pn:fileType="FILE_XST_PROJECT" xil_pn:name="system86_beh.prj"/>
     <file xil_pn:branch="Implementation" xil_pn:fileType="FILE_XST_PROJECT" xil_pn:name="system86_stx_beh.prj"/>
     <file xil_pn:fileType="FILE_HTML" xil_pn:name="system86_summary.html"/>
+    <file xil_pn:fileType="FILE_XST_PROJECT" xil_pn:name="system86_tb_stx_beh.prj"/>
     <file xil_pn:fileType="FILE_XRPT" xil_pn:name="system86_xst.xrpt"/>
     <file xil_pn:fileType="FILE_FITTER_REPORT" xil_pn:name="webtalk_pn.xml"/>
     <file xil_pn:branch="BehavioralSim" xil_pn:fileType="FILE_INI" xil_pn:name="xilinxsim.ini"/>
@@ -66,19 +67,21 @@
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1554395887" xil_pn:in_ck="-7025659503098631942" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1554395887">
+    <transform xil_pn:end_ts="1554902929" xil_pn:in_ck="4253938540941580371" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1554902929">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="../../../../../../../lib/system86/rtl/custom/cus27.v"/>
+      <outfile xil_pn:name="../../../../../../../lib/system86/simulation/system86_tb.v"/>
       <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Count.v"/>
       <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Test_Pattern_Gen.v"/>
+      <outfile xil_pn:name="../../../../../../../lib/video_lib/simulation/vga_logger.v"/>
       <outfile xil_pn:name="../../hdl/vhdl/system86.vhd"/>
     </transform>
-    <transform xil_pn:end_ts="1554298607" xil_pn:name="TRAN_xawsToSimhdl" xil_pn:prop_ck="-6076320159079266283" xil_pn:start_ts="1554298607">
+    <transform xil_pn:end_ts="1554913772" xil_pn:name="TRAN_xawsToSimhdl" xil_pn:prop_ck="4460280370906137887" xil_pn:start_ts="1554913772">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1554298607" xil_pn:name="TRAN_schematicsToHdlSim" xil_pn:prop_ck="2487839126480660947" xil_pn:start_ts="1554298607">
+    <transform xil_pn:end_ts="1554913772" xil_pn:name="TRAN_schematicsToHdlSim" xil_pn:prop_ck="-1918572884309542179" xil_pn:start_ts="1554913772">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
@@ -86,17 +89,20 @@
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1554395887" xil_pn:in_ck="-7025659503098631942" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1554395887">
+    <transform xil_pn:end_ts="1554902929" xil_pn:in_ck="4253938540941580371" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1554902929">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="../../../../../../../lib/system86/rtl/custom/cus27.v"/>
+      <outfile xil_pn:name="../../../../../../../lib/system86/simulation/system86_tb.v"/>
       <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Count.v"/>
       <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Test_Pattern_Gen.v"/>
+      <outfile xil_pn:name="../../../../../../../lib/video_lib/simulation/vga_logger.v"/>
       <outfile xil_pn:name="../../hdl/vhdl/system86.vhd"/>
     </transform>
-    <transform xil_pn:end_ts="1554395889" xil_pn:in_ck="-7025659503098631942" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="2248032458436671987" xil_pn:start_ts="1554395887">
+    <transform xil_pn:end_ts="1554913774" xil_pn:in_ck="4253938540941580371" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="4350324855994339261" xil_pn:start_ts="1554913772">
       <status xil_pn:value="FailedRun"/>
       <status xil_pn:value="ReadyToRun"/>
+      <status xil_pn:value="OutOfDateForProperties"/>
     </transform>
     <transform xil_pn:end_ts="1554298590" xil_pn:in_ck="-8291625404736247133" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="-7866846988311291208" xil_pn:start_ts="1554298589">
       <status xil_pn:value="AbortedRun"/>
