@@ -388,11 +388,11 @@ BEGIN system86
  PARAMETER INSTANCE = system86_0
  PARAMETER HW_VER = 1.00.a
  PORT clk_48m = clkext_Net_48_0000MHz_nobufclkext_Port_48_0000MHz_nobuf
- PORT reset = proc_sys_reset_0_MB_Reset
+ PORT rst = proc_sys_reset_0_MB_Reset
  PORT clk_12m = clkext_Net_12_0000MHzclkext_Port_12_0000MHz
  PORT clk_24m = clkext_Net_24_0000MHzclkext_Port_24_0000MHz
  PORT clk_6m = clkext_Net_6_0000MHzclkext_Port_6_0000MHz
- PORT vid_clk_6m = system86_0_vid_clk_6m
+ PORT vid_clk = system86_0_vid_clk
  PORT vid_data = system86_0_vid_data
  PORT vid_hblank = system86_0_vid_hblank
  PORT vid_vblank = system86_0_vid_vblank
@@ -405,7 +405,7 @@ BEGIN v_vid_in_axi4s
  PARAMETER HW_VER = 2.01.a
  PARAMETER RAM_ADDR_BITS = 5
  BUS_INTERFACE VTIMING_OUT = v_vid_in_axi4s_0_VTIMING_OUT
- PORT vid_in_clk = system86_0_vid_clk_6m
+ PORT vid_in_clk = system86_0_vid_clk
  PORT vid_vblank = system86_0_vid_vblank
  PORT vid_hblank = system86_0_vid_hblank
  PORT vid_vsync = system86_0_vid_vsync
