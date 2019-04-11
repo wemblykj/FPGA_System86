@@ -60,7 +60,6 @@
  PORT clkext_Port_24_0000MHz = clkext_Net_24_0000MHzclkext_Port_24_0000MHz, DIR = I, SIGIS = CLK, CLK_FREQ = 24000000
  PORT clkext_Port_6_0000MHz = clkext_Net_6_0000MHzclkext_Port_6_0000MHz, DIR = I, SIGIS = CLK, CLK_FREQ = 6000000
  PORT clkext_Port_12_0000MHz = clkext_Net_12_0000MHzclkext_Port_12_0000MHz, DIR = I, SIGIS = CLK, CLK_FREQ = 12000000
- PORT clkext_Port_48_0000MHz_nobuf = clkext_Net_48_0000MHz_nobufclkext_Port_48_0000MHz_nobuf, DIR = I, SIGIS = CLK, CLK_FREQ = 48000000
  PORT axi_hdmi_0_TMDS_TX_CLK_P_pin = axi_hdmi_0_TMDS_TX_CLK_P, DIR = O
  PORT axi_hdmi_0_TMDS_TX_CLK_N_pin = axi_hdmi_0_TMDS_TX_CLK_N, DIR = O
  PORT axi_hdmi_0_TMDS_TX_2_P_pin = axi_hdmi_0_TMDS_TX_2_P, DIR = O
@@ -79,6 +78,8 @@
  PORT axi_hdmi_0_TMDS_RX_0_N_pin = axi_hdmi_0_TMDS_RX_0_N, DIR = I
  PORT axi_hdmi_0_TMDS_RX_SCL_pin = axi_hdmi_0_TMDS_RX_SCL, DIR = I
  PORT axi_hdmi_0_TMDS_RX_SDA_pin = axi_hdmi_0_TMDS_RX_SDA, DIR = IO
+ PORT clkext_Port_133_3333MHz = clkext_Net_133_3333MHzclkext_Port_133_3333MHz, DIR = I, SIGIS = CLK, CLK_FREQ = 133333333
+ PORT clkext_Port_48_0000MHz = clkext_Net_48_0000MHzclkext_Port_48_0000MHz, DIR = I, SIGIS = CLK, CLK_FREQ = 48000000
 
 
 BEGIN proc_sys_reset
@@ -397,12 +398,12 @@ END
 BEGIN system86
  PARAMETER INSTANCE = system86_0
  PARAMETER HW_VER = 1.00.a
- PORT clk_48m = clkext_Net_48_0000MHz_nobufclkext_Port_48_0000MHz_nobuf
+ PORT clk_48m = clkext_Net_48_0000MHzclkext_Port_48_0000MHz
  PORT rst = proc_sys_reset_0_MB_Reset
  PORT clk_12m = clkext_Net_12_0000MHzclkext_Port_12_0000MHz
  PORT clk_24m = clkext_Net_24_0000MHzclkext_Port_24_0000MHz
  PORT clk_6m = clkext_Net_6_0000MHzclkext_Port_6_0000MHz
- PORT vid_clk = system86_0_vid_clk
+ PORT vid_clk = clk_system86_0vid_clk
  PORT vid_data = system86_0_vid_data
  PORT vid_hblank = system86_0_vid_hblank
  PORT vid_vblank = system86_0_vid_vblank
@@ -416,13 +417,14 @@ BEGIN v_vid_in_axi4s
  PARAMETER RAM_ADDR_BITS = 5
  BUS_INTERFACE VTIMING_OUT = v_vid_in_axi4s_0_VTIMING_OUT
  BUS_INTERFACE M_AXIS_VIDEO = v_vid_in_axi4s_0_M_AXIS_VIDEO
- PORT vid_in_clk = system86_0_vid_clk
+ PORT vid_in_clk = clk_system86_0vid_clk
  PORT vid_vblank = system86_0_vid_vblank
  PORT vid_hblank = system86_0_vid_hblank
  PORT vid_vsync = system86_0_vid_vsync
  PORT vid_hsync = system86_0_vid_hsync
  PORT vid_data = system86_0_vid_data
  PORT rst = proc_sys_reset_0_Interconnect_aresetn
+ PORT aclk = clkext_Net_133_3333MHzclkext_Port_133_3333MHz
 END
 
 BEGIN v_scaler
@@ -436,6 +438,8 @@ BEGIN v_scaler
  BUS_INTERFACE M_AXIS_VIDEO = v_scaler_0_M_AXIS_VIDEO
  PORT core_clk = clk_100_0000MHzPLL0
  PORT core_aresetn = proc_sys_reset_0_Interconnect_aresetn
+ PORT m_axis_video_aclk = clkext_Net_133_3333MHzclkext_Port_133_3333MHz
+ PORT s_axis_video_aclk = clkext_Net_133_3333MHzclkext_Port_133_3333MHz
 END
 
 BEGIN axi_hdmi
@@ -480,5 +484,6 @@ BEGIN v_tc
  BUS_INTERFACE S_AXI = axi4lite_0
  BUS_INTERFACE VTIMING_IN = v_vid_in_axi4s_0_VTIMING_OUT
  PORT s_axi_aclk = clk_100_0000MHzPLL0
+ PORT clk = clkext_Net_133_3333MHzclkext_Port_133_3333MHz
 END
 
