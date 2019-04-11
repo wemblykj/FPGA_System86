@@ -35,10 +35,10 @@ PORT clk_24m = "", DIR=I, SIGIS=CLK, ISVALID=(C_USE_HARDWARE_CLOCKS == 1)
 PORT clk_12m = "", DIR=I, SIGIS=CLK, ISVALID=(C_USE_HARDWARE_CLOCKS == 1)
 PORT clk_6m = "", DIR=I, SIGIS=CLK, ISVALID=(C_USE_HARDWARE_CLOCKS == 1)
 
-PORT reset = "", DIR=I, SIGIS=RST
+PORT rst = "", DIR=I, SIGIS=RST
 
 # Component video
-PORT vid_clk_6m = "", DIR = O, SIGIS=CLK, IO_IF = VIDEO_OUT, IO_IS = Clk
+PORT vid_clk = "", DIR = O, SIGIS=CLK, IO_IF = VIDEO_OUT, IO_IS = Clk
 PORT vid_data = "", DIR = O, VEC = [((3*C_VIDEO_COMPONENT_DEPTH)-1):0], IO_IF = VIDEO_OUT, IO_IS = Data
 PORT vid_red = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = Red
 PORT vid_green = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = Green
@@ -54,27 +54,25 @@ PORT conn_j4_reset = Reset, DIR=O, BUS = CONN_J4
 PORT conn_j4_ce = ChipEnable, DIR=O, BUS = CONN_J4
 PORT conn_j4_oe = OutputEnable, DIR=O, BUS = CONN_J4
 PORT conn_j4_we = WriteEnable, DIR=O, BUS = CONN_J4
-PORT conn_j4_addr = Addr, DIR=O, BUS = CONN_J4
-PORT conn_j4_data = Data, DIR=O, BUS = CONN_J4
+PORT conn_j4_addr = Addr, DIR=O, VEC = [14:0], BUS = CONN_J4
+PORT conn_j4_data = Data, DIR=O, VEC = [7:0], BUS = CONN_J4
 PORT conn_j4_voice = Voice, DIR=I, BUS = CONN_J4
 
 # EPROM 3R
 PORT eprom_3r_ce = ChipEnable, DIR=I, BUS = M_ROM
 PORT eprom_3r_oe = OutputEnable, DIR=I, BUS = M_ROM
-PORT eprom_3r_addr = Addr, DIR=I, BUS = M_ROM
-PORT eprom_3r_data = Data, DIR=O, BUS = M_ROM
+PORT eprom_3r_addr = Addr, DIR=I, VEC = [8:0], BUS = M_ROM
+PORT eprom_3r_data = Data, DIR=O, VEC = [7:0], BUS = M_ROM
 # EPROM 3S
 PORT eprom_3s_ce = ChipEnable, DIR=I, BUS = M_ROM
 PORT eprom_3s_oe = OutputEnable, DIR=I, BUS = M_ROM
-PORT eprom_3s_addr = Addr, DIR=I, BUS = M_ROM
-PORT eprom_3s_data = Data, DIR=O, BUS = M_ROM
+PORT eprom_3s_addr = Addr, DIR=I, VEC = [8:0], BUS = M_ROM
+PORT eprom_3s_data = Data, DIR=O, VEC = [3:0], BUS = M_ROM
 #
 PORT sram_4r_ce = ChipEnable, DIR=I, BUS = M_RAM
 PORT sram_4r_we = WriteEnable, DIR=I, BUS = M_RAM
 PORT sram_4r_oe = OutputEnable, DIR=I, BUS = M_RAM
-PORT sram_4r_addr = Addr, DIR=I, BUS = M_RAM
-#PORT sram_4r_data = Data, TRI_O = sram_4r_data_i, TRI_T = sram_4r_we, DIR = IO, TRI_I = sram_4r_data_o, THREE_STATE = TRUE, BUS = M_RAM
-PORT sram_4r_data_i = DataWrite, DIR=I, BUS = M_RAM
-PORT sram_4r_data_o = DataRead, DIR=O, BUS = M_RAM
+PORT sram_4r_addr = Addr, DIR=I, VEC = [12:0], BUS = M_RAM
+#PORT sram_4r_data = Data, DIR=IO, VEC = [7:0], BUS = M_RAM
 
 END

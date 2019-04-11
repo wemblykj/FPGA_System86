@@ -80,7 +80,7 @@ entity system86 is
 	generic
 	(
 		C_USE_HARDWARE_CLOCKS 		: integer	:= 0;
-		C_VIDEO_COMPONENT_DEPTH		: integer	:= 4;
+		C_VIDEO_COMPONENT_DEPTH		: integer	:= 8;
 		
 		C_EPROM_7116_ADDR_WIDTH 	: integer	:= 9;
 		C_EPROM_7116_DATA_WIDTH 	: integer	:= 4;
@@ -94,13 +94,13 @@ entity system86 is
 	(
 		-- Global Ports
 
-		rst			: in	std_logic;
+		rst		: in	std_logic;
 		clk_48m		: in	std_logic;
 		
 		-- hardware generated clocks
-		clk_24m_i	: in	std_logic;
-		clk_12m_i	: in	std_logic;
-		clk_6m_i		: in	std_logic;
+		clk_24m		: in	std_logic;
+		clk_12m		: in	std_logic;
+		clk_6m		: in	std_logic;
 		
 		-- Component Video
 		vid_clk		: out    std_logic;
@@ -115,24 +115,24 @@ entity system86 is
 		vid_vsync	: out    std_logic;
 
 		-- J4 connector to sub PCB (34 pin)
-		conn_j4_reset    : out    std_logic;				-- pin 18 - system reset
-		conn_j4_ce		: out    std_logic;				-- pin 4  - sub PCB bus 'chip enable'
-		conn_j4_oe       : out    std_logic;				-- pin 14 - output enable (pixel clock x2)
-		conn_j4_we       : out    std_logic;				-- pin 33 - r/w
-		conn_j4_addr	 : out    std_logic_vector(14 downto 0);	-- address bus
-		conn_j4_data	 : out    std_logic_vector(7 downto 0);		-- data bus
-		conn_j4_voice    : in     std_logic;				-- pin 1  - audio
+		conn_j4_reset		: out    std_logic;				-- pin 18 - system reset
+		conn_j4_ce			: out    std_logic;				-- pin 4  - sub PCB bus 'chip enable'
+		conn_j4_oe			: out    std_logic;				-- pin 14 - output enable (pixel clock x2)
+		conn_j4_we			: out    std_logic;				-- pin 33 - r/w
+		conn_j4_addr	 	: out    std_logic_vector(14 downto 0);	-- address bus
+		conn_j4_data		: out    std_logic_vector(7 downto 0);		-- data bus
+		conn_j4_voice		: in     std_logic;				-- pin 1  - audio
 
 		-- J5 connector (20 pin, tile layer expansion?)
-		conn_j5_clk_6m        : out    std_logic;
-		conn_j5_vreset        : out    std_logic;
-		conn_j5_hreset        : out    std_logic;
-		conn_j5_clk_48m       : out    std_logic;
-		conn_j5_pr            : inout  std_logic_vector(2 downto 0);
-		conn_j5_cl            : inout  std_logic_vector(7 downto 0);
-		conn_j5_dt            : inout  std_logic_vector(2 downto 0);
-		conn_j5_backcolor     : out    std_logic;
-		conn_j5_backcolor_t   : in     std_logic;			-- disable backcolor buffer
+		--conn_j5_clk_6m        : out    std_logic;
+		--conn_j5_vreset        : out    std_logic;
+		--conn_j5_hreset        : out    std_logic;
+		--conn_j5_clk_48m       : out    std_logic;
+		--conn_j5_pr            : inout  std_logic_vector(2 downto 0);
+		--conn_j5_cl            : inout  std_logic_vector(7 downto 0);
+		--conn_j5_dt            : inout  std_logic_vector(2 downto 0);
+		--conn_j5_backcolor     : out    std_logic;
+		--conn_j5_backcolor_t   : in     std_logic;			-- disable backcolor buffer
 		
 		-- SRAM 4r
 		sram_4r_ce     : in	std_logic;
@@ -159,9 +159,9 @@ attribute SIGIS : string;
 attribute SIGIS of rst : signal is "Rst"; 
 
 attribute SIGIS of clk_48m : signal is "Clk"; 
-attribute SIGIS of clk_24m_i : signal is "Clk"; 
-attribute SIGIS of clk_12m_i : signal is "Clk"; 
-attribute SIGIS of clk_6m_i : signal is "Clk"; 
+attribute SIGIS of clk_24m : signal is "Clk"; 
+attribute SIGIS of clk_12m : signal is "Clk"; 
+attribute SIGIS of clk_6m : signal is "Clk"; 
 
 attribute SIGIS of vid_clk : signal is "Clk"; 
 
@@ -186,9 +186,9 @@ end system86;
 architecture rtl of system86 is
 
 -- system clocks
-signal clk_24m		: std_logic;
-signal clk_12m		: std_logic;
-signal clk_6m		: std_logic;
+signal clk_24m_t		: std_logic;
+signal clk_12m_t		: std_logic;
+signal clk_6m_t		: std_logic;
 
 -- cus27 outputs
 signal cus27_clk_48m		: std_logic;
@@ -267,15 +267,15 @@ end component;
 begin
 
 	NO_HARDWARE_CLOCKS: if C_USE_HARDWARE_CLOCKS = 0 generate
-		clk_24m <= cus27_clk_24m;
-		clk_12m <= cus27_clk_12m;
-		clk_6m <= cus27_clk_6m;
+		clk_24m_t <= cus27_clk_24m;
+		clk_12m_t <= cus27_clk_12m;
+		clk_6m_t <= cus27_clk_6m;
 	end generate;
 	
 	HARDWARE_CLOCKS: if C_USE_HARDWARE_CLOCKS = 1 generate
-		clk_24m <= clk_24m_i;
-		clk_12m <= clk_12m_i;
-		clk_6m <= clk_6m_i;
+		clk_24m_t <= clk_24m;
+		clk_12m_t <= clk_12m;
+		clk_6m_t <= clk_6m;
 	end generate;
 
 	-- video generation
@@ -292,7 +292,7 @@ begin
 		rst			=> rst,
 		-- input clocks
 		clk_48m		=> clk_48m,
-		clk_6m		=> clk_6m,
+		clk_6m		=> clk_6m_t,
 		-- soft generated clocks
 		clk_24m_o	=> cus27_clk_24m,
 		clk_12m_o	=> cus27_clk_12m,
@@ -322,7 +322,7 @@ begin
 	)
 	port map
 	(
-		i_Clk 			=> clk_6m,
+		i_Clk 			=> clk_6m_t,
 		i_Pattern 		=> vid_pattern,
 		i_HSync 			=> cus27_hsync,
 		i_VSync 			=> cus27_vsync,
