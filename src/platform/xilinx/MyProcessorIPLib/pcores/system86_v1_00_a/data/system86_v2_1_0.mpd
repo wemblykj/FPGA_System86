@@ -75,5 +75,4 @@ PORT sram_4r_oe = OutputEnable, DIR=I, BUS = M_RAM
 PORT sram_4r_addr = Addr, DIR=I, VEC = [12:0], BUS = M_RAM
 #PORT sram_4r_data = Data, DIR=IO, VEC = [7:0], BUS = M_RAM
 
-
 END
