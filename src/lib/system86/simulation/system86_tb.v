@@ -46,16 +46,16 @@ module system86_tb;
 			.C_VIDEO_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
 		)
 		uut (
-			.clk_48m(clk_in), 
+			.clk_48m(clk_48m), 
 			.rst(rst),
 			.vid_clk(vid_clk),
 			.vid_red(vid_red),
 			.vid_green(vid_green),
 			.vid_blue(vid_blue),
-			.hsync(hsync),
-			.hblank(hblank),
-			.vsync(vsync),
-			.vblank(vblank)
+			.vid_hsync(hsync),
+			.vid_hblank(hblank),
+			.vid_vsync(vsync),
+			.vid_vblank(vblank)
 		);
 
 	vga_logger

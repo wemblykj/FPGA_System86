@@ -47,8 +47,8 @@ module cus27
 	output reg pclk_4h_o,
 	output reg pclk_2h_o,
 	output reg pclk_1h_o,
-	output reg pclk_s1h_o,
-	output reg pclk_s2h_o
+	output reg pclk_s2h_o,
+	output reg pclk_s1h_o
 );
 
 	reg [8:0] horizontal_counter = 0;
