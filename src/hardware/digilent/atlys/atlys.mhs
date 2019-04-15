@@ -75,7 +75,6 @@
  PORT axi_hdmi_0_TMDS_RX_0_N_pin = axi_hdmi_0_TMDS_RX_0_N, DIR = I
  PORT axi_hdmi_0_TMDS_RX_SCL_pin = axi_hdmi_0_TMDS_RX_SCL, DIR = I
  PORT axi_hdmi_0_TMDS_RX_SDA_pin = axi_hdmi_0_TMDS_RX_SDA, DIR = IO
- PORT clkext_Port_6_0000MHz = clkext_Net_6_0000MHzclkext_Port_6_0000MHz, DIR = I, SIGIS = CLK, CLK_FREQ = 6000000
 
 
 BEGIN proc_sys_reset

@@ -1,7 +1,7 @@
 #Please do not modify this file by hand
 XmpVersion: 14.7
 VerMgmt: 14.7
-IntStyle: default
+IntStyle: ise
 Flow: ise
 ModuleSearchPath: C:/Users/Wembly/Development/System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/../../../
 ModuleSearchPath: C:/Xilinx/atlys_bsb_support_v_3_7/Atlys_AXI_BSB_Support/lib/Digilent/pcores/d_usb_epp_dstm_axi_v1_00_a/../../../
@@ -19,9 +19,9 @@ UserCmd2Type: 0
 GenSimTB: 0
 SdkExportBmmBit: 1
 SdkExportDir: SDK/SDK_Export
-InsertNoPads: 0
+InsertNoPads: 1
 WarnForEAArch: 1
-HdlLang: VHDL
+HdlLang: vhdl
 SimModel: BEHAVIORAL
 ExternalMemSim: 0
 UcfFile: data/atlys.ucf
