@@ -1,4 +1,4 @@
-`timescale 1ns/1ns
+`timescale 1ns/1ps
 
 module vga_logger
 #
@@ -23,7 +23,7 @@ end
 
 always @(posedge pixel_clk) begin
 	if ((rgb_fd !== -1) & output_enable) begin
-		$fwrite(rgb_fd, "%0t fs: %b %b %b %b %b\n", $time, hsync, vsync, red, green, blue);
+		$fwrite(rgb_fd, "%0t ps: %b %b %b %b %b\n", $time, hsync, vsync, red, green, blue);
 	end
 end
 

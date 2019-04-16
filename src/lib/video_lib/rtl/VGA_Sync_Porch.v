@@ -28,8 +28,8 @@ module VGA_Sync_Porch #(parameter VIDEO_WIDTH = 3,  // remember to
    output reg [VIDEO_WIDTH-1:0] o_Blu_Video
    );
 
-  parameter c_FRONT_PORCH_HORZ = 18;
-  parameter c_BACK_PORCH_HORZ  = 50;
+  parameter c_FRONT_PORCH_HORZ = 16;
+  parameter c_BACK_PORCH_HORZ  = 48;
   parameter c_FRONT_PORCH_VERT = 10;
   parameter c_BACK_PORCH_VERT  = 33;
 
