@@ -38,10 +38,10 @@ module VGA_Test_Pattterns_TB;
   parameter c_SYNC_PULSE_HORZ = 32;
   parameter c_SYNC_PULSE_VERT = 8;
   
-  parameter c_FRONT_PORCH_HORZ = 32;
-  parameter c_BACK_PORCH_HORZ  = 32;
-  parameter c_FRONT_PORCH_VERT = 8;
-  parameter c_BACK_PORCH_VERT  = 24;
+  parameter c_FRONT_PORCH_HORZ = 32;	// Mame has a 3 pixel offset on these horizontal timings
+  parameter c_BACK_PORCH_HORZ  = 32;	// - this works out as 29 f.p. and 32 b.p.
+  parameter c_FRONT_PORCH_VERT = 24;
+  parameter c_BACK_PORCH_VERT  = 8;
   
   parameter c_PERIOD = 81.3802;
   
