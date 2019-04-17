@@ -7,27 +7,16 @@
 
 module VGA_Test_Pattterns_TB;
   
+  parameter c_USE_SYSTEM86 = 1;
+  
   parameter c_VIDEO_WIDTH = 3; // 3 bits per pixel
-  parameter c_TOTAL_COLS  = 800;
-  parameter c_TOTAL_ROWS  = 525;
-  parameter c_ACTIVE_COLS = 640;
-  parameter c_ACTIVE_ROWS = 480;
-  
-  parameter c_SYNC_PULSE_HORZ = 96;
-  parameter c_SYNC_PULSE_VERT = 2;
-  
-  parameter c_FRONT_PORCH_HORZ = 16;
-  parameter c_BACK_PORCH_HORZ  = 48;
-  parameter c_FRONT_PORCH_VERT = 10;
-  parameter c_BACK_PORCH_VERT  = 33;
-  
   parameter c_USE_BLANKING = 1;
   
-  //parameter c_TOTAL_COLS  = 384;
-  //parameter c_TOTAL_ROWS  = 288;
-  //parameter c_ACTIVE_COLS = 288;
-  //parameter c_ACTIVE_ROWS = 224;
-  
+  // VGA 640x480 standard timings (800x525) 25.145Mhz pixel clock
+  //parameter c_TOTAL_COLS  = 800;
+  //parameter c_TOTAL_ROWS  = 525;
+  //parameter c_ACTIVE_COLS = 640;
+  //parameter c_ACTIVE_ROWS = 480;
   
   //parameter c_SYNC_PULSE_HORZ = 96;
   //parameter c_SYNC_PULSE_VERT = 2;
@@ -36,6 +25,25 @@ module VGA_Test_Pattterns_TB;
   //parameter c_BACK_PORCH_HORZ  = 48;
   //parameter c_FRONT_PORCH_VERT = 10;
   //parameter c_BACK_PORCH_VERT  = 33;
+  
+  //parameter c_PERIOD = 39.7219464/2.0;
+  
+  // Namco System86 timings 288x224 (384x264) 6Mhz pixel clock
+  parameter c_TOTAL_COLS = 384;
+  parameter c_TOTAL_ROWS  = 264;
+  parameter c_ACTIVE_COLS = 288;
+  parameter c_ACTIVE_ROWS = 224;
+  
+  
+  parameter c_SYNC_PULSE_HORZ = 32;
+  parameter c_SYNC_PULSE_VERT = 8;
+  
+  parameter c_FRONT_PORCH_HORZ = 32;
+  parameter c_BACK_PORCH_HORZ  = 32;
+  parameter c_FRONT_PORCH_VERT = 8;
+  parameter c_BACK_PORCH_VERT  = 24;
+  
+  parameter c_PERIOD = 81.3802;
   
   reg r_Clk = 1'b0;
   
@@ -47,8 +55,8 @@ module VGA_Test_Pattterns_TB;
   wire [c_VIDEO_WIDTH-1:0] w_Grn_Video_TP;
   wire [c_VIDEO_WIDTH-1:0] w_Blu_Video_TP;
     
-  //always #10 r_Clk <= ~r_Clk;
-  always #(39.7219464/2.0) r_Clk <= ~r_Clk;
+  always #c_PERIOD r_Clk <= ~r_Clk;
+  //always #(39.7219464/2.0) r_Clk <= ~r_Clk;
   //always #81.3802 r_Clk <= ~r_Clk;
   
   // Generates Sync Pulses to run VGA
@@ -74,6 +82,8 @@ module VGA_Test_Pattterns_TB;
                       .ACTIVE_COLS(c_ACTIVE_COLS),
                       .ACTIVE_ROWS(c_ACTIVE_ROWS),
 							 .USE_BLANKING(c_USE_BLANKING),
+							 .SYNC_PULSE_HORZ(c_SYNC_PULSE_HORZ),
+							 .SYNC_PULSE_VERT(c_SYNC_PULSE_VERT),
 							 .FRONT_PORCH_HORZ(c_FRONT_PORCH_HORZ),
 							 .BACK_PORCH_HORZ(c_BACK_PORCH_HORZ),
 							 .FRONT_PORCH_VERT(c_FRONT_PORCH_VERT),
