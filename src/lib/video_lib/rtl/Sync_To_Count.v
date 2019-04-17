@@ -9,27 +9,22 @@ module Sync_To_Count
   (input            i_Clk,
    input            i_HSync,
    input            i_VSync, 
-   output reg       o_HSync = 0,
-   output reg       o_VSync = 0,
+   output reg       o_HSync = 1,
+   output reg       o_VSync = 1,
    output reg [9:0] o_Col_Count = 0,
    output reg [9:0] o_Row_Count = 0);
    
    wire w_Frame_Start;
-   
-  // Register syncs to align with output data.
-  always @(posedge i_Clk)
-  begin
-    o_VSync <= i_VSync;
-    o_HSync <= i_HSync;
-  end
-
-  // Keep track of Row/Column counters.
-  always @(posedge i_Clk)
+   reg [9:0] w_Col_Count = 0;
+   reg [9:0] w_Row_Count = 0;
+	
+  // Keep track of Row/Column counters, perform on negative edge so counter starts at zero for the first pulse.
+  always @(negedge i_Clk)
   begin
     if (w_Frame_Start == 1'b1)
     begin
-      o_Col_Count <= 0;
-      o_Row_Count <= 0;
+      w_Col_Count <= 0;
+      w_Row_Count <= 0;
     end
     else
     begin
@@ -37,21 +32,29 @@ module Sync_To_Count
       begin
         if (o_Row_Count == TOTAL_ROWS-1)
         begin
-          o_Row_Count <= 0;
+          w_Row_Count <= 0;
         end
         else
         begin
-          o_Row_Count <= o_Row_Count + 1;
+          w_Row_Count <= o_Row_Count + 1;
         end
-        o_Col_Count <= 0;
+        w_Col_Count <= 0;
       end
       else
       begin
-        o_Col_Count <= o_Col_Count + 1;
+        w_Col_Count <= o_Col_Count + 1;
       end
     end
   end
   
+  // Register counters and syncs to align with output data.
+  always @(posedge i_Clk)
+  begin
+	 o_Col_Count <= w_Col_Count;
+	 o_Row_Count <= w_Row_Count;
+	 o_VSync <= i_VSync;
+    o_HSync <= i_HSync;
+  end
     
   // Look for rising edge on Vertical Sync to reset the counters
   assign w_Frame_Start = (o_VSync & ~i_VSync);

@@ -35,8 +35,8 @@ module Test_Pattern_Gen
    input [3:0] i_Pattern,
    input       i_HSync,
    input       i_VSync,
-   output reg  o_HSync = 0,
-   output reg  o_VSync = 0,
+   output reg  o_HSync = 1,
+   output reg  o_VSync = 1,
 	output reg  o_HBlank = 0,
    output reg  o_VBlank = 0,
    output reg [VIDEO_WIDTH-1:0] o_Red_Video,
@@ -52,7 +52,6 @@ module Test_Pattern_Gen
   wire w_VBlank2;
   wire w_HBlank2;
   
-  
   // Patterns have 16 indexes (0 to 15) and can be g_Video_Width bits wide
   wire [VIDEO_WIDTH-1:0] Pattern_Red[0:15];
   wire [VIDEO_WIDTH-1:0] Pattern_Grn[0:15];
@@ -62,26 +61,11 @@ module Test_Pattern_Gen
   wire [9:0] w_Col_Count;
   wire [9:0] w_Row_Count;
   wire w_Active;
-  wire [9:0] w_Active_Col_Count;
-  wire [9:0] w_Active_Row_Count;
   
   wire [6:0] w_Bar_Width;
   wire [2:0] w_Bar_Select;
   
-  Sync_To_Count #(.TOTAL_COLS(TOTAL_COLS),
-                  .TOTAL_ROWS(TOTAL_ROWS))
-  
-  Sync_To_Count (.i_Clk      (i_Clk),
-       .i_HSync    (i_HSync),
-       .i_VSync    (i_VSync),
-		 .o_HSync    (w_HSync1),
-       .o_VSync    (w_VSync1),
-		 .o_Col_Count(w_Col_Count),
-       .o_Row_Count(w_Row_Count)
-      );
-	
-		
-	generate
+  generate
 		if (USE_BLANKING == 1) begin
 	
 			Sync_To_Blanking #(.TOTAL_COLS(TOTAL_COLS),
@@ -94,34 +78,47 @@ module Test_Pattern_Gen
 								  .BACK_PORCH_VERT(BACK_PORCH_VERT))
 			
 			Sync_To_Blanking (.i_Clk(i_Clk),
-				 .i_HSync    (w_HSync1),
-				 .i_VSync    (w_VSync1),
-				 .o_HSync    (w_HSync2),
-				 .o_VSync    (w_VSync2),
+				 .i_HSync    (i_HSync),
+				 .i_VSync    (i_VSync),
+				 .o_HSync    (w_HSync1),
+				 .o_VSync    (w_VSync1),
 				 .o_HBlank   (w_HBlank1),
 				 .o_VBlank   (w_VBlank1)
 				);
 	
-			Blank_To_Count #(.TOTAL_COLS(ACTIVE_COLS),
+			Blanking_To_Count #(.TOTAL_COLS(ACTIVE_COLS),
 							.TOTAL_ROWS(ACTIVE_ROWS))
   
 			Blank_To_Count (.i_Clk      (i_Clk),
+					.i_HSync    (w_HSync1),
+					.i_VSync    (w_VSync1),
 					.i_HBlank   (w_HBlank1),
 					.i_VBlank   (w_VBlank1),
+					.o_HSync    (w_HSync2),
+					.o_VSync    (w_VSync2),
 					.o_Active   (w_Active),
 					.o_HBlank   (w_HBlank2),
 					.o_VBlank   (w_VBlank2),
-					.o_Col_Count(w_Active_Col_Count),
-					.o_Row_Count(w_Active_Row_Count)
+					.o_Col_Count(w_Col_Count),
+					.o_Row_Count(w_Row_Count)
 				);
 		end else begin
-			assign w_HSync2 = w_HSync1;
-			assign w_VSync2 = w_VSync1;
+			
+			Sync_To_Count #(.TOTAL_COLS(TOTAL_COLS),
+			                .TOTAL_ROWS(TOTAL_ROWS))
+  
+			Sync_To_Count (.i_Clk      (i_Clk),
+				  .i_HSync    (i_HSync),
+				  .i_VSync    (i_VSync),
+				  .o_HSync    (w_HSync2),
+				  .o_VSync    (w_VSync2),
+				  .o_Col_Count(w_Col_Count),
+				  .o_Row_Count(w_Row_Count)
+				 );
+				 
 			assign w_HBlank2 = 0;
 			assign w_VBlank2 = 0;
 			assign w_Active = 1'b1;
-			assign w_Active_Col_Count = w_Col_Count;
-			assign w_Active_Row_Count = w_Row_Count;
 		end
   endgenerate
   
@@ -144,7 +141,7 @@ module Test_Pattern_Gen
   /////////////////////////////////////////////////////////////////////////////
   // Pattern 1: All Red
   /////////////////////////////////////////////////////////////////////////////
-  assign Pattern_Red[1] = (w_Active_Col_Count < ACTIVE_COLS && w_Active_Row_Count < ACTIVE_ROWS) ? {VIDEO_WIDTH{1'b1}} : 0;
+  assign Pattern_Red[1] = (w_Col_Count < ACTIVE_COLS && w_Row_Count < ACTIVE_ROWS) ? {VIDEO_WIDTH{1'b1}} : 0;
   assign Pattern_Grn[1] = 0;
   assign Pattern_Blu[1] = 0;
 
@@ -152,7 +149,7 @@ module Test_Pattern_Gen
   // Pattern 2: All Green
   /////////////////////////////////////////////////////////////////////////////
   assign Pattern_Red[2] = 0;
-  assign Pattern_Grn[2] = (w_Active_Col_Count < ACTIVE_COLS && w_Active_Row_Count < ACTIVE_ROWS) ? {VIDEO_WIDTH{1'b1}} : 0;
+  assign Pattern_Grn[2] = (w_Col_Count < ACTIVE_COLS && w_Row_Count < ACTIVE_ROWS) ? {VIDEO_WIDTH{1'b1}} : 0;
   assign Pattern_Blu[2] = 0;
   
   /////////////////////////////////////////////////////////////////////////////
@@ -160,12 +157,12 @@ module Test_Pattern_Gen
   /////////////////////////////////////////////////////////////////////////////
   assign Pattern_Red[3] = 0;
   assign Pattern_Grn[3] = 0;
-  assign Pattern_Blu[3] = (w_Active_Col_Count < ACTIVE_COLS && w_Active_Row_Count < ACTIVE_ROWS) ? {VIDEO_WIDTH{1'b1}} : 0;
+  assign Pattern_Blu[3] = (w_Col_Count < ACTIVE_COLS && w_Row_Count < ACTIVE_ROWS) ? {VIDEO_WIDTH{1'b1}} : 0;
 
   /////////////////////////////////////////////////////////////////////////////
   // Pattern 4: Checkerboard white/black
   /////////////////////////////////////////////////////////////////////////////
-  assign Pattern_Red[4] = w_Active_Col_Count[5] ^ w_Active_Row_Count[5] ? {VIDEO_WIDTH{1'b1}} : 0;
+  assign Pattern_Red[4] = w_Col_Count[5] ^ w_Row_Count[5] ? {VIDEO_WIDTH{1'b1}} : 0;
   assign Pattern_Grn[4] = Pattern_Red[4];
   assign Pattern_Blu[4] = Pattern_Red[4];
   
@@ -186,13 +183,13 @@ module Test_Pattern_Gen
   /////////////////////////////////////////////////////////////////////////////
   assign w_Bar_Width = ACTIVE_COLS/8;
   
-  assign w_Bar_Select = w_Active_Col_Count < w_Bar_Width*1 ? 0 : 
-                        w_Active_Col_Count < w_Bar_Width*2 ? 1 :
-				        w_Active_Col_Count < w_Bar_Width*3 ? 2 :
-				        w_Active_Col_Count < w_Bar_Width*4 ? 3 :
-				        w_Active_Col_Count < w_Bar_Width*5 ? 4 :
-				        w_Active_Col_Count < w_Bar_Width*6 ? 5 :
-				        w_Active_Col_Count < w_Bar_Width*7 ? 6 : 7;
+  assign w_Bar_Select = w_Col_Count < w_Bar_Width*1 ? 0 : 
+                        w_Col_Count < w_Bar_Width*2 ? 1 :
+				        w_Col_Count < w_Bar_Width*3 ? 2 :
+				        w_Col_Count < w_Bar_Width*4 ? 3 :
+				        w_Col_Count < w_Bar_Width*5 ? 4 :
+				        w_Col_Count < w_Bar_Width*6 ? 5 :
+				        w_Col_Count < w_Bar_Width*7 ? 6 : 7;
 				  
   // Implement Truth Table above with Conditional Assignments
   assign Pattern_Red[5] = (w_Bar_Select == 4 || w_Bar_Select == 5 ||
@@ -212,8 +209,8 @@ module Test_Pattern_Gen
   // Pattern 6: Black With White Border
   // Creates a black screen with a white border 2 pixels wide around outside.
   /////////////////////////////////////////////////////////////////////////////
-  assign Pattern_Red[6] = (w_Active_Row_Count <= 1 || w_Active_Row_Count >= ACTIVE_ROWS-1-1 ||
-                           w_Active_Col_Count <= 1 || w_Active_Col_Count >= ACTIVE_COLS-1-1) ?
+  assign Pattern_Red[6] = (w_Row_Count <= 1 || w_Row_Count >= ACTIVE_ROWS-1-1 ||
+                           w_Col_Count <= 1 || w_Col_Count >= ACTIVE_COLS-1-1) ?
                           {VIDEO_WIDTH{1'b1}} : 0;
   assign Pattern_Grn[6] = Pattern_Red[6];
   assign Pattern_Blu[6] = Pattern_Red[6];
@@ -277,7 +274,7 @@ module Test_Pattern_Gen
 	  else begin
 	    o_Red_Video <= 0;
 		 o_Grn_Video <= 0;
-		 o_Blu_Video <= 0;
+		 o_Blu_Video <= 255;
 	  end
 endmodule
 

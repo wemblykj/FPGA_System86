@@ -40,35 +40,11 @@
   </files>
 
   <transforms xmlns="http://www.xilinx.com/XMLSchema">
-    <transform xil_pn:end_ts="1555455437" xil_pn:name="TRAN_copyInitialToAbstractSimulation" xil_pn:start_ts="1555455437">
+    <transform xil_pn:end_ts="1555508337" xil_pn:name="TRAN_copyInitialToAbstractSimulation" xil_pn:start_ts="1555508337">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1555455437" xil_pn:in_ck="6194929187293631716" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1555455437">
-      <status xil_pn:value="SuccessfullyRun"/>
-      <status xil_pn:value="ReadyToRun"/>
-      <outfile xil_pn:name="../../../lib/video_lib/rtl/Blank_To_Count.v"/>
-      <outfile xil_pn:name="../../../lib/video_lib/rtl/Sync_To_Blank.v"/>
-      <outfile xil_pn:name="../../../lib/video_lib/rtl/Sync_To_Count.v"/>
-      <outfile xil_pn:name="../../../lib/video_lib/rtl/Test_Pattern_Gen.v"/>
-      <outfile xil_pn:name="../../../lib/video_lib/rtl/VGA_Sync_Porch.v"/>
-      <outfile xil_pn:name="../../../lib/video_lib/rtl/VGA_Sync_Pulses.v"/>
-      <outfile xil_pn:name="../../../lib/video_lib/simulation/VGA_Test_Patterns_TB.v"/>
-      <outfile xil_pn:name="../../../lib/video_lib/simulation/vga_logger.v"/>
-    </transform>
-    <transform xil_pn:end_ts="1555455437" xil_pn:name="TRAN_xawsToSimhdl" xil_pn:prop_ck="2047669921716179341" xil_pn:start_ts="1555455437">
-      <status xil_pn:value="SuccessfullyRun"/>
-      <status xil_pn:value="ReadyToRun"/>
-    </transform>
-    <transform xil_pn:end_ts="1555455437" xil_pn:name="TRAN_schematicsToHdlSim" xil_pn:prop_ck="-816096438715767989" xil_pn:start_ts="1555455437">
-      <status xil_pn:value="SuccessfullyRun"/>
-      <status xil_pn:value="ReadyToRun"/>
-    </transform>
-    <transform xil_pn:end_ts="1555455437" xil_pn:name="TRAN_regenerateCoresSim" xil_pn:prop_ck="-5686272586604159236" xil_pn:start_ts="1555455437">
-      <status xil_pn:value="SuccessfullyRun"/>
-      <status xil_pn:value="ReadyToRun"/>
-    </transform>
-    <transform xil_pn:end_ts="1555455437" xil_pn:in_ck="6194929187293631716" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1555455437">
+    <transform xil_pn:end_ts="1555508337" xil_pn:in_ck="6194929187293631716" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1555508337">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="../../../lib/video_lib/rtl/Blank_To_Count.v"/>
@@ -80,7 +56,31 @@
       <outfile xil_pn:name="../../../lib/video_lib/simulation/VGA_Test_Patterns_TB.v"/>
       <outfile xil_pn:name="../../../lib/video_lib/simulation/vga_logger.v"/>
     </transform>
-    <transform xil_pn:end_ts="1555455458" xil_pn:in_ck="6194929187293631716" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="-1403744685297534183" xil_pn:start_ts="1555455437">
+    <transform xil_pn:end_ts="1555508337" xil_pn:name="TRAN_xawsToSimhdl" xil_pn:prop_ck="2047669921716179341" xil_pn:start_ts="1555508337">
+      <status xil_pn:value="SuccessfullyRun"/>
+      <status xil_pn:value="ReadyToRun"/>
+    </transform>
+    <transform xil_pn:end_ts="1555508337" xil_pn:name="TRAN_schematicsToHdlSim" xil_pn:prop_ck="-816096438715767989" xil_pn:start_ts="1555508337">
+      <status xil_pn:value="SuccessfullyRun"/>
+      <status xil_pn:value="ReadyToRun"/>
+    </transform>
+    <transform xil_pn:end_ts="1555508337" xil_pn:name="TRAN_regenerateCoresSim" xil_pn:prop_ck="-5686272586604159236" xil_pn:start_ts="1555508337">
+      <status xil_pn:value="SuccessfullyRun"/>
+      <status xil_pn:value="ReadyToRun"/>
+    </transform>
+    <transform xil_pn:end_ts="1555508337" xil_pn:in_ck="6194929187293631716" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1555508337">
+      <status xil_pn:value="SuccessfullyRun"/>
+      <status xil_pn:value="ReadyToRun"/>
+      <outfile xil_pn:name="../../../lib/video_lib/rtl/Blank_To_Count.v"/>
+      <outfile xil_pn:name="../../../lib/video_lib/rtl/Sync_To_Blank.v"/>
+      <outfile xil_pn:name="../../../lib/video_lib/rtl/Sync_To_Count.v"/>
+      <outfile xil_pn:name="../../../lib/video_lib/rtl/Test_Pattern_Gen.v"/>
+      <outfile xil_pn:name="../../../lib/video_lib/rtl/VGA_Sync_Porch.v"/>
+      <outfile xil_pn:name="../../../lib/video_lib/rtl/VGA_Sync_Pulses.v"/>
+      <outfile xil_pn:name="../../../lib/video_lib/simulation/VGA_Test_Patterns_TB.v"/>
+      <outfile xil_pn:name="../../../lib/video_lib/simulation/vga_logger.v"/>
+    </transform>
+    <transform xil_pn:end_ts="1555508340" xil_pn:in_ck="6194929187293631716" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="-1403744685297534183" xil_pn:start_ts="1555508337">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <status xil_pn:value="OutOfDateForOutputs"/>
@@ -92,7 +92,7 @@
       <outfile xil_pn:name="isim.log"/>
       <outfile xil_pn:name="xilinxsim.ini"/>
     </transform>
-    <transform xil_pn:end_ts="1555455459" xil_pn:in_ck="-9066085230337472134" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="581429984503660980" xil_pn:start_ts="1555455458">
+    <transform xil_pn:end_ts="1555508340" xil_pn:in_ck="-8577608055132911090" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="1125857653363691249" xil_pn:start_ts="1555508340">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <status xil_pn:value="OutOfDateForOutputs"/>
