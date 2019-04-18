@@ -208,7 +208,7 @@ signal cus27_pclk_1h		: std_logic;
 signal cus27_pclk_s2h	: std_logic;
 signal cus27_pclk_s1h	: std_logic;
 
-signal vid_pattern		: std_logic_vector(3 downto 0) := "0110";
+signal vid_pattern		: std_logic_vector(3 downto 0) := "0101";	-- 0110 black recangle with white border
 
 component cus27
 generic(
@@ -245,11 +245,19 @@ end component;
 	
 component Test_Pattern_Gen
 generic(
-	VIDEO_WIDTH 	: integer := 3;
-   TOTAL_COLS  	: integer := 384;
-   TOTAL_ROWS   	: integer := 264;
-   ACTIVE_COLS  	: integer := 288;
-   ACTIVE_ROWS  	: integer := 224
+	VIDEO_WIDTH 		: integer := 3;
+   TOTAL_COLS  		: integer := 384;
+   TOTAL_ROWS   		: integer := 264;
+   ACTIVE_COLS  		: integer := 288;
+   ACTIVE_ROWS  		: integer := 224;
+	USE_BLANKING  		: integer := 1;
+	SYNC_PULSE_HORZ  	: integer := 32;
+	SYNC_PULSE_VERT  	: integer := 8;
+	FRONT_PORCH_HORZ  : integer := 32;
+	BACK_PORCH_HORZ   : integer := 32;
+	FRONT_PORCH_VERT  : integer := 8;
+	BACK_PORCH_VERT   : integer := 24
+	
 );
 port (
 	i_Clk : in std_logic;
