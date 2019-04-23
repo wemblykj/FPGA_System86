@@ -73,72 +73,62 @@
       <status xil_pn:value="FailedRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1555365342" xil_pn:name="TRAN_copyInitialToAbstractSimulation" xil_pn:start_ts="1555365342">
+    <transform xil_pn:end_ts="1555591389" xil_pn:name="TRAN_copyInitialToAbstractSimulation" xil_pn:start_ts="1555591389">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1555419388" xil_pn:in_ck="4253938540941580371" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1555419388">
+    <transform xil_pn:end_ts="1555591592" xil_pn:in_ck="-3891303848533774605" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1555591592">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
-      <status xil_pn:value="OutOfDateForInputs"/>
-      <status xil_pn:value="OutOfDateForOutputs"/>
-      <status xil_pn:value="InputChanged"/>
-      <status xil_pn:value="OutputChanged"/>
       <outfile xil_pn:name="../../../../../../../lib/system86/rtl/custom/cus27.v"/>
       <outfile xil_pn:name="../../../../../../../lib/system86/simulation/system86_tb.v"/>
+      <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Blank_To_Count.v"/>
+      <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Blank.v"/>
+      <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Count.v"/>
       <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Test_Pattern_Gen.v"/>
       <outfile xil_pn:name="../../../../../../../lib/video_lib/simulation/vga_logger.v"/>
       <outfile xil_pn:name="../../hdl/vhdl/system86.vhd"/>
     </transform>
-    <transform xil_pn:end_ts="1555365342" xil_pn:name="TRAN_xawsToSimhdl" xil_pn:prop_ck="4460280370906137887" xil_pn:start_ts="1555365342">
+    <transform xil_pn:end_ts="1555591389" xil_pn:name="TRAN_xawsToSimhdl" xil_pn:prop_ck="4460280370906137887" xil_pn:start_ts="1555591389">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1555365342" xil_pn:name="TRAN_schematicsToHdlSim" xil_pn:prop_ck="-1918572884309542179" xil_pn:start_ts="1555365342">
+    <transform xil_pn:end_ts="1555591389" xil_pn:name="TRAN_schematicsToHdlSim" xil_pn:prop_ck="-1918572884309542179" xil_pn:start_ts="1555591389">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1555419388" xil_pn:name="TRAN_regenerateCoresSim" xil_pn:prop_ck="4141301967558568452" xil_pn:start_ts="1555419388">
+    <transform xil_pn:end_ts="1555591389" xil_pn:name="TRAN_regenerateCoresSim" xil_pn:prop_ck="4141301967558568452" xil_pn:start_ts="1555591389">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1555419388" xil_pn:in_ck="4253938540941580371" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1555419388">
+    <transform xil_pn:end_ts="1555591592" xil_pn:in_ck="-3891303848533774605" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1555591592">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
-      <status xil_pn:value="OutOfDateForInputs"/>
-      <status xil_pn:value="OutOfDateForPredecessor"/>
-      <status xil_pn:value="OutOfDateForOutputs"/>
-      <status xil_pn:value="InputChanged"/>
-      <status xil_pn:value="OutputChanged"/>
       <outfile xil_pn:name="../../../../../../../lib/system86/rtl/custom/cus27.v"/>
       <outfile xil_pn:name="../../../../../../../lib/system86/simulation/system86_tb.v"/>
+      <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Blank_To_Count.v"/>
+      <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Blank.v"/>
+      <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Count.v"/>
       <outfile xil_pn:name="../../../../../../../lib/video_lib/rtl/Test_Pattern_Gen.v"/>
       <outfile xil_pn:name="../../../../../../../lib/video_lib/simulation/vga_logger.v"/>
       <outfile xil_pn:name="../../hdl/vhdl/system86.vhd"/>
     </transform>
-    <transform xil_pn:end_ts="1555419392" xil_pn:in_ck="4253938540941580371" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="4350324855994339261" xil_pn:start_ts="1555419388">
+    <transform xil_pn:end_ts="1555591595" xil_pn:in_ck="-3891303848533774605" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="4350324855994339261" xil_pn:start_ts="1555591592">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
-      <status xil_pn:value="OutOfDateForInputs"/>
-      <status xil_pn:value="OutOfDateForPredecessor"/>
-      <status xil_pn:value="OutOfDateForOutputs"/>
-      <status xil_pn:value="InputChanged"/>
-      <status xil_pn:value="OutputChanged"/>
       <outfile xil_pn:name="fuse.log"/>
       <outfile xil_pn:name="isim"/>
+      <outfile xil_pn:name="isim.log"/>
       <outfile xil_pn:name="system86_tb_beh.prj"/>
       <outfile xil_pn:name="system86_tb_isim_beh.exe"/>
       <outfile xil_pn:name="xilinxsim.ini"/>
     </transform>
-    <transform xil_pn:end_ts="1555419392" xil_pn:in_ck="-4968396031891254130" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="-7741809783154361248" xil_pn:start_ts="1555419392">
+    <transform xil_pn:end_ts="1555591595" xil_pn:in_ck="-4968396031891254130" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="-7741809783154361248" xil_pn:start_ts="1555591595">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
-      <status xil_pn:value="OutOfDateForInputs"/>
-      <status xil_pn:value="OutOfDateForPredecessor"/>
-      <status xil_pn:value="OutOfDateForOutputs"/>
-      <status xil_pn:value="InputRemoved"/>
-      <status xil_pn:value="OutputChanged"/>
-      <status xil_pn:value="OutputRemoved"/>
+      <outfile xil_pn:name="isim.cmd"/>
+      <outfile xil_pn:name="isim.log"/>
+      <outfile xil_pn:name="system86_tb_isim_beh.wdb"/>
     </transform>
     <transform xil_pn:end_ts="1554211396" xil_pn:name="TRAN_copyInitialToXSTAbstractSynthesis" xil_pn:start_ts="1554211396">
       <status xil_pn:value="SuccessfullyRun"/>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="/home/administrator/Development/fpga/system86/src/platform/xilinx/video_lib/VGA_Test_Pattterns_TB_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="VGA_Test_Pattterns_TB" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="11" />
+   <wvobject fp_name="/VGA_Test_Pattterns_TB/w_HSync_TP" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">w_HSync_TP</obj_property>
+      <obj_property name="ObjectShortName">w_HSync_TP</obj_property>
+   </wvobject>
+   <wvobject fp_name="/VGA_Test_Pattterns_TB/w_VSync_TP" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">w_VSync_TP</obj_property>
+      <obj_property name="ObjectShortName">w_VSync_TP</obj_property>
+   </wvobject>
+   <wvobject fp_name="/VGA_Test_Pattterns_TB/w_HBlank_TP" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">w_HBlank_TP</obj_property>
+      <obj_property name="ObjectShortName">w_HBlank_TP</obj_property>
+   </wvobject>
+   <wvobject fp_name="/VGA_Test_Pattterns_TB/w_VBlank_TP" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">w_VBlank_TP</obj_property>
+      <obj_property name="ObjectShortName">w_VBlank_TP</obj_property>
+   </wvobject>
+   <wvobject fp_name="/VGA_Test_Pattterns_TB/w_Red_Video_TP" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">w_Red_Video_TP[2:0]</obj_property>
+      <obj_property name="ObjectShortName">w_Red_Video_TP[2:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/VGA_Test_Pattterns_TB/w_Grn_Video_TP" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">w_Grn_Video_TP[2:0]</obj_property>
+      <obj_property name="ObjectShortName">w_Grn_Video_TP[2:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/VGA_Test_Pattterns_TB/w_Blu_Video_TP" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">w_Blu_Video_TP[2:0]</obj_property>
+      <obj_property name="ObjectShortName">w_Blu_Video_TP[2:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/VGA_Test_Pattterns_TB/w_HSync_Start" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">w_HSync_Start</obj_property>
+      <obj_property name="ObjectShortName">w_HSync_Start</obj_property>
+   </wvobject>
+   <wvobject fp_name="/VGA_Test_Pattterns_TB/w_VSync_Start" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">w_VSync_Start</obj_property>
+      <obj_property name="ObjectShortName">w_VSync_Start</obj_property>
+   </wvobject>
+   <wvobject fp_name="/VGA_Test_Pattterns_TB/r_Clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">r_Clk</obj_property>
+      <obj_property name="ObjectShortName">r_Clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="group31" type="group">
+      <obj_property name="label">Test_Pattern_Gen_Inst</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/o_HSync" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">o_HSync</obj_property>
+         <obj_property name="ObjectShortName">o_HSync</obj_property>
+      </wvobject>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/o_VSync" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">o_VSync</obj_property>
+         <obj_property name="ObjectShortName">o_VSync</obj_property>
+      </wvobject>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/o_HBlank" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">o_HBlank</obj_property>
+         <obj_property name="ObjectShortName">o_HBlank</obj_property>
+      </wvobject>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/o_VBlank" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">o_VBlank</obj_property>
+         <obj_property name="ObjectShortName">o_VBlank</obj_property>
+      </wvobject>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/o_Red_Video" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">o_Red_Video[2:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Red_Video[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/o_Grn_Video" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">o_Grn_Video[2:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Grn_Video[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/o_Blu_Video" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">o_Blu_Video[2:0]</obj_property>
+         <obj_property name="ObjectShortName">o_Blu_Video[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/w_Active" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">w_Active</obj_property>
+         <obj_property name="ObjectShortName">w_Active</obj_property>
+      </wvobject>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/w_Col_Count" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_Col_Count[9:0]</obj_property>
+         <obj_property name="ObjectShortName">w_Col_Count[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/w_Row_Count" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_Row_Count[9:0]</obj_property>
+         <obj_property name="ObjectShortName">w_Row_Count[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/w_Active_Col_Count" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_Active_Col_Count[9:0]</obj_property>
+         <obj_property name="ObjectShortName">w_Active_Col_Count[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/w_Active_Row_Count" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_Active_Row_Count[9:0]</obj_property>
+         <obj_property name="ObjectShortName">w_Active_Row_Count[9:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="group30" type="group">
+         <obj_property name="label">Sync_To_Count</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Count/i_Clk" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">i_Clk</obj_property>
+            <obj_property name="ObjectShortName">i_Clk</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Count/i_HSync" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">i_HSync</obj_property>
+            <obj_property name="ObjectShortName">i_HSync</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Count/i_VSync" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">i_VSync</obj_property>
+            <obj_property name="ObjectShortName">i_VSync</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Count/w_Frame_Start" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">w_Frame_Start</obj_property>
+            <obj_property name="ObjectShortName">w_Frame_Start</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Count/w_Col_Count" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">w_Col_Count[9:0]</obj_property>
+            <obj_property name="ObjectShortName">w_Col_Count[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Count/w_Row_Count" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">w_Row_Count[9:0]</obj_property>
+            <obj_property name="ObjectShortName">w_Row_Count[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Count/o_Col_Count" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">o_Col_Count[9:0]</obj_property>
+            <obj_property name="ObjectShortName">o_Col_Count[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Count/o_Row_Count" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">o_Row_Count[9:0]</obj_property>
+            <obj_property name="ObjectShortName">o_Row_Count[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="group33" type="group">
+         <obj_property name="label">Sync_To_Blanking</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Blanking/w_Col_Count" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">w_Col_Count[9:0]</obj_property>
+            <obj_property name="ObjectShortName">w_Col_Count[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Blanking/w_Row_Count" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">w_Row_Count[9:0]</obj_property>
+            <obj_property name="ObjectShortName">w_Row_Count[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Blanking/w_HSync" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">w_HSync</obj_property>
+            <obj_property name="ObjectShortName">w_HSync</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Blanking/w_VSync" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">w_VSync</obj_property>
+            <obj_property name="ObjectShortName">w_VSync</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Blanking/o_VBlank" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">o_VBlank</obj_property>
+            <obj_property name="ObjectShortName">o_VBlank</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Sync_To_Blanking/o_HBlank" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">o_HBlank</obj_property>
+            <obj_property name="ObjectShortName">o_HBlank</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="group50" type="group">
+         <obj_property name="label">Blanking_To_Count</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Blank_To_Count/w_Frame_Start" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">w_Frame_Start</obj_property>
+            <obj_property name="ObjectShortName">w_Frame_Start</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Blank_To_Count/w_Line_Start" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">w_Line_Start</obj_property>
+            <obj_property name="ObjectShortName">w_Line_Start</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Blank_To_Count/o_Active" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">o_Active</obj_property>
+            <obj_property name="ObjectShortName">o_Active</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Blank_To_Count/w_Col_Count" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">w_Col_Count[9:0]</obj_property>
+            <obj_property name="ObjectShortName">w_Col_Count[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Blank_To_Count/w_Row_Count" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">w_Row_Count[9:0]</obj_property>
+            <obj_property name="ObjectShortName">w_Row_Count[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Blank_To_Count/o_Col_Count" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">o_Col_Count[9:0]</obj_property>
+            <obj_property name="ObjectShortName">o_Col_Count[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Blank_To_Count/o_Row_Count" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">o_Row_Count[9:0]</obj_property>
+            <obj_property name="ObjectShortName">o_Row_Count[9:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Blank_To_Count/o_VBlank" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">o_VBlank</obj_property>
+            <obj_property name="ObjectShortName">o_VBlank</obj_property>
+         </wvobject>
+         <wvobject fp_name="/VGA_Test_Pattterns_TB/Test_Pattern_Gen_Inst/Blank_To_Count/o_HBlank" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">o_HBlank</obj_property>
+            <obj_property name="ObjectShortName">o_HBlank</obj_property>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+</wave_config>
