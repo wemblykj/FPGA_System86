@@ -1,7 +1,7 @@
 #Please do not modify this file by hand
 XmpVersion: 14.7
 VerMgmt: 14.7
-IntStyle: default
+IntStyle: ise
 Flow: ise
 ModuleSearchPath: /home/administrator/Downloads/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
 MHS File: vid_processing.mhs
@@ -16,9 +16,9 @@ UserCmd2Type: 0
 GenSimTB: 0
 SdkExportBmmBit: 1
 SdkExportDir: SDK/SDK_Export
-InsertNoPads: 0
+InsertNoPads: 1
 WarnForEAArch: 1
-HdlLang: VHDL
+HdlLang: vhdl
 SimModel: BEHAVIORAL
 ExternalMemSim: 0
 UcfFile: data/vid_processing.ucf
