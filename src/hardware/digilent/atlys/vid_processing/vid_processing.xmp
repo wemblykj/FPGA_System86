@@ -3,6 +3,7 @@ XmpVersion: 14.7
 VerMgmt: 14.7
 IntStyle: ise
 Flow: ise
+ModuleSearchPath: C:/Xilinx/atlys_bsb_support_v_3_7/Atlys_AXI_BSB_Support/lib/Digilent/pcores/axi_hdmi_v1_00_a/../../../
 ModuleSearchPath: /home/administrator/Downloads/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
 MHS File: vid_processing.mhs
 Architecture: spartan6
@@ -14,7 +15,7 @@ UserCmd1Type: 0
 UserCmd2: 
 UserCmd2Type: 0
 GenSimTB: 0
-SdkExportBmmBit: 1
+SdkExportBmmBit: 0
 SdkExportDir: SDK/SDK_Export
 InsertNoPads: 1
 WarnForEAArch: 1
@@ -23,7 +24,7 @@ SimModel: BEHAVIORAL
 ExternalMemSim: 0
 UcfFile: data/vid_processing.ucf
 EnableParTimingError: 1
-ShowLicenseDialog: 1
+ShowLicenseDialog: 0
 BInfo: 
 ICacheAddr: MCB_DDR2,C_S0_AXI_BASEADDR
 ICacheAddr: MCB_DDR2,C_S1_AXI_BASEADDR
