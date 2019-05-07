@@ -21,7 +21,7 @@ InsertNoPads: 1
 WarnForEAArch: 1
 HdlLang: vhdl
 SimModel: BEHAVIORAL
-ExternalMemSim: 0
+ExternalMemSim: 1
 UcfFile: data/vid_processing.ucf
 EnableParTimingError: 1
 ShowLicenseDialog: 0

@@ -67,8 +67,10 @@ architecture STRUCTURE of testbench is
       axi_hdmi_0_TMDS_TX_0_N_pin : out std_logic
     );
   end component;
-
+ -- cas_n,ck,ck_n,cke,cs_n,ldm,odt,ras_n,udm,we_n,a,ba,ldqs,ldqs_n,udqs,udqs_n,dq
   component ede1116 is
+    --generic(
+	 --);
 	 port(
 		cas_n		: in std_logic;
 		ck			: in std_logic;
@@ -86,7 +88,7 @@ architecture STRUCTURE of testbench is
 		ldqs_n	: inout std_logic;
 		udqs		: inout std_logic;
 		udqs_n	: inout std_logic;
-		dq			: in std_logic_vector(15 downto 0)
+		dq			: inout std_logic_vector(15 downto 0)
 	 );
   end component;
   -- Internal signals
