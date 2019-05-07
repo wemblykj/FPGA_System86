@@ -68,6 +68,27 @@ architecture STRUCTURE of testbench is
     );
   end component;
 
+  component ede1116 is
+	 port(
+		cas_n		: in std_logic;
+		ck			: in std_logic;
+		ck_n		: in std_logic;
+		cke		: in std_logic;
+		cs_n		: in std_logic;
+		ldm		: in std_logic;
+		odt		: in std_logic;
+		ras_n		: in std_logic;
+		udm		: in std_logic;
+		we_n		: in std_logic;
+		a			: in std_logic_vector(12 downto 0);
+		ba			: in std_logic_vector(2 downto 0);
+		ldqs		: inout std_logic;
+		ldqs_n	: inout std_logic;
+		udqs		: inout std_logic;
+		udqs_n	: inout std_logic;
+		dq			: in std_logic_vector(15 downto 0)
+	 );
+  end component;
   -- Internal signals
 
   signal DIP_Switches_8Bits_TRI_I : std_logic_vector(7 downto 0);
@@ -166,6 +187,26 @@ begin
       axi_hdmi_0_TMDS_TX_0_N_pin => axi_hdmi_0_TMDS_TX_0_N_pin
     );
 
+	 sdram : ede1116
+    port map (
+		cs_n => '0',
+		we_n => mcbx_dram_we_n,
+      udqs_n => mcbx_dram_udqs_n,
+      udqs => mcbx_dram_udqs,
+      udm => mcbx_dram_udm,
+      ras_n => mcbx_dram_ras_n,
+      odt => mcbx_dram_odt,
+      ldm => mcbx_dram_ldm,
+      ldqs_n => mcbx_dram_dqs_n,
+      ldqs => mcbx_dram_dqs,
+      dq => mcbx_dram_dq,
+      ck_n => mcbx_dram_clk_n,
+      ck => mcbx_dram_clk,
+      cke => mcbx_dram_cke,
+      cas_n => mcbx_dram_cas_n,
+      ba => mcbx_dram_ba,
+      a => mcbx_dram_addr
+	);
   -- Clock generator for GCLK
 
   process
