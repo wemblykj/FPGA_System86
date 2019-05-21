@@ -3,8 +3,8 @@ XmpVersion: 14.7
 VerMgmt: 14.7
 IntStyle: ise
 Flow: ise
-ModuleSearchPath: C:/Xilinx/atlys_bsb_support_v_3_7/Atlys_AXI_BSB_Support/lib/Digilent/pcores/axi_hdmi_v1_00_a/../../../
 ModuleSearchPath: /home/administrator/Downloads/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
+ModuleSearchPath: /home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib
 MHS File: vid_processing.mhs
 Architecture: spartan6
 Device: xc6slx45
@@ -14,7 +14,7 @@ UserCmd1:
 UserCmd1Type: 0
 UserCmd2: 
 UserCmd2Type: 0
-GenSimTB: 0
+GenSimTB: 1
 SdkExportBmmBit: 0
 SdkExportDir: SDK/SDK_Export
 InsertNoPads: 1

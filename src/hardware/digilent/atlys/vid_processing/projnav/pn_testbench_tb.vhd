@@ -67,30 +67,39 @@ architecture STRUCTURE of testbench is
       axi_hdmi_0_TMDS_TX_0_N_pin : out std_logic
     );
   end component;
- -- cas_n,ck,ck_n,cke,cs_n,ldm,odt,ras_n,udm,we_n,a,ba,ldqs,ldqs_n,udqs,udqs_n,dq
-  component ede1116 is
-    --generic(
-	 --);
-	 port(
-		cas_n		: in std_logic;
-		ck			: in std_logic;
-		ck_n		: in std_logic;
-		cke		: in std_logic;
-		cs_n		: in std_logic;
-		ldm		: in std_logic;
-		odt		: in std_logic;
-		ras_n		: in std_logic;
-		udm		: in std_logic;
-		we_n		: in std_logic;
-		a			: in std_logic_vector(12 downto 0);
-		ba			: in std_logic_vector(2 downto 0);
-		ldqs		: inout std_logic;
-		ldqs_n	: inout std_logic;
-		udqs		: inout std_logic;
-		udqs_n	: inout std_logic;
-		dq			: inout std_logic_vector(15 downto 0)
-	 );
+
+  component ddr2 is
+    generic (
+      ADDR_BITS : INTEGER;
+      BA_BITS : INTEGER;
+      COL_BITS : INTEGER;
+      ROW_BITS : INTEGER;
+      TRAS_MIN : INTEGER;
+      TRCD : INTEGER;
+      TRFC_MIN : INTEGER;
+      TRP : INTEGER;
+      TRTP : INTEGER;
+      TWTR : INTEGER
+    );
+    port (
+      addr : in std_logic_vector(12 downto 0);
+      ba : in std_logic_vector(2 downto 0);
+      cas_n : in std_logic;
+      ck : in std_logic;
+      ck_n : in std_logic;
+      cke : in std_logic;
+      dm_rdqs : inout std_logic_vector(0 to 0);
+      dq : inout std_logic_vector(7 downto 0);
+      dqs : inout std_logic_vector(0 to 0);
+      dqs_n : inout std_logic_vector(0 to 0);
+      odt : in std_logic;
+      ras_n : in std_logic;
+      we_n : in std_logic;
+      rdqs_n : out std_logic_vector(0 to 0);
+      cs_n : in std_logic
+    );
   end component;
+
   -- Internal signals
 
   signal DIP_Switches_8Bits_TRI_I : std_logic_vector(7 downto 0);
@@ -123,15 +132,16 @@ architecture STRUCTURE of testbench is
   signal mcbx_dram_clk : std_logic;
   signal mcbx_dram_clk_n : std_logic;
   signal mcbx_dram_dq : std_logic_vector(15 downto 0);
-  signal mcbx_dram_dqs : std_logic;
-  signal mcbx_dram_dqs_n : std_logic;
-  signal mcbx_dram_ldm : std_logic;
+  signal mcbx_dram_dqs : std_logic_vector(0 to 0);
+  signal mcbx_dram_dqs_n : std_logic_vector(0 to 0);
+  signal mcbx_dram_ldm : std_logic_vector(0 to 0);
   signal mcbx_dram_odt : std_logic;
   signal mcbx_dram_ras_n : std_logic;
-  signal mcbx_dram_udm : std_logic;
-  signal mcbx_dram_udqs : std_logic;
-  signal mcbx_dram_udqs_n : std_logic;
+  signal mcbx_dram_udm : std_logic_vector(0 to 0);
+  signal mcbx_dram_udqs : std_logic_vector(0 to 0);
+  signal mcbx_dram_udqs_n : std_logic_vector(0 to 0);
   signal mcbx_dram_we_n : std_logic;
+  signal net_gnd : std_logic;
   signal rzq : std_logic;
   signal zio : std_logic;
 
@@ -144,19 +154,23 @@ architecture STRUCTURE of testbench is
 
 begin
 
+  -- Internal assignments
+
+  net_gnd <= '0';
+
   dut : vid_processing
     port map (
       zio => zio,
       rzq => rzq,
       mcbx_dram_we_n => mcbx_dram_we_n,
-      mcbx_dram_udqs_n => mcbx_dram_udqs_n,
-      mcbx_dram_udqs => mcbx_dram_udqs,
-      mcbx_dram_udm => mcbx_dram_udm,
+      mcbx_dram_udqs_n => mcbx_dram_udqs_n(0),
+      mcbx_dram_udqs => mcbx_dram_udqs(0),
+      mcbx_dram_udm => mcbx_dram_udm(0),
       mcbx_dram_ras_n => mcbx_dram_ras_n,
       mcbx_dram_odt => mcbx_dram_odt,
-      mcbx_dram_ldm => mcbx_dram_ldm,
-      mcbx_dram_dqs_n => mcbx_dram_dqs_n,
-      mcbx_dram_dqs => mcbx_dram_dqs,
+      mcbx_dram_ldm => mcbx_dram_ldm(0),
+      mcbx_dram_dqs_n => mcbx_dram_dqs_n(0),
+      mcbx_dram_dqs => mcbx_dram_dqs(0),
       mcbx_dram_dq => mcbx_dram_dq,
       mcbx_dram_clk_n => mcbx_dram_clk_n,
       mcbx_dram_clk => mcbx_dram_clk,
@@ -189,26 +203,68 @@ begin
       axi_hdmi_0_TMDS_TX_0_N_pin => axi_hdmi_0_TMDS_TX_0_N_pin
     );
 
-	 sdram : ede1116
+  inst_ddr_00 : ddr2
+    generic map (
+      ADDR_BITS => 13,
+      BA_BITS => 3,
+      COL_BITS => 10,
+      ROW_BITS => 13,
+      TRAS_MIN => 42500,
+      TRCD => 15000,
+      TRFC_MIN => 127500,
+      TRP => 15000,
+      TRTP => 7500,
+      TWTR => 7500
+    )
     port map (
-		cs_n => '0',
-		we_n => mcbx_dram_we_n,
-      udqs_n => mcbx_dram_udqs_n,
-      udqs => mcbx_dram_udqs,
-      udm => mcbx_dram_udm,
-      ras_n => mcbx_dram_ras_n,
-      odt => mcbx_dram_odt,
-      ldm => mcbx_dram_ldm,
-      ldqs_n => mcbx_dram_dqs_n,
-      ldqs => mcbx_dram_dqs,
-      dq => mcbx_dram_dq,
-      ck_n => mcbx_dram_clk_n,
-      ck => mcbx_dram_clk,
-      cke => mcbx_dram_cke,
-      cas_n => mcbx_dram_cas_n,
+      addr => mcbx_dram_addr,
       ba => mcbx_dram_ba,
-      a => mcbx_dram_addr
-	);
+      cas_n => mcbx_dram_cas_n,
+      ck => mcbx_dram_clk,
+      ck_n => mcbx_dram_clk_n,
+      cke => mcbx_dram_cke,
+      dm_rdqs => mcbx_dram_ldm(0 to 0),
+      dq => mcbx_dram_dq(7 downto 0),
+      dqs => mcbx_dram_dqs(0 to 0),
+      dqs_n => mcbx_dram_dqs_n(0 to 0),
+      odt => mcbx_dram_odt,
+      ras_n => mcbx_dram_ras_n,
+      we_n => mcbx_dram_we_n,
+      rdqs_n => open,
+      cs_n => net_gnd
+    );
+
+  inst_ddr_01 : ddr2
+    generic map (
+      ADDR_BITS => 13,
+      BA_BITS => 3,
+      COL_BITS => 10,
+      ROW_BITS => 13,
+      TRAS_MIN => 42500,
+      TRCD => 15000,
+      TRFC_MIN => 127500,
+      TRP => 15000,
+      TRTP => 7500,
+      TWTR => 7500
+    )
+    port map (
+      addr => mcbx_dram_addr,
+      ba => mcbx_dram_ba,
+      cas_n => mcbx_dram_cas_n,
+      ck => mcbx_dram_clk,
+      ck_n => mcbx_dram_clk_n,
+      cke => mcbx_dram_cke,
+      dm_rdqs => mcbx_dram_udm(0 to 0),
+      dq => mcbx_dram_dq(15 downto 8),
+      dqs => mcbx_dram_udqs(0 to 0),
+      dqs_n => mcbx_dram_udqs_n(0 to 0),
+      odt => mcbx_dram_odt,
+      ras_n => mcbx_dram_ras_n,
+      we_n => mcbx_dram_we_n,
+      rdqs_n => open,
+      cs_n => net_gnd
+    );
+
   -- Clock generator for GCLK
 
   process
