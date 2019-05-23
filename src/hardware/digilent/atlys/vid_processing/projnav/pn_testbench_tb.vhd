@@ -89,7 +89,7 @@ architecture STRUCTURE of testbench is
       ck_n : in std_logic;
       cke : in std_logic;
       dm_rdqs : inout std_logic_vector(0 to 0);
-      dq : inout std_logic_vector(7 downto 0);
+      dq : inout std_logic_vector(15 downto 0);
       dqs : inout std_logic_vector(0 to 0);
       dqs_n : inout std_logic_vector(0 to 0);
       odt : in std_logic;
@@ -224,7 +224,7 @@ begin
       ck_n => mcbx_dram_clk_n,
       cke => mcbx_dram_cke,
       dm_rdqs => mcbx_dram_ldm(0 to 0),
-      dq => mcbx_dram_dq(7 downto 0),
+      dq => mcbx_dram_dq(15 downto 0),
       dqs => mcbx_dram_dqs(0 to 0),
       dqs_n => mcbx_dram_dqs_n(0 to 0),
       odt => mcbx_dram_odt,
@@ -234,36 +234,36 @@ begin
       cs_n => net_gnd
     );
 
-  inst_ddr_01 : ddr2
-    generic map (
-      ADDR_BITS => 13,
-      BA_BITS => 3,
-      COL_BITS => 10,
-      ROW_BITS => 13,
-      TRAS_MIN => 42500,
-      TRCD => 15000,
-      TRFC_MIN => 127500,
-      TRP => 15000,
-      TRTP => 7500,
-      TWTR => 7500
-    )
-    port map (
-      addr => mcbx_dram_addr,
-      ba => mcbx_dram_ba,
-      cas_n => mcbx_dram_cas_n,
-      ck => mcbx_dram_clk,
-      ck_n => mcbx_dram_clk_n,
-      cke => mcbx_dram_cke,
-      dm_rdqs => mcbx_dram_udm(0 to 0),
-      dq => mcbx_dram_dq(15 downto 8),
-      dqs => mcbx_dram_udqs(0 to 0),
-      dqs_n => mcbx_dram_udqs_n(0 to 0),
-      odt => mcbx_dram_odt,
-      ras_n => mcbx_dram_ras_n,
-      we_n => mcbx_dram_we_n,
-      rdqs_n => open,
-      cs_n => net_gnd
-    );
+--  inst_ddr_01 : ddr2
+--    generic map (
+--      ADDR_BITS => 13,
+--      BA_BITS => 3,
+--      COL_BITS => 10,
+--      ROW_BITS => 13,
+--      TRAS_MIN => 42500,
+--      TRCD => 15000,
+--      TRFC_MIN => 127500,
+--      TRP => 15000,
+--      TRTP => 7500,
+--      TWTR => 7500
+--    )
+--    port map (
+--      addr => mcbx_dram_addr,
+--      ba => mcbx_dram_ba,
+--      cas_n => mcbx_dram_cas_n,
+--      ck => mcbx_dram_clk,
+--      ck_n => mcbx_dram_clk_n,
+--      cke => mcbx_dram_cke,
+--      dm_rdqs => mcbx_dram_udm(0 to 0),
+--      dq => mcbx_dram_dq(15 downto 8),
+--      dqs => mcbx_dram_udqs(0 to 0),
+--      dqs_n => mcbx_dram_udqs_n(0 to 0),
+--      odt => mcbx_dram_odt,
+--      ras_n => mcbx_dram_ras_n,
+--      we_n => mcbx_dram_we_n,
+--      rdqs_n => open,
+--      cs_n => net_gnd
+--    );
 
   -- Clock generator for GCLK
 
