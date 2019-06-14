@@ -3,8 +3,8 @@ XmpVersion: 14.7
 VerMgmt: 14.7
 IntStyle: ise
 Flow: ise
-ModuleSearchPath: /home/administrator/Downloads/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
-ModuleSearchPath: /home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib
+ModuleSearchPath: /opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib/
+ModuleSearchPath: /home/administrator/Development/fpga/system86/src/platform/xilinx
 MHS File: vid_processing.mhs
 Architecture: spartan6
 Device: xc6slx45

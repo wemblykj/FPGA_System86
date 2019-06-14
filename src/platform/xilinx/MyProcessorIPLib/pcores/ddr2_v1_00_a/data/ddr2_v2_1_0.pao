@@ -1,0 +1,7 @@
+##############################################################################
+## Filename:          /home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/MyProcessorIPLib/pcores/ddr2_v1_00_a/data/ddr2_v2_1_0.pao
+## Description:       Peripheral Analysis Order
+## Date:              Tue May 21 08:57:44 2019 (by Create and Import Peripheral Wizard)
+##############################################################################
+
+lib ddr2_v1_00_a ddr2 verilog
