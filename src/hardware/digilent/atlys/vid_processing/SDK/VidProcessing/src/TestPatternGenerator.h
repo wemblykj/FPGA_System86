@@ -15,7 +15,7 @@
 template<int BaseAddress>
 class TestPatternGenerator : public Component<BaseAddress, TPG_CONTROL, TPG_STATUS> {
 public:
-	TestPatternGenerator() {}
+	TestPatternGenerator() : m_dirty(true) {}
 	virtual ~TestPatternGenerator() {}
 
 	bool GetEnabled() const;
@@ -27,12 +27,18 @@ public:
 	// TPG specific
 	void FSyncReset();
 
+	void SetPattern(Xuint32 pattern);
+	void SetResolution(Xuint32 width, Xuint32 height);
+	void RegisterUpdate();
+
 protected:
 	virtual void ReportHeader() const;
 	virtual void ReportControlSettings() const;
     virtual void ReportStatusSettings() const;
 	virtual void ReportCustomSettings() const;
 
+private:
+	bool m_dirty;
 };
 
 #include "tpg.h"
@@ -50,6 +56,7 @@ void TestPatternGenerator<BaseAddress>::SetEnabled(bool enable)
 	Xuint32 control = this->GetControl();
 	if (enable)
 	{
+		RegisterUpdate();
 		control &= ~TPG_CTL_EN_MASK;
 	}
 	else
@@ -90,6 +97,31 @@ void TestPatternGenerator<BaseAddress>::FSyncReset()
 	control |= TPG_RST_AUTORESET;
 
 	this->SetControl(control);
+}
+
+template<int BaseAddress>
+void TestPatternGenerator<BaseAddress>::SetPattern(Xuint32 pattern)
+{
+	TPG_WriteReg(BaseAddress, TPG_PATTERN_CONTROL, pattern);
+	m_dirty = true;
+}
+
+template<int BaseAddress>
+void TestPatternGenerator<BaseAddress>::SetResolution(Xuint32 width, Xuint32 height)
+{
+	TPG_WriteReg(BaseAddress, TPG_ACTIVE_SIZE, width*height);
+	m_dirty = true;
+}
+
+template<int BaseAddress>
+void TestPatternGenerator<BaseAddress>::RegisterUpdate()
+{
+	if (m_dirty)
+	{
+		Xuint32 control = this->GetControl();
+		this->SetControl(control | TPG_CTL_RUE_MASK);
+		m_dirty = false;
+	}
 }
 
 template<int BaseAddress>

@@ -14,6 +14,9 @@ int main()
 
 	tpg_0.Report();
 
+	tpg_0.SetResolution(1280, 720);
+	tpg_0.SetEnabled(true);
+
 	xil_printf("Press Space to continue!\r\n");
 
 	getchar();
