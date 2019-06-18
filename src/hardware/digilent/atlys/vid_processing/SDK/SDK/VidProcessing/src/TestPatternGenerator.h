@@ -8,12 +8,12 @@
 #ifndef TESTPATTERNGENERATOR_H_
 #define TESTPATTERNGENERATOR_H_
 
-#include "Component.h"
+#include "AxiModule.h"
 
 #include "tpg.h"
 
 template<int BaseAddress>
-class TestPatternGenerator : public Component<BaseAddress, TPG_CONTROL, TPG_STATUS> {
+class TestPatternGenerator : public AxiModule<BaseAddress, TPG_CONTROL, TPG_STATUS> {
 public:
 	TestPatternGenerator() : m_dirty(true) {}
 	virtual ~TestPatternGenerator() {}
@@ -32,10 +32,10 @@ public:
 	void RegisterUpdate();
 
 protected:
-	virtual void ReportHeader() const;
-	virtual void ReportControlSettings() const;
-    virtual void ReportStatusSettings() const;
-	virtual void ReportCustomSettings() const;
+	virtual void DumpHeader() const;
+	virtual void DumpControlSettings() const;
+    virtual void DumpStatusSettings() const;
+	virtual void DumpCustomSettings() const;
 
 private:
 	bool m_dirty;
@@ -125,12 +125,12 @@ void TestPatternGenerator<BaseAddress>::RegisterUpdate()
 }
 
 template<int BaseAddress>
-void TestPatternGenerator<BaseAddress>::ReportHeader() const {
-	xil_printf("Test Pattern Generator Core Configuration:\r\n");
+void TestPatternGenerator<BaseAddress>::DumpHeader() const {
+  xil_printf("Test Pattern Generator Core Configuration:\r\n");
 }
 
 template<int BaseAddress>
-void TestPatternGenerator<BaseAddress>::ReportControlSettings() const {
+void TestPatternGenerator<BaseAddress>::DumpControlSettings() const {
 
   Xuint32 reg_val;
 
@@ -139,7 +139,7 @@ void TestPatternGenerator<BaseAddress>::ReportControlSettings() const {
 }
 
 template<int BaseAddress>
-void TestPatternGenerator<BaseAddress>::ReportStatusSettings() const {
+void TestPatternGenerator<BaseAddress>::DumpStatusSettings() const {
 
   //Xuint32 reg_val;
 
@@ -148,7 +148,7 @@ void TestPatternGenerator<BaseAddress>::ReportStatusSettings() const {
 }
 
 template<int BaseAddress>
-void TestPatternGenerator<BaseAddress>::ReportCustomSettings() const {
+void TestPatternGenerator<BaseAddress>::DumpCustomSettings() const {
 
   Xuint32 reg_val;
 
