@@ -38,25 +38,25 @@ protected:
 template<int BaseAddress, int Control, int Status>
 Xuint32 AxiModule<BaseAddress, Control, Status>::GetControl() const
 {
-	return GetRegister<Control>();
+	return this->template GetRegister<Control>();
 }
 
 template<int BaseAddress, int Control, int Status>
 void AxiModule<BaseAddress, Control, Status>::SetControl(Xuint32 control)
 {
-	SetRegister<Control>(control);
+	this->template SetRegister<Control>(control);
 }
 
 template<int BaseAddress, int Control, int Status>
 Xuint32 AxiModule<BaseAddress, Control, Status>::GetStatus() const
 {
-	return GetRegister<Status>();
+	return 0; //this->GetRegister<Status>();
 }
 
 template<int BaseAddress, int Control, int Status>
 void AxiModule<BaseAddress, Control, Status>::SetStatus(Xuint32 status)
 {
-	SetRegister<Status>(status);
+	this->SetRegister<Status>(status);
 }
 
 template<int BaseAddress, int Control, int Status>

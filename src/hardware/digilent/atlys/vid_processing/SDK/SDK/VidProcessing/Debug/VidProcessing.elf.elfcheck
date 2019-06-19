@@ -6,4 +6,19 @@ Command Line: elfcheck -hw ../../vid_processing_hw_platform/system.xml -pe
 microblaze_0 VidProcessing.elf 
 
 ELF file	: VidProcessing.elf
-elfcheck passed.
+ERROR:EDK:3165 - elfcheck failed!
+The following sections did not fit into Processor  memory:
+	Section .stack (0xA8020B58 - 0xA8020F57)
+	Section .heap (0xA8020758 - 0xA8020B57)
+	Section .bss (0xA801FEB0 - 0xA8020757)
+	Section .sdata (0xA801FEAC - 0xA801FEAF)
+	Section .data (0xA801F918 - 0xA801FEAB)
+	Section .rodata (0xA801CF1C - 0xA801F917)
+	Section .dtors (0xA801CF14 - 0xA801CF1B)
+	Section .ctors (0xA801CF0C - 0xA801CF13)
+	Section .fini (0xA801CEEC - 0xA801CF0B)
+	Section .init (0xA801CEB0 - 0xA801CEEB)
+	Section .text (0xA8000000 - 0xA801CEAF)
+
+Try using the linker script generation tools to generate an ELF that maps
+correctly to your hardware design.

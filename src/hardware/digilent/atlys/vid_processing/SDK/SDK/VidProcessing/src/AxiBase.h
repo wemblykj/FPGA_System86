@@ -19,12 +19,13 @@ public:
 
 	Xuint32 GetBaseAddress() const { return BaseAddress; }
 	Xuint32 GetRegister(Xuint32 offset) const;
-	void SetRegister(Xuint32 offset, Xuint32 value) const;
+	void SetRegister(Xuint32 offset, Xuint32 value);
 
 	template<int Offset>
 	Xuint32 GetRegister() const;
+
 	template<int Offset>
-	void SetRegister(Xuint32 value) const;
+	void SetRegister(Xuint32 value);
 
 	void Dump() const;
 
@@ -46,15 +47,15 @@ void AxiBase<BaseAddress>::SetRegister(Xuint32 offset, Xuint32 value)
 	Xil_Out32(BaseAddress + offset, value);
 }
 
-template<int Offset>
 template<int BaseAddress>
+template<int Offset>
 Xuint32 AxiBase<BaseAddress>::GetRegister() const
 {
 	return Xil_In32(BaseAddress + Offset);
 }
 
-template<int Offset>
 template<int BaseAddress>
+template<int Offset>
 void AxiBase<BaseAddress>::SetRegister(Xuint32 value)
 {
 	Xil_Out32(BaseAddress + Offset, value);
