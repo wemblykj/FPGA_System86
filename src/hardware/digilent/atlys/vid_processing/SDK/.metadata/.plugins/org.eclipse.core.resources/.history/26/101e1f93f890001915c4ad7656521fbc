@@ -1,0 +1,18 @@
+/*
+ * TestPatternGenerator.cpp
+ *
+ *  Created on: 17 Jun 2019
+ *      Author: administrator
+ */
+
+#include "TestPatternGenerator.h"
+
+TestPatternGenerator::TestPatternGenerator() {
+	// TODO Auto-generated constructor stub
+
+}
+
+TestPatternGenerator::~TestPatternGenerator() {
+	// TODO Auto-generated destructor stub
+}
+

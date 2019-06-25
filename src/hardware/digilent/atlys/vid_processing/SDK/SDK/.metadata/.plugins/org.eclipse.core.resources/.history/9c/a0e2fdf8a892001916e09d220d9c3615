@@ -1,0 +1,19 @@
+/*
+ * AxiHdmi.h
+ *
+ *  Created on: 19 Jun 2019
+ *      Author: administrator
+ */
+
+#ifndef AXIHDMI_H_
+#define AXIHDMI_H_
+
+#include "AxiBase.h"
+
+class AxiHdmi: public AxiBase {
+public:
+	AxiHdmi();
+	virtual ~AxiHdmi();
+};
+
+#endif /* AXIHDMI_H_ */

@@ -1,0 +1,19 @@
+/*
+ * Empty C++ Application
+ */
+
+#include "TestPatternGenerator.h"
+
+#include "xparameters.h"
+
+int main()
+{
+	TestPatternGenerator tpg_0();
+
+	tpg_0.ReportSettings();
+
+	xil_printf("Press Space to continue!\r\n", reg_val);
+	while (inchar != ' ') inchar = inbyte();
+
+	return 0;
+}

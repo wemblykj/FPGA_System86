@@ -1,0 +1,53 @@
+/*
+ * Component.h
+ *
+ *  Created on: 17 Jun 2019
+ *      Author: administrator
+ */
+
+#ifndef COMPONENT_H_
+#define COMPONENT_H_
+
+#include "xbasic_types.h"
+
+template<int BaseAddress, int Control, int Status>
+class Component {
+public:
+	Component(Xuint32 baseAddress);
+	virtual ~Component();
+
+	Xuint32 GetBaseAddress() { return BaseAddress; }
+
+	Xuint32 GetControl();
+	void SetControl(Xuint32 control);
+
+	bool GetEnabled();
+	void SetEnabled(bool enable);
+
+	bool GetReset();
+	void SetReset(bool reset);
+
+	virtual void ReportSettings();
+};
+
+Xuint32 Component::GetControl()
+{
+	return TPG_ReadReg(BaseAddress, Control);
+}
+
+void Component::SetControl(Xuint32 control)
+{
+	TPG_WriteReg(BaseAddress, Control, control);
+}
+
+Xuint32 TestPatternGenerator::GetStatus()
+{
+	return TPG_ReadReg(BaseAddress, Status);
+}
+
+void TestPatternGenerator::SetStatus(Xuint32 status)
+{
+	TPG_WriteReg(BaseAddress, Status, status);
+}
+
+#endif /* COMPONENT_H_ */

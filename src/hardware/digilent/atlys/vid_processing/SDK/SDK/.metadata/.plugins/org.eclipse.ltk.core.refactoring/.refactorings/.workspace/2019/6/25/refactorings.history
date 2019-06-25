@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;VidProcessing/src/AxiHdmi.cpp&apos;" deleteContents="false" description="Delete resource &apos;VidProcessing/src/AxiHdmi.cpp&apos;" element1="/VidProcessing/src/AxiHdmi.cpp" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1560959212346"/>
+</session>
