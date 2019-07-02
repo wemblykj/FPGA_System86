@@ -103,10 +103,15 @@ void PushBtnHandler(void *CallBackRef);
 /**/
 
 #define IIC_BASEADDR XPAR_INTC_0_BASEADDR
+#define INTC_DEVICE_ID XPAR_INTC_0_DEVICE_ID
+
 #define BTNS_BASEADDR XPAR_PUSH_BUTTONS_5BITS_BASEADDR
 #define BTNS_DEVICE_ID XPAR_PUSH_BUTTONS_5BITS_DEVICE_ID
-#define INTC_DEVICE_ID XPAR_INTC_0_DEVICE_ID
 #define BTNS_IRPT_ID XPAR_AXI_INTC_0_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_INTR
+
+#define LEDS_BASEADDR XPAR_LEDS_8BITS_BASEADDR
+#define LEDS_DEVICE_ID XPAR_LEDS_8BITS_DEVICE_ID
+
 //#define IIC_IRPT_ID XPAR_AXI_INTC_0_XPS_IIC_0_IIC2INTC_IRPT_INTR
 #define HDMIOUT_BASEADDR XPAR_AXI_HDMI_0_BASEADDR
 
@@ -126,6 +131,7 @@ int main()
 {
 	init_platform();
 
+	static XGpio ledsCtrl;
 	static XGpio pshBtns;
 	static XIntc intCtrl;
 
@@ -134,11 +140,18 @@ int main()
 	lDeBncCnt = lDeBncCntMax;
 
 	/*
+	 *Initialize the driver structs for the LEDs
+	 */
+	XGpio_Initialize(&ledsCtrl, LEDS_DEVICE_ID);
+	Xil_Out32(LEDS_BASEADDR, 0x00000001);  // Set first LED
+
+	/*
 	 *Initialize the driver structs for the Push button and interrupt cores.
 	 *This allows the API functions to be used with these cores.
 	 */
 	XGpio_Initialize(&pshBtns, BTNS_DEVICE_ID);
 	//XIntc_Initialize(&intCtrl, INTC_DEVICE_ID);
+
 
 	/*
 	 * Connect the function PushBtnHandler to the interrupt controller so that
@@ -187,8 +200,13 @@ int main()
 	TestPatternGenerator<XPAR_TPG_0_BASEADDR> tpg_0;
 	AxiHdmi<HDMIOUT_BASEADDR> hdmi_0;
 
+	Xil_Out32(LEDS_BASEADDR, 0x00000002);  // Set second LED
+
+#ifndef SIMULATION
 	hdmi_0.Dump();
 	tpg_0.Dump();
+#endif
+	Xil_Out32(LEDS_BASEADDR, 0x00000003);  // Set third LED
 
 	hdmi_0.SetOutputResolution(1280, 720);
 
@@ -196,6 +214,9 @@ int main()
 	tpg_0.SetEnabled(true);
 
 
+	Xil_Out32(LEDS_BASEADDR, 0x00000000);  // Clear LEDs
+
+	volatile u32 leds;
 	while (1)
 	{
 		/*
@@ -204,6 +225,8 @@ int main()
 		while (lDeBncCnt < lDeBncCntMax)
 		{
 				lDeBncCnt++;
+				leds = ~leds;
+				Xil_Out32(LEDS_BASEADDR, leds);  // Clear LEDs
 		}
 	}
 

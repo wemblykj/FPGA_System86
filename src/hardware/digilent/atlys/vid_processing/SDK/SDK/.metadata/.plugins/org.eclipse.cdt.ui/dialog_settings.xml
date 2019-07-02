@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<section name="IncludeSysmbolsPropertyPage">
+		<item value="0" key="pageIndex"/>
+	</section>
 	<section name="completion_proposal_size">
 	</section>
 	<section name="org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeActionSettings">
@@ -45,6 +48,9 @@
 		<item value="false" key="stubInline0"/>
 		<item value="true" key="stubSelected0"/>
 		<item value="" key="namespace"/>
+	</section>
+	<section name="CPathsPropertyPage">
+		<item value="4" key="pageIndex"/>
 	</section>
 	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">
 	</section>

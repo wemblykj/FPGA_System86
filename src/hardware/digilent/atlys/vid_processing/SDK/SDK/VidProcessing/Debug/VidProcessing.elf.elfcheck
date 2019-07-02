@@ -8,16 +8,16 @@ microblaze_0 VidProcessing.elf
 ELF file	: VidProcessing.elf
 ERROR:EDK:3165 - elfcheck failed!
 The following sections did not fit into Processor  memory:
-	Section .stack (0xA8021380 - 0xA802177F)
-	Section .heap (0xA8020F7C - 0xA802137F)
-	Section .bss (0xA8020620 - 0xA8020F7B)
-	Section .data (0xA8020028 - 0xA802061F)
-	Section .rodata (0xA801D5F8 - 0xA8020027)
-	Section .dtors (0xA801D5F0 - 0xA801D5F7)
-	Section .ctors (0xA801D5E8 - 0xA801D5EF)
-	Section .fini (0xA801D5C8 - 0xA801D5E7)
-	Section .init (0xA801D58C - 0xA801D5C7)
-	Section .text (0xA8000000 - 0xA801D58B)
+	Section .stack (0xA8021400 - 0xA80217FF)
+	Section .heap (0xA8020FFC - 0xA80213FF)
+	Section .bss (0xA8020690 - 0xA8020FFB)
+	Section .data (0xA8020098 - 0xA802068F)
+	Section .rodata (0xA801D668 - 0xA8020097)
+	Section .dtors (0xA801D660 - 0xA801D667)
+	Section .ctors (0xA801D658 - 0xA801D65F)
+	Section .fini (0xA801D638 - 0xA801D657)
+	Section .init (0xA801D5FC - 0xA801D637)
+	Section .text (0xA8000000 - 0xA801D5FB)
 
 Try using the linker script generation tools to generate an ELF that maps
 correctly to your hardware design.
