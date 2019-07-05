@@ -79,7 +79,8 @@ implementation/supervisor_mcb_ddr2_wrapper.ngc \
 implementation/supervisor_leds_8bits_wrapper.ngc \
 implementation/supervisor_digilent_usb_epp_wrapper.ngc \
 implementation/supervisor_digilent_ac97_cntlr_wrapper.ngc \
-implementation/supervisor_dip_switches_8bits_wrapper.ngc
+implementation/supervisor_dip_switches_8bits_wrapper.ngc \
+implementation/supervisor_axi_hdmi_0_wrapper.ngc
 
 POSTSYN_NETLIST = implementation/$(SYSTEM).ngc
 
@@ -89,7 +90,7 @@ DOWNLOAD_BIT = implementation/download.bit
 
 SYSTEM_ACE = implementation/$(SYSTEM).ace
 
-UCF_FILE = /home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/system86/supervisor/data/supervisor.ucf
+UCF_FILE = data/supervisor.ucf
 
 BMM_FILE = implementation/$(SYSTEM).bmm
 
