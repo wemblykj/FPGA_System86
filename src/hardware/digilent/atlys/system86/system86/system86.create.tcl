@@ -1,5 +1,5 @@
-cd /home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/system86/supervisor
-if { [xload new supervisor.xmp] != 0 } {
+cd /home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/system86/system86
+if { [xload new system86.xmp] != 0 } {
   exit -1
 }
 xset arch spartan6

@@ -4,7 +4,7 @@ VerMgmt: 14.7
 IntStyle: ise
 Flow: ise
 ModuleSearchPath: /opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
-MHS File: supervisor.mhs
+MHS File: system86.mhs
 Architecture: spartan6
 Device: xc6slx45
 Package: csg324
@@ -21,7 +21,7 @@ WarnForEAArch: 1
 HdlLang: vhdl
 SimModel: BEHAVIORAL
 ExternalMemSim: 0
-UcfFile: data/supervisor.ucf
+UcfFile: data/system86.ucf
 EnableParTimingError: 1
 ShowLicenseDialog: 1
 BInfo: 
