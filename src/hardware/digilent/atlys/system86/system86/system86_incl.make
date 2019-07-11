@@ -80,7 +80,8 @@ implementation/system86_leds_8bits_wrapper.ngc \
 implementation/system86_digilent_usb_epp_wrapper.ngc \
 implementation/system86_digilent_ac97_cntlr_wrapper.ngc \
 implementation/system86_dip_switches_8bits_wrapper.ngc \
-implementation/system86_axi_hdmi_0_wrapper.ngc
+implementation/system86_axi_hdmi_0_wrapper.ngc \
+implementation/system86_axi_vdma_0_wrapper.ngc
 
 POSTSYN_NETLIST = implementation/$(SYSTEM).ngc
 
