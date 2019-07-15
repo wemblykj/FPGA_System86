@@ -69,12 +69,12 @@
  PORT Digilent_Usb_Epp_FIFOADR_pin = Digilent_Usb_Epp_FIFOADR, DIR = O, VEC = [1:0]
  PORT Digilent_Usb_Epp_PKTEND_pin = Digilent_Usb_Epp_PKTEND, DIR = O
  PORT Digilent_Usb_Epp_EPPRST_pin = Digilent_Usb_Epp_EPPRST, DIR = I
- PORT Digilent_Usb_Epp_DB_pin = Digilent_Usb_Epp_DB, DIR = IO, VEC = [7:0]
  PORT Digilent_AC97_Cntlr_BITCLK_pin = Digilent_AC97_Cntlr_BITCLK, DIR = I
  PORT Digilent_AC97_Cntlr_SDATA_IN_pin = Digilent_AC97_Cntlr_SDATA_IN, DIR = I
  PORT Digilent_AC97_Cntlr_SDATA_OUT_pin = Digilent_AC97_Cntlr_SDATA_OUT, DIR = O
  PORT Digilent_AC97_Cntlr_SYNC_pin = Digilent_AC97_Cntlr_SYNC, DIR = O
  PORT Digilent_AC97_Cntlr_RESET_N_pin = Digilent_AC97_Cntlr_RESET_N, DIR = O
+ PORT Digilent_Usb_Epp_DB_pin = Digilent_Usb_Epp_DB, DIR = IO, VEC = [7:0]
 
 
 BEGIN proc_sys_reset
@@ -100,6 +100,7 @@ BEGIN axi_intc
  PORT S_AXI_ACLK = clk_100_0000MHzPLL0
  PORT INTR = RS232_Uart_1_Interrupt & Digilent_Usb_Epp_IRQ_EPP & DIP_Switches_8Bits_IP2INTC_Irpt
  PORT Processor_clk = clk_100_0000MHzPLL0
+ PORT Processor_rst = proc_sys_reset_0_MB_Reset
 END
 
 BEGIN lmb_v10
@@ -427,6 +428,8 @@ BEGIN axi_vdma
  PARAMETER C_HIGHADDR = 0x7e22ffff
  PARAMETER C_S2MM_LINEBUFFER_DEPTH = 1024
  PARAMETER C_S2MM_LINEBUFFER_THRESH = 512
+ PARAMETER C_M_AXIS_MM2S_TDATA_WIDTH = 24
+ PARAMETER C_S_AXIS_S2MM_TDATA_WIDTH = 24
  BUS_INTERFACE S_AXI_LITE = axi4lite_0
  BUS_INTERFACE M_AXI_MM2S = axi4_0
  BUS_INTERFACE M_AXIS_MM2S = axi_vdma_0_M_AXIS_MM2S
@@ -439,6 +442,7 @@ BEGIN axi_vdma
  PORT mm2s_fsync_out = axi_vdma_0_mm2s_fsync_out
  PORT m_axis_mm2s_aclk = axi_hdmi_0_S_AXIS_MM2S_ACLK
  PORT m_axi_s2mm_aclk = clk_100_0000MHzPLL0
+ PORT s_axis_s2mm_aclk = axi_hdmi_0_S_AXIS_MM2S_ACLK
 END
 
 BEGIN v_tpg
