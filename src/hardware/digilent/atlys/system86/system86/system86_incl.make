@@ -38,12 +38,13 @@ PPC440_BOOTLOOP = $(XILINX_EDK_DIR)/sw/lib/ppc440/ppc440_bootloop.elf
 BOOTLOOP_DIR = bootloops
 
 MICROBLAZE_0_BOOTLOOP = $(BOOTLOOP_DIR)/microblaze_0.elf
+MICROBLAZE_0_ELF_SIM = ../SDK/System86Supervisor/Simulation/System86Supervisor.elf
 
 BRAMINIT_ELF_IMP_FILES = $(MICROBLAZE_0_BOOTLOOP)
 BRAMINIT_ELF_IMP_FILE_ARGS = -pe microblaze_0 $(MICROBLAZE_0_BOOTLOOP)
 
-BRAMINIT_ELF_SIM_FILES = $(MICROBLAZE_0_BOOTLOOP)
-BRAMINIT_ELF_SIM_FILE_ARGS = -pe microblaze_0 $(MICROBLAZE_0_BOOTLOOP)
+BRAMINIT_ELF_SIM_FILES = $(MICROBLAZE_0_ELF_SIM)
+BRAMINIT_ELF_SIM_FILE_ARGS = -pe microblaze_0 $(MICROBLAZE_0_ELF_SIM)
 
 SIM_CMD = xterm -e ./isim_system86
 
@@ -55,7 +56,7 @@ TIMING_SIM_SCRIPT = simulation/timing/$(SYSTEM)_setup.tcl
 
 DEFAULT_SIM_SCRIPT = $(BEHAVIORAL_SIM_SCRIPT)
 
-SIMGEN_OPTIONS = -p $(DEVICE) -lang $(XPS_HDL_LANG) -intstyle $(INTSTYLE) $(SEARCHPATHOPT) $(BRAMINIT_ELF_SIM_FILE_ARGS) -msg __xps/ise/xmsgprops.lst -s isim
+SIMGEN_OPTIONS = -p $(DEVICE) -lang $(XPS_HDL_LANG) -intstyle $(INTSTYLE) $(SEARCHPATHOPT) $(BRAMINIT_ELF_SIM_FILE_ARGS) -msg __xps/ise/xmsgprops.lst -s isim -tb -external_mem_sim yes
 
 
 CORE_STATE_DEVELOPMENT_FILES = 

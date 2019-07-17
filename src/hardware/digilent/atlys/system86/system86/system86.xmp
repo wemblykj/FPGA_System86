@@ -13,14 +13,14 @@ UserCmd1:
 UserCmd1Type: 0
 UserCmd2: 
 UserCmd2Type: 0
-GenSimTB: 0
+GenSimTB: 1
 SdkExportBmmBit: 1
 SdkExportDir: SDK/SDK_Export
 InsertNoPads: 1
 WarnForEAArch: 1
 HdlLang: vhdl
 SimModel: BEHAVIORAL
-ExternalMemSim: 0
+ExternalMemSim: 1
 UcfFile: data/system86.ucf
 EnableParTimingError: 1
 ShowLicenseDialog: 1
@@ -39,4 +39,4 @@ DCacheAddr: MCB_DDR2,C_S4_AXI_BASEADDR
 DCacheAddr: MCB_DDR2,C_S5_AXI_BASEADDR
 Processor: microblaze_0
 ElfImp: 
-ElfSim: 
+ElfSim: ../SDK/System86Supervisor/Simulation/System86Supervisor.elf
