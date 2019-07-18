@@ -34,7 +34,7 @@ entity system86_stub is
     QSPI_FLASH_SCLK : inout std_logic;
     QSPI_FLASH_IO1 : inout std_logic;
     QSPI_FLASH_IO0 : inout std_logic;
-    Push_Buttons_5Bits_TRI_I : in std_logic_vector(0 to 4);
+    Push_Buttons_5Bits_TRI_I : in std_logic_vector(4 downto 0);
     LEDs_8Bits_TRI_O : out std_logic_vector(7 downto 0);
     GCLK : in std_logic;
     DIP_Switches_8Bits_TRI_I : in std_logic_vector(7 downto 0);
@@ -67,12 +67,12 @@ entity system86_stub is
     Digilent_Usb_Epp_FIFOADR_pin : out std_logic_vector(1 downto 0);
     Digilent_Usb_Epp_PKTEND_pin : out std_logic;
     Digilent_Usb_Epp_EPPRST_pin : in std_logic;
-    Digilent_Usb_Epp_DB_pin : inout std_logic_vector(7 downto 0);
     Digilent_AC97_Cntlr_BITCLK_pin : in std_logic;
     Digilent_AC97_Cntlr_SDATA_IN_pin : in std_logic;
     Digilent_AC97_Cntlr_SDATA_OUT_pin : out std_logic;
     Digilent_AC97_Cntlr_SYNC_pin : out std_logic;
-    Digilent_AC97_Cntlr_RESET_N_pin : out std_logic
+    Digilent_AC97_Cntlr_RESET_N_pin : out std_logic;
+    Digilent_Usb_Epp_DB_pin : inout std_logic_vector(7 downto 0)
   );
 end system86_stub;
 
@@ -105,7 +105,7 @@ architecture STRUCTURE of system86_stub is
       QSPI_FLASH_SCLK : inout std_logic;
       QSPI_FLASH_IO1 : inout std_logic;
       QSPI_FLASH_IO0 : inout std_logic;
-      Push_Buttons_5Bits_TRI_I : in std_logic_vector(0 to 4);
+      Push_Buttons_5Bits_TRI_I : in std_logic_vector(4 downto 0);
       LEDs_8Bits_TRI_O : out std_logic_vector(7 downto 0);
       GCLK : in std_logic;
       DIP_Switches_8Bits_TRI_I : in std_logic_vector(7 downto 0);
@@ -138,12 +138,12 @@ architecture STRUCTURE of system86_stub is
       Digilent_Usb_Epp_FIFOADR_pin : out std_logic_vector(1 downto 0);
       Digilent_Usb_Epp_PKTEND_pin : out std_logic;
       Digilent_Usb_Epp_EPPRST_pin : in std_logic;
-      Digilent_Usb_Epp_DB_pin : inout std_logic_vector(7 downto 0);
       Digilent_AC97_Cntlr_BITCLK_pin : in std_logic;
       Digilent_AC97_Cntlr_SDATA_IN_pin : in std_logic;
       Digilent_AC97_Cntlr_SDATA_OUT_pin : out std_logic;
       Digilent_AC97_Cntlr_SYNC_pin : out std_logic;
-      Digilent_AC97_Cntlr_RESET_N_pin : out std_logic
+      Digilent_AC97_Cntlr_RESET_N_pin : out std_logic;
+      Digilent_Usb_Epp_DB_pin : inout std_logic_vector(7 downto 0)
     );
   end component;
 
@@ -212,12 +212,12 @@ begin
       Digilent_Usb_Epp_FIFOADR_pin => Digilent_Usb_Epp_FIFOADR_pin,
       Digilent_Usb_Epp_PKTEND_pin => Digilent_Usb_Epp_PKTEND_pin,
       Digilent_Usb_Epp_EPPRST_pin => Digilent_Usb_Epp_EPPRST_pin,
-      Digilent_Usb_Epp_DB_pin => Digilent_Usb_Epp_DB_pin,
       Digilent_AC97_Cntlr_BITCLK_pin => Digilent_AC97_Cntlr_BITCLK_pin,
       Digilent_AC97_Cntlr_SDATA_IN_pin => Digilent_AC97_Cntlr_SDATA_IN_pin,
       Digilent_AC97_Cntlr_SDATA_OUT_pin => Digilent_AC97_Cntlr_SDATA_OUT_pin,
       Digilent_AC97_Cntlr_SYNC_pin => Digilent_AC97_Cntlr_SYNC_pin,
-      Digilent_AC97_Cntlr_RESET_N_pin => Digilent_AC97_Cntlr_RESET_N_pin
+      Digilent_AC97_Cntlr_RESET_N_pin => Digilent_AC97_Cntlr_RESET_N_pin,
+      Digilent_Usb_Epp_DB_pin => Digilent_Usb_Epp_DB_pin
     );
 
 end architecture STRUCTURE;
