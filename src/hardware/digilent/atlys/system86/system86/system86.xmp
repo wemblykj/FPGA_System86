@@ -4,6 +4,7 @@ VerMgmt: 14.7
 IntStyle: ise
 Flow: ise
 ModuleSearchPath: /opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
+ModuleSearchPath: C:/Xilinx/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
 MHS File: system86.mhs
 Architecture: spartan6
 Device: xc6slx45
@@ -38,5 +39,5 @@ DCacheAddr: MCB_DDR2,C_S3_AXI_BASEADDR
 DCacheAddr: MCB_DDR2,C_S4_AXI_BASEADDR
 DCacheAddr: MCB_DDR2,C_S5_AXI_BASEADDR
 Processor: microblaze_0
-ElfImp: ../SDK/System86Supervisor/Debug/System86Supervisor.elf
-ElfSim: ../SDK/System86Supervisor/Simulation/System86Supervisor.elf
+ElfImp: ../SDK2/system86_supervisor/Debug/system86_supervisor.elf
+ElfSim: ../SDK2/system86_supervisor/Debug/system86_supervisor.elf
