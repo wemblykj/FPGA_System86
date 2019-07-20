@@ -206,6 +206,7 @@ int main()
 	hdmi_0.Dump();
 	tpg_0.Dump();
 #endif
+
 	Xil_Out32(LEDS_BASEADDR, 0x00000003);  // Set third LED
 
 	hdmi_0.SetOutputResolution(1280, 720);

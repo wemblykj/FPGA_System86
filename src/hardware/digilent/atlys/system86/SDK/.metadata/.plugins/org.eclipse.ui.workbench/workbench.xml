@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="16" version="2.0">
+<workbench progressCount="20" version="2.0">
 <workbenchAdvisor/>
 <window height="728" width="1024" x="52" y="0">
 <fastViewData fastViewLocation="1024"/>
@@ -18,10 +18,11 @@
 <coolItem id="com.xilinx.sdk.targetmanager.ui.toolbar1" itemType="typeToolBarContribution" x="61" y="22"/>
 <coolItem id="com.xilinx.sdk.sw.toolbar1" itemType="typeToolBarContribution" x="38" y="22"/>
 <coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="76" y="22"/>
-<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="61" y="22"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="84" y="22"/>
 <coolItem id="group.nav" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="190" y="22"/>
 <coolItem id="group.editor" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.cdt.ui.editor.CEditor" itemType="typeToolBarContribution" x="-1" y="-1"/>
 <coolItem id="group.help" itemType="typeGroupMarker"/>
 <coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
 </coolbarLayout>
@@ -32,12 +33,21 @@
 <folder appearance="1" expanded="2">
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
 <part id="0"/>
+<part id="1"/>
+<part id="2"/>
 </presentation>
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="com.xilinx.sdk.hw.ui.HwSpecXMLEditor" name="system.xml" partName="system.xml" path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/hardware/digilent/atlys/system86/SDK/system86_hw_platform/system.xml" title="system.xml" tooltip="system86_hw_platform/system.xml" workbook="DefaultEditorWorkbook">
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="main.cc" partName="main.cc" path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/hardware/digilent/atlys/system86/SDK/System86Supervisor/src/main.cc" title="main.cc" tooltip="System86Supervisor/src/main.cc" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/System86Supervisor/src/main.cc"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="6959" selectionTopPixel="3757"/>
+</editor>
+<editor id="com.xilinx.sdk.hw.ui.HwSpecXMLEditor" name="system.xml" partName="system.xml" path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/hardware/digilent/atlys/system86/SDK/system86_hw_platform/system.xml" title="system.xml" tooltip="system86_hw_platform/system.xml" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/system86_hw_platform/system.xml"/>
+</editor>
+<editor activePart="true" focus="true" id="com.xilinx.sdk.sw.MSSEditor" name="system.mss" partName="system.mss" path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/hardware/digilent/atlys/system86/SDK/System86Supervisor_bsp/system.mss" title="system.mss" tooltip="System86Supervisor_bsp/system.mss" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/System86Supervisor_bsp/system.mss"/>
 </editor>
 </editors>
 <views>
@@ -181,8 +191,18 @@
 <navigationHistory>
 <editors>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.xilinx.sdk.hw.ui.HwSpecXMLEditor" path="/system86_hw_platform/system.xml"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/System86Supervisor/src/main.cc"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.xilinx.sdk.hw.ui.HwSpecXMLEditor" path="/system86_hw_platform/system.xml"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.xilinx.sdk.sw.MSSEditor" path="/System86Supervisor_bsp/system.mss"/>
 </editors>
-<item active="true" historyLabel="system.xml" index="0"/>
+<item historyLabel="system.xml" index="0">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="main.cc" index="1">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="system.xml" index="2"/>
+<item active="true" historyLabel="system.mss" index="3"/>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
@@ -200,8 +220,14 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.xilinx.sdk.sw.MSSEditor" name="system.mss" tooltip="System86Supervisor_bsp/system.mss">
+<persistable path="/System86Supervisor_bsp/system.mss"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.xilinx.sdk.hw.ui.HwSpecXMLEditor" name="system.xml" tooltip="system86_hw_platform/system.xml">
 <persistable path="/system86_hw_platform/system.xml"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.cc" tooltip="System86Supervisor/src/main.cc">
+<persistable path="/System86Supervisor/src/main.cc"/>
 </file>
 </mruList>
 </workbench>

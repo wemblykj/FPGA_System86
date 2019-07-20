@@ -30,17 +30,17 @@
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="2"/>
     </file>
-    <file xil_pn:name="SDK/System86Supervisor/Simulation/System86Supervisor.elf" xil_pn:type="FILE_ELF"/>
-    <file xil_pn:name="SDK/System86Supervisor/Debug/System86Supervisor.elf" xil_pn:type="FILE_ELF"/>
-    <file xil_pn:name="SDK2/system86_supervisor/Debug/system86_supervisor.elf" xil_pn:type="FILE_ELF">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="16"/>
-    </file>
     <file xil_pn:name="pn_system86_testbench_tb.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="3"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="17"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="17"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="17"/>
+    </file>
+    <file xil_pn:name="SDK/System86Supervisor/Debug/System86Supervisor.elf" xil_pn:type="FILE_ELF">
+      <association xil_pn:name="Implementation" xil_pn:seqID="81"/>
+    </file>
+    <file xil_pn:name="SDK/System86Supervisor/Simulation/System86Supervisor.elf" xil_pn:type="FILE_ELF">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
     </file>
   </files>
 
