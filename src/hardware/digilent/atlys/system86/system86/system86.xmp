@@ -40,4 +40,4 @@ DCacheAddr: MCB_DDR2,C_S4_AXI_BASEADDR
 DCacheAddr: MCB_DDR2,C_S5_AXI_BASEADDR
 Processor: microblaze_0
 ElfImp: ../SDK/System86Supervisor/Debug/System86Supervisor.elf
-ElfSim: ../SDK/System86Supervisor/Simulation/System86Supervisor.elf
+ElfSim: ../SDK_A/SDK_A/Debug/SDK_A.elf
