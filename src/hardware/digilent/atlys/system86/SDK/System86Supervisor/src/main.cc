@@ -144,7 +144,6 @@ int main()
 	 */
 	XGpio_Initialize(&ledsCtrl, LEDS_DEVICE_ID);
 	Xil_Out32(LEDS_BASEADDR, 0x00000001);  // Set first LED
-
 	/*
 	 *Initialize the driver structs for the Push button and interrupt cores.
 	 *This allows the API functions to be used with these cores.
@@ -206,6 +205,7 @@ int main()
 	hdmi_0.Dump();
 	tpg_0.Dump();
 #endif
+
 	Xil_Out32(LEDS_BASEADDR, 0x00000003);  // Set third LED
 
 	hdmi_0.SetOutputResolution(1280, 720);
@@ -228,6 +228,8 @@ int main()
 				leds = ~leds;
 				Xil_Out32(LEDS_BASEADDR, leds);  // Clear LEDs
 		}
+
+		lDeBncCnt = 0;
 	}
 
 	return 0;

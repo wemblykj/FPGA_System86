@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/hardware/digilent/atlys/system86/testbench_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="attributes" />
+            <top_module name="axi_vdma_pkg" />
+            <top_module name="coregen_comp_defs" />
+            <top_module name="family" />
+            <top_module name="family_support" />
+            <top_module name="glbl" />
+            <top_module name="ipif_pkg" />
+            <top_module name="lmb_bram_if_funcs" />
+            <top_module name="math_real" />
+            <top_module name="memxlib_utils" />
+            <top_module name="numeric_std" />
+            <top_module name="proc_common_pkg" />
+            <top_module name="rlepatternpkg" />
+            <top_module name="std_logic_1164" />
+            <top_module name="std_logic_arith" />
+            <top_module name="std_logic_misc" />
+            <top_module name="std_logic_signed" />
+            <top_module name="std_logic_textio" />
+            <top_module name="std_logic_unsigned" />
+            <top_module name="testbench" />
+            <top_module name="textio" />
+            <top_module name="tpg_pkg" />
+            <top_module name="vcomponents" />
+            <top_module name="video" />
+            <top_module name="vital_primitives" />
+            <top_module name="vital_timing" />
+            <top_module name="vl_types" />
+            <top_module name="vpkg" />
+            <top_module name="zplatelib" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="31" />
+   <wvobject fp_name="/testbench/dut/microblaze_0/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_instruction" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_instruction[0:31]</obj_property>
+      <obj_property name="ObjectShortName">trace_instruction[0:31]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_valid_instr" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_valid_instr</obj_property>
+      <obj_property name="ObjectShortName">trace_valid_instr</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_pc" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_pc[0:31]</obj_property>
+      <obj_property name="ObjectShortName">trace_pc[0:31]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_reg_write" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_reg_write</obj_property>
+      <obj_property name="ObjectShortName">trace_reg_write</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_reg_addr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_reg_addr[0:4]</obj_property>
+      <obj_property name="ObjectShortName">trace_reg_addr[0:4]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_msr_reg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_msr_reg[0:14]</obj_property>
+      <obj_property name="ObjectShortName">trace_msr_reg[0:14]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_pid_reg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_pid_reg[0:7]</obj_property>
+      <obj_property name="ObjectShortName">trace_pid_reg[0:7]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_new_reg_value" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_new_reg_value[0:31]</obj_property>
+      <obj_property name="ObjectShortName">trace_new_reg_value[0:31]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_exception_taken" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_exception_taken</obj_property>
+      <obj_property name="ObjectShortName">trace_exception_taken</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_exception_kind" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_exception_kind[0:4]</obj_property>
+      <obj_property name="ObjectShortName">trace_exception_kind[0:4]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_jump_taken" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_jump_taken</obj_property>
+      <obj_property name="ObjectShortName">trace_jump_taken</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_delay_slot" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_delay_slot</obj_property>
+      <obj_property name="ObjectShortName">trace_delay_slot</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_data_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_data_address[0:31]</obj_property>
+      <obj_property name="ObjectShortName">trace_data_address[0:31]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_data_access" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_data_access</obj_property>
+      <obj_property name="ObjectShortName">trace_data_access</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_data_read" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_data_read</obj_property>
+      <obj_property name="ObjectShortName">trace_data_read</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_data_write" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_data_write</obj_property>
+      <obj_property name="ObjectShortName">trace_data_write</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_data_write_value" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_data_write_value[0:31]</obj_property>
+      <obj_property name="ObjectShortName">trace_data_write_value[0:31]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_data_byte_enable" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_data_byte_enable[0:3]</obj_property>
+      <obj_property name="ObjectShortName">trace_data_byte_enable[0:3]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_dcache_req" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_dcache_req</obj_property>
+      <obj_property name="ObjectShortName">trace_dcache_req</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_dcache_hit" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_dcache_hit</obj_property>
+      <obj_property name="ObjectShortName">trace_dcache_hit</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_dcache_rdy" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_dcache_rdy</obj_property>
+      <obj_property name="ObjectShortName">trace_dcache_rdy</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_dcache_read" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_dcache_read</obj_property>
+      <obj_property name="ObjectShortName">trace_dcache_read</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_icache_req" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_icache_req</obj_property>
+      <obj_property name="ObjectShortName">trace_icache_req</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_icache_hit" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_icache_hit</obj_property>
+      <obj_property name="ObjectShortName">trace_icache_hit</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_icache_rdy" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_icache_rdy</obj_property>
+      <obj_property name="ObjectShortName">trace_icache_rdy</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_of_piperun" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_of_piperun</obj_property>
+      <obj_property name="ObjectShortName">trace_of_piperun</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_ex_piperun" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_ex_piperun</obj_property>
+      <obj_property name="ObjectShortName">trace_ex_piperun</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_mem_piperun" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_mem_piperun</obj_property>
+      <obj_property name="ObjectShortName">trace_mem_piperun</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_mb_halted" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_mb_halted</obj_property>
+      <obj_property name="ObjectShortName">trace_mb_halted</obj_property>
+   </wvobject>
+   <wvobject fp_name="/testbench/dut/microblaze_0/trace_jump_hit" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trace_jump_hit</obj_property>
+      <obj_property name="ObjectShortName">trace_jump_hit</obj_property>
+   </wvobject>
+</wave_config>

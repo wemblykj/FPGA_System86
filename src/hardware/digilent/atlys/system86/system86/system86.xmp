@@ -4,6 +4,7 @@ VerMgmt: 14.7
 IntStyle: ise
 Flow: ise
 ModuleSearchPath: /opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
+ModuleSearchPath: C:/Xilinx/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
 MHS File: system86.mhs
 Architecture: spartan6
 Device: xc6slx45
