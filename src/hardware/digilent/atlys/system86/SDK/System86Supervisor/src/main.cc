@@ -13,6 +13,7 @@
 #include "mb_interface.h" 	//Contains the functions for registering the
                           	//interrupt controller with the microblaze MP
 
+
 /* ------------------------------------------------------------ */
 /*					Constant Definitions						*/
 /* ------------------------------------------------------------ */
@@ -129,7 +130,7 @@ volatile int lDeBncCnt;
 
 int main()
 {
-	init_platform();
+	//init_platform();
 
 	static XGpio ledsCtrl;
 	static XGpio pshBtns;
@@ -143,7 +144,16 @@ int main()
 	 *Initialize the driver structs for the LEDs
 	 */
 	XGpio_Initialize(&ledsCtrl, LEDS_DEVICE_ID);
-	Xil_Out32(LEDS_BASEADDR, 0x00000001);  // Set first LED
+	XGpio_SetDataDirection(&ledsCtrl, 1, 0x00000000); // set channel 1 to output
+
+
+	for (int i = 0; i < 256; i++)
+	{
+		XGpio_DiscreteWrite(&ledsCtrl, 1, i);
+		for (int j = 0; j < 20; j++);
+	}
+
+	XGpio_DiscreteWrite(&ledsCtrl, 1, 0x01); // Set first LED
 	/*
 	 *Initialize the driver structs for the Push button and interrupt cores.
 	 *This allows the API functions to be used with these cores.
@@ -199,14 +209,14 @@ int main()
 	TestPatternGenerator<XPAR_TPG_0_BASEADDR> tpg_0;
 	AxiHdmi<HDMIOUT_BASEADDR> hdmi_0;
 
-	Xil_Out32(LEDS_BASEADDR, 0x00000002);  // Set second LED
+	XGpio_DiscreteWrite(&ledsCtrl, 1, 0x02); // Set second LED
 
 #ifndef SIMULATION
 	hdmi_0.Dump();
 	tpg_0.Dump();
 #endif
 
-	Xil_Out32(LEDS_BASEADDR, 0x00000003);  // Set third LED
+	XGpio_DiscreteWrite(&ledsCtrl, 1, 0x04);  // Set third LED
 
 	hdmi_0.SetOutputResolution(1280, 720);
 
@@ -214,9 +224,9 @@ int main()
 	tpg_0.SetEnabled(true);
 
 
-	Xil_Out32(LEDS_BASEADDR, 0x00000000);  // Clear LEDs
+	XGpio_DiscreteWrite(&ledsCtrl, 1, 0x00);  // Clear LEDs
 
-	volatile u32 leds;
+	volatile u32 leds = 0x0;
 	while (1)
 	{
 		/*
@@ -226,12 +236,13 @@ int main()
 		{
 				lDeBncCnt++;
 				leds = ~leds;
-				Xil_Out32(LEDS_BASEADDR, leds);  // Clear LEDs
+				XGpio_DiscreteWrite(&ledsCtrl, 1, leds);  // Toggle LEDs
 		}
 
 		lDeBncCnt = 0;
 	}
 
+	cleanup_platform();
 	return 0;
 }
 

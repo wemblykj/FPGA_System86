@@ -37,13 +37,14 @@
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="17"/>
     </file>
     <file xil_pn:name="SDK/System86Supervisor/Debug/System86Supervisor.elf" xil_pn:type="FILE_ELF">
-      <association xil_pn:name="Implementation" xil_pn:seqID="81"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
     </file>
     <file xil_pn:name="SDK/System86Supervisor/Simulation/System86Supervisor.elf" xil_pn:type="FILE_ELF">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
     </file>
-    <file xil_pn:name="SDK_A/SDK_A/Debug/SDK_A.elf" xil_pn:type="FILE_ELF">
+    <file xil_pn:name="SDK_A/sdk_a/Debug/sdk_a.elf" xil_pn:type="FILE_ELF">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
     </file>
   </files>
 

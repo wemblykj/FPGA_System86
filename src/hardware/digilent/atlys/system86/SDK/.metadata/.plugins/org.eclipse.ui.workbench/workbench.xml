@@ -35,19 +35,24 @@
 <part id="0"/>
 <part id="1"/>
 <part id="2"/>
+<part id="3"/>
 </presentation>
 </folder>
 </info>
 </editorArea>
 <editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="main.cc" partName="main.cc" path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/hardware/digilent/atlys/system86/SDK/System86Supervisor/src/main.cc" title="main.cc" tooltip="System86Supervisor/src/main.cc" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/System86Supervisor/src/main.cc"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="7446" selectionTopPixel="3337"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="7115" selectionTopPixel="3519"/>
 </editor>
 <editor id="com.xilinx.sdk.hw.ui.HwSpecXMLEditor" name="system.xml" partName="system.xml" path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/hardware/digilent/atlys/system86/SDK/system86_hw_platform/system.xml" title="system.xml" tooltip="system86_hw_platform/system.xml" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/system86_hw_platform/system.xml"/>
 </editor>
 <editor id="com.xilinx.sdk.sw.MSSEditor" name="system.mss" partName="system.mss" path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/hardware/digilent/atlys/system86/SDK/System86Supervisor_bsp/system.mss" title="system.mss" tooltip="System86Supervisor_bsp/system.mss" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/System86Supervisor_bsp/system.mss"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="xgpio.h" partName="xgpio.h" path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/hardware/digilent/atlys/system86/SDK/System86Supervisor_bsp/microblaze_0/include/xgpio.h" title="xgpio.h" tooltip="System86Supervisor_bsp/microblaze_0/include/xgpio.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/System86Supervisor_bsp/microblaze_0/include/xgpio.h"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="7409" selectionTopPixel="1955"/>
 </editor>
 </editors>
 <views>
@@ -59,9 +64,6 @@
 <view id="org.eclipse.tm.terminal.view.TerminalView" partName="Terminal"/>
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
-<expanded>
-<category IMemento.internal.id="Warnings (1 item)"/>
-</expanded>
 <columnWidths org.eclipse.ui.ide.locationField="90" org.eclipse.ui.ide.markerType="90" org.eclipse.ui.ide.pathField="120" org.eclipse.ui.ide.resourceField="90" org.eclipse.ui.ide.severityAndDescriptionField="300"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
@@ -199,6 +201,7 @@
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.xilinx.sdk.sw.MSSEditor" path="/System86Supervisor_bsp/system.mss"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.xilinx.sdk.sw.MSSEditor" path="/System86Supervisor_bsp/system.mss"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/System86Supervisor/src/main.cc"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/System86Supervisor_bsp/microblaze_0/include/xgpio.h"/>
 </editors>
 <item historyLabel="system.xml" index="0">
 <position info="not_deleted" x="0" y="0"/>
@@ -226,8 +229,47 @@
 <position info="not_deleted" x="6959" y="0"/>
 </item>
 <item historyLabel="system.mss" index="7"/>
-<item active="true" historyLabel="main.cc" index="8">
+<item historyLabel="main.cc" index="8">
 <position info="not_deleted" x="6957" y="0"/>
+</item>
+<item historyLabel="xgpio.h" index="9">
+<position info="not_deleted" x="82" y="0"/>
+</item>
+<item historyLabel="main.cc" index="8">
+<position info="not_deleted" x="4886" y="0"/>
+</item>
+<item historyLabel="xgpio.h" index="9">
+<position info="not_deleted" x="7505" y="22"/>
+</item>
+<item historyLabel="main.cc" index="8">
+<position info="not_deleted" x="4886" y="0"/>
+</item>
+<item historyLabel="main.cc" index="8">
+<position info="not_deleted" x="4855" y="0"/>
+</item>
+<item historyLabel="xgpio.h" index="9">
+<position info="not_deleted" x="7409" y="0"/>
+</item>
+<item historyLabel="main.cc" index="8">
+<position info="not_deleted" x="4855" y="0"/>
+</item>
+<item historyLabel="main.cc" index="8">
+<position info="not_deleted" x="7105" y="0"/>
+</item>
+<item historyLabel="main.cc" index="8">
+<position info="not_deleted" x="4889" y="57"/>
+</item>
+<item historyLabel="main.cc" index="8">
+<position info="not_deleted" x="4808" y="76"/>
+</item>
+<item historyLabel="main.cc" index="8">
+<position info="not_deleted" x="5008" y="0"/>
+</item>
+<item historyLabel="main.cc" index="8">
+<position info="not_deleted" x="4038" y="0"/>
+</item>
+<item active="true" historyLabel="main.cc" index="8">
+<position info="not_deleted" x="5002" y="0"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -246,6 +288,9 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="xgpio.h" tooltip="System86Supervisor_bsp/microblaze_0/include/xgpio.h">
+<persistable path="/System86Supervisor_bsp/microblaze_0/include/xgpio.h"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.xilinx.sdk.sw.MSSEditor" name="system.mss" tooltip="System86Supervisor_bsp/system.mss">
 <persistable path="/System86Supervisor_bsp/system.mss"/>
 </file>
