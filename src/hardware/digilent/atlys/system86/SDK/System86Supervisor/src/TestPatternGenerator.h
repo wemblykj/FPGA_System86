@@ -32,10 +32,13 @@ public:
 	void RegisterUpdate();
 
 protected:
+
+#ifdef USE_DUMP
 	virtual void DumpHeader() const;
 	virtual void DumpControlSettings() const;
     virtual void DumpStatusSettings() const;
 	virtual void DumpCustomSettings() const;
+#endif /* USE_DUMP */
 
 private:
 	bool m_dirty;
@@ -124,6 +127,8 @@ void TestPatternGenerator<BaseAddress>::RegisterUpdate()
 	}
 }
 
+#ifdef USE_DUMP
+
 template<int BaseAddress>
 void TestPatternGenerator<BaseAddress>::DumpHeader() const {
   xil_printf("Test Pattern Generator Core Configuration:\r\n");
@@ -160,5 +165,7 @@ void TestPatternGenerator<BaseAddress>::DumpCustomSettings() const {
   reg_val = (TPG_ReadReg(BaseAddress, TPG_ACTIVE_SIZE) >> 16);
   xil_printf("Active Columns      : %8d\r\n", reg_val);
 }
+
+#endif /* USE_DUMP */
 
 #endif /* TESTPATTERNGENERATOR_H_ */

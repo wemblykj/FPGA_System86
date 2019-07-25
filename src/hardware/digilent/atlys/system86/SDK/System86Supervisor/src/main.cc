@@ -2,6 +2,11 @@
  * Empty C++ Application
  */
 
+
+//#if DEBUG && !defined SIMULATION
+//#define USE_DUMP
+//#endif
+
 #include "AxiHdmi.h"
 #include "TestPatternGenerator.h"
 
@@ -201,10 +206,10 @@ int main()
 
 	Xil_Out32(LEDS_BASEADDR, 0x00000002);  // Set second LED
 
-#ifndef SIMULATION
+#ifdef USE_DUMP
 	hdmi_0.Dump();
 	tpg_0.Dump();
-#endif
+#endif /* USE_DUMP */
 
 	Xil_Out32(LEDS_BASEADDR, 0x00000003);  // Set third LED
 
@@ -355,11 +360,13 @@ void PushBtnHandler(void *CallBackRef)
 	/*
 	 * Output Frame dimensions
 	 */
+#ifndef SIMULATION
 	if ((lBtnChanges & bitBtnL) && (lBtnStateNew & bitBtnL))
 	{
 		xil_printf("\n\rOutput Resolution Code = %x\n\r",
 				Xil_In32(HDMIOUT_BASEADDR + bHdmiOutRes) );
 	}
+#endif /* SIMULATION */
 
 	XGpio_InterruptClear(pPushBtn, lBtnChannel);
 }

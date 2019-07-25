@@ -29,10 +29,13 @@ public:
 	virtual void SetReset(bool reset) = 0;
 
 protected:
+
+#ifdef USE_DUMP
 	virtual void DumpBody() const;
 	virtual void DumpControlSettings() const;
 	virtual void DumpStatusSettings() const;
 	virtual void DumpCustomSettings() const {}
+#endif /* USE_DUMP */
 };
 
 template<int BaseAddress, int Control, int Status>
@@ -58,6 +61,8 @@ void AxiModule<BaseAddress, Control, Status>::SetStatus(Xuint32 status)
 {
 	this->SetRegister<Status>(status);
 }
+
+#ifdef USE_DUMP
 
 template<int BaseAddress, int Control, int Status>
 void AxiModule<BaseAddress, Control, Status>::DumpBody() const {
@@ -87,4 +92,5 @@ template<int BaseAddress, int Control, int Status>
 void AxiModule<BaseAddress, Control, Status>::DumpStatusSettings() const {
 }
 
+#endif /* VERBOSE */
 #endif /* AXIMODULE_H_ */

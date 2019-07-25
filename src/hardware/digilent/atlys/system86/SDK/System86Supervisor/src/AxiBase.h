@@ -27,12 +27,16 @@ public:
 	template<int Offset>
 	void SetRegister(Xuint32 value);
 
+#ifdef USE_DUMP
 	void Dump() const;
+#endif /* USE_DUMP */
 
 protected:
+#ifdef USE_DUMP
 	virtual void DumpHeader() const;
 	virtual void DumpBody() const;
 	virtual void DumpFooter() const;
+#endif /* USE_DUMP */
 };
 
 template<int BaseAddress>
@@ -61,6 +65,8 @@ void AxiBase<BaseAddress>::SetRegister(Xuint32 value)
 	Xil_Out32(BaseAddress + Offset, value);
 }
 
+#ifdef USE_DUMP
+
 template<int BaseAddress>
 void AxiBase<BaseAddress>::Dump() const {
   DumpHeader();
@@ -80,6 +86,8 @@ void AxiBase<BaseAddress>::DumpBody() const {
 
 template<int BaseAddress>
 void AxiBase<BaseAddress>::DumpFooter() const {
-
 }
+
+#endif /* USE_DUMP */
+
 #endif /* AXIBASE_H_ */
