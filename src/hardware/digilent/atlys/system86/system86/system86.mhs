@@ -182,10 +182,10 @@ BEGIN microblaze
  BUS_INTERFACE M_AXI_DP = axi4lite_0
  BUS_INTERFACE DEBUG = microblaze_0_debug
  BUS_INTERFACE INTERRUPT = microblaze_0_interrupt
- BUS_INTERFACE DLMB = microblaze_0_dlmb
- BUS_INTERFACE ILMB = microblaze_0_ilmb
  BUS_INTERFACE M_AXI_DC = axi4_0
  BUS_INTERFACE M_AXI_IC = axi4_0
+ BUS_INTERFACE DLMB = microblaze_0_dlmb
+ BUS_INTERFACE ILMB = microblaze_0_ilmb
  PORT MB_RESET = proc_sys_reset_0_MB_Reset
  PORT CLK = clk_100_0000MHzPLL0
 END

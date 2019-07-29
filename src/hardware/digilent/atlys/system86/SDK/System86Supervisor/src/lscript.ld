@@ -17,10 +17,9 @@ _HEAP_SIZE = DEFINED(_HEAP_SIZE) ? _HEAP_SIZE : 0x400;
 
 MEMORY
 {
-   /*microblaze_0_i_bram_ctrl_0_microblaze_0_d_bram_ctrl_0 : ORIGIN = 0x00000050, LENGTH = 0x0000FFB0
+   microblaze_0_i_bram_ctrl_0_microblaze_0_d_bram_ctrl_0 : ORIGIN = 0x00000050, LENGTH = 0x0000FFB0
    microblaze_0_i_bram_ctrl_1_microblaze_0_d_bram_ctrl_1 : ORIGIN = 0x00010000, LENGTH = 0x00010000
-   microblaze_0_i_bram_cntlr_2_microblaze_0_d_bram_cntlr_2 : ORIGIN = 0x00020000, LENGTH = 0x00002000*/
-   microblaze_0_i_bram_ctrl_0_microblaze_0_d_bram_ctrl_0 : ORIGIN = 0x00000050, LENGTH = 0x00021FB0
+   microblaze_0_i_bram_cntlr_2_microblaze_0_d_bram_cntlr_2 : ORIGIN = 0x00020000, LENGTH = 0x00002000
    mcb_ddr2_S0_AXI_BASEADDR : ORIGIN = 0xC0000000, LENGTH = 0x08000000
 }
 
@@ -201,7 +200,7 @@ _SDA2_BASE_ = __sdata2_start + ((__sbss2_end - __sdata2_start) / 2 );
    _heap_start = .;
    . += _HEAP_SIZE;
    _heap_end = .;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_0_microblaze_0_d_bram_ctrl_0
 
 .stack (NOLOAD) : {
    _stack_end = .;
@@ -209,7 +208,7 @@ _SDA2_BASE_ = __sdata2_start + ((__sbss2_end - __sdata2_start) / 2 );
    . = ALIGN(8);
    _stack = .;
    __stack = _stack;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_0_microblaze_0_d_bram_ctrl_0
 
 _end = .;
 }
