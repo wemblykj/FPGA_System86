@@ -1,0 +1,8 @@
+
+*.pdom
+*.mk
+*.d
+*.o
+*.tcl
+*.mem
+*.index
