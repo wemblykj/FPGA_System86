@@ -26,10 +26,6 @@
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="109"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="109"/>
     </file>
-    <file xil_pn:name="system86/system86_top.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="2"/>
-    </file>
     <file xil_pn:name="pn_system86_testbench_tb.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="3"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="17"/>
@@ -38,6 +34,10 @@
     </file>
     <file xil_pn:name="SDK/System86Supervisor/Debug/System86Supervisor.elf" xil_pn:type="FILE_ELF"/>
     <file xil_pn:name="SDK/System86Supervisor/Simulation/System86Supervisor.elf" xil_pn:type="FILE_ELF"/>
+    <file xil_pn:name="system86/system86_top.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="18"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="2"/>
+    </file>
   </files>
 
   <properties>
@@ -309,6 +309,7 @@
     <property xil_pn:name="Starting Placer Cost Table (1-100) Map spartan6" xil_pn:value="1" xil_pn:valueState="default"/>
     <property xil_pn:name="Synthesis Tool" xil_pn:value="XST (VHDL/Verilog)" xil_pn:valueState="default"/>
     <property xil_pn:name="Target Simulator" xil_pn:value="Please Specify" xil_pn:valueState="default"/>
+    <property xil_pn:name="Target UCF File Name" xil_pn:value="system86_top.ucf" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Test Bench Module/Entity Name" xil_pn:value="testbench" xil_pn:valueState="default"/>
     <property xil_pn:name="Test Bench Target Language Xps" xil_pn:value="VHDL" xil_pn:valueState="default"/>
     <property xil_pn:name="Timing Mode Map" xil_pn:value="Performance Evaluation" xil_pn:valueState="default"/>

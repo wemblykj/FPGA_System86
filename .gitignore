@@ -6,3 +6,6 @@
 *.tcl
 *.mem
 *.index
+*.debug
+*.elfcheck
+*.size

@@ -40,6 +40,23 @@
  PORT LEDs_8Bits_TRI_O = LEDs_8Bits_TRI_O, DIR = O, VEC = [7:0]
  PORT GCLK = GCLK, DIR = I, SIGIS = CLK, CLK_FREQ = 100000000
  PORT DIP_Switches_8Bits_TRI_I = DIP_Switches_8Bits_TRI_I, DIR = I, VEC = [7:0]
+ PORT Digilent_Usb_Epp_IFCLK_pin = Digilent_Usb_Epp_IFCLK, DIR = I, SIGIS = CLK
+ PORT Digilent_Usb_Epp_STMEN_pin = Digilent_Usb_Epp_STMEN, DIR = I
+ PORT Digilent_Usb_Epp_FLAGA_pin = Digilent_Usb_Epp_FLAGA, DIR = I
+ PORT Digilent_Usb_Epp_FLAGB_pin = Digilent_Usb_Epp_FLAGB, DIR = I
+ PORT Digilent_Usb_Epp_FLAGC_pin = Digilent_Usb_Epp_FLAGC, DIR = I
+ PORT Digilent_Usb_Epp_SLRD_pin = Digilent_Usb_Epp_SLRD, DIR = O
+ PORT Digilent_Usb_Epp_SLWR_pin = Digilent_Usb_Epp_SLWR, DIR = O
+ PORT Digilent_Usb_Epp_SLOE_pin = Digilent_Usb_Epp_SLOE, DIR = O
+ PORT Digilent_Usb_Epp_FIFOADR_pin = Digilent_Usb_Epp_FIFOADR, DIR = O, VEC = [1:0]
+ PORT Digilent_Usb_Epp_PKTEND_pin = Digilent_Usb_Epp_PKTEND, DIR = O
+ PORT Digilent_Usb_Epp_EPPRST_pin = Digilent_Usb_Epp_EPPRST, DIR = I
+ PORT Digilent_AC97_Cntlr_BITCLK_pin = Digilent_AC97_Cntlr_BITCLK, DIR = I
+ PORT Digilent_AC97_Cntlr_SDATA_IN_pin = Digilent_AC97_Cntlr_SDATA_IN, DIR = I
+ PORT Digilent_AC97_Cntlr_SDATA_OUT_pin = Digilent_AC97_Cntlr_SDATA_OUT, DIR = O
+ PORT Digilent_AC97_Cntlr_SYNC_pin = Digilent_AC97_Cntlr_SYNC, DIR = O
+ PORT Digilent_AC97_Cntlr_RESET_N_pin = Digilent_AC97_Cntlr_RESET_N, DIR = O
+ PORT Digilent_Usb_Epp_DB_pin = Digilent_Usb_Epp_DB, DIR = IO, VEC = [7:0]
  PORT axi_hdmi_0_TMDS_RX_CLK_P_pin = axi_hdmi_0_TMDS_RX_CLK_P, DIR = I
  PORT axi_hdmi_0_TMDS_RX_CLK_N_pin = axi_hdmi_0_TMDS_RX_CLK_N, DIR = I
  PORT axi_hdmi_0_TMDS_RX_2_P_pin = axi_hdmi_0_TMDS_RX_2_P, DIR = I
@@ -58,23 +75,6 @@
  PORT axi_hdmi_0_TMDS_TX_1_N_pin = axi_hdmi_0_TMDS_TX_1_N, DIR = O
  PORT axi_hdmi_0_TMDS_TX_0_P_pin = axi_hdmi_0_TMDS_TX_0_P, DIR = O
  PORT axi_hdmi_0_TMDS_TX_0_N_pin = axi_hdmi_0_TMDS_TX_0_N, DIR = O
- PORT Digilent_Usb_Epp_IFCLK_pin = Digilent_Usb_Epp_IFCLK, DIR = I, SIGIS = CLK
- PORT Digilent_Usb_Epp_STMEN_pin = Digilent_Usb_Epp_STMEN, DIR = I
- PORT Digilent_Usb_Epp_FLAGA_pin = Digilent_Usb_Epp_FLAGA, DIR = I
- PORT Digilent_Usb_Epp_FLAGB_pin = Digilent_Usb_Epp_FLAGB, DIR = I
- PORT Digilent_Usb_Epp_FLAGC_pin = Digilent_Usb_Epp_FLAGC, DIR = I
- PORT Digilent_Usb_Epp_SLRD_pin = Digilent_Usb_Epp_SLRD, DIR = O
- PORT Digilent_Usb_Epp_SLWR_pin = Digilent_Usb_Epp_SLWR, DIR = O
- PORT Digilent_Usb_Epp_SLOE_pin = Digilent_Usb_Epp_SLOE, DIR = O
- PORT Digilent_Usb_Epp_FIFOADR_pin = Digilent_Usb_Epp_FIFOADR, DIR = O, VEC = [1:0]
- PORT Digilent_Usb_Epp_PKTEND_pin = Digilent_Usb_Epp_PKTEND, DIR = O
- PORT Digilent_Usb_Epp_EPPRST_pin = Digilent_Usb_Epp_EPPRST, DIR = I
- PORT Digilent_AC97_Cntlr_BITCLK_pin = Digilent_AC97_Cntlr_BITCLK, DIR = I
- PORT Digilent_AC97_Cntlr_SDATA_IN_pin = Digilent_AC97_Cntlr_SDATA_IN, DIR = I
- PORT Digilent_AC97_Cntlr_SDATA_OUT_pin = Digilent_AC97_Cntlr_SDATA_OUT, DIR = O
- PORT Digilent_AC97_Cntlr_SYNC_pin = Digilent_AC97_Cntlr_SYNC, DIR = O
- PORT Digilent_AC97_Cntlr_RESET_N_pin = Digilent_AC97_Cntlr_RESET_N, DIR = O
- PORT Digilent_Usb_Epp_DB_pin = Digilent_Usb_Epp_DB, DIR = IO, VEC = [7:0]
 
 
 BEGIN v_tpg
@@ -89,7 +89,6 @@ BEGIN v_tpg
  PARAMETER C_BASEADDR = 0x7a000000
  PARAMETER C_HIGHADDR = 0x7a00ffff
  BUS_INTERFACE S_AXI = axi4lite_0
- BUS_INTERFACE M_AXIS_VIDEO = v_tpg_0_M_AXIS_VIDEO
  PORT s_axi_aclk = clk_100_0000MHzPLL0
  PORT aclk = axi_hdmi_0_S_AXIS_MM2S_ACLK
  PORT aclken = net_vcc
@@ -171,7 +170,7 @@ BEGIN microblaze
  PARAMETER C_DEBUG_ENABLED = 1
  PARAMETER C_ICACHE_BASEADDR = 0xc0000000
  PARAMETER C_ICACHE_HIGHADDR = 0xc7ffffff
- PARAMETER C_USE_ICACHE = 1
+ PARAMETER C_USE_ICACHE = 0
  PARAMETER C_CACHE_BYTE_SIZE = 8192
  PARAMETER C_ICACHE_ALWAYS_USED = 1
  PARAMETER C_DCACHE_BASEADDR = 0xc0000000
@@ -183,7 +182,6 @@ BEGIN microblaze
  BUS_INTERFACE DEBUG = microblaze_0_debug
  BUS_INTERFACE INTERRUPT = microblaze_0_interrupt
  BUS_INTERFACE M_AXI_DC = axi4_0
- BUS_INTERFACE M_AXI_IC = axi4_0
  BUS_INTERFACE DLMB = microblaze_0_dlmb
  BUS_INTERFACE ILMB = microblaze_0_ilmb
  PORT MB_RESET = proc_sys_reset_0_MB_Reset
@@ -242,9 +240,9 @@ BEGIN axi_vdma
  PARAMETER C_HIGHADDR = 0x7e20ffff
  BUS_INTERFACE S_AXI_LITE = axi4lite_0
  BUS_INTERFACE M_AXIS_MM2S = axi_vdma_0_M_AXIS_MM2S
- BUS_INTERFACE S_AXIS_S2MM = v_tpg_0_M_AXIS_VIDEO
  BUS_INTERFACE M_AXI_MM2S = axi4_0
  BUS_INTERFACE M_AXI_S2MM = axi4_0
+ BUS_INTERFACE S_AXIS_S2MM = axi_hdmi_0_M_AXIS_S2MM
  PORT s_axi_lite_aclk = clk_100_0000MHzPLL0
  PORT m_axi_mm2s_aclk = clk_100_0000MHzPLL0
  PORT s2mm_fsync_out = axi_vdma_0_s2mm_fsync_out
@@ -252,20 +250,27 @@ BEGIN axi_vdma
  PORT mm2s_fsync_out = axi_vdma_0_mm2s_fsync_out
  PORT m_axis_mm2s_aclk = axi_hdmi_0_S_AXIS_MM2S_ACLK
  PORT m_axi_s2mm_aclk = clk_100_0000MHzPLL0
- PORT s_axis_s2mm_aclk = axi_hdmi_0_S_AXIS_MM2S_ACLK
+ PORT s_axis_s2mm_aclk = axi_hdmi_0_M_AXIS_S2MM_ACLK
  PORT mm2s_fsync = axi_vdma_0_s2mm_fsync_out
 END
 
 BEGIN axi_hdmi
  PARAMETER INSTANCE = axi_hdmi_0
  PARAMETER HW_VER = 1.00.a
- PARAMETER C_USE_HDMI_RECEIVER = 0
+ PARAMETER C_USE_HDMI_RECEIVER = 1
  PARAMETER C_AXI_STREAM_DATA_WIDTH = 24
  PARAMETER C_BASEADDR = 0x7e220000
  PARAMETER C_HIGHADDR = 0x7e22ffff
  BUS_INTERFACE S_AXI = axi4lite_0
  BUS_INTERFACE S_AXIS_MM2S = axi_vdma_0_M_AXIS_MM2S
+ BUS_INTERFACE M_AXIS_S2MM = axi_hdmi_0_M_AXIS_S2MM
  PORT S_AXI_ACLK = clk_100_0000MHzPLL0
+ PORT MM2S_BUFFER_ALMOST_EMPTY = axi_vdma_0_mm2s_buffer_almost_empty
+ PORT MM2S_FSYNC_IN = axi_vdma_0_mm2s_fsync_out
+ PORT ACLK = clk_100_0000MHzPLL0
+ PORT S_AXIS_MM2S_ACLK = axi_hdmi_0_S_AXIS_MM2S_ACLK
+ PORT S2MM_FSYNC_IN = axi_vdma_0_mm2s_fsync_out
+ PORT M_AXIS_S2MM_ACLK = axi_hdmi_0_M_AXIS_S2MM_ACLK
  PORT TMDS_RX_CLK_P = axi_hdmi_0_TMDS_RX_CLK_P
  PORT TMDS_RX_CLK_N = axi_hdmi_0_TMDS_RX_CLK_N
  PORT TMDS_RX_2_P = axi_hdmi_0_TMDS_RX_2_P
@@ -284,10 +289,6 @@ BEGIN axi_hdmi
  PORT TMDS_TX_1_N = axi_hdmi_0_TMDS_TX_1_N
  PORT TMDS_TX_0_P = axi_hdmi_0_TMDS_TX_0_P
  PORT TMDS_TX_0_N = axi_hdmi_0_TMDS_TX_0_N
- PORT MM2S_BUFFER_ALMOST_EMPTY = axi_vdma_0_mm2s_buffer_almost_empty
- PORT MM2S_FSYNC_IN = axi_vdma_0_mm2s_fsync_out
- PORT ACLK = clk_100_0000MHzPLL0
- PORT S_AXIS_MM2S_ACLK = axi_hdmi_0_S_AXIS_MM2S_ACLK
 END
 
 BEGIN axi_interconnect
@@ -370,7 +371,7 @@ BEGIN axi_s6_ddrx
  PARAMETER C_INTERCONNECT_S0_AXI_W_REGISTER = 8
  PARAMETER C_INTERCONNECT_S0_AXI_R_REGISTER = 8
  PARAMETER C_INTERCONNECT_S0_AXI_B_REGISTER = 8
- PARAMETER C_INTERCONNECT_S0_AXI_MASTERS = microblaze_0.M_AXI_DC & microblaze_0.M_AXI_IC & axi_vdma_0.M_AXI_MM2S & axi_vdma_0.M_AXI_S2MM
+ PARAMETER C_INTERCONNECT_S0_AXI_MASTERS = microblaze_0.M_AXI_DC & axi_vdma_0.M_AXI_MM2S & axi_vdma_0.M_AXI_S2MM
  PARAMETER C_S0_AXI_BASEADDR = 0xc0000000
  PARAMETER C_S0_AXI_HIGHADDR = 0xc7ffffff
  BUS_INTERFACE S0_AXI = axi4_0

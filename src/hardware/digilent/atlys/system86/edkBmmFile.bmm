@@ -1,8 +1,7 @@
-// File: /home/administrator/Development/fpga/system86/src/hardware/digilent/atlys/system86/system86/implementation/system86.bmm
+// File: C:\Users\paulw\Development\Arcade\FPGA_System86\src\hardware\digilent\atlys\system86\system86\implementation\system86.bmm
 
 ADDRESS_MAP microblaze_0 MICROBLAZE-LE 100
-	ADDRESS_SPACE microblaze_0_bram_block_0_combined COMBINED [0x00000000:0x00021fff]
-	#ADDRESS_SPACE microblaze_0_bram_block_0_combined COMBINED [0x00000000:0x0000ffff]
+	ADDRESS_SPACE microblaze_0_bram_block_0_combined COMBINED [0x00000000:0x0000ffff]
 		ADDRESS_RANGE RAMB16
 		BUS_BLOCK
 			system86_i/microblaze_0_bram_block_0/microblaze_0_bram_block_0/ramb16bwer_0 [31:31] INPUT = microblaze_0_bram_block_0_combined_0.mem ;
@@ -39,8 +38,8 @@ ADDRESS_MAP microblaze_0 MICROBLAZE-LE 100
 			system86_i/microblaze_0_bram_block_0/microblaze_0_bram_block_0/ramb16bwer_31 [0:0] INPUT = microblaze_0_bram_block_0_combined_31.mem ;
 		END_BUS_BLOCK;
 		END_ADDRESS_RANGE;
-	#END_ADDRESS_SPACE;
-	#ADDRESS_SPACE microblaze_0_bram_block_1_combined COMBINED [0x00010000:0x0001ffff]
+	END_ADDRESS_SPACE;
+	ADDRESS_SPACE microblaze_0_bram_block_1_combined COMBINED [0x00010000:0x0001ffff]
 		ADDRESS_RANGE RAMB16
 		BUS_BLOCK
 			system86_i/microblaze_0_bram_block_1/microblaze_0_bram_block_1/ramb16bwer_0 [31:31] INPUT = microblaze_0_bram_block_1_combined_0.mem ;
@@ -77,8 +76,8 @@ ADDRESS_MAP microblaze_0 MICROBLAZE-LE 100
 			system86_i/microblaze_0_bram_block_1/microblaze_0_bram_block_1/ramb16bwer_31 [0:0] INPUT = microblaze_0_bram_block_1_combined_31.mem ;
 		END_BUS_BLOCK;
 		END_ADDRESS_RANGE;
-	#END_ADDRESS_SPACE;
-	#ADDRESS_SPACE microblaze_0_bram_block_2_combined COMBINED [0x00020000:0x00021fff]
+	END_ADDRESS_SPACE;
+	ADDRESS_SPACE microblaze_0_bram_block_2_combined COMBINED [0x00020000:0x00021fff]
 		ADDRESS_RANGE RAMB16
 		BUS_BLOCK
 			system86_i/microblaze_0_bram_block_2/microblaze_0_bram_block_2/ramb16bwer_0 [31:24] INPUT = microblaze_0_bram_block_2_combined_0.mem ;

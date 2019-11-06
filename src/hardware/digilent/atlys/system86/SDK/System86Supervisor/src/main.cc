@@ -4,7 +4,7 @@
 
 
 //#if DEBUG && !defined SIMULATION
-//#define USE_DUMP
+#define USE_DUMP
 //#endif
 
 #include "AxiHdmi.h"
@@ -135,7 +135,7 @@ volatile int lDeBncCnt;
 
 int main()
 {
-	//init_platform();
+	init_platform();
 
 	static XGpio ledsCtrl;
 	static XGpio pshBtns;
@@ -151,11 +151,11 @@ int main()
 	XGpio_Initialize(&ledsCtrl, LEDS_DEVICE_ID);
 	XGpio_SetDataDirection(&ledsCtrl, 1, 0x00000000); // set channel 1 to output
 
-
-	for (int i = 0; i < 256; i++)
+	int i = 256;
+	while(i-- > 0)
 	{
 		XGpio_DiscreteWrite(&ledsCtrl, 1, i);
-		for (int j = 0; j < 20; j++);
+		for (int j = 0; j < 20000; j++);
 	}
 
 	XGpio_DiscreteWrite(&ledsCtrl, 1, 0x01); // Set first LED
@@ -171,7 +171,7 @@ int main()
 	 * Connect the function PushBtnHandler to the interrupt controller so that
 	 * it is called whenever the Push button GPIO core signals an interrupt.
 	 */
-	XIntc_Connect(&intCtrl, BTNS_IRPT_ID, PushBtnHandler, &pshBtns);
+	//XIntc_Connect(&intCtrl, BTNS_IRPT_ID, PushBtnHandler, &pshBtns);
 
 	/*
 	 * Connect the function IicHandler to the interrupt controller so that
@@ -182,7 +182,7 @@ int main()
 	/*
 	 * Enable both interrupts at the interrupt controller
 	 */
-	XIntc_Enable(&intCtrl, BTNS_IRPT_ID);
+	//XIntc_Enable(&intCtrl, BTNS_IRPT_ID);
 	//XIntc_Enable(&intCtrl, IIC_IRPT_ID);
 
 	/*
@@ -190,27 +190,27 @@ int main()
 	 * processor and then start the Interrupt controller so that it begins
 	 * listening to the push buttons and IIC core for triggers.
 	 */
-	microblaze_register_handler(XIntc_DeviceInterruptHandler, INTC_DEVICE_ID);
-	microblaze_enable_interrupts();
-	XIntc_Start(&intCtrl, XIN_REAL_MODE);
+	//microblaze_register_handler(XIntc_DeviceInterruptHandler, INTC_DEVICE_ID);
+	//microblaze_enable_interrupts();
+	//XIntc_Start(&intCtrl, XIN_REAL_MODE);
 
 	/*
 	 * Enable the push button GPIO core to begin sending interrupts to the
 	 * interrupt controller in response to changes in the button states
 	 */
-	XGpio_InterruptEnable(&pshBtns, lBtnChannel);
-	XGpio_InterruptGlobalEnable(&pshBtns);
+	//XGpio_InterruptEnable(&pshBtns, lBtnChannel);
+	//XGpio_InterruptGlobalEnable(&pshBtns);
 
 	/*
 	 * Enable the IIC core to begin sending interrupts to the
 	 * interrupt controller.
 	 */
-	Xil_Out32(IIC_BASEADDR + bIicIER, 0x00000026);  //Enable AAS, TxFifo empty
+	/*Xil_Out32(IIC_BASEADDR + bIicIER, 0x00000026);  //Enable AAS, TxFifo empty
 													//and Tx done interrupts
 	Xil_Out32(IIC_BASEADDR + bIicADR, 0x000000A0);  //Set slave address for E-DDC
 	Xil_Out32(IIC_BASEADDR + bIicGIE, 0x80000000);  //Enable global interrupts
 	Xil_Out32(IIC_BASEADDR + bIicCR, 0x00000001);   //Enable IIC core
-
+*/
 	TestPatternGenerator<XPAR_TPG_0_BASEADDR> tpg_0;
 	AxiHdmi<HDMIOUT_BASEADDR> hdmi_0;
 
@@ -223,7 +223,20 @@ int main()
 
 	XGpio_DiscreteWrite(&ledsCtrl, 1, 0x04);  // Set third LED
 
+	xil_printf("\n\rOutput Resolution Code = %x\n\r",
+						Xil_In32(HDMIOUT_BASEADDR + bHdmiOutRes) );
+
 	hdmi_0.SetOutputResolution(1280, 720);
+
+#if 1
+	xil_printf("\n\rOutput Resolution Code = %x\n\r",
+					Xil_In32(HDMIOUT_BASEADDR + bHdmiOutRes) );
+
+	Xuint32 width, height;
+	hdmi_0.GetOutputResolution(width, height);
+
+	xil_printf("\n\rOutput Resolution %dx%d\n\r", width, height);
+#endif
 
 	tpg_0.SetResolution(1280, 720);
 	tpg_0.SetEnabled(true);
