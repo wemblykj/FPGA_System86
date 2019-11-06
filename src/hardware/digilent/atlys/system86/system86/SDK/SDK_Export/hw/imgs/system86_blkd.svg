@@ -916,18 +916,6 @@
     <g id="symbol_STACK_1_SHAPE_0">
       <rect x="0" y="0" rx="6" ry="6" width="90" height="74" style="fill:#CCCCCC; stroke:#FFFFFF; stroke-width:2"/>
       <rect x="11" y="4" rx="3" ry="3" width="68" height="38" style="fill:#FFFFFF; stroke:none;"/>
-      <text x="45" y="12" fill="#AA0017" stroke="none" font-size="10pt" font-style="italic" font-weight="900" text-anchor="middle" font-family="Verdana Arial Helvetica san-serif">v_tpg</text>
-      <text x="45" y="20" fill="#000000" stroke="none" font-size="10pt" font-style="italic" font-weight="900" text-anchor="middle" font-family="Courier Arial Helvetica san-serif">v_tpg_0</text>
-      <line x1="0" y1="64" x2="11" y2="64" style="stroke:#0084AB;stroke-width:1"/>
-      <use xmlns:xlink="http://www.w3.org/1999/xlink" x="11" y="54" xlink:href="#AXI_BifLabel"/>
-      <text x="27" y="65" fill="#000000" stroke="none" font-size="10pt" font-style="italic" font-weight="900" text-anchor="middle" font-family="Verdana Courier Arial Helvetica san-serif">S_AXI</text>
-      <line x1="79" y1="64" x2="91" y2="64" style="stroke:#0084AB;stroke-width:1"/>
-      <use xmlns:xlink="http://www.w3.org/1999/xlink" x="47" y="54" xlink:href="#AXIS_BifLabel"/>
-      <text x="63" y="65" fill="#000000" stroke="none" font-size="10pt" font-style="italic" font-weight="900" text-anchor="middle" font-family="Verdana Courier Arial Helvetica san-serif">M_AX</text>
-    </g>
-    <g id="symbol_STACK_1_SHAPE_1">
-      <rect x="0" y="0" rx="6" ry="6" width="90" height="74" style="fill:#CCCCCC; stroke:#FFFFFF; stroke-width:2"/>
-      <rect x="11" y="4" rx="3" ry="3" width="68" height="38" style="fill:#FFFFFF; stroke:none;"/>
       <text x="45" y="12" fill="#AA0017" stroke="none" font-size="10pt" font-style="italic" font-weight="900" text-anchor="middle" font-family="Verdana Arial Helvetica san-serif">axi_hdmi</text>
       <text x="45" y="20" fill="#000000" stroke="none" font-size="10pt" font-style="italic" font-weight="900" text-anchor="middle" font-family="Courier Arial Helvetica san-serif">axi_hdmi_0</text>
       <line x1="0" y1="64" x2="11" y2="64" style="stroke:#0084AB;stroke-width:1"/>
@@ -936,6 +924,15 @@
       <line x1="79" y1="64" x2="91" y2="64" style="stroke:#0084AB;stroke-width:1"/>
       <use xmlns:xlink="http://www.w3.org/1999/xlink" x="47" y="54" xlink:href="#AXIS_BifLabel"/>
       <text x="63" y="65" fill="#000000" stroke="none" font-size="10pt" font-style="italic" font-weight="900" text-anchor="middle" font-family="Verdana Courier Arial Helvetica san-serif">S_AX</text>
+    </g>
+    <g id="symbol_STACK_1_SHAPE_1">
+      <rect x="0" y="0" rx="6" ry="6" width="90" height="74" style="fill:#CCCCCC; stroke:#FFFFFF; stroke-width:2"/>
+      <rect x="11" y="4" rx="3" ry="3" width="68" height="38" style="fill:#FFFFFF; stroke:none;"/>
+      <text x="45" y="12" fill="#AA0017" stroke="none" font-size="10pt" font-style="italic" font-weight="900" text-anchor="middle" font-family="Verdana Arial Helvetica san-serif">v_vid_in_axi4s</text>
+      <text x="45" y="20" fill="#000000" stroke="none" font-size="10pt" font-style="italic" font-weight="900" text-anchor="middle" font-family="Courier Arial Helvetica san-serif">v_vid_in_axi4s_0</text>
+      <line x1="79" y1="64" x2="91" y2="64" style="stroke:#0084AB;stroke-width:1"/>
+      <use xmlns:xlink="http://www.w3.org/1999/xlink" x="47" y="54" xlink:href="#AXIS_BifLabel"/>
+      <text x="63" y="65" fill="#000000" stroke="none" font-size="10pt" font-style="italic" font-weight="900" text-anchor="middle" font-family="Verdana Courier Arial Helvetica san-serif">M_AX</text>
     </g>
     <g id="symbol_STACK_1">
       <rect x="0" y="0" rx="6" ry="6" width="90" height="180" style="fill:#CCCCCC; stroke:none;"/>
@@ -1074,7 +1071,7 @@
       <text x="241" y="72" fill="#000000" stroke="none" font-size="10pt" font-style="italic" font-weight="bold" text-anchor="middle" font-family="Courier Arial Helvetica san-serif">xc6slx45csg324-3</text>
       <rect x="0" y="80" width="300" height="16" style="fill:#EEEEEE; stroke:none;"/>
       <text x="4" y="92" fill="#000000" stroke="none" font-size="10pt" font-weight="bold" text-anchor="start" font-family="Arial Helvetica san-serif">GENERATED</text>
-      <text x="217" y="92" fill="#000000" stroke="none" font-size="10pt" font-style="italic" font-weight="bold" text-anchor="middle" font-family="Courier Arial Helvetica san-serif">Mon Aug  5 15:24:58 2019</text>
+      <text x="217" y="92" fill="#000000" stroke="none" font-size="10pt" font-style="italic" font-weight="bold" text-anchor="middle" font-family="Courier Arial Helvetica san-serif">Wed Nov 06 21:34:30 2019</text>
     </g>
   </defs>
   <rect x="0" y="0" width="1082" height="2311" fill="#FFFFFF" stroke="#000000" stroke-width="4"/>
