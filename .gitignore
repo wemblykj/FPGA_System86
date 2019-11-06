@@ -9,3 +9,4 @@
 *.debug
 *.elfcheck
 *.size
+*.orig

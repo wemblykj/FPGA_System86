@@ -4,7 +4,7 @@
 
 
 //#if DEBUG && !defined SIMULATION
-#define USE_DUMP
+//#define USE_DUMP
 //#endif
 
 #include "AxiHdmi.h"
@@ -394,3 +394,4 @@ void PushBtnHandler(void *CallBackRef)
 
 	XGpio_InterruptClear(pPushBtn, lBtnChannel);
 }
+#endif /* DONOTDO */
