@@ -135,6 +135,19 @@ volatile int lDeBncCnt;
 
 int main()
 {
+	TPG_RegUpdateDisable(XPAR_TPG_0_BASEADDR);
+	TPG_WriteReg(XPAR_TPG_0_BASEADDR, TPG_ACTIVE_SIZE, 640*480);
+	TPG_RegUpdateEnable(XPAR_TPG_0_BASEADDR);
+	TPG_Enable(XPAR_TPG_0_BASEADDR);
+
+	//TPG_RegUpdateDisable(XPAR_TPG_0_BASEADDR);
+	//TPG_WriteReg(XPAR_TPG_0_BASEADDR, TPG_PATTERN_CONTROL, 0);
+	//TPG_RegUpdateEnable(XPAR_TPG_0_BASEADDR);
+}
+
+#ifdef DONOTDO
+int main()
+{
 	//init_platform();
 
 	static XGpio ledsCtrl;
@@ -381,3 +394,4 @@ void PushBtnHandler(void *CallBackRef)
 
 	XGpio_InterruptClear(pPushBtn, lBtnChannel);
 }
+#endif /* DONOTDO */
