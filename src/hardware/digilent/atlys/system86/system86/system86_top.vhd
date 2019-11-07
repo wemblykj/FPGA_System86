@@ -38,6 +38,23 @@ entity system86_top is
     LEDs_8Bits_TRI_O : out std_logic_vector(7 downto 0);
     GCLK : in std_logic;
     DIP_Switches_8Bits_TRI_I : in std_logic_vector(7 downto 0);
+    Digilent_Usb_Epp_IFCLK_pin : in std_logic;
+    Digilent_Usb_Epp_STMEN_pin : in std_logic;
+    Digilent_Usb_Epp_FLAGA_pin : in std_logic;
+    Digilent_Usb_Epp_FLAGB_pin : in std_logic;
+    Digilent_Usb_Epp_FLAGC_pin : in std_logic;
+    Digilent_Usb_Epp_SLRD_pin : out std_logic;
+    Digilent_Usb_Epp_SLWR_pin : out std_logic;
+    Digilent_Usb_Epp_SLOE_pin : out std_logic;
+    Digilent_Usb_Epp_FIFOADR_pin : out std_logic_vector(1 downto 0);
+    Digilent_Usb_Epp_PKTEND_pin : out std_logic;
+    Digilent_Usb_Epp_EPPRST_pin : in std_logic;
+    Digilent_AC97_Cntlr_BITCLK_pin : in std_logic;
+    Digilent_AC97_Cntlr_SDATA_IN_pin : in std_logic;
+    Digilent_AC97_Cntlr_SDATA_OUT_pin : out std_logic;
+    Digilent_AC97_Cntlr_SYNC_pin : out std_logic;
+    Digilent_AC97_Cntlr_RESET_N_pin : out std_logic;
+    Digilent_Usb_Epp_DB_pin : inout std_logic_vector(7 downto 0);
     axi_hdmi_0_TMDS_RX_CLK_P_pin : in std_logic;
     axi_hdmi_0_TMDS_RX_CLK_N_pin : in std_logic;
     axi_hdmi_0_TMDS_RX_2_P_pin : in std_logic;
@@ -55,24 +72,7 @@ entity system86_top is
     axi_hdmi_0_TMDS_TX_1_P_pin : out std_logic;
     axi_hdmi_0_TMDS_TX_1_N_pin : out std_logic;
     axi_hdmi_0_TMDS_TX_0_P_pin : out std_logic;
-    axi_hdmi_0_TMDS_TX_0_N_pin : out std_logic;
-    Digilent_Usb_Epp_IFCLK_pin : in std_logic;
-    Digilent_Usb_Epp_STMEN_pin : in std_logic;
-    Digilent_Usb_Epp_FLAGA_pin : in std_logic;
-    Digilent_Usb_Epp_FLAGB_pin : in std_logic;
-    Digilent_Usb_Epp_FLAGC_pin : in std_logic;
-    Digilent_Usb_Epp_SLRD_pin : out std_logic;
-    Digilent_Usb_Epp_SLWR_pin : out std_logic;
-    Digilent_Usb_Epp_SLOE_pin : out std_logic;
-    Digilent_Usb_Epp_FIFOADR_pin : out std_logic_vector(1 downto 0);
-    Digilent_Usb_Epp_PKTEND_pin : out std_logic;
-    Digilent_Usb_Epp_EPPRST_pin : in std_logic;
-    Digilent_AC97_Cntlr_BITCLK_pin : in std_logic;
-    Digilent_AC97_Cntlr_SDATA_IN_pin : in std_logic;
-    Digilent_AC97_Cntlr_SDATA_OUT_pin : out std_logic;
-    Digilent_AC97_Cntlr_SYNC_pin : out std_logic;
-    Digilent_AC97_Cntlr_RESET_N_pin : out std_logic;
-    Digilent_Usb_Epp_DB_pin : inout std_logic_vector(7 downto 0)
+    axi_hdmi_0_TMDS_TX_0_N_pin : out std_logic
   );
 end system86_top;
 
@@ -109,6 +109,23 @@ architecture STRUCTURE of system86_top is
       LEDs_8Bits_TRI_O : out std_logic_vector(7 downto 0);
       GCLK : in std_logic;
       DIP_Switches_8Bits_TRI_I : in std_logic_vector(7 downto 0);
+      Digilent_Usb_Epp_IFCLK_pin : in std_logic;
+      Digilent_Usb_Epp_STMEN_pin : in std_logic;
+      Digilent_Usb_Epp_FLAGA_pin : in std_logic;
+      Digilent_Usb_Epp_FLAGB_pin : in std_logic;
+      Digilent_Usb_Epp_FLAGC_pin : in std_logic;
+      Digilent_Usb_Epp_SLRD_pin : out std_logic;
+      Digilent_Usb_Epp_SLWR_pin : out std_logic;
+      Digilent_Usb_Epp_SLOE_pin : out std_logic;
+      Digilent_Usb_Epp_FIFOADR_pin : out std_logic_vector(1 downto 0);
+      Digilent_Usb_Epp_PKTEND_pin : out std_logic;
+      Digilent_Usb_Epp_EPPRST_pin : in std_logic;
+      Digilent_AC97_Cntlr_BITCLK_pin : in std_logic;
+      Digilent_AC97_Cntlr_SDATA_IN_pin : in std_logic;
+      Digilent_AC97_Cntlr_SDATA_OUT_pin : out std_logic;
+      Digilent_AC97_Cntlr_SYNC_pin : out std_logic;
+      Digilent_AC97_Cntlr_RESET_N_pin : out std_logic;
+      Digilent_Usb_Epp_DB_pin : inout std_logic_vector(7 downto 0);
       axi_hdmi_0_TMDS_RX_CLK_P_pin : in std_logic;
       axi_hdmi_0_TMDS_RX_CLK_N_pin : in std_logic;
       axi_hdmi_0_TMDS_RX_2_P_pin : in std_logic;
@@ -126,24 +143,7 @@ architecture STRUCTURE of system86_top is
       axi_hdmi_0_TMDS_TX_1_P_pin : out std_logic;
       axi_hdmi_0_TMDS_TX_1_N_pin : out std_logic;
       axi_hdmi_0_TMDS_TX_0_P_pin : out std_logic;
-      axi_hdmi_0_TMDS_TX_0_N_pin : out std_logic;
-      Digilent_Usb_Epp_IFCLK_pin : in std_logic;
-      Digilent_Usb_Epp_STMEN_pin : in std_logic;
-      Digilent_Usb_Epp_FLAGA_pin : in std_logic;
-      Digilent_Usb_Epp_FLAGB_pin : in std_logic;
-      Digilent_Usb_Epp_FLAGC_pin : in std_logic;
-      Digilent_Usb_Epp_SLRD_pin : out std_logic;
-      Digilent_Usb_Epp_SLWR_pin : out std_logic;
-      Digilent_Usb_Epp_SLOE_pin : out std_logic;
-      Digilent_Usb_Epp_FIFOADR_pin : out std_logic_vector(1 downto 0);
-      Digilent_Usb_Epp_PKTEND_pin : out std_logic;
-      Digilent_Usb_Epp_EPPRST_pin : in std_logic;
-      Digilent_AC97_Cntlr_BITCLK_pin : in std_logic;
-      Digilent_AC97_Cntlr_SDATA_IN_pin : in std_logic;
-      Digilent_AC97_Cntlr_SDATA_OUT_pin : out std_logic;
-      Digilent_AC97_Cntlr_SYNC_pin : out std_logic;
-      Digilent_AC97_Cntlr_RESET_N_pin : out std_logic;
-      Digilent_Usb_Epp_DB_pin : inout std_logic_vector(7 downto 0)
+      axi_hdmi_0_TMDS_TX_0_N_pin : out std_logic
     );
   end component;
 
@@ -183,6 +183,23 @@ begin
       LEDs_8Bits_TRI_O => LEDs_8Bits_TRI_O,
       GCLK => GCLK,
       DIP_Switches_8Bits_TRI_I => DIP_Switches_8Bits_TRI_I,
+      Digilent_Usb_Epp_IFCLK_pin => Digilent_Usb_Epp_IFCLK_pin,
+      Digilent_Usb_Epp_STMEN_pin => Digilent_Usb_Epp_STMEN_pin,
+      Digilent_Usb_Epp_FLAGA_pin => Digilent_Usb_Epp_FLAGA_pin,
+      Digilent_Usb_Epp_FLAGB_pin => Digilent_Usb_Epp_FLAGB_pin,
+      Digilent_Usb_Epp_FLAGC_pin => Digilent_Usb_Epp_FLAGC_pin,
+      Digilent_Usb_Epp_SLRD_pin => Digilent_Usb_Epp_SLRD_pin,
+      Digilent_Usb_Epp_SLWR_pin => Digilent_Usb_Epp_SLWR_pin,
+      Digilent_Usb_Epp_SLOE_pin => Digilent_Usb_Epp_SLOE_pin,
+      Digilent_Usb_Epp_FIFOADR_pin => Digilent_Usb_Epp_FIFOADR_pin,
+      Digilent_Usb_Epp_PKTEND_pin => Digilent_Usb_Epp_PKTEND_pin,
+      Digilent_Usb_Epp_EPPRST_pin => Digilent_Usb_Epp_EPPRST_pin,
+      Digilent_AC97_Cntlr_BITCLK_pin => Digilent_AC97_Cntlr_BITCLK_pin,
+      Digilent_AC97_Cntlr_SDATA_IN_pin => Digilent_AC97_Cntlr_SDATA_IN_pin,
+      Digilent_AC97_Cntlr_SDATA_OUT_pin => Digilent_AC97_Cntlr_SDATA_OUT_pin,
+      Digilent_AC97_Cntlr_SYNC_pin => Digilent_AC97_Cntlr_SYNC_pin,
+      Digilent_AC97_Cntlr_RESET_N_pin => Digilent_AC97_Cntlr_RESET_N_pin,
+      Digilent_Usb_Epp_DB_pin => Digilent_Usb_Epp_DB_pin,
       axi_hdmi_0_TMDS_RX_CLK_P_pin => axi_hdmi_0_TMDS_RX_CLK_P_pin,
       axi_hdmi_0_TMDS_RX_CLK_N_pin => axi_hdmi_0_TMDS_RX_CLK_N_pin,
       axi_hdmi_0_TMDS_RX_2_P_pin => axi_hdmi_0_TMDS_RX_2_P_pin,
@@ -200,24 +217,7 @@ begin
       axi_hdmi_0_TMDS_TX_1_P_pin => axi_hdmi_0_TMDS_TX_1_P_pin,
       axi_hdmi_0_TMDS_TX_1_N_pin => axi_hdmi_0_TMDS_TX_1_N_pin,
       axi_hdmi_0_TMDS_TX_0_P_pin => axi_hdmi_0_TMDS_TX_0_P_pin,
-      axi_hdmi_0_TMDS_TX_0_N_pin => axi_hdmi_0_TMDS_TX_0_N_pin,
-      Digilent_Usb_Epp_IFCLK_pin => Digilent_Usb_Epp_IFCLK_pin,
-      Digilent_Usb_Epp_STMEN_pin => Digilent_Usb_Epp_STMEN_pin,
-      Digilent_Usb_Epp_FLAGA_pin => Digilent_Usb_Epp_FLAGA_pin,
-      Digilent_Usb_Epp_FLAGB_pin => Digilent_Usb_Epp_FLAGB_pin,
-      Digilent_Usb_Epp_FLAGC_pin => Digilent_Usb_Epp_FLAGC_pin,
-      Digilent_Usb_Epp_SLRD_pin => Digilent_Usb_Epp_SLRD_pin,
-      Digilent_Usb_Epp_SLWR_pin => Digilent_Usb_Epp_SLWR_pin,
-      Digilent_Usb_Epp_SLOE_pin => Digilent_Usb_Epp_SLOE_pin,
-      Digilent_Usb_Epp_FIFOADR_pin => Digilent_Usb_Epp_FIFOADR_pin,
-      Digilent_Usb_Epp_PKTEND_pin => Digilent_Usb_Epp_PKTEND_pin,
-      Digilent_Usb_Epp_EPPRST_pin => Digilent_Usb_Epp_EPPRST_pin,
-      Digilent_AC97_Cntlr_BITCLK_pin => Digilent_AC97_Cntlr_BITCLK_pin,
-      Digilent_AC97_Cntlr_SDATA_IN_pin => Digilent_AC97_Cntlr_SDATA_IN_pin,
-      Digilent_AC97_Cntlr_SDATA_OUT_pin => Digilent_AC97_Cntlr_SDATA_OUT_pin,
-      Digilent_AC97_Cntlr_SYNC_pin => Digilent_AC97_Cntlr_SYNC_pin,
-      Digilent_AC97_Cntlr_RESET_N_pin => Digilent_AC97_Cntlr_RESET_N_pin,
-      Digilent_Usb_Epp_DB_pin => Digilent_Usb_Epp_DB_pin
+      axi_hdmi_0_TMDS_TX_0_N_pin => axi_hdmi_0_TMDS_TX_0_N_pin
     );
 
 end architecture STRUCTURE;

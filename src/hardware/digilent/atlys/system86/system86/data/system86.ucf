@@ -1,3 +1,9 @@
+#### HDMI Core constraints
+# Overwrite existing VCCAUX setting for TMDS interfaces
+
+#CONFIG VCCAUX = 3.300v;
+CONFIG VCCAUX=3.3;
+
 #
 # pin constraints
 #
@@ -63,10 +69,6 @@ NET zio IOSTANDARD = "LVCMOS18_JEDEC";
 
 NET "GCLK" TNM_NET = sys_clk_pin;
 TIMESPEC TS_sys_clk_pin = PERIOD sys_clk_pin 100000 kHz;
-
-#### HDMI Core constraints
-# Overwrite existing VCCAUX setting for TMDS interfaces
-CONFIG VCCAUX = 3.3;
 
 ############################################################
 

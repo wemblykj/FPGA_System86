@@ -1,0 +1,12 @@
+
+*.pdom
+*.mk
+*.d
+*.o
+*.tcl
+*.mem
+*.index
+*.debug
+*.elfcheck
+*.size
+*.orig

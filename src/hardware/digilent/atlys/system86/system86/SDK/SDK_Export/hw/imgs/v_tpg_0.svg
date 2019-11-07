@@ -120,6 +120,4 @@
   <text x="60" y="126" fill="#000000" stroke="none" font-size="8pt" font-style="normal" font-weight="bold" text-anchor="middle" font-family="Verdana Arial Helvetica san-serif">4</text>
   <use xmlns:xlink="http://www.w3.org/1999/xlink" x="24" y="152" xlink:href="#AXI_busconn_SLAVE"/>
   <text x="60" y="166" fill="#000000" stroke="none" font-size="8pt" font-style="normal" font-weight="bold" font-family="Verdana Arial Helvetica san-serif">S_AXI</text>
-  <use xmlns:xlink="http://www.w3.org/1999/xlink" x="228" y="152" xlink:href="#AXIS_busconn_INITIATOR"/>
-  <text x="130" y="166" fill="#000000" stroke="none" font-size="8pt" font-style="normal" font-weight="bold" font-family="Verdana Arial Helvetica san-serif">M_AXIS_VIDEO</text>
 </svg>
