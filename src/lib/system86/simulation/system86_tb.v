@@ -28,16 +28,35 @@ module system86_tb;
 
 	// Inputs
 	reg clk_48m;
+	wire clk_24m;
 	reg rst;
 
-	wire vid_clk;
-	wire [3:0] vid_red;
-	wire [3:0] vid_green;
-	wire [3:0] vid_blue;
-	wire hsync;
-	wire hblank;
-	wire vsync;
-	wire vblank;
+	wire s86_vid_clk;
+	wire [3:0] s86_vid_red;
+	wire [3:0] s86_vid_green;
+	wire [3:0] s86_vid_blue;
+	wire s86_hsync;
+	wire s86_hblank;
+	wire s86_vsync;
+	wire s86_vblank;
+	
+	wire s86_vid_clk;
+	wire [3:0] s86_vid_red;
+	wire [3:0] s86_vid_green;
+	wire [3:0] s86_vid_blue;
+	wire s86_hsync;
+	wire s86_hblank;
+	wire s86_vsync;
+	wire s86_vblank;
+	
+	wire x2_vid_clk;
+	wire [3:0] x2_vid_red;
+	wire [3:0] x2_vid_green;
+	wire [3:0] x2_vid_blue;
+	wire x2_hsync;
+	wire x2_hblank;
+	wire x2_vsync;
+	wire x2_vblank;
 	
 	// Instantiate the Unit Under Test (UUT)
 	system86 
@@ -48,28 +67,49 @@ module system86_tb;
 		uut (
 			.clk_48m(clk_48m), 
 			.rst(rst),
-			.vid_clk(vid_clk),
-			.vid_red(vid_red),
-			.vid_green(vid_green),
-			.vid_blue(vid_blue),
-			.vid_hsync(hsync),
-			.vid_hblank(hblank),
-			.vid_vsync(vsync),
-			.vid_vblank(vblank)
+			.vid_clk(s86_vid_clk),
+			.vid_red(s86_vid_red),
+			.vid_green(s86_vid_green),
+			.vid_blue(s86_vid_blue),
+			.vid_hsync(s86_hsync),
+			.vid_hblank(s86_hblank),
+			.vid_vsync(s86_vsync),
+			.vid_vblank(s86_vblank)
 		);
 
+	scan_doubler
+		#(
+			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
+		)
+		doubler (
+			.pixel_clk_in(s86_vid_clk),
+			.pixel_clk_out_ref(x2_vid_clk),
+			
+			.red_in(s86_vid_red),
+			.green_in(s86_vid_green),
+			.blue_in(s86_vid_blue),
+			.hsync_in(s86_hsync),
+			.vsync_in(s86_vsync),
+			
+			.red_out(x2_vid_red),
+			.green_out(x2_vid_green),
+			.blue_out(x2_vid_blue),
+			.hsync_out(x2_hsync),
+			.vsync_out(x2_vsync)
+		);
+		
 	vga_logger
 		#(
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
 		)
 		logger (
-			.pixel_clk(vid_clk),
+			.pixel_clk(clk_24m),
 			.output_enable(~rst),
-			.red(vid_red),
-			.green(vid_green),
-			.blue(vid_blue),
-			.hsync(hsync),
-			.vsync(vsync)
+			.red(x2_vid_red),
+			.green(x2_vid_green),
+			.blue(x2_vid_blue),
+			.hsync(x2_hsync),
+			.vsync(x2_vsync)
 		);
 		
 	initial begin
@@ -85,6 +125,10 @@ module system86_tb;
 	end
       
 	always #10.1725 clk_48m = ~clk_48m;
+
+	// generate our 24mhz output clock
+	always @(posedge pixel_clk) clk_24m = ~clk_24m;
+		
 	
 endmodule
 
