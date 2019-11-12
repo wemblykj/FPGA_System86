@@ -28,9 +28,10 @@ module system86_tb;
 
 	// Inputs
 	reg clk_48m;
-	wire clk_24m;
 	reg rst;
 
+	reg clk_24m;
+		
 	wire s86_vid_clk;
 	wire [3:0] s86_vid_red;
 	wire [3:0] s86_vid_green;
@@ -40,16 +41,7 @@ module system86_tb;
 	wire s86_vsync;
 	wire s86_vblank;
 	
-	wire s86_vid_clk;
-	wire [3:0] s86_vid_red;
-	wire [3:0] s86_vid_green;
-	wire [3:0] s86_vid_blue;
-	wire s86_hsync;
-	wire s86_hblank;
-	wire s86_vsync;
-	wire s86_vblank;
-	
-	wire x2_vid_clk;
+	//wire x2_vid_clk;
 	wire [3:0] x2_vid_red;
 	wire [3:0] x2_vid_green;
 	wire [3:0] x2_vid_blue;
@@ -83,7 +75,7 @@ module system86_tb;
 		)
 		doubler (
 			.pixel_clk_in(s86_vid_clk),
-			.pixel_clk_out_ref(x2_vid_clk),
+			.pixel_clk_out_ref(clk_24m),
 			
 			.red_in(s86_vid_red),
 			.green_in(s86_vid_green),
@@ -115,6 +107,7 @@ module system86_tb;
 	initial begin
 		// Initialize Inputs
 		clk_48m = 0;
+		clk_24m = 0;
 		rst = 1;
 
 		// Wait 1000 ns for global reset to finish
@@ -127,7 +120,7 @@ module system86_tb;
 	always #10.1725 clk_48m = ~clk_48m;
 
 	// generate our 24mhz output clock
-	always @(posedge pixel_clk) clk_24m = ~clk_24m;
+	always @(posedge clk_48m) clk_24m = ~clk_24m;
 		
 	
 endmodule
