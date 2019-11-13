@@ -29,19 +29,22 @@ reg [10:0] read_pos = 0;
 reg [10:0] hsync_width = 0;
 
 reg hsync_in_latched = 1;
+reg hsync_in_latched2 = 1;
 
-assign adjusted_read_pos = read_pos[(C_LINE_BUFFER_WIDTH>>7)-1:1];
-assign line_pos = read_pos[(C_LINE_BUFFER_WIDTH>>8)-1:0];
+wire [9:0] adjusted_read_pos;
+wire [9:0] line_pos;
+assign adjusted_read_pos = read_pos[10:1];
+assign line_pos = read_pos[9:0];
 
 always @(posedge pixel_clk_in) begin
-	if (hsync_in_latched === 1 && hsync_in === 0) begin
+	if (hsync_in_latched == 1 && hsync_in == 0) begin
 		// get the width of the line just written
 		line_width = write_pos;
 		// swap write buffers
 		write_buffer_select = ~write_buffer_select;
 		// reset the write position
 		write_pos = 0;
-	end else if (hsync_in_latched === 0 && hsync_in === 1) begin
+	end else if (hsync_in_latched == 0 && hsync_in == 1) begin
 		// gives us the width in pixels of the hsync pulse
 		hsync_width = write_pos;
 	end
@@ -52,21 +55,27 @@ always @(posedge pixel_clk_in) begin
 	line_buffer[1][write_pos][write_buffer_select] <= green_in;
 	line_buffer[2][write_pos][write_buffer_select] <= blue_in;
 	write_pos <= write_pos + 1;
+	
+	
 end
 
 always @(posedge pixel_clk_out_ref) begin
-	if (hsync_in_latched === 0 && hsync_in === 1) begin
+	if (hsync_in_latched2 == 0 && hsync_in == 1) begin
 		// swap read buffers
 		read_buffer_select = ~read_buffer_select;
 		read_pos = 0;
 	end
 	
-	hsync_out <= line_pos < hsync_width;
+	hsync_in_latched2 <= hsync_in;
+	
+	if (line_pos[9:1] == 0) hsync_out <= 0;
+	if (line_pos[9:1] == hsync_width) hsync_out <= 1;
 	
 	red_out <= line_buffer[0][adjusted_read_pos][read_buffer_select];
 	green_out <= line_buffer[1][adjusted_read_pos][read_buffer_select];
 	blue_out <= line_buffer[2][adjusted_read_pos][read_buffer_select];
 	read_pos <= read_pos + 1;
+		
 end
 
 
