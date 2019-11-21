@@ -78,7 +78,9 @@ module upscaler_tb;
 	// Instantiate the Unit Under Test (UUT)
 	upscaler 
 	#( 
-		.C_COMPONENT_DEPTH(c_VIDEO_WIDTH))
+		.C_COMPONENT_DEPTH(c_VIDEO_WIDTH),
+		.C_LINE_BUFFER_SIZE(c_TOTAL_COLS),
+		.C_LINE_BUFFER_COUNT(2))
 	uut (
 		.rst(rst), 
 		.pixel_clk_a(pixel_clk_a), 
@@ -227,9 +229,14 @@ module upscaler_tb;
 	assign vsync_a = tpg_a_vsync;
 	assign hblank_a = tpg_a_hblank;
 	assign vblank_a = tpg_a_vblank;
+
+	/*assign pixel_clk_b = clk_6m;
+	assign hsync_b = tpg_a_hsync;
+	assign vsync_b = tpg_a_vsync;
+	assign hblank_b = tpg_a_hblank;
+	assign vblank_b = tpg_a_vblank;*/
 	
 	assign pixel_clk_b = clk_25m;
-	
 	assign hsync_b = s2b_b_hsync;
 	assign vsync_b = s2b_b_vsync;
 	assign hblank_b = s2b_b_hblank;
