@@ -102,7 +102,7 @@ always @(posedge pixel_clk_b) begin
 			line_acc = 0;
 			
 			// calculate scaling factor
-			if (line_width_a != 0) line_delta <= (delta_width * line_width_b) / line_width_a;
+			if (line_width_a != 0) line_delta <= (delta_width * line_width_a) / line_width_b;
 			
 			// next line in the buffer
 			//if (read_buffer_index_a = C_LINE_BUFFER_COUNT) read_buffer_index_a <= 0;

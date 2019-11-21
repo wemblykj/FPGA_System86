@@ -30,7 +30,7 @@ module system86_tb;
 	reg clk_48m;
 	reg rst;
 
-	reg clk_24m;
+	reg clk_25m;
 		
 	wire s86_vid_clk;
 	wire [3:0] s86_vid_red;
@@ -42,13 +42,13 @@ module system86_tb;
 	wire s86_vblank;
 	
 	//wire x2_vid_clk;
-	wire [3:0] x2_vid_red;
-	wire [3:0] x2_vid_green;
-	wire [3:0] x2_vid_blue;
-	wire x2_hsync;
-	wire x2_hblank;
-	wire x2_vsync;
-	wire x2_vblank;
+	wire [3:0] out_vid_red;
+	wire [3:0] out_vid_green;
+	wire [3:0] out_vid_blue;
+	wire out_hsync;
+	wire out_hblank;
+	wire out_vsync;
+	wire out_vblank;
 	
 	// Instantiate the Unit Under Test (UUT)
 	system86 
@@ -90,11 +90,20 @@ module system86_tb;
 			.vsync_out(x2_vsync)
 		);*/
 		
+	VGA_Sync_Pulses
+		//#(
+		//)
+		output_sync_gen (
+			.i_Clk(clk_25m),
+			.o_HSync(out_hsync),
+			.o_VSync(out_vsync)
+		);
+		
 	upscaler
 		#(
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
 			.C_LINE_BUFFER_COUNT(2),
-			.C_DELTA_WIDTH(8)
+			.C_DELTA_WIDTH(12)
 		)
 		upscaler (
 			.rst(rst),
@@ -109,15 +118,15 @@ module system86_tb;
 			.hblank_a(s86_hblank),
 			.vblank_a(s86_vblank),
 			
-			.pixel_clk_b(s86_vid_clk),
-			.hsync_b(s86_hsync),
-			.vsync_b(s86_hsync),
-			.hblank_b(s86_hblank),
-			.vblank_b(s86_vblank),
+			.pixel_clk_b(clk_25m),
+			.hsync_b(out_hsync),
+			.vsync_b(out_vsync),
+			.hblank_b(out_hblank),
+			.vblank_b(out_vblank),
 			
-			.red_b(x2_vid_red),
-			.green_b(x2_vid_green),
-			.blue_b(x2_vid_blue)
+			.red_b(out_vid_red),
+			.green_b(out_vid_green),
+			.blue_b(out_vid_blue)
 		);
 		
 	vga_logger
@@ -128,16 +137,16 @@ module system86_tb;
 			.pixel_clk(clk_24m),
 			.output_enable(~rst),
 			.red(x2_vid_red),
-			.green(x2_vid_green),
-			.blue(x2_vid_blue),
-			.hsync(x2_hsync),
-			.vsync(x2_vsync)
+			.green(out_vid_green),
+			.blue(out_vid_blue),
+			.hsync(out_hsync),
+			.vsync(out_vsync)
 		);
 		
 	initial begin
 		// Initialize Inputs
 		clk_48m = 0;
-		clk_24m = 0;
+		clk_25m = 0;
 		rst = 1;
 
 		// Wait 1000 ns for global reset to finish
@@ -147,11 +156,11 @@ module system86_tb;
 		rst = 0;
 	end
       
+	//always #10.1725 clk_48m = ~clk_48m;
 	always #10.1725 clk_48m = ~clk_48m;
 
-	// generate our 24mhz output clock
-	always @(posedge clk_48m) clk_24m = ~clk_24m;
-		
+	// generate our 25Mhz VGA clock
+	always #19.5313 clk_25m = ~clk_25m;
 	
 endmodule
 
