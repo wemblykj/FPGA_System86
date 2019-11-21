@@ -50,6 +50,9 @@ module system86_tb;
 	wire out_vsync;
 	wire out_vblank;
 	
+	assign out_hsync_n = ~out_hsync;
+	assign out_vsync_n = ~out_vsync;
+	
 	// Instantiate the Unit Under Test (UUT)
 	system86 
 		#(
@@ -102,8 +105,9 @@ module system86_tb;
 	upscaler
 		#(
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
-			.C_LINE_BUFFER_COUNT(2),
-			.C_DELTA_WIDTH(12)
+			.C_LINE_BUFFER_COUNT(8),
+			.C_DELTA_WIDTH_PRECISION(12),
+			.C_DELTA_HEIGHT_PRECISION(12)
 		)
 		upscaler (
 			.rst(rst),
@@ -134,9 +138,9 @@ module system86_tb;
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
 		)
 		logger (
-			.pixel_clk(clk_24m),
+			.pixel_clk(clk_25m),
 			.output_enable(~rst),
-			.red(x2_vid_red),
+			.red(out_vid_red),
 			.green(out_vid_green),
 			.blue(out_vid_blue),
 			.hsync(out_hsync),
