@@ -62,9 +62,7 @@ module VGA_Test_Pattterns_TB;
   // Generates Sync Pulses to run VGA
   VGA_Sync_Pulses #(.TOTAL_COLS(c_TOTAL_COLS),
                     .TOTAL_ROWS(c_TOTAL_ROWS),
-                    .ACTIVE_COLS(c_ACTIVE_COLS),
-                    .ACTIVE_ROWS(c_ACTIVE_ROWS),
-						  .SYNC_PULSE_HORZ(c_SYNC_PULSE_HORZ),
+                    .SYNC_PULSE_HORZ(c_SYNC_PULSE_HORZ),
 						  .SYNC_PULSE_VERT(c_SYNC_PULSE_VERT)) 
 						  
   VGA_Sync_Pulses_Inst(.i_Clk(r_Clk),

@@ -3,9 +3,7 @@
 module VGA_Sync_Pulses 
  #(parameter TOTAL_COLS  = 800, 
    parameter TOTAL_ROWS  = 525,
-   parameter ACTIVE_COLS = 640, 
-   parameter ACTIVE_ROWS = 480,
-	parameter SYNC_PULSE_HORZ = 96,
+   parameter SYNC_PULSE_HORZ = 96,
 	parameter SYNC_PULSE_VERT = 2)
   (input            i_Clk, 
    output           o_HSync,
@@ -29,7 +27,7 @@ module VGA_Sync_Pulses
       
   end
 	  
-  assign o_HSync = (o_Col_Count < TOTAL_COLS) & (o_Col_Count > SYNC_PULSE_HORZ - 1) ? 1'b1 : 1'b0;
-  assign o_VSync = (o_Row_Count < TOTAL_ROWS) & (o_Row_Count > SYNC_PULSE_VERT - 1) ? 1'b1 : 1'b0;
+  assign o_HSync = (o_Col_Count < TOTAL_COLS) && (o_Col_Count > SYNC_PULSE_HORZ - 1) ? 1'b1 : 1'b0;
+  assign o_VSync = (o_Row_Count < TOTAL_ROWS) && (o_Row_Count > SYNC_PULSE_VERT - 1) ? 1'b1 : 1'b0;
   
 endmodule
