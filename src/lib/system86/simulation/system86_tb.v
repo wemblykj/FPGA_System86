@@ -69,7 +69,7 @@ module system86_tb;
 			.vid_vblank(s86_vblank)
 		);
 
-	scan_doubler
+	/*scan_doubler
 		#(
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
 		)
@@ -88,6 +88,36 @@ module system86_tb;
 			.blue_out(x2_vid_blue),
 			.hsync_out(x2_hsync),
 			.vsync_out(x2_vsync)
+		);*/
+		
+	upscaler
+		#(
+			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
+			.C_LINE_BUFFER_COUNT(2),
+			.C_DELTA_WIDTH(8)
+		)
+		upscaler (
+			.rst(rst),
+			
+			.pixel_clk_a(s86_vid_clk),
+			
+			.red_a(s86_vid_red),
+			.green_a(s86_vid_green),
+			.blue_a(s86_vid_blue),
+			.hsync_a(s86_hsync),
+			.vsync_a(s86_vsync),
+			.hblank_a(s86_hblank),
+			.vblank_a(s86_vblank),
+			
+			.pixel_clk_b(s86_vid_clk),
+			.hsync_b(s86_hsync),
+			.vsync_b(s86_hsync),
+			.hblank_b(s86_hblank),
+			.vblank_b(s86_vblank),
+			
+			.red_b(x2_vid_red),
+			.green_b(x2_vid_green),
+			.blue_b(x2_vid_blue)
 		);
 		
 	vga_logger
