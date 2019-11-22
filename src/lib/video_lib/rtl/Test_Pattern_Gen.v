@@ -33,10 +33,12 @@ module Test_Pattern_Gen
 	parameter FRONT_PORCH_VERT = 10,
 	parameter BACK_PORCH_VERT  = 33
 )
-  (input       i_Clk,
+  (input       i_Rst,
+   input       i_Clk,
    input [3:0] i_Pattern,
    input       i_HSync,
    input       i_VSync,
+	output reg  o_Locked = 0,
    output reg  o_HSync = 1,
    output reg  o_VSync = 1,
 	output reg  o_HBlank = 0,
@@ -45,6 +47,8 @@ module Test_Pattern_Gen
    output reg [VIDEO_WIDTH-1:0] o_Grn_Video,
    output reg [VIDEO_WIDTH-1:0] o_Blu_Video);
   
+  wire w_Locked1;
+  wire w_Locked2;
   wire w_VSync1;
   wire w_HSync1;
   wire w_VSync2;
@@ -81,9 +85,12 @@ module Test_Pattern_Gen
 								  .FRONT_PORCH_VERT(FRONT_PORCH_VERT),
 								  .BACK_PORCH_VERT(BACK_PORCH_VERT))
 			
-			Sync_To_Blanking (.i_Clk(i_Clk),
+			Sync_To_Blanking (
+				 .i_Rst(i_Rst),
+				 .i_Clk(i_Clk),
 				 .i_HSync    (i_HSync),
 				 .i_VSync    (i_VSync),
+				 .o_Locked   (w_Locked1),
 				 .o_HSync    (w_HSync1),
 				 .o_VSync    (w_VSync1),
 				 .o_HBlank   (w_HBlank1),
@@ -93,11 +100,14 @@ module Test_Pattern_Gen
 			Blanking_To_Count #(.TOTAL_COLS(ACTIVE_COLS),
 							.TOTAL_ROWS(ACTIVE_ROWS))
   
-			Blank_To_Count (.i_Clk      (i_Clk),
+			Blank_To_Count (
+					.i_Rst      (i_Rst),
+				   .i_Clk      (i_Clk),
 					.i_HSync    (w_HSync1),
 					.i_VSync    (w_VSync1),
 					.i_HBlank   (w_HBlank1),
 					.i_VBlank   (w_VBlank1),
+					.o_Locked   (w_Locked2),
 					.o_HSync    (w_HSync2),
 					.o_VSync    (w_VSync2),
 					.o_Active   (w_Active),
@@ -111,9 +121,12 @@ module Test_Pattern_Gen
 			Sync_To_Count #(.TOTAL_COLS(TOTAL_COLS),
 			                .TOTAL_ROWS(TOTAL_ROWS))
   
-			Sync_To_Count (.i_Clk      (i_Clk),
+			Sync_To_Count (
+				  .i_Rst      (i_Rst),
+				  .i_Clk      (i_Clk),
 				  .i_HSync    (i_HSync),
 				  .i_VSync    (i_VSync),
+				  .o_Locked   (w_Locked2),
 				  .o_HSync    (w_HSync2),
 				  .o_VSync    (w_VSync2),
 				  .o_Col_Count(w_Col_Count),
@@ -129,6 +142,7 @@ module Test_Pattern_Gen
   // Register syncs to align with output data.
   always @(posedge i_Clk)
   begin
+	 o_Locked <= w_Locked1 & w_Locked2;
     o_VSync <= w_VSync2;
     o_HSync <= w_HSync2;
 	 o_VBlank <= w_VBlank2;
@@ -220,65 +234,71 @@ module Test_Pattern_Gen
   assign Pattern_Blu[6] = Pattern_Red[6];
   
 
-  /////////////////////////////////////////////////////////////////////////////
-  // Select between different test patterns
-  /////////////////////////////////////////////////////////////////////////////
-  always @(posedge i_Clk)
-	  if (w_Active)
-		 case (i_Pattern)
-			4'h0 : 
-			begin
-			 o_Red_Video <= Pattern_Red[0];
-			  o_Grn_Video <= Pattern_Grn[0];
-			  o_Blu_Video <= Pattern_Blu[0];
-			end
-			4'h1 :
-			begin
-			  o_Red_Video <= Pattern_Red[1];
-			  o_Grn_Video <= Pattern_Grn[1];
-			  o_Blu_Video <= Pattern_Blu[1];
-			end
-			4'h2 :
-			begin
-			  o_Red_Video <= Pattern_Red[2];
-			  o_Grn_Video <= Pattern_Grn[2];
-			  o_Blu_Video <= Pattern_Blu[2];
-			end
-			4'h3 :
-			begin
-			  o_Red_Video <= Pattern_Red[3];
-			  o_Grn_Video <= Pattern_Grn[3];
-			  o_Blu_Video <= Pattern_Blu[3];
-			end
-			4'h4 :
-			begin
-			  o_Red_Video <= Pattern_Red[4];
-			  o_Grn_Video <= Pattern_Grn[4];
-			  o_Blu_Video <= Pattern_Blu[4];
-			end
-			4'h5 :
-			begin
-			  o_Red_Video <= Pattern_Red[5];
-			  o_Grn_Video <= Pattern_Grn[5];
-			  o_Blu_Video <= Pattern_Blu[5];
-			end
-			4'h6 :
-			begin
-			  o_Red_Video <= Pattern_Red[6];
-			  o_Grn_Video <= Pattern_Grn[6];
-			  o_Blu_Video <= Pattern_Blu[6];
-			end
-			default:
-			begin
-			  o_Red_Video <= Pattern_Red[0];
-			  o_Grn_Video <= Pattern_Grn[0];
-			  o_Blu_Video <= Pattern_Blu[0];
-			end
-		 endcase
-	  else begin
-	    o_Red_Video <= 0;
+/////////////////////////////////////////////////////////////////////////////
+// Select between different test patterns
+/////////////////////////////////////////////////////////////////////////////
+always @(posedge i_Clk)
+	if (i_Rst) begin
+		o_Red_Video <= 0;
+		o_Grn_Video <= 0;
+		o_Blu_Video <= 0;
+	end else begin
+		if (w_Active)
+	case (i_Pattern)
+		4'h0 : 
+		begin
+		 o_Red_Video <= Pattern_Red[0];
+		  o_Grn_Video <= Pattern_Grn[0];
+		  o_Blu_Video <= Pattern_Blu[0];
+		end
+		4'h1 :
+		begin
+		  o_Red_Video <= Pattern_Red[1];
+		  o_Grn_Video <= Pattern_Grn[1];
+		  o_Blu_Video <= Pattern_Blu[1];
+		end
+		4'h2 :
+		begin
+		  o_Red_Video <= Pattern_Red[2];
+		  o_Grn_Video <= Pattern_Grn[2];
+		  o_Blu_Video <= Pattern_Blu[2];
+		end
+		4'h3 :
+		begin
+		  o_Red_Video <= Pattern_Red[3];
+		  o_Grn_Video <= Pattern_Grn[3];
+		  o_Blu_Video <= Pattern_Blu[3];
+		end
+		4'h4 :
+		begin
+		  o_Red_Video <= Pattern_Red[4];
+		  o_Grn_Video <= Pattern_Grn[4];
+		  o_Blu_Video <= Pattern_Blu[4];
+		end
+		4'h5 :
+		begin
+		  o_Red_Video <= Pattern_Red[5];
+		  o_Grn_Video <= Pattern_Grn[5];
+		  o_Blu_Video <= Pattern_Blu[5];
+		end
+		4'h6 :
+		begin
+		  o_Red_Video <= Pattern_Red[6];
+		  o_Grn_Video <= Pattern_Grn[6];
+		  o_Blu_Video <= Pattern_Blu[6];
+		end
+		default:
+		begin
+		  o_Red_Video <= Pattern_Red[0];
+		  o_Grn_Video <= Pattern_Grn[0];
+		  o_Blu_Video <= Pattern_Blu[0];
+		end
+	endcase
+		else begin
+		 o_Red_Video <= 0;
 		 o_Grn_Video <= 0;
 		 o_Blu_Video <= 255;
-	  end
+		end
+	end
 endmodule
 

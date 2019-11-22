@@ -71,48 +71,59 @@ module upscaler_tb;
 	wire [c_VIDEO_WIDTH-1:0] blue_a;
 	
 	// Outputs
+	wire o_locked_b;
+	wire o_hsync_b;
+	wire o_vsync_b;
+	wire o_hblank_b;
+	wire o_vblank_b;
 	wire [c_VIDEO_WIDTH-1:0] red_b;
 	wire [c_VIDEO_WIDTH-1:0] green_b;
 	wire [c_VIDEO_WIDTH-1:0] blue_b;
 	
 	// Instantiate the Unit Under Test (UUT)
-	upscaler 
+	Upscaler 
 	#( 
 		.C_COMPONENT_DEPTH(c_VIDEO_WIDTH),
 		.C_LINE_BUFFER_SIZE(c_TOTAL_COLS),
 		.C_LINE_BUFFER_COUNT(2))
 	uut (
-		.rst(rst), 
-		.pixel_clk_a(pixel_clk_a), 
-		.hsync_a(hsync_a), 
-		.vsync_a(vsync_a), 
-		.hblank_a(hblank_a), 
-		.vblank_a(vblank_a), 
-		.red_a(red_a), 
-		.green_a(green_a), 
-		.blue_a(blue_a), 
-		.pixel_clk_b(pixel_clk_b), 
-		.hsync_b(hsync_b), 
-		.vsync_b(vsync_b), 
-		.hblank_b(hblank_b), 
-		.vblank_b(vblank_b), 
-		.red_b(red_b), 
-		.green_b(green_b), 
-		.blue_b(blue_b)
+		.i_Rst(rst), 
+		.i_ClkA(pixel_clk_a), 
+		.i_HSyncA(hsync_a), 
+		.i_VSyncA(vsync_a), 
+		.i_HBlankA(hblank_a), 
+		.i_VBlankA(vblank_a), 
+		.i_RedA(red_a), 
+		.i_GreenA(green_a), 
+		.i_BlueA(blue_a), 
+		.i_ClkB(pixel_clk_b), 
+		.i_HSyncB(hsync_b), 
+		.i_VSyncB(vsync_b), 
+		.i_HBlankB(hblank_b), 
+		.i_VBlankB(vblank_b), 
+		.o_Locked(o_locked_b), 
+		.o_HSyncB(o_hsync_b), 
+		.o_VSyncB(o_vsync_b), 
+		.o_HBlankB(o_hblank_b), 
+		.o_VBlankB(o_vblank_b),
+		.o_RedB(red_b), 
+		.o_GreenB(green_b), 
+		.o_BlueB(blue_b)
 	);
 	
-	vga_logger #( 
+	VgaLogger #( 
 		.C_COMPONENT_DEPTH(c_VIDEO_WIDTH),
 		.C_FILE_NAME("vga_vid.txt"))
 		vga_logger
 		(
-			.pixel_clk(pixel_clk_b),
-			.output_enable(1'b1),
-			.red(red_b),
-			.green(green_b),
-			.blue(blue_b),
-			.hsync(hsync_b),
-			.vsync(vsync_b)
+			.i_Rst(rst),
+			.i_Clk(pixel_clk_b),
+			.i_OutputEnable(o_locked_b),
+			.i_HSync(o_hsync_b),
+			.i_VSync(o_vsync_b),
+			.i_Red(red_b),
+			.i_Green(green_b),
+			.i_Blue(blue_b)
 		);
 		
 	wire sg_a_hsync;
@@ -123,6 +134,7 @@ module upscaler_tb;
          .SYNC_PULSE_HORZ(c_SYNC_PULSE_HORZ),
 			.SYNC_PULSE_VERT(c_SYNC_PULSE_VERT))
 		sync_gen_a (
+			.i_Rst(rst),
 			.i_Clk(clk_6m),
 			.o_HSync(sg_a_hsync),
 			.o_VSync(sg_a_vsync)
@@ -142,6 +154,7 @@ module upscaler_tb;
 			.FRONT_PORCH_VERT(c_FRONT_PORCH_VERT),
 			.BACK_PORCH_VERT(c_BACK_PORCH_VERT))
 		sync2blank4_a (
+			.i_Rst(rst),
 			.i_Clk(clk_6m),
 			.i_HSync(sg_a_hsync),
 			.i_VSync(sg_a_vsync),
@@ -152,6 +165,7 @@ module upscaler_tb;
 		);	
 	
 	// Drives Red/Grn/Blue video - Test Pattern 5 (Color Bars)
+	wire tpg_a_locked;
 	wire tpg_a_hsync;
 	wire tpg_a_vsync;
 	wire tpg_a_hblank;
@@ -173,10 +187,12 @@ module upscaler_tb;
 			.FRONT_PORCH_VERT(c_FRONT_PORCH_VERT),
 			.BACK_PORCH_VERT(c_BACK_PORCH_VERT))							 
 		tpg_a (
+			.i_Rst(rst),
 			.i_Clk(clk_6m),
 			.i_Pattern(4'b0101), // 0101 = color bars
 			.i_HSync(sg_a_hsync),
 			.i_VSync(sg_a_vsync),
+			.o_Locked(tpg_a_locked),
 			.o_HSync(tpg_a_hsync),
 			.o_VSync(tpg_a_vsync),
 			.o_HBlank(tpg_a_hblank),
@@ -186,24 +202,26 @@ module upscaler_tb;
 			.o_Blu_Video(tpg_a_blue)
 			);
 	
-	vga_logger #( 
+	VgaLogger #( 
 		.C_COMPONENT_DEPTH(c_VIDEO_WIDTH),
 		.C_FILE_NAME("namco_vid.txt"))
 		namco_logger
 		(
-			.pixel_clk(pixel_clk_a),
-			.output_enable(1'b1),
-			.red(tpg_a_red),
-			.green(tpg_a_green),
-			.blue(tpg_a_blue),
-			.hsync(tpg_a_hsync),
-			.vsync(tpg_a_vsync)
+			.i_Rst(rst),
+			.i_Clk(pixel_clk_a),
+			.i_OutputEnable(tpg_a_locked),
+			.i_HSync(tpg_a_hsync),
+			.i_VSync(tpg_a_vsync),
+			.i_Red(tpg_a_red),
+			.i_Green(tpg_a_green),
+			.i_Blue(tpg_a_blue)
 		);
 			
 	wire sg_b_hsync;
 	wire sg_b_vsync;
 	VGA_Sync_Pulses
 		sync_gen_b (
+			.i_Rst(rst),
 			.i_Clk(clk_25m),
 			.o_HSync(sg_b_hsync),
 			.o_VSync(sg_b_vsync)
@@ -215,6 +233,7 @@ module upscaler_tb;
 	wire s2b_b_vblank;
 	Sync_To_Blanking 
 		sync2blank4_b (
+			.i_Rst(rst),
 			.i_Clk(clk_25m),
 			.i_HSync(sg_b_hsync),
 			.i_VSync(sg_b_vsync),
