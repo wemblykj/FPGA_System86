@@ -42,8 +42,8 @@ module upscaler_tb;
 	parameter c_USE_BLANKING = 1;
 	
 	parameter c_VIDEO_WIDTH = 8;
-	parameter c_NAMCO_PERIOD = 81.3802;
-	parameter c_VGA_PERIOD = 19.5313;
+	parameter c_NAMCO_PERIOD = 164.569030145202/2.0;//81.3802;
+	parameter c_VGA_PERIOD = 39.7222619047619/2.0; //19.5313; 
 	
 	// Inputs
 	reg rst = 0;
@@ -85,7 +85,9 @@ module upscaler_tb;
 	#( 
 		.C_COMPONENT_DEPTH(c_VIDEO_WIDTH),
 		.C_LINE_BUFFER_SIZE(c_TOTAL_COLS),
-		.C_LINE_BUFFER_COUNT(2))
+		.C_LINE_BUFFER_COUNT(32),
+		.C_DELTA_WIDTH_PRECISION(16),
+		.C_DELTA_HEIGHT_PRECISION(16))
 	uut (
 		.i_Rst(rst), 
 		.i_ClkA(pixel_clk_a), 
@@ -126,6 +128,7 @@ module upscaler_tb;
 			.i_Blue(blue_b)
 		);
 		
+	wire sg_a_locked;
 	wire sg_a_hsync;
 	wire sg_a_vsync;
 	VGA_Sync_Pulses
@@ -136,10 +139,12 @@ module upscaler_tb;
 		sync_gen_a (
 			.i_Rst(rst),
 			.i_Clk(clk_6m),
+			.o_Locked(locked),
 			.o_HSync(sg_a_hsync),
 			.o_VSync(sg_a_vsync)
 		);
-		
+	
+	wire s2b_a_locked;	
 	wire s2b_a_hsync;
 	wire s2b_a_vsync;
 	wire s2b_a_hblank;
@@ -158,6 +163,7 @@ module upscaler_tb;
 			.i_Clk(clk_6m),
 			.i_HSync(sg_a_hsync),
 			.i_VSync(sg_a_vsync),
+			.o_Locked(s2b_a_locked),
 			.o_HSync(s2b_a_hsync),
 			.o_VSync(s2b_a_vsync),
 			.o_HBlank(s2b_a_hblank),
@@ -189,7 +195,7 @@ module upscaler_tb;
 		tpg_a (
 			.i_Rst(rst),
 			.i_Clk(clk_6m),
-			.i_Pattern(4'b0101), // 0101 = color bars
+			.i_Pattern(4'b0110), // 0101 = color bars
 			.i_HSync(sg_a_hsync),
 			.i_VSync(sg_a_vsync),
 			.o_Locked(tpg_a_locked),
@@ -217,16 +223,19 @@ module upscaler_tb;
 			.i_Blue(tpg_a_blue)
 		);
 			
+	wire sg_b_locked;
 	wire sg_b_hsync;
 	wire sg_b_vsync;
 	VGA_Sync_Pulses
 		sync_gen_b (
 			.i_Rst(rst),
 			.i_Clk(clk_25m),
+			.o_Locked(sg_b_locked),
 			.o_HSync(sg_b_hsync),
 			.o_VSync(sg_b_vsync)
 		);
 		
+	wire s2b_b_locked;
 	wire s2b_b_hsync;
 	wire s2b_b_vsync;
 	wire s2b_b_hblank;
@@ -237,12 +246,55 @@ module upscaler_tb;
 			.i_Clk(clk_25m),
 			.i_HSync(sg_b_hsync),
 			.i_VSync(sg_b_vsync),
+			.o_Locked(s2b_b_locked),
 			.o_HSync(s2b_b_hsync),
 			.o_VSync(s2b_b_vsync),
 			.o_HBlank(s2b_b_hblank),
 			.o_VBlank(s2b_b_vblank)
 	);	
 
+	wire tpg_vga_ref_locked;
+	wire tpg_vga_ref_hsync;
+	wire tpg_vga_ref_vsync;
+	wire tpg_vga_ref_hblank;
+	wire tpg_vga_ref_vblank;
+	wire [c_VIDEO_WIDTH-1:0] tpg_vga_ref_red;
+	wire [c_VIDEO_WIDTH-1:0] tpg_vga_ref_green;
+	wire [c_VIDEO_WIDTH-1:0] tpg_vga_ref_blue;
+	Test_Pattern_Gen  
+		#( .VIDEO_WIDTH(c_VIDEO_WIDTH),
+			.USE_BLANKING(c_USE_BLANKING))						 
+		tpg_vga_ref (
+			.i_Rst(rst),
+			.i_Clk(clk_25m),
+			.i_Pattern(4'b0110), // 0101 = color bars
+			.i_HSync(s2b_b_hsync),
+			.i_VSync(s2b_b_vsync),
+			.o_Locked(tpg_vga_ref_locked),
+			.o_HSync(tpg_vga_ref_hsync),
+			.o_VSync(tpg_vga_ref_vsync),
+			.o_HBlank(tpg_vga_ref_hblank),
+			.o_VBlank(tpg_vga_ref_vblank),
+			.o_Red_Video(tpg_vga_ref_red),
+			.o_Grn_Video(tpg_vga_ref_green),
+			.o_Blu_Video(tpg_vga_ref_blue)
+			);
+	
+VgaLogger #( 
+		.C_COMPONENT_DEPTH(c_VIDEO_WIDTH),
+		.C_FILE_NAME("vga_ref_vid.txt"))
+		vga_ref_logger
+		(
+			.i_Rst(rst),
+			.i_Clk(clk_25m),
+			.i_OutputEnable(tpg_vga_ref_locked),
+			.i_HSync(tpg_vga_ref_hsync),
+			.i_VSync(tpg_vga_ref_vsync),
+			.i_Red(tpg_vga_ref_red),
+			.i_Green(tpg_vga_ref_green),
+			.i_Blue(tpg_vga_ref_blue)
+		);
+		
 	assign pixel_clk_a = clk_6m;
 	assign hsync_a = tpg_a_hsync;
 	assign vsync_a = tpg_a_vsync;

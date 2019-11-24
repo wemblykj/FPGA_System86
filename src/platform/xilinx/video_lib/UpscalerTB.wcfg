@@ -43,6 +43,10 @@
    <wvobject fp_name="group95" type="group">
       <obj_property name="label">stage 2</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/upscaler_tb/tpg_a_locked" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">tpg_a_locked</obj_property>
+         <obj_property name="ObjectShortName">tpg_a_locked</obj_property>
+      </wvobject>
       <wvobject fp_name="/upscaler_tb/tpg_a_hsync" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">tpg_a_hsync</obj_property>
          <obj_property name="ObjectShortName">tpg_a_hsync</obj_property>
@@ -95,6 +99,10 @@
    <wvobject fp_name="group83" type="group">
       <obj_property name="label">stage 3</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/upscaler_tb/sg_b_locked" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sg_b_locked</obj_property>
+         <obj_property name="ObjectShortName">sg_b_locked</obj_property>
+      </wvobject>
       <wvobject fp_name="/upscaler_tb/sg_b_hsync" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">sg_b_hsync</obj_property>
          <obj_property name="ObjectShortName">sg_b_hsync</obj_property>
@@ -107,6 +115,10 @@
    <wvobject fp_name="group84" type="group">
       <obj_property name="label">stage 4</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/upscaler_tb/s2b_b_locked" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">s2b_b_locked</obj_property>
+         <obj_property name="ObjectShortName">s2b_b_locked</obj_property>
+      </wvobject>
       <wvobject fp_name="/upscaler_tb/s2b_b_hsync" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">s2b_b_hsync</obj_property>
          <obj_property name="ObjectShortName">s2b_b_hsync</obj_property>
@@ -182,6 +194,26 @@
       <wvobject fp_name="/upscaler_tb/vblank_b" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">vblank_b</obj_property>
          <obj_property name="ObjectShortName">vblank_b</obj_property>
+      </wvobject>
+      <wvobject fp_name="/upscaler_tb/o_locked_b" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">o_locked_b</obj_property>
+         <obj_property name="ObjectShortName">o_locked_b</obj_property>
+      </wvobject>
+      <wvobject fp_name="/upscaler_tb/o_hsync_b" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">o_hsync_b</obj_property>
+         <obj_property name="ObjectShortName">o_hsync_b</obj_property>
+      </wvobject>
+      <wvobject fp_name="/upscaler_tb/o_vsync_b" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">o_vsync_b</obj_property>
+         <obj_property name="ObjectShortName">o_vsync_b</obj_property>
+      </wvobject>
+      <wvobject fp_name="/upscaler_tb/o_hblank_b" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">o_hblank_b</obj_property>
+         <obj_property name="ObjectShortName">o_hblank_b</obj_property>
+      </wvobject>
+      <wvobject fp_name="/upscaler_tb/o_vblank_b" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">o_vblank_b</obj_property>
+         <obj_property name="ObjectShortName">o_vblank_b</obj_property>
       </wvobject>
       <wvobject fp_name="/upscaler_tb/red_b" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">red_b[7:0]</obj_property>

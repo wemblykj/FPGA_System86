@@ -56,16 +56,16 @@ module Sync_To_Blanking #(
   // Purpose: Modifies the HSync and VSync signals to include Front/Back Porch
   always @(posedge i_Clk)
   begin
-    if ((w_Col_Count < FRONT_PORCH_HORZ + ACTIVE_COLS) || 
-        (w_Col_Count > TOTAL_COLS - BACK_PORCH_HORZ - 1))
+    if ((w_Col_Count < SYNC_PULSE_HORZ + BACK_PORCH_HORZ) || 
+        (w_Col_Count > TOTAL_COLS - FRONT_PORCH_HORZ - 1))
       o_HBlank <= 1'b1;
     else
       o_HBlank <= 1'b0;
     
 	 o_HSync <= w_HSync;
 	 
-    if ((w_Row_Count < FRONT_PORCH_VERT + ACTIVE_ROWS) ||
-        (w_Row_Count > TOTAL_ROWS - BACK_PORCH_VERT - 1))
+    if ((w_Row_Count < SYNC_PULSE_VERT + BACK_PORCH_VERT) ||
+        (w_Row_Count > TOTAL_ROWS - FRONT_PORCH_VERT - 1))
       o_VBlank <= 1'b1;
     else
       o_VBlank <= 1'b0;

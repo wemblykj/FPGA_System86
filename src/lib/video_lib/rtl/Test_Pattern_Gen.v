@@ -97,8 +97,8 @@ module Test_Pattern_Gen
 				 .o_VBlank   (w_VBlank1)
 				);
 	
-			Blanking_To_Count #(.TOTAL_COLS(ACTIVE_COLS),
-							.TOTAL_ROWS(ACTIVE_ROWS))
+			Blanking_To_Count #(.ACTIVE_COLS(ACTIVE_COLS),
+							.ACTIVE_ROWS(ACTIVE_ROWS))
   
 			Blank_To_Count (
 					.i_Rst      (i_Rst),
@@ -143,10 +143,11 @@ module Test_Pattern_Gen
   always @(posedge i_Clk)
   begin
 	 o_Locked <= w_Locked1 & w_Locked2;
-    o_VSync <= w_VSync2;
+    
     o_HSync <= w_HSync2;
+	 o_VSync <= w_VSync2;
+	 o_HBlank <= w_HBlank2;
 	 o_VBlank <= w_VBlank2;
-    o_HBlank <= w_HBlank2;
   end
   
   /////////////////////////////////////////////////////////////////////////////
