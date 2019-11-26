@@ -2,6 +2,8 @@ module Upscaler
 #
 (
 	parameter C_COMPONENT_DEPTH = 8,
+	parameter C_USE_BLANKING_A = 1,
+	parameter C_USE_BLANKING_B = 1,
 	parameter C_LINE_BUFFER_SIZE = 1024,
 	parameter C_LINE_BUFFER_COUNT = 3,
 	parameter C_DELTA_WIDTH_PRECISION = 12,
@@ -41,179 +43,266 @@ reg [C_COMPONENT_DEPTH-1:0] line_buffer_green[0:C_LINE_BUFFER_COUNT-1][0:C_LINE_
 reg [C_COMPONENT_DEPTH-1:0] line_buffer_blue[0:C_LINE_BUFFER_COUNT-1][0:C_LINE_BUFFER_SIZE-1];
 
 // horizontal
-reg [10:0] pixel_count_a = 0;
-reg [10:0] active_width_a = 0;
-wire [10:0] write_pos_a;
-reg i_HSyncA_latched = 0;
-reg i_HBlankA_latched = 0;
+reg [10:0] w_HCountA = 0;
+reg [10:0] w_WidthA = 0;
+wire [10:0] w_HPosA;
 // vertical
-reg [10:0] line_count_a = 0;
-reg [10:0] active_height_a = 0;
-reg [4:0] write_buffer_index_a = 0;
-reg [4:0] sof_line_buffer_index_a = 0;
-reg i_VSyncA_latched = 0;
-reg i_VBlankA_latched = 0;
+reg [10:0] w_VCountA = 0;
+reg [10:0] w_HeightA = 0;
+reg [4:0] w_VBufferIndexA = 0;
 
-assign active_a = i_HBlankA === 0 && i_VBlankA === 0;
-assign write_pos_a = pixel_count_a;
+wire w_HTriggerA;	
+wire w_VTriggerA;
+wire w_HActiveA;	
+wire w_VActiveA;	
+
+reg w_HTriggerA_latched = 0;
+reg w_VTriggerA_latched = 0;
+
+assign w_HPosA = w_HCountA;
 
 // horizontal
-reg [10:0] pixel_count_b = 0;
-reg [10:0] active_width_b = 0;
-wire [10:0] read_pos_b;
+reg [10:0] w_HCountB = 0;
+reg [10:0] w_WidthB = 0;
+wire [10:0] w_HPosB;
 reg [C_DELTA_WIDTH_PRECISION+9:0] hpos_acc = 0;
 reg [C_DELTA_WIDTH_PRECISION:0] hpos_delta = 0;
 // vertical
-reg [10:0] line_count_b = 0;
-reg [10:0] active_height_b = 0;
+reg [10:0] w_VCountB = 0;
+reg [10:0] w_HeightB = 0;
 reg [C_DELTA_HEIGHT_PRECISION+9:0] vpos_acc = 0;
 reg [C_DELTA_HEIGHT_PRECISION:0] vpos_delta = 0;
-reg [4:0] read_buffer_index_b;
-reg [4:0] sof_line_buffer_index_b = 0;
+reg [4:0] w_VBufferIndexB;
 
-//assign active_b = i_HBlankB === 0 && w_VBlankB === 0;
-assign read_pos_b = hpos_acc[C_DELTA_WIDTH_PRECISION+9:C_DELTA_WIDTH_PRECISION];
+assign w_HPosB = hpos_acc[C_DELTA_WIDTH_PRECISION+9:C_DELTA_WIDTH_PRECISION];
 
-integer delta_width = (1 << C_DELTA_WIDTH_PRECISION);
-integer delta_height = (1 << C_DELTA_HEIGHT_PRECISION);
+wire w_HTriggerB;	
+wire w_VTriggerB;
+wire w_HActiveB;	
+wire w_VActiveB;	
+
+reg w_HTriggerB_latched = 0;
+reg w_VTriggerB_latched = 0;
 
 reg w_LockedB = 0;
 reg w_HSyncB = 1;
 reg w_VSyncB = 1;
 reg w_HBlankB = 0;
 reg w_VBlankB = 0;
-    
-always @(posedge i_ClkA) begin
-	if (i_Rst) begin
-		pixel_count_a <= 0;
-		line_count_a <= 0;
-		active_width_a <= 0;	
-		active_height_a <= 0;
-		write_buffer_index_a <= 0;
-		i_HSyncA_latched <= 0;
-		i_VSyncA_latched <= 0;
-		i_VBlankA_latched <= 0;
+reg [C_COMPONENT_DEPTH-1:0] w_RedB = 0;
+reg [C_COMPONENT_DEPTH-1:0] w_GreenB = 0;
+reg [C_COMPONENT_DEPTH-1:0] w_BlueB = 0;
+
+generate
+	if (C_USE_BLANKING_A == 1) begin
+		assign w_HTriggerA = ~i_HBlankA;
+		assign w_VTriggerA = ~i_VBlankA;
+		assign w_HActiveA = ~i_HBlankA;
+		assign w_VActiveA = ~i_VBlankA;
 	end else begin
-		if (i_HSyncA_latched && ~i_HSyncA) begin
+		assign w_HTriggerA = ~i_HSyncA;
+		assign w_VTriggerA = ~i_VSyncA;
+		assign w_HActiveA = 1;
+		assign w_VActiveA = 1;
+	end
+
+	if (C_USE_BLANKING_B == 1) begin
+		assign w_HTriggerB = ~i_HBlankB;
+		assign w_VTriggerB = ~i_VBlankB;
+		assign w_HActiveB = ~i_HBlankB;
+		assign w_VActiveB = ~i_VBlankB;
+	end else begin
+		assign w_HTriggerB = ~i_HSyncB;
+		assign w_VTriggerB = ~i_VSyncB;
+		assign w_HActiveB = 1;
+		assign w_VActiveB = 1;
+	end
+endgenerate
+
+integer delta_width = (1 << C_DELTA_WIDTH_PRECISION);
+integer delta_height = (1 << C_DELTA_HEIGHT_PRECISION);
+
+always @(negedge i_ClkA) begin
+	if (i_Rst) begin
+		w_HCountA <= 0;
+		w_VCountA <= 0;
+		w_WidthA <= 0;	
+		w_HeightA <= 0;
+		w_VBufferIndexA <= 0;
+		w_HTriggerA_latched <= 0;		
+		w_VTriggerA_latched <= 0;		
+	end else begin
+		// next line ?
+		if (w_HTriggerA && ~w_HTriggerA_latched) begin
 			// cache active width
-			active_width_a = pixel_count_a;
+			w_WidthA = w_HCountA;
 			
 			// return to start of next line
-			pixel_count_a = 0;
+			w_HCountA = 0;
 			
-			if (i_VBlankA_latched === 0) begin			
-				line_count_a <= line_count_a + 1;
+			// next frame?
+			if (w_VActiveA) begin
+				w_VCountA = w_VCountA + 1;
 				
 				// next line in the buffer
-				write_buffer_index_a <= (write_buffer_index_a + 1) % C_LINE_BUFFER_COUNT;
+				w_VBufferIndexA = w_VCountA % C_LINE_BUFFER_COUNT;
 			end
-		end
-		
-		if (i_VSyncA_latched && ~i_VSyncA) begin
-			// cache active height
-			active_height_a <= line_count_a;
+			/*if (w_VTriggerA && ~w_VTriggerA_latched) begin
+				// cache active height
+				w_HeightA = w_VCountA;
 			
-			// return to start of next frame
-			line_count_a <= 0;
-			
-			sof_line_buffer_index_a <= write_buffer_index_a;
-		end
-		
-		if (i_HBlankA === 0) begin
-			pixel_count_a <= pixel_count_a + 1;
-			
-			if (i_VBlankA === 0) begin
-				line_buffer_red[write_buffer_index_a][write_pos_a] <= i_RedA;
-				line_buffer_green[write_buffer_index_a][write_pos_a] <= i_GreenA;
-				line_buffer_blue[write_buffer_index_a][write_pos_a] <= i_BlueA;
-			end
+				// return to start of next frame
+				w_VCountA = 0;
+			end else if (w_VActiveA) begin
+				w_VCountA = w_VCountA + 1;
+				
+				// next line in the buffer
+				w_VBufferIndexA = w_VCountA % C_LINE_BUFFER_COUNT;
+			end*/
+		end else if (w_HActiveA) begin
+			// next pixel
+			w_HCountA = w_HCountA + 1;
 		end
 	end
 	
-	i_HSyncA_latched <= i_HSyncA;
-	i_VSyncA_latched <= i_VSyncA;
-	i_VBlankA_latched <= i_VBlankA;
+	// next frame?
+	if (w_VTriggerA && ~w_VTriggerA_latched) begin
+		// cache active height
+		w_HeightA = w_VCountA;
+	
+		// return to start of next frame
+		w_VCountA = 0;
+	end
+	
+	if (w_VActiveA && w_HActiveA) begin
+		line_buffer_red[w_VBufferIndexA][w_HPosA] <= i_RedA;
+		line_buffer_green[w_VBufferIndexA][w_HPosA] <= i_GreenA;
+		line_buffer_blue[w_VBufferIndexA][w_HPosA] <= i_BlueA;
+	end;
+						
+	w_HTriggerA_latched <= w_HTriggerA;
+	w_VTriggerA_latched <= w_VTriggerA;
 end
 
 always @(posedge i_ClkB) begin
+	// sync'd outputs
 	o_Locked <= w_LockedB;
 	o_HSyncB <= w_HSyncB;
 	o_VSyncB <= w_VSyncB;
 	o_HBlankB <= w_HBlankB;
 	o_VBlankB <= w_VBlankB;
-	
-	if (w_HBlankB === 0 && w_VBlankB === 0) begin
-		o_RedB <= line_buffer_red[read_buffer_index_b][read_pos_b];
-		o_GreenB <= line_buffer_green[read_buffer_index_b][read_pos_b];
-		o_BlueB <= line_buffer_blue[read_buffer_index_b][read_pos_b];
-	end else begin
-		o_RedB <= 0;
-		o_GreenB <= 0;
-		o_BlueB <= 0;
-	end
+	o_RedB <= w_RedB;
+	o_GreenB <= w_GreenB;
+	o_BlueB <= w_BlueB;
 end
 
 always @(negedge i_ClkB) begin
-	if (i_Rst) begin
-		pixel_count_b <= 0;
-		active_width_b <= 0;
+if (i_Rst) begin
+		w_HCountB <= 0;
+		w_VCountB <= 0;
+		w_WidthB <= 0;	
+		w_HeightB <= 0;
+		w_VBufferIndexB <= 0;
 		hpos_delta <= 0;
 		hpos_acc <= 0;
+		w_HTriggerB_latched <= 0;		
+		w_VTriggerB_latched <= 0;		
+		
+		// outputs
 		w_LockedB <= 0;
 		w_HSyncB <= 1;
 		w_VSyncB <= 1;
 		w_HBlankB <= 0;
 		w_VBlankB <= 0;
+		w_RedB <= 0;
+		w_GreenB <= 0;
+		w_BlueB <= 0;
 	end else begin
-		if (w_HSyncB && ~i_HSyncB) begin
-			// cache active line width
-			active_width_b = pixel_count_b;
+		// next line ?
+		if (w_HTriggerB && ~w_HTriggerB_latched) begin
+			// cache active width
+			w_WidthB = w_HCountB;
 			
 			// return to start of next line
-			pixel_count_b = 0;
+			w_HCountB = 0;
 			
 			// reset line accumulator
 			hpos_acc = 0;
 			
 			// calculate scaling factor
-			if (active_width_a != 0) hpos_delta <= (delta_width * active_width_a) / active_width_b;
+			if (w_WidthA != 0) hpos_delta = (delta_width * w_WidthA) / w_WidthB;
 			
-			//if (i_VBlankB === 0) begin
-				line_count_b <= line_count_b + 1;
-				vpos_acc <= vpos_acc + vpos_delta;
-				read_buffer_index_b <= (sof_line_buffer_index_b + vpos_acc[C_DELTA_HEIGHT_PRECISION+9:C_DELTA_HEIGHT_PRECISION]) % C_LINE_BUFFER_COUNT;
-			//end
+			// next frame?
+			/*if (w_VTriggerB && ~w_VTriggerB_latched) begin
+				// cache active height
+				w_HeightB = w_VCountB;
 			
-		end else if (i_HBlankB === 0) begin
-			pixel_count_b <= pixel_count_b + 1;
+				// return to start of next frame
+				w_VCountB = 0;
+				
+				// calculate scaling factor
+				if (w_HeightA != 0) vpos_delta <= (delta_height * w_HeightA) / w_HeightB;
+				
+				// reset line accumulator 
+				vpos_acc = 0;
+				
+				w_VBufferIndexB <= 0;
+				
+				w_LockedB <= 1;
+			end else*/ if (w_VActiveB) begin
+				w_VCountB = w_VCountB + 1;
+				
+				// increment line accumulator
+				vpos_acc = vpos_acc + vpos_delta;
+				
+				// next line in the buffer
+				w_VBufferIndexB = vpos_acc[C_DELTA_HEIGHT_PRECISION+9:C_DELTA_HEIGHT_PRECISION] % C_LINE_BUFFER_COUNT;
+			end
+		end else if (w_HActiveB) begin
+			// next pixel
+			w_HCountB = w_HCountB + 1;
+			
+			// increment pixel position accumulator
 			hpos_acc <= hpos_acc + hpos_delta;
-			
 		end
+	end
+	
+	// next frame?
+	if (w_VTriggerB && ~w_VTriggerB_latched) begin
+		// cache active height
+		w_HeightB = w_VCountB;
+	
+		// return to start of next frame
+		w_VCountB = 0;
 		
-		if (w_VSyncB && ~i_VSyncB) begin
-			// cache active height
-			active_height_b <= line_count_b;
+		// calculate scaling factor
+		if (w_HeightA != 0) vpos_delta <= (delta_height * w_HeightA) / w_HeightB;
+		
+		// reset line accumulator 
+		vpos_acc = 0;
+		
+		w_VBufferIndexB = 0;
+		
+		w_LockedB <= 1;
+	end
 			
-			// return to start of next frame
-			line_count_b <= 0;
-			
-			// calculate scaling factor
-			if (active_height_a != 0) vpos_delta <= (delta_height * active_height_a) / active_height_b;
-			
-			// reset line accumulator 
-			vpos_acc = 0;
-			
-			sof_line_buffer_index_b <= sof_line_buffer_index_a;
-			read_buffer_index_b <= sof_line_buffer_index_b;
-			
-			w_LockedB <= 1;
-		end
+	if (w_VActiveB && w_HActiveB) begin
+		w_RedB <= line_buffer_red[w_VBufferIndexB][w_HPosB];
+		w_GreenB <= line_buffer_green[w_VBufferIndexB][w_HPosB];
+		w_BlueB <= line_buffer_blue[w_VBufferIndexB][w_HPosB];
+	end else begin
+		w_RedB <= 0;
+		w_GreenB <= 0;
+		w_BlueB <= 0;
 	end
 	
 	w_HSyncB <= i_HSyncB;
 	w_VSyncB <= i_VSyncB;
 	w_HBlankB <= i_HBlankB;
 	w_VBlankB <= i_VBlankB;
+	
+	w_HTriggerB_latched <= w_HTriggerB;
+	w_VTriggerB_latched <= w_VTriggerB;
 end
 
 

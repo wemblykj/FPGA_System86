@@ -22,7 +22,7 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module upscaler_tb;
+module UpscalerTB;
 
 	// Namco System86 timings 288x224 (384x264) 6Mhz pixel clock
 	parameter c_TOTAL_COLS = 384;
@@ -63,9 +63,6 @@ module upscaler_tb;
 	wire hblank_b;
 	wire vblank_b;
 	
-	//reg [c_VIDEO_WIDTH-1:0] red_a = 0;
-	//reg [c_VIDEO_WIDTH-1:0] green_a = 0;
-	//reg [c_VIDEO_WIDTH-1:0] blue_a = 0;
 	wire [c_VIDEO_WIDTH-1:0] red_a;
 	wire [c_VIDEO_WIDTH-1:0] green_a;
 	wire [c_VIDEO_WIDTH-1:0] blue_a;
@@ -84,6 +81,8 @@ module upscaler_tb;
 	Upscaler 
 	#( 
 		.C_COMPONENT_DEPTH(c_VIDEO_WIDTH),
+		.C_USE_BLANKING_A(c_USE_BLANKING),
+		.C_USE_BLANKING_B(c_USE_BLANKING),
 		.C_LINE_BUFFER_SIZE(c_TOTAL_COLS),
 		.C_LINE_BUFFER_COUNT(32),
 		.C_DELTA_WIDTH_PRECISION(16),
