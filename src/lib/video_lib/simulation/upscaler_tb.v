@@ -40,6 +40,10 @@ module UpscalerTB;
 	parameter c_BACK_PORCH_VERT  = 8;
 	  
 	parameter c_USE_BLANKING = 1;
+	parameter c_TEST_PATTERN = 6;
+	
+	parameter c_LINE_BUFFER_COUNT = 32;
+	parameter c_VERTICAL_SYNC_DELAY = 1;
 	
 	parameter c_VIDEO_WIDTH = 8;
 	parameter c_NAMCO_PERIOD = 164.569030145202/2.0;//81.3802;
@@ -84,7 +88,8 @@ module UpscalerTB;
 		.C_USE_BLANKING_A(c_USE_BLANKING),
 		.C_USE_BLANKING_B(c_USE_BLANKING),
 		.C_LINE_BUFFER_SIZE(c_TOTAL_COLS),
-		.C_LINE_BUFFER_COUNT(31),
+		.C_LINE_BUFFER_COUNT(c_LINE_BUFFER_COUNT),
+		.C_VERTICAL_SYNC_DELAY(c_VERTICAL_SYNC_DELAY),
 		.C_DELTA_WIDTH_PRECISION(16),
 		.C_DELTA_HEIGHT_PRECISION(16))
 	uut (
@@ -194,7 +199,7 @@ module UpscalerTB;
 		tpg_a (
 			.i_Rst(rst),
 			.i_Clk(clk_6m),
-			.i_Pattern(4'b0100), // 0101 = color bars
+			.i_Pattern(c_TEST_PATTERN), // 0101 = color bars
 			.i_HSync(sg_a_hsync),
 			.i_VSync(sg_a_vsync),
 			.o_Locked(tpg_a_locked),
@@ -266,7 +271,7 @@ module UpscalerTB;
 		tpg_vga_ref (
 			.i_Rst(rst),
 			.i_Clk(clk_25m),
-			.i_Pattern(4'b0100), // 0101 = color bars
+			.i_Pattern(c_TEST_PATTERN), // 0101 = color bars
 			.i_HSync(s2b_b_hsync),
 			.i_VSync(s2b_b_vsync),
 			.o_Locked(tpg_vga_ref_locked),

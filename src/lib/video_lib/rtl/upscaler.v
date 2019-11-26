@@ -6,6 +6,7 @@ module Upscaler
 	parameter C_USE_BLANKING_B = 1,
 	parameter C_LINE_BUFFER_SIZE = 1024,
 	parameter C_LINE_BUFFER_COUNT = 3,
+	parameter C_VERTICAL_SYNC_DELAY = 2,
 	parameter C_DELTA_WIDTH_PRECISION = 12,
 	parameter C_DELTA_HEIGHT_PRECISION = 12
 )
@@ -91,8 +92,8 @@ reg w_HSyncB = 1;
 reg w_VSyncB = 1;
 reg w_HBlankB = 0;
 reg w_VBlankB = 0;
-reg [C_LINE_BUFFER_COUNT-1:0] w_VSyncB_Delay = {C_LINE_BUFFER_COUNT{1'b1}};
-reg [C_LINE_BUFFER_COUNT-1:0] w_VBlankB_Delay = 0;
+reg [C_VERTICAL_SYNC_DELAY-1:0] w_VSyncB_Delay = {C_VERTICAL_SYNC_DELAY{1'b1}};
+reg [C_VERTICAL_SYNC_DELAY-1:0] w_VBlankB_Delay = 0;
 
 reg [C_COMPONENT_DEPTH-1:0] w_RedB = 0;
 reg [C_COMPONENT_DEPTH-1:0] w_GreenB = 0;
@@ -113,12 +114,12 @@ generate
 
 	if (C_USE_BLANKING_B == 1) begin
 		assign w_HTriggerB = ~i_HBlankB;
-		assign w_VTriggerB = ~w_VBlankB_Delay[C_LINE_BUFFER_COUNT-1];
+		assign w_VTriggerB = ~w_VBlankB_Delay[C_VERTICAL_SYNC_DELAY-1];
 		assign w_HActiveB = ~i_HBlankB;
-		assign w_VActiveB = ~w_VBlankB_Delay[C_LINE_BUFFER_COUNT-1];
+		assign w_VActiveB = ~w_VBlankB_Delay[C_VERTICAL_SYNC_DELAY-1];
 	end else begin
 		assign w_HTriggerB = ~i_HSyncB;
-		assign w_VTriggerB = ~w_VSyncB_Delay[C_LINE_BUFFER_COUNT-1];
+		assign w_VTriggerB = ~w_VSyncB_Delay[C_VERTICAL_SYNC_DELAY-1];
 		assign w_HActiveB = 1;
 		assign w_VActiveB = 1;
 	end
@@ -141,7 +142,7 @@ always @(negedge i_ClkA) begin
 		// next line ?
 		if (w_HTriggerA && ~w_HTriggerA_latched) begin
 			// cache active width
-			w_WidthA = w_HCountA;
+			w_WidthA = w_HCountA + 1;
 			
 			// return to start of next line
 			w_HCountA = 0;
@@ -182,7 +183,7 @@ end
 
 always @(negedge i_HSyncB) begin
 	if (i_Rst) begin
-		w_VSyncB_Delay <= {C_LINE_BUFFER_COUNT{1'b1}};
+		w_VSyncB_Delay <= {C_VERTICAL_SYNC_DELAY{1'b1}};
 		w_VBlankB_Delay <= 0;
 	end else begin
 		w_VSyncB_Delay = w_VSyncB_Delay << 1;//[C_LINE_BUFFER_COUNT-1:1] = w_VSyncB_Delay[C_LINE_BUFFER_COUNT-2:0];
@@ -230,7 +231,7 @@ always @(negedge i_ClkB) begin
 		// next line ?
 		if (w_HTriggerB && ~w_HTriggerB_latched) begin
 			// cache active width
-			w_WidthB = w_HCountB;
+			w_WidthB = w_HCountB + 1;
 			
 			// return to start of next line
 			w_HCountB = 0;
@@ -291,9 +292,9 @@ always @(negedge i_ClkB) begin
 	end
 	
 	w_HSyncB <= i_HSyncB;
-	w_VSyncB <= w_VSyncB_Delay[C_LINE_BUFFER_COUNT-1];
+	w_VSyncB <= w_VSyncB_Delay[C_VERTICAL_SYNC_DELAY-1];
 	w_HBlankB <= i_HBlankB;
-	w_VBlankB <= w_VBlankB_Delay[C_LINE_BUFFER_COUNT-1];
+	w_VBlankB <= w_VBlankB_Delay[C_VERTICAL_SYNC_DELAY-1];
 		
 	w_HTriggerB_latched <= w_HTriggerB;
 	w_VTriggerB_latched <= w_VTriggerB;
