@@ -3,10 +3,10 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="/home/administrator/Development/fpga/system86/src/platform/xilinx/video_lib/UpscalerTB_isim_beh.wdb" id="1" type="auto">
+      <db_ref path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/platform/xilinx/video_lib/UpscalerTB_isim_beh.wdb" id="1" type="auto">
          <top_modules>
-            <top_module name="glbl" />
             <top_module name="UpscalerTB" />
+            <top_module name="glbl" />
          </top_modules>
       </db_ref>
    </db_ref_list>
@@ -90,6 +90,11 @@
          <wvobject fp_name="/UpscalerTB/uut/w_HeightA" type="array" db_ref_id="1">
             <obj_property name="ElementShortName">w_HeightA[10:0]</obj_property>
             <obj_property name="ObjectShortName">w_HeightA[10:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/UpscalerTB/uut/w_SoFVBufferIndexA" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">w_SoFVBufferIndexA[4:0]</obj_property>
+            <obj_property name="ObjectShortName">w_SoFVBufferIndexA[4:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject fp_name="/UpscalerTB/uut/w_VBufferIndexA" type="array" db_ref_id="1">
@@ -210,10 +215,23 @@
             <obj_property name="ObjectShortName">vpos_delta[16:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
+         <wvobject fp_name="/UpscalerTB/uut/w_SoFVBufferIndexB" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">w_SoFVBufferIndexB[4:0]</obj_property>
+            <obj_property name="ObjectShortName">w_SoFVBufferIndexB[4:0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
          <wvobject fp_name="/UpscalerTB/uut/w_VBufferIndexB" type="array" db_ref_id="1">
             <obj_property name="ElementShortName">w_VBufferIndexB[4:0]</obj_property>
             <obj_property name="ObjectShortName">w_VBufferIndexB[4:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/UpscalerTB/uut/w_VSyncB_Delay" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">w_VSyncB_Delay[63:0]</obj_property>
+            <obj_property name="ObjectShortName">w_VSyncB_Delay[63:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/UpscalerTB/uut/w_VBlankB_Delay" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">w_VBlankB_Delay[63:0]</obj_property>
+            <obj_property name="ObjectShortName">w_VBlankB_Delay[63:0]</obj_property>
          </wvobject>
       </wvobject>
    </wvobject>

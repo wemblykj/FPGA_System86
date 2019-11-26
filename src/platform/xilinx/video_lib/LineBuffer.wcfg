@@ -3,10 +3,10 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/platform/xilinx/video_lib/upscaler_tb_isim_beh.wdb" id="1" type="auto">
+      <db_ref path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/platform/xilinx/video_lib/UpscalerTB_isim_beh.wdb" id="1" type="auto">
          <top_modules>
+            <top_module name="UpscalerTB" />
             <top_module name="glbl" />
-            <top_module name="upscaler_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
@@ -14,109 +14,85 @@
    <wvobject fp_name="group147" type="group">
       <obj_property name="label">input</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject fp_name="/upscaler_tb/uut/i_ClkB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">i_ClkB</obj_property>
-         <obj_property name="ObjectShortName">i_ClkB</obj_property>
+      <wvobject fp_name="/UpscalerTB/uut/i_ClkA" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">i_ClkA</obj_property>
+         <obj_property name="ObjectShortName">i_ClkA</obj_property>
       </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/i_HSyncB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">i_HSyncB</obj_property>
-         <obj_property name="ObjectShortName">i_HSyncB</obj_property>
+      <wvobject fp_name="/UpscalerTB/uut/i_VSyncA" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">i_VSyncA</obj_property>
+         <obj_property name="ObjectShortName">i_VSyncA</obj_property>
       </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/i_VSyncB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">i_VSyncB</obj_property>
-         <obj_property name="ObjectShortName">i_VSyncB</obj_property>
-      </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/i_HBlankB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">i_HBlankB</obj_property>
-         <obj_property name="ObjectShortName">i_HBlankB</obj_property>
-      </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/i_VBlankB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">i_VBlankB</obj_property>
-         <obj_property name="ObjectShortName">i_VBlankB</obj_property>
-      </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/active_a" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">active_a</obj_property>
-         <obj_property name="ObjectShortName">active_a</obj_property>
-      </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/pixel_count_a" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">pixel_count_a[10:0]</obj_property>
-         <obj_property name="ObjectShortName">pixel_count_a[10:0]</obj_property>
+      <wvobject fp_name="/UpscalerTB/uut/w_VCountA" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_VCountA[10:0]</obj_property>
+         <obj_property name="ObjectShortName">w_VCountA[10:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/write_pos_a" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">write_pos_a[10:0]</obj_property>
-         <obj_property name="ObjectShortName">write_pos_a[10:0]</obj_property>
+      <wvobject fp_name="/UpscalerTB/uut/w_SoFVBufferIndexA" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_SoFVBufferIndexA[4:0]</obj_property>
+         <obj_property name="ObjectShortName">w_SoFVBufferIndexA[4:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/sof_line_buffer_index_a" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">sof_line_buffer_index_a[3:0]</obj_property>
-         <obj_property name="ObjectShortName">sof_line_buffer_index_a[3:0]</obj_property>
+      <wvobject fp_name="/UpscalerTB/uut/w_VBufferIndexA" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_VBufferIndexA[4:0]</obj_property>
+         <obj_property name="ObjectShortName">w_VBufferIndexA[4:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/write_buffer_index_a" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">write_buffer_index_a[3:0]</obj_property>
-         <obj_property name="ObjectShortName">write_buffer_index_a[3:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <wvobject fp_name="/UpscalerTB/uut/i_RedA" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">i_RedA[7:0]</obj_property>
+         <obj_property name="ObjectShortName">i_RedA[7:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/UpscalerTB/uut/i_GreenA" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">i_GreenA[7:0]</obj_property>
+         <obj_property name="ObjectShortName">i_GreenA[7:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/UpscalerTB/uut/i_BlueA" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">i_BlueA[7:0]</obj_property>
+         <obj_property name="ObjectShortName">i_BlueA[7:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group157" type="group">
       <obj_property name="label">output</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject fp_name="/upscaler_tb/uut/i_ClkB" type="logic" db_ref_id="1">
+      <wvobject fp_name="/UpscalerTB/uut/i_ClkB" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">i_ClkB</obj_property>
          <obj_property name="ObjectShortName">i_ClkB</obj_property>
       </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/i_HSyncB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">i_HSyncB</obj_property>
-         <obj_property name="ObjectShortName">i_HSyncB</obj_property>
+      <wvobject fp_name="/UpscalerTB/uut/w_VSyncB" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">w_VSyncB</obj_property>
+         <obj_property name="ObjectShortName">w_VSyncB</obj_property>
       </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/i_VSyncB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">i_VSyncB</obj_property>
-         <obj_property name="ObjectShortName">i_VSyncB</obj_property>
-      </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/i_HBlankB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">i_HBlankB</obj_property>
-         <obj_property name="ObjectShortName">i_HBlankB</obj_property>
-      </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/i_VBlankB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">i_VBlankB</obj_property>
-         <obj_property name="ObjectShortName">i_VBlankB</obj_property>
-      </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/o_HSyncB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">o_HSyncB</obj_property>
-         <obj_property name="ObjectShortName">o_HSyncB</obj_property>
-      </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/o_VSyncB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">o_VSyncB</obj_property>
-         <obj_property name="ObjectShortName">o_VSyncB</obj_property>
-      </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/o_HBlankB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">o_HBlankB</obj_property>
-         <obj_property name="ObjectShortName">o_HBlankB</obj_property>
-      </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/o_VBlankB" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">o_VBlankB</obj_property>
-         <obj_property name="ObjectShortName">o_VBlankB</obj_property>
-      </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/pixel_count_b" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">pixel_count_b[10:0]</obj_property>
-         <obj_property name="ObjectShortName">pixel_count_b[10:0]</obj_property>
+      <wvobject fp_name="/UpscalerTB/uut/w_SoFVBufferIndexB" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_SoFVBufferIndexB[4:0]</obj_property>
+         <obj_property name="ObjectShortName">w_SoFVBufferIndexB[4:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/read_pos_b" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">read_pos_b[10:0]</obj_property>
-         <obj_property name="ObjectShortName">read_pos_b[10:0]</obj_property>
+      <wvobject fp_name="/UpscalerTB/uut/w_VCountB" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_VCountB[10:0]</obj_property>
+         <obj_property name="ObjectShortName">w_VCountB[10:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/sof_line_buffer_index_b" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">sof_line_buffer_index_b[3:0]</obj_property>
-         <obj_property name="ObjectShortName">sof_line_buffer_index_b[3:0]</obj_property>
+      <wvobject fp_name="/UpscalerTB/uut/w_VBufferIndexB" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_VBufferIndexB[4:0]</obj_property>
+         <obj_property name="ObjectShortName">w_VBufferIndexB[4:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/upscaler_tb/uut/read_buffer_index_b" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">read_buffer_index_b[3:0]</obj_property>
-         <obj_property name="ObjectShortName">read_buffer_index_b[3:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <wvobject fp_name="/UpscalerTB/uut/w_RedB" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_RedB[7:0]</obj_property>
+         <obj_property name="ObjectShortName">w_RedB[7:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/UpscalerTB/uut/w_GreenB" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_GreenB[7:0]</obj_property>
+         <obj_property name="ObjectShortName">w_GreenB[7:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/UpscalerTB/uut/w_BlueB" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">w_BlueB[7:0]</obj_property>
+         <obj_property name="ObjectShortName">w_BlueB[7:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group2208" type="group">

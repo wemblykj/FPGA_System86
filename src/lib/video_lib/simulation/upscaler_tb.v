@@ -84,7 +84,7 @@ module UpscalerTB;
 		.C_USE_BLANKING_A(c_USE_BLANKING),
 		.C_USE_BLANKING_B(c_USE_BLANKING),
 		.C_LINE_BUFFER_SIZE(c_TOTAL_COLS),
-		.C_LINE_BUFFER_COUNT(32),
+		.C_LINE_BUFFER_COUNT(31),
 		.C_DELTA_WIDTH_PRECISION(16),
 		.C_DELTA_HEIGHT_PRECISION(16))
 	uut (
@@ -194,7 +194,7 @@ module UpscalerTB;
 		tpg_a (
 			.i_Rst(rst),
 			.i_Clk(clk_6m),
-			.i_Pattern(4'b0110), // 0101 = color bars
+			.i_Pattern(4'b0100), // 0101 = color bars
 			.i_HSync(sg_a_hsync),
 			.i_VSync(sg_a_vsync),
 			.o_Locked(tpg_a_locked),
@@ -266,7 +266,7 @@ module UpscalerTB;
 		tpg_vga_ref (
 			.i_Rst(rst),
 			.i_Clk(clk_25m),
-			.i_Pattern(4'b0110), // 0101 = color bars
+			.i_Pattern(4'b0100), // 0101 = color bars
 			.i_HSync(s2b_b_hsync),
 			.i_VSync(s2b_b_vsync),
 			.o_Locked(tpg_vga_ref_locked),
@@ -304,7 +304,8 @@ VgaLogger #(
 	assign hsync_b = tpg_a_hsync;
 	assign vsync_b = tpg_a_vsync;
 	assign hblank_b = tpg_a_hblank;
-	assign vblank_b = tpg_a_vblank;*/
+	assign vblank_b = tpg_a_vblank;
+	*/
 	
 	assign pixel_clk_b = clk_25m;
 	assign hsync_b = s2b_b_hsync;
@@ -323,10 +324,6 @@ VgaLogger #(
 		rst = 1;
 		clk_6m = 0;
 		clk_25m = 0;
-		
-		//red_a = 8'b1;
-		//green_a = 8'b1;
-		//blue_a = 8'b1;
 		
 		// Wait 100 ns for global reset to finish
 		#100;

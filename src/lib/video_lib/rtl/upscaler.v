@@ -50,6 +50,7 @@ wire [10:0] w_HPosA;
 reg [10:0] w_VCountA = 0;
 reg [10:0] w_HeightA = 0;
 reg [4:0] w_VBufferIndexA = 0;
+reg [4:0] w_SoFVBufferIndexA = 0;
 
 wire w_HTriggerA;	
 wire w_VTriggerA;
@@ -73,6 +74,7 @@ reg [10:0] w_HeightB = 0;
 reg [C_DELTA_HEIGHT_PRECISION+9:0] vpos_acc = 0;
 reg [C_DELTA_HEIGHT_PRECISION:0] vpos_delta = 0;
 reg [4:0] w_VBufferIndexB;
+reg [4:0] w_SoFVBufferIndexB = 0;
 
 assign w_HPosB = hpos_acc[C_DELTA_WIDTH_PRECISION+9:C_DELTA_WIDTH_PRECISION];
 
@@ -89,6 +91,9 @@ reg w_HSyncB = 1;
 reg w_VSyncB = 1;
 reg w_HBlankB = 0;
 reg w_VBlankB = 0;
+reg [C_LINE_BUFFER_COUNT-1:0] w_VSyncB_Delay = {C_LINE_BUFFER_COUNT{1'b1}};
+reg [C_LINE_BUFFER_COUNT-1:0] w_VBlankB_Delay = 0;
+
 reg [C_COMPONENT_DEPTH-1:0] w_RedB = 0;
 reg [C_COMPONENT_DEPTH-1:0] w_GreenB = 0;
 reg [C_COMPONENT_DEPTH-1:0] w_BlueB = 0;
@@ -108,12 +113,12 @@ generate
 
 	if (C_USE_BLANKING_B == 1) begin
 		assign w_HTriggerB = ~i_HBlankB;
-		assign w_VTriggerB = ~i_VBlankB;
+		assign w_VTriggerB = ~w_VBlankB_Delay[C_LINE_BUFFER_COUNT-1];
 		assign w_HActiveB = ~i_HBlankB;
-		assign w_VActiveB = ~i_VBlankB;
+		assign w_VActiveB = ~w_VBlankB_Delay[C_LINE_BUFFER_COUNT-1];
 	end else begin
 		assign w_HTriggerB = ~i_HSyncB;
-		assign w_VTriggerB = ~i_VSyncB;
+		assign w_VTriggerB = ~w_VSyncB_Delay[C_LINE_BUFFER_COUNT-1];
 		assign w_HActiveB = 1;
 		assign w_VActiveB = 1;
 	end
@@ -129,6 +134,7 @@ always @(negedge i_ClkA) begin
 		w_WidthA <= 0;	
 		w_HeightA <= 0;
 		w_VBufferIndexA <= 0;
+		w_SoFVBufferIndexA <= 0;
 		w_HTriggerA_latched <= 0;		
 		w_VTriggerA_latched <= 0;		
 	end else begin
@@ -140,25 +146,13 @@ always @(negedge i_ClkA) begin
 			// return to start of next line
 			w_HCountA = 0;
 			
-			// next frame?
+			// increment active line
 			if (w_VActiveA) begin
 				w_VCountA = w_VCountA + 1;
 				
 				// next line in the buffer
-				w_VBufferIndexA = w_VCountA % C_LINE_BUFFER_COUNT;
+				w_VBufferIndexA = (w_VBufferIndexA + 1) % C_LINE_BUFFER_COUNT;
 			end
-			/*if (w_VTriggerA && ~w_VTriggerA_latched) begin
-				// cache active height
-				w_HeightA = w_VCountA;
-			
-				// return to start of next frame
-				w_VCountA = 0;
-			end else if (w_VActiveA) begin
-				w_VCountA = w_VCountA + 1;
-				
-				// next line in the buffer
-				w_VBufferIndexA = w_VCountA % C_LINE_BUFFER_COUNT;
-			end*/
 		end else if (w_HActiveA) begin
 			// next pixel
 			w_HCountA = w_HCountA + 1;
@@ -172,6 +166,8 @@ always @(negedge i_ClkA) begin
 	
 		// return to start of next frame
 		w_VCountA = 0;
+		
+		w_SoFVBufferIndexA = w_VBufferIndexA;
 	end
 	
 	if (w_VActiveA && w_HActiveA) begin
@@ -182,6 +178,19 @@ always @(negedge i_ClkA) begin
 						
 	w_HTriggerA_latched <= w_HTriggerA;
 	w_VTriggerA_latched <= w_VTriggerA;
+end
+
+always @(negedge i_HSyncB) begin
+	if (i_Rst) begin
+		w_VSyncB_Delay <= {C_LINE_BUFFER_COUNT{1'b1}};
+		w_VBlankB_Delay <= 0;
+	end else begin
+		w_VSyncB_Delay = w_VSyncB_Delay << 1;//[C_LINE_BUFFER_COUNT-1:1] = w_VSyncB_Delay[C_LINE_BUFFER_COUNT-2:0];
+		w_VSyncB_Delay[0] = i_VSyncB;
+		
+		w_VBlankB_Delay = w_VBlankB_Delay << 1; //[C_LINE_BUFFER_COUNT-1:1] = w_VBlankB_Delay[C_LINE_BUFFER_COUNT-2:0];
+		w_VBlankB_Delay[0] = i_VBlankB;
+	end
 end
 
 always @(posedge i_ClkB) begin
@@ -197,7 +206,7 @@ always @(posedge i_ClkB) begin
 end
 
 always @(negedge i_ClkB) begin
-if (i_Rst) begin
+	if (i_Rst) begin
 		w_HCountB <= 0;
 		w_VCountB <= 0;
 		w_WidthB <= 0;	
@@ -232,31 +241,15 @@ if (i_Rst) begin
 			// calculate scaling factor
 			if (w_WidthA != 0) hpos_delta = (delta_width * w_WidthA) / w_WidthB;
 			
-			// next frame?
-			/*if (w_VTriggerB && ~w_VTriggerB_latched) begin
-				// cache active height
-				w_HeightB = w_VCountB;
-			
-				// return to start of next frame
-				w_VCountB = 0;
-				
-				// calculate scaling factor
-				if (w_HeightA != 0) vpos_delta <= (delta_height * w_HeightA) / w_HeightB;
-				
-				// reset line accumulator 
-				vpos_acc = 0;
-				
-				w_VBufferIndexB <= 0;
-				
-				w_LockedB <= 1;
-			end else*/ if (w_VActiveB) begin
+			// increment active line
+			if (w_VActiveB) begin
 				w_VCountB = w_VCountB + 1;
 				
 				// increment line accumulator
 				vpos_acc = vpos_acc + vpos_delta;
 				
 				// next line in the buffer
-				w_VBufferIndexB = vpos_acc[C_DELTA_HEIGHT_PRECISION+9:C_DELTA_HEIGHT_PRECISION] % C_LINE_BUFFER_COUNT;
+				w_VBufferIndexB = (w_SoFVBufferIndexB + vpos_acc[C_DELTA_HEIGHT_PRECISION+9:C_DELTA_HEIGHT_PRECISION]) % C_LINE_BUFFER_COUNT;
 			end
 		end else if (w_HActiveB) begin
 			// next pixel
@@ -281,7 +274,8 @@ if (i_Rst) begin
 		// reset line accumulator 
 		vpos_acc = 0;
 		
-		w_VBufferIndexB = 0;
+		w_SoFVBufferIndexB = w_SoFVBufferIndexA;
+		w_VBufferIndexB = w_SoFVBufferIndexA;
 		
 		w_LockedB <= 1;
 	end
@@ -297,10 +291,10 @@ if (i_Rst) begin
 	end
 	
 	w_HSyncB <= i_HSyncB;
-	w_VSyncB <= i_VSyncB;
+	w_VSyncB <= w_VSyncB_Delay[C_LINE_BUFFER_COUNT-1];
 	w_HBlankB <= i_HBlankB;
-	w_VBlankB <= i_VBlankB;
-	
+	w_VBlankB <= w_VBlankB_Delay[C_LINE_BUFFER_COUNT-1];
+		
 	w_HTriggerB_latched <= w_HTriggerB;
 	w_VTriggerB_latched <= w_VTriggerB;
 end
