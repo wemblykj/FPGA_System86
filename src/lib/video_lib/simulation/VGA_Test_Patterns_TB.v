@@ -100,16 +100,16 @@ module VGA_Test_Pattterns_TB;
     .o_Grn_Video(w_Grn_Video_TP),
     .o_Blu_Video(w_Blu_Video_TP));
   
-  vga_logger #( .C_COMPONENT_DEPTH(c_VIDEO_WIDTH) )
+  Video_Logger #( .C_COMPONENT_DEPTH(c_VIDEO_WIDTH) )
 		vga_logger
 		(
-			.pixel_clk(r_Clk),
-			.output_enable(1'b1),
-			.red(w_Red_Video_TP),
-			.green(w_Grn_Video_TP),
-			.blue(w_Blu_Video_TP),
-			.hsync(w_HSync_TP),
-			.vsync(w_VSync_TP)
+			.i_Clk(r_Clk),
+			.i_OutputEnable(1'b1),
+			.i_Red(w_Red_Video_TP),
+			.i_Green(w_Grn_Video_TP),
+			.i_Blue(w_Blu_Video_TP),
+			.i_HSync(w_HSync_TP),
+			.i_VSync(w_VSync_TP)
 		);
 		
   initial

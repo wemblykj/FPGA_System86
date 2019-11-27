@@ -33,7 +33,7 @@
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="6"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="6"/>
     </file>
-    <file xil_pn:name="../../../lib/video_lib/simulation/vga_logger.v" xil_pn:type="FILE_VERILOG">
+    <file xil_pn:name="../../../lib/video_lib/simulation/Video_Logger.v" xil_pn:type="FILE_VERILOG">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="4"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="17"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="17"/>
@@ -51,11 +51,11 @@
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="2"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="21"/>
     </file>
-    <file xil_pn:name="../../../lib/video_lib/rtl/upscaler.v" xil_pn:type="FILE_VERILOG">
+    <file xil_pn:name="../../../lib/video_lib/rtl/Upscaler.v" xil_pn:type="FILE_VERILOG">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="6"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="25"/>
     </file>
-    <file xil_pn:name="../../../lib/video_lib/simulation/upscaler_tb.v" xil_pn:type="FILE_VERILOG">
+    <file xil_pn:name="../../../lib/video_lib/simulation/Upscaler_TB.v" xil_pn:type="FILE_VERILOG">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="8"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="26"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="26"/>

@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module VgaLogger
+module Video_Logger
 #
 (
 	parameter C_COMPONENT_DEPTH = 8,

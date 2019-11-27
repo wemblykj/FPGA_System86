@@ -30,7 +30,6 @@ module UpscalerTB;
 	parameter c_ACTIVE_COLS = 288;
 	parameter c_ACTIVE_ROWS = 224;
 	  
-	  
 	parameter c_SYNC_PULSE_HORZ = 32;
 	parameter c_SYNC_PULSE_VERT = 8;
 	  
@@ -117,7 +116,7 @@ module UpscalerTB;
 		.o_BlueB(blue_b)
 	);
 	
-	VgaLogger #( 
+	Video_Logger #( 
 		.C_COMPONENT_DEPTH(c_VIDEO_WIDTH),
 		.C_FILE_NAME("vga_vid.txt"))
 		vga_logger
@@ -212,7 +211,7 @@ module UpscalerTB;
 			.o_Blu_Video(tpg_a_blue)
 			);
 	
-	VgaLogger #( 
+	Video_Logger #( 
 		.C_COMPONENT_DEPTH(c_VIDEO_WIDTH),
 		.C_FILE_NAME("namco_vid.txt"))
 		namco_logger
@@ -284,7 +283,7 @@ module UpscalerTB;
 			.o_Blu_Video(tpg_vga_ref_blue)
 			);
 	
-VgaLogger #( 
+	Video_Logger #( 
 		.C_COMPONENT_DEPTH(c_VIDEO_WIDTH),
 		.C_FILE_NAME("vga_ref_vid.txt"))
 		vga_ref_logger
