@@ -1,0 +1,12 @@
+run
+-opt_level 2
+-opt_mode speed
+-ifmt mixed
+-ifn "/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/MyProcessorIPLib/pcores/axi_video_tpg_v1_00_a/devl/synthesis/axi_video_tpg_xst.prj"
+-top axi_video_tpg
+-p virtex6
+-ofn "/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/MyProcessorIPLib/pcores/axi_video_tpg_v1_00_a/devl/synthesis/axi_video_tpg_xst.ngc"
+-iobuf NO
+-rtlview YES
+-hierarchy_separator /
+-work_lib axi_video_tpg_v1_00_a

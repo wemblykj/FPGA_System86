@@ -1,0 +1,15 @@
+##############################################################################
+## Filename:          /home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/MyProcessorIPLib/drivers/axi_video_tpg_v1_00_a/data/axi_video_tpg_v2_1_0.mdd
+## Description:       Microprocessor Driver Definition
+## Date:              Thu Nov 28 13:05:45 2019 (by Create and Import Peripheral Wizard)
+##############################################################################
+
+OPTION psf_version = 2.1.0;
+
+BEGIN DRIVER axi_video_tpg
+
+  OPTION supported_peripherals = (axi_video_tpg);
+  OPTION depends = (common_v1_00_a);
+  OPTION copyfiles = all;
+
+END DRIVER

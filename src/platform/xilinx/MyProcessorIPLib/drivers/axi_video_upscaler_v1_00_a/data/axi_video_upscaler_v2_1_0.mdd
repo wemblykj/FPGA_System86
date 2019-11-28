@@ -1,0 +1,15 @@
+##############################################################################
+## Filename:          /home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/drivers/axi_video_upscaler_v1_00_a/data/axi_video_upscaler_v2_1_0.mdd
+## Description:       Microprocessor Driver Definition
+## Date:              Thu Nov 28 13:08:13 2019 (by Create and Import Peripheral Wizard)
+##############################################################################
+
+OPTION psf_version = 2.1.0;
+
+BEGIN DRIVER axi_video_upscaler
+
+  OPTION supported_peripherals = (axi_video_upscaler);
+  OPTION depends = (common_v1_00_a);
+  OPTION copyfiles = all;
+
+END DRIVER

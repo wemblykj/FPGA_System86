@@ -1,0 +1,27 @@
+#Please do not modify this file by hand
+XmpVersion: 14.7
+VerMgmt: 14.7
+IntStyle: default
+Flow: ise
+ModuleSearchPath: ../../../../../
+MHS File: bfm_system.mhs
+Architecture: virtex6
+Device: xc6vlx240t
+Package: ff1156
+SpeedGrade: -1
+UserCmd1: 
+UserCmd1Type: 0
+UserCmd2: 
+UserCmd2Type: 0
+GenSimTB: 1
+SdkExportBmmBit: 1
+SdkExportDir: 
+InsertNoPads: 0
+WarnForEAArch: 1
+HdlLang: VERILOG
+SimModel: BEHAVIORAL
+ExternalMemSim: 0
+UcfFile: data/bfm_system.ucf
+EnableParTimingError: 1
+ShowLicenseDialog: 1
+BInfo: 

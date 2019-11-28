@@ -1,0 +1,12 @@
+run
+-opt_level 2
+-opt_mode speed
+-ifmt mixed
+-ifn "/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/axi_video_upscaler_v1_00_a/devl/synthesis/axi_video_upscaler_xst.prj"
+-top axi_video_upscaler
+-p virtex6
+-ofn "/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/axi_video_upscaler_v1_00_a/devl/synthesis/axi_video_upscaler_xst.ngc"
+-iobuf NO
+-rtlview YES
+-hierarchy_separator /
+-work_lib axi_video_upscaler_v1_00_a
