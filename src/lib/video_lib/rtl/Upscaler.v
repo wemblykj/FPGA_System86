@@ -1,14 +1,18 @@
 module Upscaler
 #
 (
-	parameter C_COMPONENT_DEPTH = 8,
-	parameter C_USE_BLANKING_A = 0,
-	parameter C_USE_BLANKING_B = 0,
-	parameter C_LINE_BUFFER_SIZE = 1024,
-	parameter C_LINE_BUFFER_COUNT = 3,
-	parameter C_VERTICAL_SYNC_DELAY = 2,
-	parameter C_DELTA_WIDTH_PRECISION = 12,
-	parameter C_DELTA_HEIGHT_PRECISION = 12
+	parameter COMPONENT_DEPTH = 8,
+	parameter USE_BLANKING_A = 0,
+	parameter USE_BLANKING_B = 0,
+	parameter LINE_BUFFER_SIZE = 1024,
+	parameter LINE_BUFFER_COUNT = 12,
+	parameter VERTICAL_SYNC_DELAY = 2,
+	parameter SCALE_PRECISION_WIDTH = 6,
+	parameter SCALE_PRECISION_HEIGHT = 6,
+	parameter HORIZONTAL_COUNTER_DEPTH_A = 12,
+	parameter VERTICAL_COUNTER_DEPTH_A = 12,
+	parameter HORIZONTAL_COUNTER_DEPTH_B = 12,
+	parameter VERTICAL_COUNTER_DEPTH_B = 12
 )
 (
 	input wire i_Rst,
@@ -21,9 +25,9 @@ module Upscaler
 	input wire i_VBlankA,
 	
 	// input data
-	input wire [C_COMPONENT_DEPTH-1:0] i_RedA,
-	input wire [C_COMPONENT_DEPTH-1:0] i_GreenA,
-	input wire [C_COMPONENT_DEPTH-1:0] i_BlueA,
+	input wire [COMPONENT_DEPTH-1:0] i_RedA,
+	input wire [COMPONENT_DEPTH-1:0] i_GreenA,
+	input wire [COMPONENT_DEPTH-1:0] i_BlueA,
 	
 	// output reference timings
 	input wire i_ClkB,
@@ -32,8 +36,13 @@ module Upscaler
 	input wire i_HBlankB,
 	input wire i_VBlankB,
 	
-	// output stability
-	output reg o_Locked,
+	// output lock stats
+	output wire o_LockedA,
+	output reg [HORIZONTAL_COUNTER_DEPTH_A-1:0] o_WidthA,
+	output reg [VERTICAL_COUNTER_DEPTH_A-1:0] o_HeightA,
+	output wire o_LockedB,
+	output reg [HORIZONTAL_COUNTER_DEPTH_B-1:0] o_WidthB,
+	output reg [VERTICAL_COUNTER_DEPTH_B-1:0] o_HeightB,
 	
 	// output timings
 	output reg o_HSyncB,
@@ -42,61 +51,62 @@ module Upscaler
 	output reg o_VBlankB,
 	
 	// output data
-	output reg [C_COMPONENT_DEPTH-1:0] o_RedB,
-	output reg [C_COMPONENT_DEPTH-1:0] o_GreenB,
-	output reg [C_COMPONENT_DEPTH-1:0] o_BlueB
+	output reg [COMPONENT_DEPTH-1:0] o_RedB,
+	output reg [COMPONENT_DEPTH-1:0] o_GreenB,
+	output reg [COMPONENT_DEPTH-1:0] o_BlueB
 );
 
 //
 // line buffers
-reg [C_COMPONENT_DEPTH-1:0] line_buffer_red[0:C_LINE_BUFFER_COUNT-1][0:C_LINE_BUFFER_SIZE-1];
-reg [C_COMPONENT_DEPTH-1:0] line_buffer_green[0:C_LINE_BUFFER_COUNT-1][0:C_LINE_BUFFER_SIZE-1];
-reg [C_COMPONENT_DEPTH-1:0] line_buffer_blue[0:C_LINE_BUFFER_COUNT-1][0:C_LINE_BUFFER_SIZE-1];
+reg [COMPONENT_DEPTH-1:0] line_buffer_red[0:LINE_BUFFER_COUNT-1][0:LINE_BUFFER_SIZE-1];
+reg [COMPONENT_DEPTH-1:0] line_buffer_green[0:LINE_BUFFER_COUNT-1][0:LINE_BUFFER_SIZE-1];
+reg [COMPONENT_DEPTH-1:0] line_buffer_blue[0:LINE_BUFFER_COUNT-1][0:LINE_BUFFER_SIZE-1];
 
 //
 // input processing
 //
 
 // horizontal
-reg [10:0] w_A_HActivePixelCount = 0;
-reg [10:0] w_A_HActiveWidth = 0;
-wire [10:0] w_A_HBufferPixelIndex;
+reg [HORIZONTAL_COUNTER_DEPTH_A-1:0] w_A_HActivePixelCount = 0;
+reg [HORIZONTAL_COUNTER_DEPTH_A-1:0] w_A_HActiveWidth = 0;
+wire [HORIZONTAL_COUNTER_DEPTH_A-1:0] w_A_HBufferPixelIndex;
 wire w_A_HActivePixelTrigger;					// start of active active pixel trigger
 wire w_A_HActivePixel;									// active video (horizontal)
 
 reg w_A_HActivePixelTrigger_latched = 0;
 
 // vertical
-reg [10:0] w_A_VActiveLineCount = 0;
-reg [10:0] w_A_VActiveHeight = 0;
+reg [VERTICAL_COUNTER_DEPTH_A-1:0] w_A_VActiveLineCount = 0;
+reg [VERTICAL_COUNTER_DEPTH_A-1:0] w_A_VActiveHeight = 0;
 reg [4:0] w_A_VBufferLineIndex = 0;
 reg [4:0] w_A_VSoFBufferIndex = 0;
 wire w_A_VActiveLineTrigger;									// start of active active line trigger
 wire w_A_VActiveLine;									// active video (vertical)
+reg w_A_FrameLocked = 0;
+reg w_A_FrameLocked_alpha = 0;
 
 reg w_A_VActiveLineTrigger_latched = 0;
 
-assign w_A_HBufferPixelIndex = w_A_HActivePixelCount;		// map write position to active pixel counter
+assign w_A_HBufferPixelIndex = w_A_HActivePixelCount % LINE_BUFFER_SIZE;		// map write position to active pixel counter
+assign o_LockedA = w_A_FrameLocked;
 
 //
 // output processing
 //
 
 // horizontal
-reg [10:0] w_B_HActivePixelCount = 0;
-reg [10:0] w_B_HActiveWidth = 0;
-wire [10:0] w_B_HBufferPixelIndex;
-reg [C_DELTA_WIDTH_PRECISION+9:0] w_B_HPixelPosAccumulator = 0;
-reg [C_DELTA_WIDTH_PRECISION:0] w_B_HPixelPosDelta = 0;
+reg [HORIZONTAL_COUNTER_DEPTH_B-1:0] w_B_HActivePixelCount = 0;
+reg [HORIZONTAL_COUNTER_DEPTH_B-1:0] w_B_HActiveWidth = 0;
+wire [HORIZONTAL_COUNTER_DEPTH_B-1:0] w_B_HBufferPixelIndex;
+reg [HORIZONTAL_COUNTER_DEPTH_B+SCALE_PRECISION_WIDTH-1:0] w_B_HPixelPosAccumulator = 0;
+reg [SCALE_PRECISION_WIDTH:0] w_B_HPixelPosDelta = 0;
 // vertical
-reg [10:0] w_B_VActiveLineCount = 0;
-reg [10:0] w_B_VActiveHeight = 0;
-reg [C_DELTA_HEIGHT_PRECISION+9:0] w_B_VLinePosAccumulator = 0;
-reg [C_DELTA_HEIGHT_PRECISION:0] w_B_VLinePosDelta = 0;
+reg [VERTICAL_COUNTER_DEPTH_B-1:0] w_B_VActiveLineCount = 0;
+reg [VERTICAL_COUNTER_DEPTH_B-1:0] w_B_VActiveHeight = 0;
+reg [VERTICAL_COUNTER_DEPTH_B+SCALE_PRECISION_HEIGHT-1:0] w_B_VLinePosAccumulator = 0;
+reg [SCALE_PRECISION_HEIGHT:0] w_B_VLinePosDelta = 0;
 reg [4:0] w_B_VBufferLineIndex;
 reg [4:0] w_B_VSoFBufferLineIndex = 0;
-
-assign w_B_HBufferPixelIndex = w_B_HPixelPosAccumulator[C_DELTA_WIDTH_PRECISION+9:C_DELTA_WIDTH_PRECISION];
 
 wire w_B_HActivePixelTrigger;	
 wire w_B_VActiveLineTrigger;
@@ -107,21 +117,25 @@ reg w_B_HActivePixelTrigger_latched = 0;
 reg w_B_VActiveLineTrigger_latched = 0;
 
 reg w_B_FrameLocked = 0;
+reg w_B_FrameLocked_alpha = 0;
 reg w_B_HSync = 1;
 reg w_B_VSync = 1;
 reg w_B_HBlank = 0;
 reg w_B_VBlank = 0;
-reg [C_VERTICAL_SYNC_DELAY-1:0] w_B_VSync_delay = {C_VERTICAL_SYNC_DELAY{1'b1}};
-reg [C_VERTICAL_SYNC_DELAY-1:0] w_B_VBlank_delay = 0;
+reg [VERTICAL_SYNC_DELAY-1:0] w_B_VSync_delay = {VERTICAL_SYNC_DELAY{1'b1}};
+reg [VERTICAL_SYNC_DELAY-1:0] w_B_VBlank_delay = 0;
 
-reg [C_COMPONENT_DEPTH-1:0] w_B_Red = 0;
-reg [C_COMPONENT_DEPTH-1:0] w_B_Green = 0;
-reg [C_COMPONENT_DEPTH-1:0] w_B_Blue = 0;
+reg [COMPONENT_DEPTH-1:0] w_B_Red = 0;
+reg [COMPONENT_DEPTH-1:0] w_B_Green = 0;
+reg [COMPONENT_DEPTH-1:0] w_B_Blue = 0;
+
+assign w_B_HBufferPixelIndex = (w_B_HPixelPosAccumulator[HORIZONTAL_COUNTER_DEPTH_B+SCALE_PRECISION_WIDTH-1:SCALE_PRECISION_WIDTH]) % LINE_BUFFER_SIZE;
+assign o_LockedB = w_B_FrameLocked;
 
 generate
-	if (C_USE_BLANKING_A == 1) begin
-		assign w_A_HActivePixelTrigger = ~i_HBlankA;
-		assign w_A_VActiveLineTrigger = ~i_VBlankA;
+	if (USE_BLANKING_A == 1) begin
+		assign w_A_HActivePixelTrigger = ~i_HSyncA;
+		assign w_A_VActiveLineTrigger = ~i_VSyncA;
 		assign w_A_HActivePixel = ~i_HBlankA;
 		assign w_A_VActiveLine = ~i_VBlankA;
 	end else begin
@@ -131,21 +145,21 @@ generate
 		assign w_A_VActiveLine = 1;
 	end
 
-	if (C_USE_BLANKING_B == 1) begin
-		assign w_B_HActivePixelTrigger = ~i_HBlankB;
-		assign w_B_VActiveLineTrigger = ~w_B_VBlank_delay[C_VERTICAL_SYNC_DELAY-1];
+	if (USE_BLANKING_B == 1) begin
+		assign w_B_HActivePixelTrigger = ~i_HSyncB;
+		assign w_B_VActiveLineTrigger = ~w_B_VSync_delay[VERTICAL_SYNC_DELAY-1];
 		assign w_B_HActivePixelB = ~i_HBlankB;
-		assign w_B_VActiveLine = ~w_B_VBlank_delay[C_VERTICAL_SYNC_DELAY-1];
+		assign w_B_VActiveLine = ~w_B_VBlank_delay[VERTICAL_SYNC_DELAY-1];
 	end else begin
 		assign w_B_HActivePixelTrigger = ~i_HSyncB;
-		assign w_B_VActiveLineTrigger = ~w_B_VSync_delay[C_VERTICAL_SYNC_DELAY-1];
+		assign w_B_VActiveLineTrigger = ~w_B_VSync_delay[VERTICAL_SYNC_DELAY-1];
 		assign w_B_HActivePixelB = 1;
 		assign w_B_VActiveLine = 1;
 	end
 endgenerate
 
-localparam delta_width = (1 << C_DELTA_WIDTH_PRECISION);
-localparam delta_height = (1 << C_DELTA_HEIGHT_PRECISION);
+localparam delta_width = (1 << SCALE_PRECISION_WIDTH);
+localparam delta_height = (1 << SCALE_PRECISION_HEIGHT);
 
 always @(negedge i_ClkA) begin
 	if (i_Rst) begin
@@ -155,13 +169,16 @@ always @(negedge i_ClkA) begin
 		w_A_VActiveHeight <= 0;
 		w_A_VBufferLineIndex <= 0;
 		w_A_VSoFBufferIndex <= 0;
+		w_A_FrameLocked_alpha <= 0;
+		w_A_FrameLocked <= 0;
 		w_A_HActivePixelTrigger_latched <= 0;		
-		w_A_VActiveLineTrigger_latched <= 0;		
+		w_A_VActiveLineTrigger_latched <= 0;	
+			
 	end else begin
 		// next line ?
 		if (w_A_HActivePixelTrigger && ~w_A_HActivePixelTrigger_latched) begin
 			// cache active width
-			w_A_HActiveWidth = w_A_HActivePixelCount + 1;
+			w_A_HActiveWidth = w_A_HActivePixelCount;// + 1;
 			
 			// return to start of next line
 			w_A_HActivePixelCount = 0;
@@ -171,7 +188,7 @@ always @(negedge i_ClkA) begin
 				w_A_VActiveLineCount = w_A_VActiveLineCount + 1;
 				
 				// next line in the buffer
-				w_A_VBufferLineIndex = (w_A_VBufferLineIndex + 1) % C_LINE_BUFFER_COUNT;
+				w_A_VBufferLineIndex = (w_A_VBufferLineIndex + 1) % LINE_BUFFER_COUNT;
 			end
 		end else if (w_A_HActivePixel) begin
 			// next pixel
@@ -188,6 +205,17 @@ always @(negedge i_ClkA) begin
 		w_A_VActiveLineCount = 0;
 		
 		w_A_VSoFBufferIndex = w_A_VBufferLineIndex;
+		
+		if (~w_A_FrameLocked) begin
+			if (w_A_FrameLocked_alpha) begin
+				o_WidthA = w_A_HActiveWidth;
+				o_HeightA = w_A_VActiveHeight;
+				
+				w_A_FrameLocked <= 1;
+			end
+			
+			w_A_FrameLocked_alpha <= 1;
+		end
 	end
 	
 	// buffer active video data
@@ -204,7 +232,7 @@ end
 
 always @(negedge i_HSyncB) begin
 	if (i_Rst) begin
-		w_B_VSync_delay <= {C_VERTICAL_SYNC_DELAY{1'b1}};
+		w_B_VSync_delay <= {VERTICAL_SYNC_DELAY{1'b1}};
 		w_B_VBlank_delay <= 0;
 	end else begin
 		w_B_VSync_delay = w_B_VSync_delay << 1;
@@ -217,7 +245,12 @@ end
 
 always @(posedge i_ClkB) begin
 	// sync'd outputs
-	o_Locked <= w_B_FrameLocked;
+	/*o_LockedA <= w_A_FrameLocked;
+	o_WidthA <= w_A_HActiveWidth;
+	o_HeightA <= w_A_VActiveHeight;
+	o_LockedB <= w_B_FrameLocked;
+	o_WidthB <= w_B_HActiveWidth;
+	o_HeightB <= w_B_VActiveHeight;*/
 	o_HSyncB <= w_B_HSync;
 	o_VSyncB <= w_B_VSync;
 	o_HBlankB <= w_B_HBlank;
@@ -241,6 +274,7 @@ always @(negedge i_ClkB) begin
 		
 		// outputs
 		w_B_FrameLocked <= 0;
+		w_B_FrameLocked_alpha <= 0;
 		w_B_HSync <= 1;
 		w_B_VSync <= 1;
 		w_B_HBlank <= 0;
@@ -252,7 +286,7 @@ always @(negedge i_ClkB) begin
 		// next line ?
 		if (w_B_HActivePixelTrigger && ~w_B_HActivePixelTrigger_latched) begin
 			// cache active width
-			w_B_HActiveWidth = w_B_HActivePixelCount + 1;
+			w_B_HActiveWidth = w_B_HActivePixelCount;// + 1;
 			
 			// return to start of next line
 			w_B_HActivePixelCount = 0;
@@ -261,7 +295,7 @@ always @(negedge i_ClkB) begin
 			w_B_HPixelPosAccumulator = 0;
 			
 			// calculate scaling factor
-			if (w_A_HActiveWidth != 0) w_B_HPixelPosDelta = (delta_width * w_A_HActiveWidth) / w_B_HActiveWidth;
+			if (w_A_FrameLocked) w_B_HPixelPosDelta = (delta_width * w_A_HActiveWidth) / w_B_HActiveWidth;
 			
 			// increment active line
 			if (w_B_VActiveLine) begin
@@ -271,7 +305,7 @@ always @(negedge i_ClkB) begin
 				w_B_VLinePosAccumulator = w_B_VLinePosAccumulator + w_B_VLinePosDelta;
 				
 				// next line in the buffer
-				w_B_VBufferLineIndex = (w_B_VSoFBufferLineIndex + w_B_VLinePosAccumulator[C_DELTA_HEIGHT_PRECISION+9:C_DELTA_HEIGHT_PRECISION]) % C_LINE_BUFFER_COUNT;
+				w_B_VBufferLineIndex = (w_B_VSoFBufferLineIndex + w_B_VLinePosAccumulator[SCALE_PRECISION_HEIGHT+9:SCALE_PRECISION_HEIGHT]) % LINE_BUFFER_COUNT;
 			end
 		end else if (w_B_HActivePixelB) begin
 			// next pixel
@@ -297,16 +331,24 @@ always @(negedge i_ClkB) begin
 		w_B_VBufferLineIndex = w_A_VSoFBufferIndex;
 		
 		// calculate vertical scaling factor
-		if (w_A_VActiveHeight != 0) begin
-			w_B_VLinePosDelta <= (delta_height * w_A_VActiveHeight) / w_B_VActiveHeight;
-			w_B_FrameLocked <= 1;
+		if (~w_B_FrameLocked) begin
+			if (w_A_FrameLocked && w_B_FrameLocked_alpha) begin
+				w_B_VLinePosDelta <= (delta_height * w_A_VActiveHeight) / w_B_VActiveHeight;
+			
+				o_WidthB <= w_B_HActiveWidth;
+				o_HeightB <= w_B_VActiveHeight;
+				
+				w_B_FrameLocked <= 1;
+			end
+			
+			w_B_FrameLocked_alpha <= 1;
 		end
 	end
 			
 	// assign output data
 	if (w_B_VActiveLine && w_B_HActivePixelB) begin
 		// map active input data to active output data
-		w_B_Red <= line_buffer_red[w_B_VBufferLineIndex][w_B_HBufferPixelIndex];
+
 		w_B_Green <= line_buffer_green[w_B_VBufferLineIndex][w_B_HBufferPixelIndex];
 		w_B_Blue <= line_buffer_blue[w_B_VBufferLineIndex][w_B_HBufferPixelIndex];
 	end else begin
@@ -317,13 +359,21 @@ always @(negedge i_ClkB) begin
 	
 	// assign output timings
 	w_B_HSync <= i_HSyncB;
-	w_B_VSync <= w_B_VSync_delay[C_VERTICAL_SYNC_DELAY-1];
+	w_B_VSync <= w_B_VSync_delay[VERTICAL_SYNC_DELAY-1];
 	w_B_HBlank <= i_HBlankB;
-	w_B_VBlank <= w_B_VBlank_delay[C_VERTICAL_SYNC_DELAY-1];
+	w_B_VBlank <= w_B_VBlank_delay[VERTICAL_SYNC_DELAY-1];
 		
 	// update latches
 	w_B_HActivePixelTrigger_latched <= w_B_HActivePixelTrigger;
 	w_B_VActiveLineTrigger_latched <= w_B_VActiveLineTrigger;
+	
+	// pre-frame stats
+	//o_LockedA <= w_A_FrameLocked;
+	//o_WidthA <= w_A_HActiveWidth;
+	//o_HeightA <= w_A_VActiveHeight;
+	//o_LockedB <= w_B_FrameLocked;
+	//o_WidthB <= w_B_HActiveWidth;
+	//o_HeightB <= w_B_VActiveHeight;
 end
 
 endmodule

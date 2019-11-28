@@ -20,7 +20,7 @@
 
 
 module Test_Pattern_Gen 
-  #(parameter VIDEO_WIDTH = 3,
+  #(parameter COMPONENT_DEPTH = 8,
    parameter TOTAL_COLS  = 800,
    parameter TOTAL_ROWS  = 525,
 	parameter ACTIVE_COLS = 640,
@@ -43,9 +43,9 @@ module Test_Pattern_Gen
    output reg  o_VSync = 1,
 	output reg  o_HBlank = 0,
    output reg  o_VBlank = 0,
-   output reg [VIDEO_WIDTH-1:0] o_Red_Video,
-   output reg [VIDEO_WIDTH-1:0] o_Grn_Video,
-   output reg [VIDEO_WIDTH-1:0] o_Blu_Video);
+   output reg [COMPONENT_DEPTH-1:0] o_Red_Video,
+   output reg [COMPONENT_DEPTH-1:0] o_Grn_Video,
+   output reg [COMPONENT_DEPTH-1:0] o_Blu_Video);
   
   wire w_Locked1;
   wire w_Locked2;
@@ -58,10 +58,10 @@ module Test_Pattern_Gen
   wire w_VBlank2;
   wire w_HBlank2;
   
-  // Patterns have 16 indexes (0 to 15) and can be g_Video_Width bits wide
-  wire [VIDEO_WIDTH-1:0] Pattern_Red[0:15];
-  wire [VIDEO_WIDTH-1:0] Pattern_Grn[0:15];
-  wire [VIDEO_WIDTH-1:0] Pattern_Blu[0:15];
+  // Patterns have 16 indexes (0 to 15) and can be g_COMPONENT_DEPTH bits wide
+  wire [COMPONENT_DEPTH-1:0] Pattern_Red[0:15];
+  wire [COMPONENT_DEPTH-1:0] Pattern_Grn[0:15];
+  wire [COMPONENT_DEPTH-1:0] Pattern_Blu[0:15];
   
   // Make these unsigned counters (always positive)
   wire [9:0] w_Col_Count;
@@ -132,7 +132,8 @@ module Test_Pattern_Gen
 				  .o_Col_Count(w_Col_Count),
 				  .o_Row_Count(w_Row_Count)
 				 );
-				 
+			
+			assign w_Locked1 = 1;			
 			assign w_HBlank2 = 0;
 			assign w_VBlank2 = 0;
 			assign w_Active = 1'b1;
@@ -160,7 +161,7 @@ module Test_Pattern_Gen
   /////////////////////////////////////////////////////////////////////////////
   // Pattern 1: All Red
   /////////////////////////////////////////////////////////////////////////////
-  assign Pattern_Red[1] = (w_Col_Count < ACTIVE_COLS && w_Row_Count < ACTIVE_ROWS) ? {VIDEO_WIDTH{1'b1}} : 0;
+  assign Pattern_Red[1] = (w_Col_Count < ACTIVE_COLS && w_Row_Count < ACTIVE_ROWS) ? {COMPONENT_DEPTH{1'b1}} : 0;
   assign Pattern_Grn[1] = 0;
   assign Pattern_Blu[1] = 0;
 
@@ -168,7 +169,7 @@ module Test_Pattern_Gen
   // Pattern 2: All Green
   /////////////////////////////////////////////////////////////////////////////
   assign Pattern_Red[2] = 0;
-  assign Pattern_Grn[2] = (w_Col_Count < ACTIVE_COLS && w_Row_Count < ACTIVE_ROWS) ? {VIDEO_WIDTH{1'b1}} : 0;
+  assign Pattern_Grn[2] = (w_Col_Count < ACTIVE_COLS && w_Row_Count < ACTIVE_ROWS) ? {COMPONENT_DEPTH{1'b1}} : 0;
   assign Pattern_Blu[2] = 0;
   
   /////////////////////////////////////////////////////////////////////////////
@@ -176,12 +177,12 @@ module Test_Pattern_Gen
   /////////////////////////////////////////////////////////////////////////////
   assign Pattern_Red[3] = 0;
   assign Pattern_Grn[3] = 0;
-  assign Pattern_Blu[3] = (w_Col_Count < ACTIVE_COLS && w_Row_Count < ACTIVE_ROWS) ? {VIDEO_WIDTH{1'b1}} : 0;
+  assign Pattern_Blu[3] = (w_Col_Count < ACTIVE_COLS && w_Row_Count < ACTIVE_ROWS) ? {COMPONENT_DEPTH{1'b1}} : 0;
 
   /////////////////////////////////////////////////////////////////////////////
   // Pattern 4: Checkerboard white/black
   /////////////////////////////////////////////////////////////////////////////
-  assign Pattern_Red[4] = w_Col_Count[5] ^ w_Row_Count[5] ? {VIDEO_WIDTH{1'b1}} : 0;
+  assign Pattern_Red[4] = w_Col_Count[5] ^ w_Row_Count[5] ? {COMPONENT_DEPTH{1'b1}} : 0;
   assign Pattern_Grn[4] = Pattern_Red[4];
   assign Pattern_Blu[4] = Pattern_Red[4];
   
@@ -213,15 +214,15 @@ module Test_Pattern_Gen
   // Implement Truth Table above with Conditional Assignments
   assign Pattern_Red[5] = (w_Bar_Select == 4 || w_Bar_Select == 5 ||
                            w_Bar_Select == 6 || w_Bar_Select == 7) ? 
-                          {VIDEO_WIDTH{1'b1}} : 0;
+                          {COMPONENT_DEPTH{1'b1}} : 0;
 					 
   assign Pattern_Grn[5] = (w_Bar_Select == 2 || w_Bar_Select == 3 ||
                            w_Bar_Select == 6 || w_Bar_Select == 7) ? 
-                          {VIDEO_WIDTH{1'b1}} : 0;
+                          {COMPONENT_DEPTH{1'b1}} : 0;
 					 					 
   assign Pattern_Blu[5] = (w_Bar_Select == 1 || w_Bar_Select == 3 ||
                            w_Bar_Select == 5 || w_Bar_Select == 7) ?
-                          {VIDEO_WIDTH{1'b1}} : 0;
+                          {COMPONENT_DEPTH{1'b1}} : 0;
 
 
   /////////////////////////////////////////////////////////////////////////////
@@ -230,7 +231,7 @@ module Test_Pattern_Gen
   /////////////////////////////////////////////////////////////////////////////
   assign Pattern_Red[6] = (w_Row_Count <= 1 || w_Row_Count >= ACTIVE_ROWS-1-1 ||
                            w_Col_Count <= 1 || w_Col_Count >= ACTIVE_COLS-1-1) ?
-                          {VIDEO_WIDTH{1'b1}} : 0;
+                          {COMPONENT_DEPTH{1'b1}} : 0;
   assign Pattern_Grn[6] = Pattern_Red[6];
   assign Pattern_Blu[6] = Pattern_Red[6];
   
