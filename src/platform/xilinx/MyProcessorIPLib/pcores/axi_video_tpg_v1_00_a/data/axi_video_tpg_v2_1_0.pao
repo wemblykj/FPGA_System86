@@ -4,8 +4,8 @@
 ## Date:              Thu Nov 28 13:05:40 2019 (by Create and Import Peripheral Wizard)
 ##############################################################################
 
-lib proc_common_v3_00_a  all 
-lib video_common_v1_00_a  all
+#lib proc_common_v3_00_a  all 
+#lib video_common_v1_00_a  all
 lib axi_lite_ipif_v1_01_a  all 
 lib axi_video_tpg_v1_00_a user_logic vhdl
 lib axi_video_tpg_v1_00_a axi_video_tpg vhdl

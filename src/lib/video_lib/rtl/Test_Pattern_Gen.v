@@ -33,16 +33,16 @@ module Test_Pattern_Gen
 	parameter FRONT_PORCH_VERT = 10,
 	parameter BACK_PORCH_VERT  = 33
 )
-  (input       i_Rst,
-   input       i_Clk,
+  (input       i_Clk,
+   input       i_Rst,
    input [3:0] i_Pattern,
    input       i_HSync,
    input       i_VSync,
-	output reg  o_Locked = 0,
-   output reg  o_HSync = 1,
-   output reg  o_VSync = 1,
-	output reg  o_HBlank = 0,
-   output reg  o_VBlank = 0,
+	output reg  o_Locked,
+   output reg  o_HSync,
+   output reg  o_VSync,
+	output reg  o_HBlank, // = 1'bX,
+   output reg  o_VBlank, // = 1'bX,
    output reg [COMPONENT_DEPTH-1:0] o_Red_Video,
    output reg [COMPONENT_DEPTH-1:0] o_Grn_Video,
    output reg [COMPONENT_DEPTH-1:0] o_Blu_Video);
