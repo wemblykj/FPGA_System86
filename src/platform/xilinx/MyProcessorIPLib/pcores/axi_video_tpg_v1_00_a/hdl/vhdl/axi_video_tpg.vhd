@@ -70,6 +70,9 @@ use proc_common_v3_00_a.soft_reset;
 library axi_lite_ipif_v1_01_a;
 use axi_lite_ipif_v1_01_a.axi_lite_ipif;
 
+library video_lib_v1_00_a;
+use video_lib_v1_00_a.all;
+  
 library axi_video_tpg_v1_00_a;
 use axi_video_tpg_v1_00_a.user_logic;
 
@@ -242,8 +245,8 @@ architecture IMP of axi_video_tpg is
 	   o_Locked : out std_logic;
 	   o_HSync : out std_logic;
       o_VSync : out std_logic;
-	   o_HBlank : out std_logic; -- := 'X';
-      o_VBlank : out std_logic; -- := 'X';
+	   o_HBlank : out std_logic := 'X';
+      o_VBlank : out std_logic := 'X';
       o_Red_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
       o_Grn_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
       o_Blu_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0)
@@ -433,6 +436,7 @@ begin
   ------------------------------------------
 
   TEST_GEN_I: Test_Pattern_Gen
+  -- TEST_GEN_I: video_common_v1_00_a.Test_Pattern_Gen
 	 generic map
     (
       COMPONENT_DEPTH                => C_COMPONENT_DEPTH,
@@ -460,9 +464,9 @@ begin
       o_VSync                        => O_VSYNC,
 		o_HBlank                       => O_HBLANK,
       o_VBlank                       => O_VBLANK,
-      o_Red_Video                    => O_RED(C_COMPONENT_DEPTH-1 downto 0),
-      o_Grn_Video                    => O_GREEN(C_COMPONENT_DEPTH-1 downto 0),
-      o_Blu_Video                    => O_BLUE(C_COMPONENT_DEPTH-1 downto 0)
+      o_Red_Video                    => O_RED,
+      o_Grn_Video                    => O_GREEN,
+      o_Blu_Video                    => O_BLUE
     );
 
   ------------------------------------------

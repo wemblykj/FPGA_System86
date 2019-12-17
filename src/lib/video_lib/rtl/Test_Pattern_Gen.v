@@ -41,8 +41,8 @@ module Test_Pattern_Gen
 	output reg  o_Locked,
    output reg  o_HSync,
    output reg  o_VSync,
-	output reg  o_HBlank, // = 1'bX,
-   output reg  o_VBlank, // = 1'bX,
+	output reg  o_HBlank = 1'bX,
+   output reg  o_VBlank = 1'bX,
    output reg [COMPONENT_DEPTH-1:0] o_Red_Video,
    output reg [COMPONENT_DEPTH-1:0] o_Grn_Video,
    output reg [COMPONENT_DEPTH-1:0] o_Blu_Video);

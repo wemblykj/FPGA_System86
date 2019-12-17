@@ -4,9 +4,6 @@
   USE ieee.std_logic_1164.ALL;
   USE ieee.numeric_std.ALL;
 
-  LIBRARY video_lib_v1_00_a;
-  USE video_lib_v1_00_a.ALL;
-  
   library axi_video_tpg_v1_00_a;
   use axi_video_tpg_v1_00_a.axi_video_tpg;
   
