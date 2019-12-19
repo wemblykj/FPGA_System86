@@ -71,7 +71,7 @@ library axi_lite_ipif_v1_01_a;
 use axi_lite_ipif_v1_01_a.axi_lite_ipif;
 
 library video_lib_v1_00_a;
-use video_lib_v1_00_a.all;
+use video_lib_v1_00_a.video_tpg;
   
 library axi_video_tpg_v1_00_a;
 use axi_video_tpg_v1_00_a.user_logic;
@@ -435,8 +435,8 @@ begin
   -- instantiate Test Pattern Generator
   ------------------------------------------
 
-  TEST_GEN_I: Test_Pattern_Gen
-  -- TEST_GEN_I: video_common_v1_00_a.Test_Pattern_Gen
+  --TEST_GEN_I: Test_Pattern_Gen
+  TEST_GEN_I: entity video_lib_v1_00_a.video_tpg
 	 generic map
     (
       COMPONENT_DEPTH                => C_COMPONENT_DEPTH,

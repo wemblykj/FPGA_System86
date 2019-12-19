@@ -16,109 +16,101 @@
 
   <files>
     <file xil_pn:name="../../hdl/vhdl/axi_video_tpg.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="15"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="17"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="11"/>
       <library xil_pn:name="axi_video_tpg_v1_00_a"/>
     </file>
     <file xil_pn:name="../../hdl/vhdl/user_logic.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="13"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="15"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="10"/>
       <library xil_pn:name="axi_video_tpg_v1_00_a"/>
     </file>
-    <file xil_pn:name="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/proc_common_pkg.vhd" xil_pn:type="FILE_VHDL">
+    <file xil_pn:name="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/proc_common_pkg.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="1"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="1"/>
       <library xil_pn:name="proc_common_v3_00_a"/>
     </file>
-    <file xil_pn:name="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/ipif_pkg.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="4"/>
+    <file xil_pn:name="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/ipif_pkg.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="5"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="4"/>
       <library xil_pn:name="proc_common_v3_00_a"/>
     </file>
-    <file xil_pn:name="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/or_muxcy.vhd" xil_pn:type="FILE_VHDL">
+    <file xil_pn:name="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/or_muxcy.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
       <library xil_pn:name="proc_common_v3_00_a"/>
     </file>
-    <file xil_pn:name="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/or_gate128.vhd" xil_pn:type="FILE_VHDL">
+    <file xil_pn:name="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/or_gate128.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="0"/>
       <library xil_pn:name="proc_common_v3_00_a"/>
     </file>
-    <file xil_pn:name="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/family_support.vhd" xil_pn:type="FILE_VHDL">
+    <file xil_pn:name="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/family_support.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="2"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="2"/>
       <library xil_pn:name="proc_common_v3_00_a"/>
     </file>
-    <file xil_pn:name="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/pselect_f.vhd" xil_pn:type="FILE_VHDL">
+    <file xil_pn:name="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/pselect_f.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="3"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="3"/>
       <library xil_pn:name="proc_common_v3_00_a"/>
     </file>
-    <file xil_pn:name="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/counter_f.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="5"/>
+    <file xil_pn:name="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/counter_f.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="6"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="5"/>
       <library xil_pn:name="proc_common_v3_00_a"/>
     </file>
-    <file xil_pn:name="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/axi_lite_ipif_v1_01_a/hdl/vhdl/address_decoder.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="6"/>
+    <file xil_pn:name="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/axi_lite_ipif_v1_01_a/hdl/vhdl/address_decoder.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="9"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="6"/>
       <library xil_pn:name="axi_lite_ipif_v1_01_a"/>
     </file>
-    <file xil_pn:name="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/axi_lite_ipif_v1_01_a/hdl/vhdl/slave_attachment.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="8"/>
+    <file xil_pn:name="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/axi_lite_ipif_v1_01_a/hdl/vhdl/slave_attachment.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="11"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="7"/>
       <library xil_pn:name="axi_lite_ipif_v1_01_a"/>
     </file>
-    <file xil_pn:name="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/axi_lite_ipif_v1_01_a/hdl/vhdl/axi_lite_ipif.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="12"/>
+    <file xil_pn:name="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/axi_lite_ipif_v1_01_a/hdl/vhdl/axi_lite_ipif.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="13"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="9"/>
       <library xil_pn:name="axi_lite_ipif_v1_01_a"/>
     </file>
-    <file xil_pn:name="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/soft_reset.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="11"/>
+    <file xil_pn:name="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/proc_common_v3_00_a/hdl/vhdl/soft_reset.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="12"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="8"/>
       <library xil_pn:name="proc_common_v3_00_a"/>
     </file>
     <file xil_pn:name="axi_video_tpg_tb.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="17"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="18"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="15"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="15"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="15"/>
+      <library xil_pn:name="axi_video_tpg_v1_00_a"/>
     </file>
-    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Blanking_To_Count.v" xil_pn:type="FILE_VERILOG">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="10"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="47"/>
-    </file>
-    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Blanking.v" xil_pn:type="FILE_VERILOG">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="9"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="48"/>
-    </file>
-    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Count.v" xil_pn:type="FILE_VERILOG">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="7"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="49"/>
-    </file>
-    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Test_Pattern_Gen.v" xil_pn:type="FILE_VERILOG">
+    <file xil_pn:name="../../../video_lib_v1_00_a/hdl/vhdl/video_tpg.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="14"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="50"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="15"/>
+      <library xil_pn:name="video_lib_v1_00_a"/>
     </file>
-    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Upscaler.v" xil_pn:type="FILE_VERILOG">
+    <file xil_pn:name="../../../video_lib_v1_00_a/hdl/verilog/Test_Pattern_Gen.v" xil_pn:type="FILE_VERILOG">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="51"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="39"/>
     </file>
-    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/VGA_Sync_Porch.v" xil_pn:type="FILE_VERILOG">
+    <file xil_pn:name="../../../video_lib_v1_00_a/hdl/verilog/Blanking_To_Count.v" xil_pn:type="FILE_VERILOG">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="52"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="41"/>
     </file>
-    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/VGA_Sync_Pulses.v" xil_pn:type="FILE_VERILOG">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="16"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="53"/>
-    </file>
-    <file xil_pn:name="../../../../../../../lib/video_lib/simulation/Video_Logger.v" xil_pn:type="FILE_VERILOG">
+    <file xil_pn:name="../../../video_lib_v1_00_a/hdl/verilog/Sync_To_Blanking.v" xil_pn:type="FILE_VERILOG">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
-      <association xil_pn:name="PostMapSimulation" xil_pn:seqID="54"/>
-      <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="54"/>
-      <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="54"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="42"/>
+    </file>
+    <file xil_pn:name="../../../video_lib_v1_00_a/hdl/verilog/Sync_To_Count.v" xil_pn:type="FILE_VERILOG">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="58"/>
+    </file>
+    <file xil_pn:name="../../../video_lib_v1_00_a/hdl/verilog/VGA_Sync_Pulses.v" xil_pn:type="FILE_VERILOG">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="59"/>
     </file>
   </files>
 
@@ -364,7 +356,7 @@
     <property xil_pn:name="Safe Implementation" xil_pn:value="No" xil_pn:valueState="default"/>
     <property xil_pn:name="Security" xil_pn:value="Enable Readback and Reconfiguration" xil_pn:valueState="default"/>
     <property xil_pn:name="Selected Module Instance Name" xil_pn:value="/testbench" xil_pn:valueState="non-default"/>
-    <property xil_pn:name="Selected Simulation Root Source Node Behavioral" xil_pn:value="work.testbench" xil_pn:valueState="non-default"/>
+    <property xil_pn:name="Selected Simulation Root Source Node Behavioral" xil_pn:value="axi_video_tpg_v1_00_a.testbench" xil_pn:valueState="non-default"/>
     <property xil_pn:name="Selected Simulation Root Source Node Post-Map" xil_pn:value="" xil_pn:valueState="default"/>
     <property xil_pn:name="Selected Simulation Root Source Node Post-Route" xil_pn:value="" xil_pn:valueState="default"/>
     <property xil_pn:name="Selected Simulation Root Source Node Post-Translate" xil_pn:value="" xil_pn:valueState="default"/>
@@ -382,14 +374,14 @@
     <property xil_pn:name="Simulator" xil_pn:value="ISim (VHDL/Verilog)" xil_pn:valueState="default"/>
     <property xil_pn:name="Slice Utilization Ratio" xil_pn:value="100" xil_pn:valueState="default"/>
     <property xil_pn:name="Specify 'define Macro Name and Value" xil_pn:value="" xil_pn:valueState="default"/>
-    <property xil_pn:name="Specify Top Level Instance Names Behavioral" xil_pn:value="work.testbench" xil_pn:valueState="default"/>
+    <property xil_pn:name="Specify Top Level Instance Names Behavioral" xil_pn:value="axi_video_tpg_v1_00_a.testbench" xil_pn:valueState="default"/>
     <property xil_pn:name="Specify Top Level Instance Names Post-Map" xil_pn:value="Default" xil_pn:valueState="default"/>
     <property xil_pn:name="Specify Top Level Instance Names Post-Route" xil_pn:value="Default" xil_pn:valueState="default"/>
     <property xil_pn:name="Specify Top Level Instance Names Post-Translate" xil_pn:value="Default" xil_pn:valueState="default"/>
     <property xil_pn:name="Speed Grade" xil_pn:value="-3" xil_pn:valueState="default"/>
     <property xil_pn:name="Starting Placer Cost Table (1-100) Map spartan6" xil_pn:value="1" xil_pn:valueState="default"/>
     <property xil_pn:name="Synthesis Tool" xil_pn:value="XST (VHDL/Verilog)" xil_pn:valueState="default"/>
-    <property xil_pn:name="Target Board for Hardware Co-Simulation" xil_pn:value="N/A" xil_pn:valueState="default"/>
+    <property xil_pn:name="Target Board for Hardware Co-Simulation" xil_pn:value="SP601 (JTAG)" xil_pn:valueState="default"/>
     <property xil_pn:name="Target Simulator" xil_pn:value="Please Specify" xil_pn:valueState="default"/>
     <property xil_pn:name="Timing Mode Map" xil_pn:value="Performance Evaluation" xil_pn:valueState="default"/>
     <property xil_pn:name="Timing Mode Par" xil_pn:value="Performance Evaluation" xil_pn:valueState="default"/>
@@ -454,7 +446,7 @@
     <library xil_pn:name="axi_lite_ipif_v1_01_a"/>
     <library xil_pn:name="axi_video_tpg_v1_00_a"/>
     <library xil_pn:name="proc_common_v3_00_a"/>
-    <library xil_pn:name="video_lib"/>
+    <library xil_pn:name="video_lib_v1_00_a"/>
   </libraries>
 
   <autoManagedFiles>
@@ -464,6 +456,11 @@
     <!-- Do not hand-edit this section, as it will be overwritten when the    -->
     <!-- project is analyzed based on files automatically identified as       -->
     <!-- include files.                                                       -->
+    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Blanking_To_Count.v" xil_pn:type="FILE_VERILOG"/>
+    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Blanking.v" xil_pn:type="FILE_VERILOG"/>
+    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Count.v" xil_pn:type="FILE_VERILOG"/>
+    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Test_Pattern_Gen.v" xil_pn:type="FILE_VERILOG"/>
+    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/VGA_Sync_Pulses.v" xil_pn:type="FILE_VERILOG"/>
   </autoManagedFiles>
 
 </project>

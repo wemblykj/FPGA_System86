@@ -1,1 +1,8 @@
-vlgincdir video_lib_v1_00_a ../../../../../../lib/video_lib/rtl/ 
+lib video_lib_v1_00_a Blanking_To_Count verilog
+lib video_lib_v1_00_a Sync_To_Blanking verilog
+lib video_lib_v1_00_a Sync_To_Count verilog
+lib video_lib_v1_00_a Test_Pattern_Gen verilog
+lib video_lib_v1_00_a Upscaler verilog
+lib video_lib_v1_00_a VGA_Sync_Porch verilog
+lib video_lib_v1_00_a VGA_Sync_Pulses verilog
+#vlgincdir video_lib_v1_00_a ../../../../../../lib/video_lib/rtl/ 
