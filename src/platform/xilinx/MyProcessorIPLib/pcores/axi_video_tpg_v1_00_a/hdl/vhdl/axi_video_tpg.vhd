@@ -71,7 +71,8 @@ library axi_lite_ipif_v1_01_a;
 use axi_lite_ipif_v1_01_a.axi_lite_ipif;
 
 library video_lib_v1_00_a;
-use video_lib_v1_00_a.video_tpg;
+use video_lib_v1_00_a.all;
+--use video_lib_v1_00_a.video_tpg;
   
 library axi_video_tpg_v1_00_a;
 use axi_video_tpg_v1_00_a.user_logic;
@@ -439,34 +440,34 @@ begin
   TEST_GEN_I: entity video_lib_v1_00_a.video_tpg
 	 generic map
     (
-      COMPONENT_DEPTH                => C_COMPONENT_DEPTH,
-      TOTAL_COLS                     => C_TOTAL_COLS,
-      TOTAL_ROWS                     => C_TOTAL_ROWS,
-      ACTIVE_COLS                    => C_ACTIVE_COLS,
-      ACTIVE_ROWS                    => C_ACTIVE_ROWS,
-		USE_BLANKING                   => C_USE_BLANKING,
-		SYNC_PULSE_HORZ                => C_SYNC_PULSE_HORZ,
-	   SYNC_PULSE_VERT                => C_SYNC_PULSE_VERT,
-	   FRONT_PORCH_HORZ               => C_FRONT_PORCH_HORZ,
-	   BACK_PORCH_HORZ                => C_BACK_PORCH_HORZ,
-	   FRONT_PORCH_VERT               => C_FRONT_PORCH_VERT,
-	   BACK_PORCH_VERT                => C_BACK_PORCH_VERT
+      C_COMPONENT_DEPTH                => C_COMPONENT_DEPTH,
+      C_TOTAL_COLS                     => C_TOTAL_COLS,
+      C_TOTAL_ROWS                     => C_TOTAL_ROWS,
+      C_ACTIVE_COLS                    => C_ACTIVE_COLS,
+      C_ACTIVE_ROWS                    => C_ACTIVE_ROWS,
+		C_USE_BLANKING                   => C_USE_BLANKING,
+		C_SYNC_PULSE_HORZ                => C_SYNC_PULSE_HORZ,
+	   C_SYNC_PULSE_VERT                => C_SYNC_PULSE_VERT,
+	   C_FRONT_PORCH_HORZ               => C_FRONT_PORCH_HORZ,
+	   C_BACK_PORCH_HORZ                => C_BACK_PORCH_HORZ,
+	   C_FRONT_PORCH_VERT               => C_FRONT_PORCH_VERT,
+	   C_BACK_PORCH_VERT                => C_BACK_PORCH_VERT
 	 )
 	 port map
 	 (
-      i_Clk                          => I_CLK,
-		i_RST                          => I_RST,
-      i_Pattern                      => I_PATTERN,
-      i_HSync                        => I_HSYNC,
-      i_VSync                        => I_VSYNC,
-		o_Locked                       => O_LOCKED,
-		o_HSync                        => O_HSYNC,
-      o_VSync                        => O_VSYNC,
-		o_HBlank                       => O_HBLANK,
-      o_VBlank                       => O_VBLANK,
-      o_Red_Video                    => O_RED,
-      o_Grn_Video                    => O_GREEN,
-      o_Blu_Video                    => O_BLUE
+      I_CLK                          => I_CLK,
+		I_RST                          => I_RST,
+      I_PATTERN                      => I_PATTERN,
+      I_HSYNC                        => I_HSYNC,
+      I_VSYNC                        => I_VSYNC,
+		O_LOCKED                       => O_LOCKED,
+		O_HSYNC                        => O_HSYNC,
+      O_VSYNC                        => O_VSYNC,
+		O_HBLANK                       => O_HBLANK,
+      O_VBLANK                       => O_VBLANK,
+      O_RED                          => O_RED,
+      O_GREEN                        => O_GREEN,
+      O_BLUE                         => O_BLUE
     );
 
   ------------------------------------------
