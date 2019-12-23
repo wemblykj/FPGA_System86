@@ -77,8 +77,8 @@ entity video_bus_breakout is
   generic
   (
     -- ADD USER GENERICS BELOW THIS LINE ---------------
-         C_DIRECTION                    : integer              := 0;
-         C_COMPONENT_DEPTH              : integer              := 8;
+         C_BUS_FLAGS                    : integer              := 7;
+			C_COMPONENT_DEPTH              : integer              := 8;
 	      C_USE_BLANKING                 : integer              := 0
     -- ADD USER GENERICS ABOVE THIS LINE ---------------
 
@@ -86,20 +86,24 @@ entity video_bus_breakout is
   port
   (
     -- ADD USER PORTS BELOW THIS LINE ------------------
+	 I_CLK                          : in std_logic;
 	 I_HSYNC                        : in std_logic;
 	 I_VSYNC                        : in std_logic;
 	 I_HBLANK                       : in std_logic := 'X';
 	 I_VBLANK                       : in std_logic := 'X';
+	 I_LOCKED                       : in std_logic;
 	 I_RED                          : in std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
 	 I_GREEN                        : in std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
 	 I_BLUE                         : in std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
 	 
+	 O_CLK                          : out std_logic;
 	 O_HSYNC                        : out std_logic;
 	 O_VSYNC                        : out std_logic;
 	 O_HBLANK                       : out std_logic := 'X';
 	 O_VBLANK                       : out std_logic := 'X';
+	 O_LOCKED                       : out std_logic;
 	 O_RED                          : out std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
-	 o_GREEN                        : out std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
+	 O_GREEN                        : out std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
 	 O_BLUE                         : out std_logic_vector(C_COMPONENT_DEPTH-1 downto 0)
     -- ADD USER PORTS ABOVE THIS LINE ------------------
   );
@@ -117,12 +121,24 @@ begin
   ------------------------------------------
   -- connect internal signals
   ------------------------------------------
+HAVE_CLOCK : if C_BUS_FLAGS & 1 generate
+  O_CLK <= I_CLK;
+end generate HAVE_CLOCK;
+
+HAVE_TIMINGS : if C_BUS_FLAGS & 2 generate
   O_HSYNC <= I_HSYNC;
   O_VSYNC <= I_VSYNC;
+HAVE_BLANKING : if C_USE_BLANKING > 0 generate
   O_HBLANK <= I_HBLANK;
   O_VBLANK <= I_VBLANK;
+end generate HAVE_BLANKING;
+  O_LOCKED <= I_LOCKED;
+end generate HAVE_TIMINGS;
+
+HAVE_DATA : if C_BUS_FLAGS & 4 generate
   O_RED <= I_RED;
   O_GREEN <= I_GREEN;
   O_BLUE <= I_BLUE;
+end generate HAVE_DATA;
 
 end IMP;
