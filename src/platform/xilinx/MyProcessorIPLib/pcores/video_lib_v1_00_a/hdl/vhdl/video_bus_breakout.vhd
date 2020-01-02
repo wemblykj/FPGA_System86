@@ -1,147 +1,145 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date:    20:30:48 12/19/2019 
--- Design Name: 
--- Module Name:    Test_Pattern_Gen - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
+------------------------------------------------------------------------------
+-- video_bus_breakout.vhd - entity/architecture pair
+------------------------------------------------------------------------------
+-- IMPORTANT:
+-- DO NOT MODIFY THIS FILE EXCEPT IN THE DESIGNATED SECTIONS.
 --
--- Dependencies: 
+-- SEARCH FOR --USER TO DETERMINE WHERE CHANGES ARE ALLOWED.
 --
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
+-- TYPICALLY, THE ONLY ACCEPTABLE CHANGES INVOLVE ADDING NEW
+-- PORTS AND GENERICS THAT GET PASSED THROUGH TO THE INSTANTIATION
+-- OF THE USER_LOGIC ENTITY.
+------------------------------------------------------------------------------
 --
-----------------------------------------------------------------------------------
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+-- ***************************************************************************
+-- ** Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.            **
+-- **                                                                       **
+-- ** Xilinx, Inc.                                                          **
+-- ** XILINX IS PROVIDING THIS DESIGN, CODE, OR INFORMATION "AS IS"         **
+-- ** AS A COURTESY TO YOU, SOLELY FOR USE IN DEVELOPING PROGRAMS AND       **
+-- ** SOLUTIONS FOR XILINX DEVICES.  BY PROVIDING THIS DESIGN, CODE,        **
+-- ** OR INFORMATION AS ONE POSSIBLE IMPLEMENTATION OF THIS FEATURE,        **
+-- ** APPLICATION OR STANDARD, XILINX IS MAKING NO REPRESENTATION           **
+-- ** THAT THIS IMPLEMENTATION IS FREE FROM ANY CLAIMS OF INFRINGEMENT,     **
+-- ** AND YOU ARE RESPONSIBLE FOR OBTAINING ANY RIGHTS YOU MAY REQUIRE      **
+-- ** FOR YOUR IMPLEMENTATION.  XILINX EXPRESSLY DISCLAIMS ANY              **
+-- ** WARRANTY WHATSOEVER WITH RESPECT TO THE ADEQUACY OF THE               **
+-- ** IMPLEMENTATION, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OR        **
+-- ** REPRESENTATIONS THAT THIS IMPLEMENTATION IS FREE FROM CLAIMS OF       **
+-- ** INFRINGEMENT, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS       **
+-- ** FOR A PARTICULAR PURPOSE.                                             **
+-- **                                                                       **
+-- ***************************************************************************
+--
+------------------------------------------------------------------------------
+-- Filename:          video_bus_breakout.vhd
+-- Version:           1.00.a
+-- Description:       Top level design, instantiates library components and user logic.
+-- Date:              Thu Nov 28 13:05:40 2019 (by Create and Import Peripheral Wizard)
+-- VHDL Standard:     VHDL'93
+------------------------------------------------------------------------------
+-- Naming Conventions:
+--   active low signals:                    "*_n"
+--   clock signals:                         "clk", "clk_div#", "clk_#x"
+--   reset signals:                         "rst", "rst_n"
+--   generics:                              "C_*"
+--   user defined types:                    "*_TYPE"
+--   state machine next state:              "*_ns"
+--   state machine current state:           "*_cs"
+--   combinatorial signals:                 "*_com"
+--   pipelined or register delay signals:   "*_d#"
+--   counter signals:                       "*cnt*"
+--   clock enable signals:                  "*_ce"
+--   internal version of output port:       "*_i"
+--   device pins:                           "*_pin"
+--   ports:                                 "- Names begin with Uppercase"
+--   processes:                             "*_PROCESS"
+--   component instantiations:              "I_<#|FUNC>"
+------------------------------------------------------------------------------
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.std_logic_arith.ALL;
+USE ieee.std_logic_unsigned.ALL;
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+------------------------------------------------------------------------------
+-- Entity section
+------------------------------------------------------------------------------
+-- Definition of Generics:
+--   C_DIRECTION                  -- 
+--   C_COMPONENT_DEPTH            -- 
+--   C_USE_BLANKING               -- 
+--
+-- Definition of Ports:
+------------------------------------------------------------------------------
 
-entity video_tpg is
-  generic
-  (
-    -- ADD USER GENERICS BELOW THIS LINE ---------------
-    C_COMPONENT_DEPTH              : integer              := 8;
-	 C_TOTAL_COLS                   : integer              := 800;
-	 C_TOTAL_ROWS                   : integer              := 525;
-	 C_ACTIVE_COLS                  : integer              := 640;
-	 C_ACTIVE_ROWS                  : integer              := 480;
-	 C_SYNC_PULSE_HORZ              : integer              := 96;
-	 C_SYNC_PULSE_VERT              : integer              := 2;
-	 C_USE_BLANKING                 : integer              := 0;
-	 C_FRONT_PORCH_HORZ             : integer              := 16;
-	 C_BACK_PORCH_HORZ              : integer              := 48;
-	 C_FRONT_PORCH_VERT             : integer              := 10;
-	 C_BACK_PORCH_VERT              : integer              := 33
-    -- ADD USER GENERICS ABOVE THIS LINE ---------------
-  );
-  port
-  (
-    -- ADD USER PORTS BELOW THIS LINE ------------------
-    I_CLK                          : in  std_logic;
-	 I_RST                          : in  std_logic := '0';
-	 
-	 I_PATTERN                      : in  std_logic_vector(3 downto 0);
-	 
-	 I_HSYNC                        : in  std_logic;
-	 I_VSYNC                        : in  std_logic;
-	 
-	 O_LOCKED                       : out std_logic;
-	 O_HSYNC                        : out std_logic;
-	 O_VSYNC                        : out std_logic;
-	 O_HBLANK                       : out std_logic := 'X';
-	 O_VBLANK                       : out std_logic := 'X';
-	 O_RED                          : out std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
-	 o_GREEN                        : out std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
-	 O_BLUE                         : out std_logic_vector(C_COMPONENT_DEPTH-1 downto 0)
-    -- ADD USER PORTS ABOVE THIS LINE ------------------
-  );
-end entity video_tpg;
+ENTITY video_bus_breakout IS
+	GENERIC (
+		-- ADD USER GENERICS BELOW THIS LINE ---------------
+		C_COMPONENT_DEPTH : INTEGER := 8;
+		C_USE_CLOCK : INTEGER := 0;
+		C_USE_TIMINGS : INTEGER := 1;
+		C_USE_BLANKING : INTEGER := 0;
+		C_USE_DATA : INTEGER := 1
 
-architecture Behavioral of video_tpg is
+		-- ADD USER GENERICS ABOVE THIS LINE ---------------
 
-component Test_Pattern_Gen
-    generic(
-      COMPONENT_DEPTH                     : integer := 8;
-      TOTAL_COLS                          : integer := 800;
-      TOTAL_ROWS                          : integer := 525;
-      ACTIVE_COLS                         : integer := 640;
-      ACTIVE_ROWS                         : integer := 480;
-      USE_BLANKING                        : integer := 0;
-      SYNC_PULSE_HORZ                     : integer := 96;
-      SYNC_PULSE_VERT                     : integer := 2;
-      FRONT_PORCH_HORZ                    : integer := 16;
-      BACK_PORCH_HORZ                     : integer := 48;
-      FRONT_PORCH_VERT                    : integer := 10;
-      BACK_PORCH_VERT                     : integer := 33	  
-    );
-    port (
-      i_Clk : in std_logic;
-	   i_Rst : in std_logic;
-      i_Pattern : in std_logic_vector(3 downto 0);
-      i_HSync : in std_logic;
-      i_VSync : in std_logic;
-	   o_Locked : out std_logic;
-	   o_HSync : out std_logic;
-      o_VSync : out std_logic;
-	   o_HBlank : out std_logic := 'X';
-      o_VBlank : out std_logic := 'X';
-      o_Red_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
-      o_Grn_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
-      o_Blu_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0)
-    );
-  end component;
-  
-begin
+	);
+	PORT (
+		-- ADD USER PORTS BELOW THIS LINE ------------------
+		I_CLK : IN std_logic;
+		I_HSYNC : IN std_logic;
+		I_VSYNC : IN std_logic;
+		I_HBLANK : IN std_logic := 'X';
+		I_VBLANK : IN std_logic := 'X';
+		I_LOCKED : IN std_logic;
+		I_RED : IN std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
+		I_GREEN : IN std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
+		I_BLUE : IN std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
 
-------------------------------------------
-  -- instantiate Test Pattern Generator
-  ------------------------------------------
+		O_CLK : OUT std_logic;
+		O_HSYNC : OUT std_logic;
+		O_VSYNC : OUT std_logic;
+		O_HBLANK : OUT std_logic := 'X';
+		O_VBLANK : OUT std_logic := 'X';
+		O_LOCKED : OUT std_logic;
+		O_RED : OUT std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
+		O_GREEN : OUT std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
+		O_BLUE : OUT std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0)
+		-- ADD USER PORTS ABOVE THIS LINE ------------------
+	);
 
-  TEST_GEN_I: Test_Pattern_Gen
-	 generic map
-    (
-      COMPONENT_DEPTH                => C_COMPONENT_DEPTH,
-      TOTAL_COLS                     => C_TOTAL_COLS,
-      TOTAL_ROWS                     => C_TOTAL_ROWS,
-      ACTIVE_COLS                    => C_ACTIVE_COLS,
-      ACTIVE_ROWS                    => C_ACTIVE_ROWS,
-		USE_BLANKING                   => C_USE_BLANKING,
-		SYNC_PULSE_HORZ                => C_SYNC_PULSE_HORZ,
-	   SYNC_PULSE_VERT                => C_SYNC_PULSE_VERT,
-	   FRONT_PORCH_HORZ               => C_FRONT_PORCH_HORZ,
-	   BACK_PORCH_HORZ                => C_BACK_PORCH_HORZ,
-	   FRONT_PORCH_VERT               => C_FRONT_PORCH_VERT,
-	   BACK_PORCH_VERT                => C_BACK_PORCH_VERT
-	 )
-	 port map
-	 (
-      i_Clk                          => I_CLK,
-		i_RST                          => I_RST,
-      i_Pattern                      => I_PATTERN,
-      i_HSync                        => I_HSYNC,
-      i_VSync                        => I_VSYNC,
-		o_Locked                       => O_LOCKED,
-		o_HSync                        => O_HSYNC,
-      o_VSync                        => O_VSYNC,
-		o_HBlank                       => O_HBLANK,
-      o_VBlank                       => O_VBLANK,
-      o_Red_Video                    => O_RED,
-      o_Grn_Video                    => O_GREEN,
-      o_Blu_Video                    => O_BLUE
-    );
+END ENTITY video_bus_breakout;
 
-end Behavioral;
+------------------------------------------------------------------------------
+-- Architecture section
+------------------------------------------------------------------------------
 
+ARCHITECTURE IMP OF video_bus_breakout IS
+
+BEGIN
+
+	------------------------------------------
+	-- connect internal signals
+	------------------------------------------
+	HAVE_CLOCK : IF C_USE_CLOCK GENERATE
+		O_CLK <= I_CLK;
+	END GENERATE HAVE_CLOCK;
+
+	HAVE_TIMINGS : IF C_USE_TIMINGS GENERATE
+		O_HSYNC <= I_HSYNC;
+		O_VSYNC <= I_VSYNC;
+		HAVE_BLANKING : IF C_USE_BLANKING > 0 GENERATE
+			O_HBLANK <= I_HBLANK;
+			O_VBLANK <= I_VBLANK;
+		END GENERATE HAVE_BLANKING;
+		O_LOCKED <= I_LOCKED;
+	END GENERATE HAVE_TIMINGS;
+
+	HAVE_DATA : IF C_USE_DATA & 4 GENERATE
+		O_RED <= I_RED;
+		O_GREEN <= I_GREEN;
+		O_BLUE <= I_BLUE;
+	END GENERATE HAVE_DATA;
+
+END IMP;

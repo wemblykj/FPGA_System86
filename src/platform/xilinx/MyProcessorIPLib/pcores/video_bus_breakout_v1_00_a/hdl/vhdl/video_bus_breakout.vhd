@@ -54,13 +54,16 @@
 --   device pins:                           "*_pin"
 --   ports:                                 "- Names begin with Uppercase"
 --   processes:                             "*_PROCESS"
---   component instantiations:              "<ENTITY_>I_<#|FUNC>"
+--   component instantiations:              "I_<#|FUNC>"
 ------------------------------------------------------------------------------
 
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.std_logic_arith.all;
-use ieee.std_logic_unsigned.all;
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.std_logic_arith.ALL;
+USE ieee.std_logic_unsigned.ALL;
+
+LIBRARY video_lib_v1_00_a;
+USE video_lib_v1_00_a.video_bus_breakout;
 
 ------------------------------------------------------------------------------
 -- Entity section
@@ -73,72 +76,80 @@ use ieee.std_logic_unsigned.all;
 -- Definition of Ports:
 ------------------------------------------------------------------------------
 
-entity video_bus_breakout is
-  generic
-  (
-    -- ADD USER GENERICS BELOW THIS LINE ---------------
-         C_BUS_FLAGS                    : integer              := 7;
-			C_COMPONENT_DEPTH              : integer              := 8;
-	      C_USE_BLANKING                 : integer              := 0
-    -- ADD USER GENERICS ABOVE THIS LINE ---------------
+ENTITY video_bus_breakout IS
+	GENERIC (
+		-- ADD USER GENERICS BELOW THIS LINE ---------------
+		C_COMPONENT_DEPTH : INTEGER := 8;
+		C_USE_CLOCK : INTEGER := 0;
+		C_USE_TIMINGS : INTEGER := 1;
+		C_USE_BLANKING : INTEGER := 0;
+		C_USE_DATA : INTEGER := 1
+		-- ADD USER GENERICS ABOVE THIS LINE ---------------
 
-  );
-  port
-  (
-    -- ADD USER PORTS BELOW THIS LINE ------------------
-	 I_CLK                          : in std_logic;
-	 I_HSYNC                        : in std_logic;
-	 I_VSYNC                        : in std_logic;
-	 I_HBLANK                       : in std_logic := 'X';
-	 I_VBLANK                       : in std_logic := 'X';
-	 I_LOCKED                       : in std_logic;
-	 I_RED                          : in std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
-	 I_GREEN                        : in std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
-	 I_BLUE                         : in std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
-	 
-	 O_CLK                          : out std_logic;
-	 O_HSYNC                        : out std_logic;
-	 O_VSYNC                        : out std_logic;
-	 O_HBLANK                       : out std_logic := 'X';
-	 O_VBLANK                       : out std_logic := 'X';
-	 O_LOCKED                       : out std_logic;
-	 O_RED                          : out std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
-	 O_GREEN                        : out std_logic_vector(C_COMPONENT_DEPTH-1 downto 0);
-	 O_BLUE                         : out std_logic_vector(C_COMPONENT_DEPTH-1 downto 0)
-    -- ADD USER PORTS ABOVE THIS LINE ------------------
-  );
+	);
+	PORT (
+		-- ADD USER PORTS BELOW THIS LINE ------------------
+		I_CLK : IN std_logic;
+		I_HSYNC : IN std_logic;
+		I_VSYNC : IN std_logic;
+		I_HBLANK : IN std_logic := 'X';
+		I_VBLANK : IN std_logic := 'X';
+		I_LOCKED : IN std_logic;
+		I_RED : IN std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
+		I_GREEN : IN std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
+		I_BLUE : IN std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
 
-end entity video_bus_breakout;
+		O_CLK : OUT std_logic;
+		O_HSYNC : OUT std_logic;
+		O_VSYNC : OUT std_logic;
+		O_HBLANK : OUT std_logic := 'X';
+		O_VBLANK : OUT std_logic := 'X';
+		O_LOCKED : OUT std_logic;
+		O_RED : OUT std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
+		O_GREEN : OUT std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
+		O_BLUE : OUT std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0)
+		-- ADD USER PORTS ABOVE THIS LINE ------------------
+	);
+
+END ENTITY video_bus_breakout;
 
 ------------------------------------------------------------------------------
 -- Architecture section
 ------------------------------------------------------------------------------
 
-architecture IMP of video_bus_breakout is
+ARCHITECTURE IMP OF video_bus_breakout IS
 
-begin
+BEGIN
 
-  ------------------------------------------
-  -- connect internal signals
-  ------------------------------------------
-HAVE_CLOCK : if C_BUS_FLAGS & 1 generate
-  O_CLK <= I_CLK;
-end generate HAVE_CLOCK;
+	BUS_BREAKOUT_I : ENTITY video_lib_v1_00_a.video_bus_breakout
+		GENERIC MAP
+		(
+			C_COMPONENT_DEPTH => C_COMPONENT_DEPTH,
+			C_USE_CLOCK => C_USE_CLOCK,
+			C_USE_TIMINGS => C_USE_TIMINGS,
+			C_USE_BLANKING => C_USE_BLANKING,
+			C_USE_DATA => C_USE_DATA
+		)
+		PORT MAP
+		(
+			I_CLK => I_CLK,
+			I_HSYNC => I_HSYNC,
+			I_VSYNC => I_VSYNC,
+			I_HBLANK => I_HBLANK,
+			I_VBLANK => I_VBLANK,
+			I_LOCKED => I_LOCKED,
+			I_RED => I_RED,
+			I_GREEN => I_GREEN,
+			I_BLUE => I_BLUE,
 
-HAVE_TIMINGS : if C_BUS_FLAGS & 2 generate
-  O_HSYNC <= I_HSYNC;
-  O_VSYNC <= I_VSYNC;
-HAVE_BLANKING : if C_USE_BLANKING > 0 generate
-  O_HBLANK <= I_HBLANK;
-  O_VBLANK <= I_VBLANK;
-end generate HAVE_BLANKING;
-  O_LOCKED <= I_LOCKED;
-end generate HAVE_TIMINGS;
+			O_HSYNC => O_HSYNC,
+			O_VSYNC => O_VSYNC,
+			O_HBLANK => O_HBLANK,
+			O_VBLANK => O_VBLANK,
+			O_LOCKED => O_LOCKED,
+			O_RED => O_RED,
+			O_GREEN => O_GREEN,
+			O_BLUE => O_BLUE
+		);
 
-HAVE_DATA : if C_BUS_FLAGS & 4 generate
-  O_RED <= I_RED;
-  O_GREEN <= I_GREEN;
-  O_BLUE <= I_BLUE;
-end generate HAVE_DATA;
-
-end IMP;
+END IMP;

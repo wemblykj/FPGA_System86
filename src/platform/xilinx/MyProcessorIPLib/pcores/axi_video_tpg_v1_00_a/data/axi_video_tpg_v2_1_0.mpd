@@ -8,7 +8,7 @@
 
 BEGIN axi_video_tpg
 
-OPTION VLNV = WemblyKJ|video_common
+OPTION VLNV = WemblyKJ|video_lib
 
 ## Peripheral Options
 OPTION IPTYPE = PERIPHERAL
