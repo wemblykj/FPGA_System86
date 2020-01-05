@@ -1,0 +1,8 @@
+##############################################################################
+## Filename:          /home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/MyProcessorIPLib/pcores/video_bus_source_v1_00_a/data/video_bus_source_v2_1_0.pao
+## Description:       Peripheral Analysis Order
+## Date:              Thu Nov 28 13:05:40 2019 (by Create and Import Peripheral Wizard)
+##############################################################################
+
+lib video_lib_v1_00_a  all
+lib video_bus_source_v1_00_a video_bus_source vhdl
