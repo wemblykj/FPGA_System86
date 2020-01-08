@@ -1,8 +1,8 @@
 CipWiz::SetVersion "14.7";
 CipWiz::SetFlow "CREATE";
 CipWiz::SetParameter "ProjectDir" "/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/MyProcessorIPLib";
-CipWiz::SetParameter "IpLongDescription" "Breakout box for converting video bus to/from standard video signals";
-CipWiz::SetParameter "IpName" "video_bus_breakout";
+CipWiz::SetParameter "IpLongDescription" "Converts from a standard video signal to video bus";
+CipWiz::SetParameter "IpName" "video_bus_source";
 CipWiz::SetParameter "IpVersion" "1.00.a";
 CipWiz::SetParameter "SimulatorName" "isim";
 CipWiz::SetParameter "HdlLanguage" "1";

@@ -7,4 +7,5 @@ lib video_lib_v1_00_a VGA_Sync_Porch verilog
 lib video_lib_v1_00_a VGA_Sync_Pulses verilog
 lib video_lib_v1_00_a video_tpg vhdl
 lib video_lib_v1_00_a video_upscaler vhdl
+lib video_lib_v1_00_a video_bus_breakout vhdl
 #vlgincdir video_lib_v1_00_a ../../../../../../lib/video_lib/rtl/ 

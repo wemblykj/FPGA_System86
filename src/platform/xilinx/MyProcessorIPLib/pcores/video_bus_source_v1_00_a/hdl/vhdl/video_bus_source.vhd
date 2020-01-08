@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
--- video_bus_breakout.vhd - entity/architecture pair
+-- video_bus_source.vhd - entity/architecture pair
 ------------------------------------------------------------------------------
 -- IMPORTANT:
 -- DO NOT MODIFY THIS FILE EXCEPT IN THE DESIGNATED SECTIONS.
@@ -32,7 +32,7 @@
 -- ***************************************************************************
 --
 ------------------------------------------------------------------------------
--- Filename:          video_bus_breakout.vhd
+-- Filename:          video_bus_source.vhd
 -- Version:           1.00.a
 -- Description:       Top level design, instantiates library components and user logic.
 -- Date:              Thu Nov 28 13:05:40 2019 (by Create and Import Peripheral Wizard)
@@ -69,18 +69,17 @@ USE video_lib_v1_00_a.video_bus_breakout;
 -- Entity section
 ------------------------------------------------------------------------------
 -- Definition of Generics:
---   C_DIRECTION                  -- 
 --   C_COMPONENT_DEPTH            -- 
 --   C_USE_BLANKING               -- 
 --
 -- Definition of Ports:
 ------------------------------------------------------------------------------
 
-ENTITY video_bus_breakout IS
+ENTITY video_bus_source IS
 	GENERIC (
 		-- ADD USER GENERICS BELOW THIS LINE ---------------
 		C_COMPONENT_DEPTH : INTEGER := 8;
-		C_USE_CLOCK : INTEGER := 0;
+		C_USE_CLOCK : INTEGER := 1;
 		C_USE_TIMINGS : INTEGER := 1;
 		C_USE_BLANKING : INTEGER := 0;
 		C_USE_DATA : INTEGER := 1
@@ -111,17 +110,17 @@ ENTITY video_bus_breakout IS
 		-- ADD USER PORTS ABOVE THIS LINE ------------------
 	);
 
-END ENTITY video_bus_breakout;
+END ENTITY video_bus_source;
 
 ------------------------------------------------------------------------------
 -- Architecture section
 ------------------------------------------------------------------------------
 
-ARCHITECTURE IMP OF video_bus_breakout IS
+ARCHITECTURE IMP OF video_bus_source IS
 
 BEGIN
 
-	BUS_BREAKOUT_I : ENTITY video_lib_v1_00_a.video_bus_breakout
+	BUS_SOURCE_I : ENTITY video_lib_v1_00_a.video_bus_breakout
 		GENERIC MAP
 		(
 			C_COMPONENT_DEPTH => C_COMPONENT_DEPTH,
@@ -142,6 +141,7 @@ BEGIN
 			I_GREEN => I_GREEN,
 			I_BLUE => I_BLUE,
 
+			O_CLK => O_CLK,
 			O_HSYNC => O_HSYNC,
 			O_VSYNC => O_VSYNC,
 			O_HBLANK => O_HBLANK,

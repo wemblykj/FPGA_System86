@@ -69,7 +69,6 @@ USE video_lib_v1_00_a.video_bus_breakout;
 -- Entity section
 ------------------------------------------------------------------------------
 -- Definition of Generics:
---   C_DIRECTION                  -- 
 --   C_COMPONENT_DEPTH            -- 
 --   C_USE_BLANKING               -- 
 --
@@ -80,7 +79,7 @@ ENTITY video_bus_breakout IS
 	GENERIC (
 		-- ADD USER GENERICS BELOW THIS LINE ---------------
 		C_COMPONENT_DEPTH : INTEGER := 8;
-		C_USE_CLOCK : INTEGER := 0;
+		C_USE_CLOCK : INTEGER := 1;
 		C_USE_TIMINGS : INTEGER := 1;
 		C_USE_BLANKING : INTEGER := 0;
 		C_USE_DATA : INTEGER := 1

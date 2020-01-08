@@ -71,6 +71,12 @@
 			 SIGNAL S1_HSync :  std_logic;
 			 SIGNAL S1_VSync :  std_logic;
 			 
+			 SIGNAL S2_Locked :  std_logic;
+			 SIGNAL S2_HSync :  std_logic;
+			 SIGNAL S2_VSync :  std_logic;
+			 SIGNAL S2_HBlank :  std_logic;
+			 SIGNAL S2_VBlank :  std_logic;
+			 
 			 SIGNAL UUT_Locked :  std_logic;
 			 SIGNAL UUT_HSync :  std_logic;
 			 SIGNAL UUT_VSync :  std_logic;
@@ -88,29 +94,43 @@
 			 PORT MAP(
                   i_Clk => VClk,
                   i_Rst => Rst,
-						i_HSync => S1_HSync,
-						i_VSync => S1_VSync,
 						o_Locked => S1_Locked,
 						o_HSync => S1_HSync,
 						o_VSync => S1_VSync
+          );
+			 
+			 stage2_timings: Sync_To_Blanking
+			 PORT MAP(
+                  i_Clk => VClk,
+                  i_Rst => Rst,
+						i_HSync => S1_HSync,
+						i_VSync => S1_VSync,
+						o_Locked => S2_Locked,
+						o_HSync => S2_HSync,
+						o_VSync => S2_VSync,
+						o_HBlank => S2_HBlank,
+						o_VBlank => S2_VBlank
           );
 			 
   -- Component Instantiation
           uut: entity video_bus_breakout_v1_00_a.video_bus_breakout
 			 GENERIC MAP
 			 (
-			   C_BUS_FLAGS => 7,
-				C_COMPONENT_DEPTH => 4,
+			   C_COMPONENT_DEPTH => 4,
 				C_USE_BLANKING => 1
 			 )
 			 PORT MAP(
-                  -- I_CLK => VClk,
+                  I_CLK => VClk,
                   -- I_RST => Rst,
-						I_HSYNC => S1_HSync,
-						I_VSYNC => S1_VSync,
-						I_HBLANK => S1_HBlank,
-						I_VBLANK => S1_VBlank,
-						-- O_LOCKED => UUT_Locked,
+						I_HSYNC => S2_HSync,
+						I_VSYNC => S2_VSync,
+						I_HBLANK => S2_HBlank,
+						I_VBLANK => S2_VBlank,
+						I_LOCKED => S2_Locked,
+						I_RED => "0110",
+						I_GREEN => "0110",
+						I_BLUE => "0110",
+						O_LOCKED => UUT_Locked,
 						O_HSYNC => UUT_HSync,
 						O_VSYNC => UUT_VSync,
 						O_HBLANK => UUT_HBlank,

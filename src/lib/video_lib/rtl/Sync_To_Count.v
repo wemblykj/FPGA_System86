@@ -10,9 +10,9 @@ module Sync_To_Count
    input            i_Clk,
    input            i_HSync,
    input            i_VSync, 
-	output reg       o_Locked = 0,
-   output reg       o_HSync = 1,
-   output reg       o_VSync = 1,
+	output reg       o_Locked,// = 0,
+   output reg       o_HSync, // = 1,
+   output reg       o_VSync, // = 1,
    output reg [9:0] o_Col_Count = 0,
    output reg [9:0] o_Row_Count = 0);
    
