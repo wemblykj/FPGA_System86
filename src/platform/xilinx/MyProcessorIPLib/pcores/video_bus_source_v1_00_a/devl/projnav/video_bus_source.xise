@@ -16,32 +16,42 @@
 
   <files>
     <file xil_pn:name="../../hdl/vhdl/video_bus_source.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="3"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="2"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="1"/>
       <library xil_pn:name="video_bus_source_v1_00_a"/>
     </file>
     <file xil_pn:name="video_bus_source_tb.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="6"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="3"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="2"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="2"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="2"/>
-    </file>
-    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/VGA_Sync_Pulses.v" xil_pn:type="FILE_VERILOG">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="4"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="3"/>
     </file>
     <file xil_pn:name="../../../video_lib_v1_00_a/hdl/vhdl/video_bus_breakout.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="1"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="6"/>
       <library xil_pn:name="video_lib_v1_00_a"/>
     </file>
-    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Blanking.v" xil_pn:type="FILE_VERILOG">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="5"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="14"/>
+    <file xil_pn:name="../../../video_lib_v1_00_a/hdl/verilog/Sync_To_Blanking.v" xil_pn:type="FILE_VERILOG">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="18"/>
     </file>
-    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Count.v" xil_pn:type="FILE_VERILOG">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="2"/>
-      <association xil_pn:name="Implementation" xil_pn:seqID="15"/>
+    <file xil_pn:name="../../../video_lib_v1_00_a/hdl/verilog/Sync_To_Count.v" xil_pn:type="FILE_VERILOG">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="19"/>
+    </file>
+    <file xil_pn:name="../../../video_lib_v1_00_a/hdl/verilog/VGA_Sync_Pulses.v" xil_pn:type="FILE_VERILOG">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="20"/>
+    </file>
+    <file xil_pn:name="../../../video_lib_v1_00_a/hdl/vhdl/video_sync_gen.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="28"/>
+      <library xil_pn:name="video_lib_v1_00_a"/>
+    </file>
+    <file xil_pn:name="../../../video_lib_v1_00_a/hdl/vhdl/video_blanking_gen.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="0"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="29"/>
+      <library xil_pn:name="video_lib_v1_00_a"/>
     </file>
   </files>
 
@@ -385,6 +395,9 @@
     <!-- Do not hand-edit this section, as it will be overwritten when the    -->
     <!-- project is analyzed based on files automatically identified as       -->
     <!-- include files.                                                       -->
+    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Blanking.v" xil_pn:type="FILE_VERILOG"/>
+    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/Sync_To_Count.v" xil_pn:type="FILE_VERILOG"/>
+    <file xil_pn:name="../../../../../../../lib/video_lib/rtl/VGA_Sync_Pulses.v" xil_pn:type="FILE_VERILOG"/>
   </autoManagedFiles>
 
 </project>

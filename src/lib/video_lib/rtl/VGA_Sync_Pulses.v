@@ -5,8 +5,8 @@ module VGA_Sync_Pulses
    parameter TOTAL_ROWS  = 525,
    parameter SYNC_PULSE_HORZ = 96,
 	parameter SYNC_PULSE_VERT = 2)
-  (input            i_Rst, 
-   input            i_Clk, 
+  (input            i_Clk, 
+   input            i_Rst, 
 	output reg       o_Locked,
    output reg       o_HSync,
    output reg       o_VSync,

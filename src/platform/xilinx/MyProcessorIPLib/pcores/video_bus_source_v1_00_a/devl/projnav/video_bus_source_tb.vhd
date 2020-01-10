@@ -4,6 +4,9 @@
   USE ieee.std_logic_1164.ALL;
   USE ieee.numeric_std.ALL;
 
+  LIBRARY video_lib_v1_00_a;
+  USE video_lib_v1_00_a.ALL;
+  
   LIBRARY video_bus_source_v1_00_a;
   USE video_bus_source_v1_00_a.video_bus_source;
   
@@ -12,29 +15,29 @@
 
   ARCHITECTURE behavior OF testbench IS 
 
-          COMPONENT VGA_Sync_Pulses
-			 PORT(
-                  i_Clk : IN std_logic;
-						i_Rst : IN std_logic;
-						o_Locked : OUT std_logic;
-						o_HSync : OUT std_logic;
-						o_VSync : OUT std_logic
-                  );
-          END COMPONENT;
+--          COMPONENT VGA_Sync_Pulses
+--			 PORT(
+--                  i_Clk : IN std_logic;
+--						i_Rst : IN std_logic;
+--						o_Locked : OUT std_logic;
+--						o_HSync : OUT std_logic;
+--						o_VSync : OUT std_logic
+--                  );
+--          END COMPONENT;
 			 
-			 COMPONENT Sync_To_Blanking
-			 PORT(
-                  i_Clk : IN std_logic;
-						i_Rst : IN std_logic;
-						i_HSync : IN std_logic;
-						i_VSync : IN std_logic;
-						o_Locked : OUT std_logic;
-						o_HSync : OUT std_logic;
-						o_VSync : OUT std_logic;
-						o_HBlank : OUT std_logic;
-						o_VBlank : OUT std_logic
-                  );
-			END COMPONENT;
+--			 COMPONENT Sync_To_Blanking
+--			 PORT(
+--                  i_Clk : IN std_logic;
+--						i_Rst : IN std_logic;
+--						i_HSync : IN std_logic;
+--						i_VSync : IN std_logic;
+--						o_Locked : OUT std_logic;
+--						o_HSync : OUT std_logic;
+--						o_VSync : OUT std_logic;
+--						o_HBlank : OUT std_logic;
+--						o_VBlank : OUT std_logic
+--                  );
+--			END COMPONENT;
   -- Component Declaration
 --          COMPONENT <component name>
 --			 generic
@@ -90,26 +93,26 @@
 
   BEGIN
 
-          stage1_timings: VGA_Sync_Pulses
+          stage1_timings: video_lib_v1_00_a.video_sync_gen
 			 PORT MAP(
-                  i_Clk => VClk,
-                  i_Rst => Rst,
-						o_Locked => S1_Locked,
-						o_HSync => S1_HSync,
-						o_VSync => S1_VSync
+                  I_CLK => VClk,
+                  I_RST => Rst,
+						O_LOCKED => S1_Locked,
+						O_HSYNC => S1_HSync,
+						O_VSYNC => S1_VSync
           );
 			 
-			 stage2_timings: Sync_To_Blanking
+			 stage2_timings: video_lib_v1_00_a.video_blanking_gen
 			 PORT MAP(
-                  i_Clk => VClk,
-                  i_Rst => Rst,
-						i_HSync => S1_HSync,
-						i_VSync => S1_VSync,
-						o_Locked => S2_Locked,
-						o_HSync => S2_HSync,
-						o_VSync => S2_VSync,
-						o_HBlank => S2_HBlank,
-						o_VBlank => S2_VBlank
+                  I_CLK => VClk,
+                  I_RST => Rst,
+						I_HSYNC => S1_HSync,
+						I_VSYNC => S1_VSync,
+						O_LOCKED => S2_Locked,
+						O_HSYNC => S2_HSync,
+						O_VSYNC => S2_VSync,
+						O_HBLANK => S2_HBlank,
+						O_VBLANK => S2_VBlank
           );
 			 
   -- Component Instantiation
