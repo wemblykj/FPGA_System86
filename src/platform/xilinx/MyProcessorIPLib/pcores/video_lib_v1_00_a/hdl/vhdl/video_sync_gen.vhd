@@ -79,14 +79,13 @@ ENTITY video_sync_gen IS
 		C_TOTAL_COLS : INTEGER := 800;
 		C_TOTAL_ROWS : INTEGER := 525;
 		C_SYNC_PULSE_HORZ : INTEGER := 96;
-		C_SYNC_PULSE_HORZ : INTEGER := 2
+		C_SYNC_PULSE_VERT : INTEGER := 2
 		-- ADD USER GENERICS ABOVE THIS LINE ---------------
 	);
 	PORT (
 		-- ADD USER PORTS BELOW THIS LINE ------------------
 		I_CLK : IN std_logic;
-		I_HSYNC : IN std_logic;
-		I_VSYNC : IN std_logic;
+		I_RST : IN std_logic;
 		O_LOCKED : OUT std_logic;
 		O_HSYNC : OUT std_logic;
 		O_VSYNC : OUT std_logic
@@ -110,10 +109,12 @@ ARCHITECTURE IMP OF video_sync_gen IS
 	);
 	PORT(
         	i_Clk : IN std_logic;
-		i_Rst : IN std_logic;
-		o_Locked : OUT std_logic;
-		o_HSync : OUT std_logic;
-		o_VSync : OUT std_logic
+			i_Rst : IN std_logic;
+			o_Locked : OUT std_logic;
+			o_HSync : OUT std_logic;
+			o_VSync : OUT std_logic;
+			o_Col_Count : OUT std_logic_vector(9 downto 0) := "0000000000";
+			o_Row_Count : OUT std_logic_vector(9 downto 0) := "0000000000"
         	);
         END COMPONENT;
 
@@ -132,6 +133,6 @@ BEGIN
 		o_Locked => O_LOCKED,
 		o_HSync => O_HSYNC,
 		o_VSync => O_VSYNC
-	        );
+	   );
 
 END IMP;

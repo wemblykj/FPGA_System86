@@ -81,7 +81,7 @@ ENTITY video_blanking_gen IS
 		C_ACTIVE_COLS : INTEGER := 640;
 		C_ACTIVE_ROWS : INTEGER := 480;
 		C_SYNC_PULSE_HORZ : INTEGER := 96;
-		C_SYNC_PULSE_HORZ : INTEGER := 2;
+		C_SYNC_PULSE_VERT : INTEGER := 2;
 		C_FRONT_PORCH_HORZ : INTEGER := 16;
 		C_BACK_PORCH_HORZ : INTEGER := 48;
 		C_FRONT_PORCH_VERT : INTEGER := 10;
@@ -97,8 +97,8 @@ ENTITY video_blanking_gen IS
 		O_LOCKED : OUT std_logic;
 		O_HSYNC : OUT std_logic;
 		O_VSYNC : OUT std_logic;
-		O_BLANK : OUT std_logic;
-		O_BLANK : OUT std_logic
+		O_HBLANK : OUT std_logic;
+		O_VBLANK : OUT std_logic
 		-- ADD USER PORTS ABOVE THIS LINE ------------------
 	);
 
@@ -125,16 +125,16 @@ ARCHITECTURE IMP OF video_blanking_gen IS
 	);
 	PORT(
         	i_Clk : IN std_logic;
-		i_Rst : IN std_logic;
-		i_HSync : IN std_logic;
-		i_VSync : IN std_logic;
-		o_Locked : OUT std_logic;
-		o_HSync : OUT std_logic;
-		o_VSync : OUT std_logic;
-		o_HBlank : OUT std_logic;
-		o_VBlank : OUT std_logic
+			i_Rst : IN std_logic;
+			i_HSync : IN std_logic;
+			i_VSync : IN std_logic;
+			o_Locked : OUT std_logic;
+			o_HSync : OUT std_logic;
+			o_VSync : OUT std_logic;
+			o_HBlank : OUT std_logic;
+			o_VBlank : OUT std_logic
         	);
-        END COMPONENT;
+   END COMPONENT;
 
 BEGIN
 
@@ -161,7 +161,6 @@ BEGIN
 		o_VSync => O_VSYNC,
 		o_HBlank => O_HBLANK,
 		o_VBlank => O_VBLANK
-
-	        );
+      );
 
 END IMP;

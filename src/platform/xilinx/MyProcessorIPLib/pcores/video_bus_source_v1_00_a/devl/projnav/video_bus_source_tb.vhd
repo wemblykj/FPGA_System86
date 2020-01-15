@@ -93,7 +93,7 @@
 
   BEGIN
 
-          stage1_timings: video_lib_v1_00_a.video_sync_gen
+          stage1_timings: entity video_lib_v1_00_a.video_sync_gen
 			 PORT MAP(
                   I_CLK => VClk,
                   I_RST => Rst,
@@ -102,7 +102,7 @@
 						O_VSYNC => S1_VSync
           );
 			 
-			 stage2_timings: video_lib_v1_00_a.video_blanking_gen
+			 stage2_timings: entity video_lib_v1_00_a.video_blanking_gen
 			 PORT MAP(
                   I_CLK => VClk,
                   I_RST => Rst,

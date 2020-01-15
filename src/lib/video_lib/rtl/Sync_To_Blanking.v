@@ -21,8 +21,8 @@ module Sync_To_Blanking #(
 								parameter BACK_PORCH_HORZ  = 48,
 								parameter FRONT_PORCH_VERT = 10,
 								parameter BACK_PORCH_VERT  = 33)
-  (input i_Rst,
-   input i_Clk,
+  (input i_Clk,
+   input i_Rst,
    input i_HSync,
    input i_VSync,
 	output reg o_Locked,
