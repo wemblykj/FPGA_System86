@@ -33,6 +33,7 @@ ENTITY video_tpg IS
 	GENERIC (
 		-- ADD USER GENERICS BELOW THIS LINE ---------------
 		C_COMPONENT_DEPTH : INTEGER := 8;
+		C_CLOCK_PASSTHRU : INTEGER := 1;
 		C_TOTAL_COLS : INTEGER := 800;
 		C_TOTAL_ROWS : INTEGER := 525;
 		C_ACTIVE_COLS : INTEGER := 640;
@@ -56,6 +57,7 @@ ENTITY video_tpg IS
 		I_HSYNC : IN std_logic;
 		I_VSYNC : IN std_logic;
 
+		O_CLK : OUT std_logic;
 		O_LOCKED : OUT std_logic;
 		O_HSYNC : OUT std_logic;
 		O_VSYNC : OUT std_logic;
@@ -103,6 +105,10 @@ ARCHITECTURE Behavioral OF video_tpg IS
 	END COMPONENT;
 
 BEGIN
+
+	HAVE_CLOCK : IF C_CLOCK_PASSTHRU > 0 GENERATE
+		O_CLK <= I_CLK;
+	END GENERATE HAVE_CLOCK;
 
 	------------------------------------------
 	-- instantiate Test Pattern Generator

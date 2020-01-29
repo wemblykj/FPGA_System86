@@ -77,7 +77,7 @@ ENTITY video_bus_breakout IS
 	GENERIC (
 		-- ADD USER GENERICS BELOW THIS LINE ---------------
 		C_COMPONENT_DEPTH : INTEGER := 8;
-		C_USE_CLOCK : INTEGER := 1;
+		C_CLOCK_PASSTHRU : INTEGER := 1;
 		C_USE_TIMINGS : INTEGER := 1;
 		C_USE_BLANKING : INTEGER := 0;
 		C_USE_DATA : INTEGER := 1
@@ -122,7 +122,7 @@ BEGIN
 	------------------------------------------
 	-- connect internal signals
 	------------------------------------------
-	HAVE_CLOCK : IF C_USE_CLOCK > 0 GENERATE
+	HAVE_CLOCK : IF C_CLOCK_PASSTHRU > 0 GENERATE
 		O_CLK <= I_CLK;
 	END GENERATE HAVE_CLOCK;
 

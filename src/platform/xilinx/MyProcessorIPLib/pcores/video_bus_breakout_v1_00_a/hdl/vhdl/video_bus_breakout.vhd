@@ -79,7 +79,7 @@ ENTITY video_bus_breakout IS
 	GENERIC (
 		-- ADD USER GENERICS BELOW THIS LINE ---------------
 		C_COMPONENT_DEPTH : INTEGER := 8;
-		C_USE_CLOCK : INTEGER := 1;
+		C_CLOCK_PASSTHRU : INTEGER := 1;
 		C_USE_TIMINGS : INTEGER := 1;
 		C_USE_BLANKING : INTEGER := 0;
 		C_USE_DATA : INTEGER := 1
@@ -88,12 +88,12 @@ ENTITY video_bus_breakout IS
 	);
 	PORT (
 		-- ADD USER PORTS BELOW THIS LINE ------------------
-		I_CLK : IN std_logic;
+		I_CLK : IN std_logic := 'X';
 		I_HSYNC : IN std_logic;
 		I_VSYNC : IN std_logic;
 		I_HBLANK : IN std_logic := 'X';
 		I_VBLANK : IN std_logic := 'X';
-		I_LOCKED : IN std_logic;
+		I_LOCKED : IN std_logic := 'X';
 		I_RED : IN std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
 		I_GREEN : IN std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
 		I_BLUE : IN std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
@@ -124,7 +124,7 @@ BEGIN
 		GENERIC MAP
 		(
 			C_COMPONENT_DEPTH => C_COMPONENT_DEPTH,
-			C_USE_CLOCK => C_USE_CLOCK,
+			C_CLOCK_PASSTHRU => C_CLOCK_PASSTHRU,
 			C_USE_TIMINGS => C_USE_TIMINGS,
 			C_USE_BLANKING => C_USE_BLANKING,
 			C_USE_DATA => C_USE_DATA
@@ -141,6 +141,7 @@ BEGIN
 			I_GREEN => I_GREEN,
 			I_BLUE => I_BLUE,
 
+			O_CLK => O_CLK,
 			O_HSYNC => O_HSYNC,
 			O_VSYNC => O_VSYNC,
 			O_HBLANK => O_HBLANK,

@@ -177,7 +177,7 @@ ENTITY axi_video_tpg IS
 		O_HBLANK : OUT std_logic := 'X';
 		O_VBLANK : OUT std_logic := 'X';
 		O_RED : OUT std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
-		o_GREEN : OUT std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
+		O_GREEN : OUT std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
 		O_BLUE : OUT std_logic_vector(C_COMPONENT_DEPTH - 1 DOWNTO 0);
 		-- ADD USER PORTS ABOVE THIS LINE ------------------
 
@@ -218,38 +218,6 @@ END ENTITY axi_video_tpg;
 ------------------------------------------------------------------------------
 
 ARCHITECTURE IMP OF axi_video_tpg IS
-
-	COMPONENT Test_Pattern_Gen
-		GENERIC (
-			COMPONENT_DEPTH : INTEGER := 8;
-			TOTAL_COLS : INTEGER := 800;
-			TOTAL_ROWS : INTEGER := 525;
-			ACTIVE_COLS : INTEGER := 640;
-			ACTIVE_ROWS : INTEGER := 480;
-			USE_BLANKING : INTEGER := 0;
-			SYNC_PULSE_HORZ : INTEGER := 96;
-			SYNC_PULSE_VERT : INTEGER := 2;
-			FRONT_PORCH_HORZ : INTEGER := 16;
-			BACK_PORCH_HORZ : INTEGER := 48;
-			FRONT_PORCH_VERT : INTEGER := 10;
-			BACK_PORCH_VERT : INTEGER := 33
-		);
-		PORT (
-			i_Clk : IN std_logic;
-			i_Rst : IN std_logic;
-			i_Pattern : IN std_logic_vector(3 DOWNTO 0);
-			i_HSync : IN std_logic;
-			i_VSync : IN std_logic;
-			o_Locked : OUT std_logic;
-			o_HSync : OUT std_logic;
-			o_VSync : OUT std_logic;
-			o_HBlank : OUT std_logic := 'X';
-			o_VBlank : OUT std_logic := 'X';
-			o_Red_Video : OUT std_logic_vector(COMPONENT_DEPTH - 1 DOWNTO 0);
-			o_Grn_Video : OUT std_logic_vector(COMPONENT_DEPTH - 1 DOWNTO 0);
-			o_Blu_Video : OUT std_logic_vector(COMPONENT_DEPTH - 1 DOWNTO 0)
-		);
-	END COMPONENT;
 
 	CONSTANT USER_SLV_DWIDTH : INTEGER := C_S_AXI_DATA_WIDTH;
 
