@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS10(
+module ls10(
         input wire A1,
         input wire B1,
         input wire C1,

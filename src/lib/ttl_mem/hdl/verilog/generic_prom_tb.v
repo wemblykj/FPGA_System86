@@ -23,7 +23,7 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-`include "../roms/rthunder.vh"
+`include "../../../../roms/rthunder.vh"
 
 module GENERIC_PROM_tb
 	#(

@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module CUS47
+module cus47
     #(
         // based on Atari watchdog based on LS197 decade
         // this equates to about 4^2 V-blanks
@@ -67,7 +67,7 @@ module CUS47
 	reg VBLK_LATCHED;
 	
 	//Based on Pacland circuitry
-	LS175 eq_generator(
+	ls175 eq_generator(
 		.CLK(CLK_6M),
 		.CLR(RES),
 		.D1(CLK_2H),

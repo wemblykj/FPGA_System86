@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS374(
+module ls374(
         input wire OC,
         input wire CLK,
         input wire [1:8] D,

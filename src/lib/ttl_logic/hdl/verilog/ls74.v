@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS74(
+module ls74(
         input wire CLR1,
         input wire CLR2,
         input wire CLK1,

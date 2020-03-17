@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS257(
+module ls257(
         input wire G,
         input wire SELA,
         input wire [3:0] A,

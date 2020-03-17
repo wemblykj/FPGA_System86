@@ -22,68 +22,150 @@
   <sourceproject xmlns="http://www.xilinx.com/XMLSchema" xil_pn:fileType="FILE_XISE" xil_pn:name="system86.xise"/>
 
   <files xmlns="http://www.xilinx.com/XMLSchema">
-    <file xil_pn:fileType="FILE_XST_PROJECT" xil_pn:name="cus27_tb_beh.prj"/>
+    <file xil_pn:fileType="FILE_XST_PROJECT" xil_pn:name="_stx_beh.prj"/>
     <file xil_pn:branch="BehavioralSim" xil_pn:fileType="FILE_ISIM_EXE" xil_pn:name="cus27_tb_isim_beh.exe"/>
     <file xil_pn:fileType="FILE_ISIM_MISC" xil_pn:name="cus27_tb_isim_beh.wdb"/>
     <file xil_pn:fileType="FILE_XST_PROJECT" xil_pn:name="cus27_tb_stx_beh.prj"/>
-    <file xil_pn:fileType="FILE_LOG" xil_pn:name="fuse.log"/>
     <file xil_pn:fileType="FILE_DIRECTORY" xil_pn:name="isim"/>
     <file xil_pn:branch="BehavioralSim" xil_pn:fileType="FILE_CMD" xil_pn:name="isim.cmd"/>
-    <file xil_pn:branch="BehavioralSim" xil_pn:fileType="FILE_LOG" xil_pn:name="isim.log"/>
+    <file xil_pn:fileType="FILE_XST_PROJECT" xil_pn:name="system86_stx_beh.prj"/>
     <file xil_pn:branch="BehavioralSim" xil_pn:fileType="FILE_INI" xil_pn:name="xilinxsim.ini"/>
   </files>
 
   <transforms xmlns="http://www.xilinx.com/XMLSchema">
-    <transform xil_pn:end_ts="1554306752" xil_pn:name="TRAN_copyInitialToAbstractSimulation" xil_pn:start_ts="1554306752">
+    <transform xil_pn:end_ts="1584453562" xil_pn:name="TRAN_copyInitialToAbstractSimulation" xil_pn:start_ts="1584453562">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1554901183" xil_pn:in_ck="4547885357854363041" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1554901183">
+    <transform xil_pn:end_ts="1584453562" xil_pn:in_ck="6354537104410196115" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1584453562">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
+      <outfile xil_pn:name="../../../../roms/roms.vh"/>
+      <outfile xil_pn:name="../../../../roms/rthunder.vh"/>
+      <outfile xil_pn:name="../../../lib/mc6809_cpu/hdl/verilog/mc68a09e.v"/>
       <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus27.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus35.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus41.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus42.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus43.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus47.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/subsystem/clut_subsystem.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/subsystem/cpu_subsystem.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/subsystem/spritegen_subsystem.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/subsystem/tilegen_subsystem.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/subsystem/timing_subsystem.v"/>
       <outfile xil_pn:name="../../../lib/system86/rtl/system86.v"/>
       <outfile xil_pn:name="../../../lib/system86/simulation/custom/cus27_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls00.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls02.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls08.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls10.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls139.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls139_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls153.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls153_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls157.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls158.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls174.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls175.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls245.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls245_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls257.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls273.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls32.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls374.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls74.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls85.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/cy6264.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/eprom_27128.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/eprom_27256.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/eprom_27512.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/generic_prom.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/generic_prom_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/generic_sram.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/generic_sram_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/prom_7112.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/prom_7116.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/prom_7124.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/prom_7138.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/tmm2064p.v"/>
     </transform>
-    <transform xil_pn:end_ts="1554308607" xil_pn:name="TRAN_xawsToSimhdl" xil_pn:prop_ck="-1804357802636184096" xil_pn:start_ts="1554308607">
+    <transform xil_pn:end_ts="1584453562" xil_pn:name="TRAN_xawsToSimhdl" xil_pn:prop_ck="7946403912957327434" xil_pn:start_ts="1584453562">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1554308607" xil_pn:name="TRAN_schematicsToHdlSim" xil_pn:prop_ck="-301530916657541730" xil_pn:start_ts="1554308607">
+    <transform xil_pn:end_ts="1584453562" xil_pn:name="TRAN_schematicsToHdlSim" xil_pn:prop_ck="5707373237961090056" xil_pn:start_ts="1584453562">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1554308607" xil_pn:name="TRAN_regenerateCoresSim" xil_pn:prop_ck="-9058661039831278567" xil_pn:start_ts="1554308607">
+    <transform xil_pn:end_ts="1584453562" xil_pn:name="TRAN_regenerateCoresSim" xil_pn:prop_ck="-9058661039831278567" xil_pn:start_ts="1584453562">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1554901183" xil_pn:in_ck="4547885357854363041" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1554901183">
+    <transform xil_pn:end_ts="1584453562" xil_pn:in_ck="6354537104410196115" xil_pn:name="TRAN_copyPostAbstractToPreSimulation" xil_pn:start_ts="1584453562">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
+      <outfile xil_pn:name="../../../../roms/roms.vh"/>
+      <outfile xil_pn:name="../../../../roms/rthunder.vh"/>
+      <outfile xil_pn:name="../../../lib/mc6809_cpu/hdl/verilog/mc68a09e.v"/>
       <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus27.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus35.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus41.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus42.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus43.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/custom/cus47.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/subsystem/clut_subsystem.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/subsystem/cpu_subsystem.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/subsystem/spritegen_subsystem.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/subsystem/tilegen_subsystem.v"/>
+      <outfile xil_pn:name="../../../lib/system86/rtl/subsystem/timing_subsystem.v"/>
       <outfile xil_pn:name="../../../lib/system86/rtl/system86.v"/>
       <outfile xil_pn:name="../../../lib/system86/simulation/custom/cus27_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls00.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls02.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls08.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls10.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls139.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls139_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls153.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls153_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls157.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls158.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls174.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls175.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls245.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls245_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls257.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls273.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls32.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls374.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls74.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_logic/hdl/verilog/ls85.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/cy6264.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/eprom_27128.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/eprom_27256.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/eprom_27512.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/generic_prom.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/generic_prom_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/generic_sram.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/generic_sram_tb.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/prom_7112.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/prom_7116.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/prom_7124.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/prom_7138.v"/>
+      <outfile xil_pn:name="../../../lib/ttl_mem/hdl/verilog/tmm2064p.v"/>
     </transform>
-    <transform xil_pn:end_ts="1554901185" xil_pn:in_ck="4547885357854363041" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="-5269319557621830049" xil_pn:start_ts="1554901183">
-      <status xil_pn:value="SuccessfullyRun"/>
+    <transform xil_pn:end_ts="1584453568" xil_pn:in_ck="6354537104410196115" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="-2452366988906758029" xil_pn:start_ts="1584453562">
+      <status xil_pn:value="FailedRun"/>
       <status xil_pn:value="ReadyToRun"/>
-      <status xil_pn:value="OutOfDateForOutputs"/>
-      <status xil_pn:value="OutputChanged"/>
-      <outfile xil_pn:name="cus27_tb_beh.prj"/>
-      <outfile xil_pn:name="cus27_tb_isim_beh.exe"/>
-      <outfile xil_pn:name="fuse.log"/>
-      <outfile xil_pn:name="isim"/>
-      <outfile xil_pn:name="isim.log"/>
-      <outfile xil_pn:name="xilinxsim.ini"/>
     </transform>
     <transform xil_pn:end_ts="1554901185" xil_pn:in_ck="2634098181858405304" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="3757045414133942786" xil_pn:start_ts="1554901185">
-      <status xil_pn:value="SuccessfullyRun"/>
+      <status xil_pn:value="AbortedRun"/>
       <status xil_pn:value="ReadyToRun"/>
-      <status xil_pn:value="OutOfDateForOutputs"/>
-      <status xil_pn:value="OutputChanged"/>
-      <outfile xil_pn:name="cus27_tb_isim_beh.wdb"/>
+      <status xil_pn:value="OutOfDateForProperties"/>
+      <status xil_pn:value="OutOfDateForPredecessor"/>
+      <status xil_pn:value="OutOfDateForced"/>
       <outfile xil_pn:name="isim.cmd"/>
-      <outfile xil_pn:name="isim.log"/>
     </transform>
   </transforms>
 

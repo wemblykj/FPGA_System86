@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS245(
+module ls245(
         input wire DIR,
         input wire OE,
         inout wire [7:0] A,

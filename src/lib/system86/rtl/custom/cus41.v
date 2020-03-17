@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module CUS41
+module cus41
     #(
         parameter WATCHDOG_WIDTH = 8
     )

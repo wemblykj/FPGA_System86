@@ -23,7 +23,7 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module LS139_tb;
+module ls139_tb;
 
 	// Inputs
 	reg Ea;
@@ -44,7 +44,7 @@ module LS139_tb;
 	wire O3b;
 
 	// Instantiate the Unit Under Test (UUT)
-	LS139 uut (
+	ls139 uut (
 		.Ea(Ea), 
 		.A0a(A0a), 
 		.A1a(A1a), 

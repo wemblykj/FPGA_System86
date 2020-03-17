@@ -21,8 +21,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-`include "common/defines.vh"
-
 module spritegen_subsystem
 	#(
 	)
@@ -80,7 +78,7 @@ module spritegen_subsystem
 	//  1    1    0  |  1    1		main CPU address == 0x1xxx	=> 0x1800 base (sprite registers)
 	//  1    1    1  |  1    1		main CPU odd address 		=> 0x1800 base	(sprite registers)
 	
-	LS32 LS32_6E(
+	ls32 LS32_6E(
 			.A3(CLK_2H),
 			.B3(A[12]),
 			.A4(CLK_2H),
@@ -130,7 +128,7 @@ module spritegen_subsystem
 	wire [3:0] cus39_11n_oo;
 	wire [7:0] prom_11u_d;	// prom or sram? 2018 (i think it is a sram!)
 	
-	LS10 LS10_7E(
+	ls10 LS10_7E(
 			.A1(~A[0]),
 			.B1(A[12]),
 			.C1(A[11] | ls174_6v_q4),
@@ -145,21 +143,21 @@ module spritegen_subsystem
 			.Y3(ls10_7e_3y)
 		);
 	
-	LS174 LS174_6V(
+	ls174 LS174_6V(
 			.CLK(cus39_11n_latch),
 			.CLR(VCC),
 			.D( { ls10_7e_2y, BLANKING, cus39_11n_oo[0], cus39_11n_oo[1], cus39_11n_oo[2], cus39_11n_oo[3] } ),
 			.Q( { ls174_6v_q6, ls174_6v_q5, ls174_6v_q4, ls174_6v_q3, ls174_6v_q2, ls174_6v_q1} )
 		);
 		
-	LS174 LS174_9V(
+	ls174 LS174_9V(
 			.CLK(cus39_11n_latch),
 			.CLR(VCC),
 			.D( { GND, ls85_7v_agtb, GND, GND, GND, GND} ),
 			.Q( { ls174_9v_q6, ls174_9v_q5, ls174_9v_q4, ls174_9v_q3, ls174_9v_q2, ls174_9v_q1} )
 		);
 		
-	LS174 LS174_8V(
+	ls174 LS174_8V(
 			.CLK(cus39_11n_latch),
 			.CLR(VCC),
 			.D( { prom_11u_d[0], prom_11u_d[1], prom_11u_d[2], prom_11u_d[3], GND, GND} ),
@@ -173,7 +171,7 @@ module spritegen_subsystem
 	//wire [7:0] cus35_9m_bi;
 	wire [7:0] cus35_9m_bo;
 	
-	CUS35 CUS35_9M(
+	cus35 CUS35_9M(
 			.CLK_6M(CLK_6M),
 			.VRES(VRESET),
 			.OCS(OBJECT),
@@ -196,7 +194,7 @@ module spritegen_subsystem
     assign sram_10m_we = cus35_9m_rwe;
     assign sram_10m_oe = cus35_9m_roe;
     
-	LS85 LS85_7V(
+	ls85 LS85_7V(
 			.A( { ls10_7e_3y, ls174_9v_q1, ls174_9v_q2, ls174_9v_q3 } ),
 			.B( { VCC, SPR } ),
 			.AgtBin(VCC),

@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS174(
+module ls174(
         input wire CLK,
         input wire CLR,
         input wire [5:0] D,

@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS175(
+module ls175(
         input wire CLK,
         input wire CLR,
         input wire D1,

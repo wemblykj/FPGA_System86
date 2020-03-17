@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module CUS35(
+module cus35(
         input wire CLK_6M,
         input wire VRES,
         input wire HSYNC,

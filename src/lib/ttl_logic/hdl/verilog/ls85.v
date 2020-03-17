@@ -19,7 +19,7 @@
 // License:		   https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS85(
+module ls85(
         input wire [3:0] A,
         input wire [3:0] B,
         output wire AgtBin,

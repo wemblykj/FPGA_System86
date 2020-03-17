@@ -20,8 +20,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-`include "common/defines.vh"
-
 module tilegen_subsystem
 	#(
 	)
@@ -169,7 +167,7 @@ module tilegen_subsystem
 	wire [2:0] cus43_6n_dto;
 	
 	// background color latch
-	LS374 LS374_8H(
+	ls374 LS374_8H(
 			.OC(~J5[5]),		// disable background color driver from auxillary driver over J5
 			.CLK(~BACKCOLOR),	// latches on negative edge
 			.D(MD),
@@ -187,7 +185,7 @@ module tilegen_subsystem
     
 	// == Layer 1 & 2 =
 	
-	CUS42 CUS42_7K(
+	cus42 CUS42_7K(
 			// inputs
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_2H), 
@@ -206,7 +204,7 @@ module tilegen_subsystem
 		);
 	
 	// tile ram
-	CY6264 CY6264_7N(
+	cy6264 CY6264_7N(
 			.CE1(VCC),
 			.CE2(VCC),
 			.WE(cus42_7k_rwe),
@@ -223,7 +221,7 @@ module tilegen_subsystem
     assign eeprom_7s_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:1] };
     assign eeprom_7s_ce = VCC;
     
-    LS158 ls158();
+    ls158 ls158();
 	
 	// auxillary select
 	wire [2:0] cus43_8n_pr_in;
@@ -237,7 +235,7 @@ module tilegen_subsystem
 	assign cus43_8n_dt_in = J5[5] ? { J5[8], J5[9], J5[10] } : 3'b1;		
 	
 	// tile generator
-	CUS43 CUS43_8N(
+	cus43 CUS43_8N(
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
 			.PRI( cus43_8n_pr_in ),
@@ -255,7 +253,7 @@ module tilegen_subsystem
 	// == Layer 3 & 4 =
 	
 	// tile address generator
-	CUS42 CUS42_5K(
+	cus42 CUS42_5K(
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_2H), 
 			.HSYNC(HSYNC),
@@ -274,7 +272,7 @@ module tilegen_subsystem
 		);
 		
 	// tile ram 1
-	CY6264 CY6264_4N(
+	cy6264 CY6264_4N(
 			.CE1(VCC),
 			.CE2(VCC),
 			.WE(cus42_5k_rwe),
@@ -285,14 +283,14 @@ module tilegen_subsystem
 	
     // layer 3/4 - red and green channels (4-bit per channel)
 	assign eeprom_4r_addr = { prom_6u_data[7:5], cus42_5k_ga[11:0] };
-    assign eeprom_4r_ce = VCC;
+   assign eeprom_4r_ce = VCC;
     
-    // layer 3/4 - blue channel (4-bit per channel with two pixels per address)
-    assign eeprom_4s_addr = { prom_6u_data[7:5], cus42_5k_ga[11:1] };
-    assign eeprom_4s_ce = VCC;
+   // layer 3/4 - blue channel (4-bit per channel with two pixels per address)
+   assign eeprom_4s_addr = { prom_6u_data[7:5], cus42_5k_ga[11:1] };
+   assign eeprom_4s_ce = VCC;
     
 	// tile generator
-	CUS43 CUS43_6N(
+	cus43 CUS43_6N(
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
 			.PRI(PR),

@@ -22,7 +22,7 @@
 
 //`include "common/defines.vh"
 
-`include "../roms/rthunder.vh"
+`include "../../../../roms/rthunder.vh"
 
 module system86
 	(
@@ -34,11 +34,11 @@ module system86
 		output wire [3:0] G,
 		output wire [3:0] B,
 		output wire HSYNC,
-		output wire VSYNC
+		output wire VSYNC,
  
 		// == External boards connectors
 		inout wire [1:20] J5,
-		inout wire [1:40] J34P,
+		inout wire [1:40] J34P
 	);
 	
 	// == global signals ==
@@ -82,7 +82,7 @@ module system86
 	wire prom_5v_ce;
 		
 	PROM_7138 
-		#('ROM_5V, 10, 8) 
+		#(`ROM_5V, 10, 8) 
 		PROM_5V(
 			.E(prom_5v_ce), 
 			.A( prom_5v_addr ), 
@@ -94,7 +94,7 @@ module system86
 	wire prom_3r_ce;
 				
 	PROM_7124 
-		#('ROM_3R) 
+		#(`ROM_3R) 
 		PROM_3R(
 			.E(prom_3r_ce),
 			.A(prom_3r_addr), 
@@ -106,7 +106,7 @@ module system86
 	wire prom_3s_ce;
 	
 	PROM_7116 
-		#('ROM_3S) 
+		#(`ROM_3S) 
 		PROM_3S(
 			.E(prom_3s_ce),
 			.A(prom_3s_addr), 
@@ -119,7 +119,7 @@ module system86
 	wire prom_6u_ce;
 		
 	PROM_7112 
-		#('ROM_6U) 
+		#(`ROM_6U) 
 		PROM_6U(
 			.E(prom_6u_ce),
 			.A(prom_6u_addr), 
@@ -132,7 +132,7 @@ module system86
 	wire prom_4v_ce;
 		
 	PROM_7138 
-		#('ROM_4V) 
+		#(`ROM_4V) 
 		PROM_4V(
 			.E(prom_4v_ce), //.E(SCRWIN),
 			.A(prom_4v_addr), 
@@ -147,7 +147,7 @@ module system86
 	wire eeprom_9c_ce;
 
 	EPROM_27256 
-		#('ROM_9C) 
+		#(`ROM_9C) 
 		eprom_9c(
 			.E(eeprom_9c_ce), 
 			.G(GND),	// negate to compensate for active low
@@ -161,7 +161,7 @@ module system86
 	wire eeprom_9d_ce;
 
 	EPROM_27256 
-		#('ROM_9D) 
+		#(`ROM_9D) 
 		eprom_9d(
 			.E(eeprom_9d_ce),
 			.G(GND), 
@@ -175,7 +175,7 @@ module system86
 	wire eeprom_12c_ce;
 		
 	EPROM_27256 
-		#('ROM_12C) 
+		#(`ROM_12C) 
 		eprom_12c(
 			.E(eeprom_12c_ce),
 			.G(GND),
@@ -189,7 +189,7 @@ module system86
 	wire eeprom_12d_ce;
 		
 	EPROM_27256 
-		#('ROM_12D) 
+		#(`ROM_12D) 
 		eprom_12d(
 			.E(eeprom_12d_ce), 
 			.G(GND),
@@ -210,7 +210,7 @@ module system86
 	wire eeprom_7r_ce;
 		
 	EPROM_27512 
-		#('ROM_7R) 
+		#(`ROM_7R) 
 		EPROM_7R(
 			.E(eeprom_7r_ce),
 			.G(VCC), 
@@ -225,7 +225,7 @@ module system86
 	wire eeprom_7s_ce;
 		
 	EPROM_27256 
-		#('ROM_7S) 
+		#(`ROM_7S) 
 		EPROM_7S(
 			.E(eeprom_7r_ce),
 			.G(VCC), 
@@ -239,7 +239,7 @@ module system86
 	wire eeprom_4r_ce;
 		
 	EPROM_27256 
-		#('ROM_4R) 
+		#(`ROM_4R) 
 		EPROM_4R(
 			.E(eeprom_4r_ce),
 			.G(VCC), 
@@ -253,7 +253,7 @@ module system86
 	wire eeprom_4s_ce;
 		
 	EPROM_27128 
-		#('ROM_4S) 
+		#(`ROM_4S) 
 		EPROM_4S(
 			.E(eeprom_4s_ce), 
 			.G(VCC),
@@ -270,7 +270,7 @@ module system86
 	wire sram_10m_we;
 	wire sram_10m_oe;
 		
-	CY6264 
+	cy6264 
 		cy6264_10m(
 			.CE1(sram_10m_ce),
 			.CE2(VCC),
@@ -287,8 +287,8 @@ module system86
 	wire sram_7n_we;
 	wire sram_7n_oe;
 		
-	CY6264 
-		cy6264_4n(
+	cy6264 
+		cy6264_7n(
 			.CE1(sram_7n_ce),
 			.CE2(VCC),
 			.WE(sram_7n_we),
@@ -304,7 +304,7 @@ module system86
 	wire sram_4n_we;
 	wire sram_4n_oe;
 	
-	CY6264 
+	cy6264 
 		cy6264_4n(
 			.CE1(sram_4n_ce),
 			.CE2(VCC),
@@ -327,11 +327,11 @@ module system86
 			.VRESET(VRESET),
 			.BLANKING(BLANKING),
 			.COMPSYNC(COMPSYNC),
-			.CLK_1H(CLK_1H),
-			.CLK_S1H(CLK_S1H),	// secondary driver? in phase with 1H
-			.CLK_2H(CLK_2H),
-			.CLK_S2H(CLK_S2H),	// secondary driver? in phase with 2H
-			.CLK_4H(CLK_4H)
+			.CLK_1H_O(CLK_1H),
+			.CLK_S1H_O(CLK_S1H),	// secondary driver? in phase with 1H
+			.CLK_2H_O(CLK_2H),
+			.CLK_S2H_O(CLK_S2H),	// secondary driver? in phase with 2H
+			.CLK_4H_O(CLK_4H)
 		);
 	
 	// CPU sub-system
@@ -358,7 +358,7 @@ module system86
 			.LATCH0(LATCH0),
 			.LATCH1(LATCH1),
 			.BACKCOLOR(BACKCOLOR),
-			.MD(MD)
+			.MD(MD),
 			
 			// == hardware abstraction - memory buses ==
 			

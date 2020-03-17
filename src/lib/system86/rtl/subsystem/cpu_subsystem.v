@@ -24,8 +24,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-`include "common/defines.vh"
-
 module cpu_subsystem
     #(
     )
@@ -123,7 +121,7 @@ module cpu_subsystem
 	wire [7:0] ls245_12e_a;
 	
 	wire ls02_12a_1y;
-	LS02 ls02_12a(
+	ls02 ls02_12a(
 			.A1(CLK_6M), 
 			.B1(CLK_S1H),
 			.Y1(ls02_12a_1y)
@@ -133,7 +131,7 @@ module cpu_subsystem
 	wire ls08_8e_2y;
 	wire ls08_8e_3y;
 	wire ls08_8e_4y;
-	LS08 ls08_8e(
+	ls08 ls08_8e(
 			.A1(~cus41_8a_mcs4),
 			.B1(cus41_8a_mrom),
 			.A2(~cus47_10c_obj),
@@ -151,7 +149,7 @@ module cpu_subsystem
 	wire ls00_8d_1y;
 	wire ls00_8d_2y;
 	wire ls00_8d_3y;
-	LS00 ls00_8d(
+	ls00 ls00_8d(
 			.A1(cpu2_11a_a[12]),
 			.B1(cpu2_11a_a[15]),
 			.A2(~cpu2_11a_we),
@@ -187,7 +185,7 @@ module cpu_subsystem
 		);	
 		
 	// CUS47 - CPU 1 ADDRESS DECODER
-	CUS47 cus47_10c
+	cus47 cus47_10c
         (
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_S2H), 
@@ -212,7 +210,7 @@ module cpu_subsystem
 			.MPGM(cus47_10C_mpmg)
 		);
 	
-	LS139 ls139_7d
+	ls139 ls139_7d
         (
 			.Eb(cpu1_9a_a[15]),
 			.A0b(cpu1_9a_a[13]),
@@ -220,7 +218,7 @@ module cpu_subsystem
 			.O3b(ls139_7d_3b)
 		);
 	
-	LS153 ls153_8f
+	ls153 ls153_8f
         (
 			.S0(cpu1_9a_a[0]),
 			.S1(cpu1_9a_a[1]),
@@ -241,7 +239,7 @@ module cpu_subsystem
 	// Sub CPU system
 	
 	// CUS41 - CPU 2 ADDRESS DECODER
-	CUS41 cus41_8a
+	cus41 cus41_8a
         (
 			.MA(cpu2_11a_a[15:11]), 
 			.CLK_0(~CLK_S2H), 	// negate for active low
@@ -286,7 +284,7 @@ module cpu_subsystem
 	wire [3:0] ls257_11f_y;
 	wire [3:0] ls157_8c_y;
 	
-	LS245 ls245_9e
+	ls245 ls245_9e
         (
 			.DIR(~cpu1_9a_we),
 			.OE(cus47_10c_bufen),
@@ -294,7 +292,7 @@ module cpu_subsystem
 			.B(cpu1_9a_d)
 		);
 	
-	LS245 ls245_12e
+	ls245 ls245_12e
         (
 			.DIR(~cpu2_11a_we),
 			.OE(~ls00_8d_3y),
@@ -302,7 +300,7 @@ module cpu_subsystem
 			.B(cpu2_11a_d)
 		);
 	
-	LS257 ls257_11e
+	ls257 ls257_11e
         (
 			.G(~CLK_1H),
 			.SELA(~CLK_S2H),
@@ -311,7 +309,7 @@ module cpu_subsystem
 			.Y(ls257_11e_y)
 		);
 		
-	LS257 ls257_11d
+	ls257 ls257_11d
         (
 			.G(~CLK_1H),
 			.SELA(~CLK_S2H),
@@ -320,7 +318,7 @@ module cpu_subsystem
 			.Y(ls257_11d_y)
 		);
 		
-	LS257 ls257_11f
+	ls257 ls257_11f
         (
 			.G(~CLK_1H),
 			.SELA(~CLK_S2H),
@@ -329,7 +327,7 @@ module cpu_subsystem
 			.Y(ls257_11f_y)
 		);
 		
-	LS157 ls157_8c
+	ls157 ls157_8c
         (
 			.G(~CLK_1H),
 			.SELA(~CLK_2H),
@@ -374,7 +372,7 @@ module cpu_subsystem
 	assign RESET = (RST == 1 || cus47_10c_res == 1 || cus41_8a_mreset == 1) ? 1'b1 : 1'b0;	
 	
 	//assign D = CLK_1H ? ls245_9e_a : ls00_8d_3y ? ls245_12e_a : 8'bZ;
-    assign D = (ls245_9e_a == z) ? ((ls245_12e_a == z) ? ls00_8d_3y : ls245_12e_a) : ls245_9e_a;
+   assign D = (ls245_9e_a == 1'bz) ? ((ls245_12e_a == 1'bz) ? ls00_8d_3y : ls245_12e_a) : ls245_9e_a;
 	
 	assign MD = cpu1_9a_d;
 	assign BACKCOLOR = cus47_10c_latch2;

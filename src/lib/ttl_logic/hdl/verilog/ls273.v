@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS273(
+module ls273(
         input wire CLK,
         input wire CLR,
         input wire [7:0] D,

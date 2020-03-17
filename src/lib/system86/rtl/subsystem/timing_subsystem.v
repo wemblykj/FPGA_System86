@@ -24,15 +24,12 @@ module timing_subsystem
 	parameter C_USE_HARDWARE_CLOCKS = 0
 )
 (
-	if (C_USE_HARDWARE_CLOCKS == 0) generate	
-		input wire CLK_48M,
-		output wire CLK_24M_O,
-		output wire CLK_12M_O,
-		output wire CLK_6M_O,
-		output wire CLK_6MD_O,
-	end	
-endgenerate
+	input wire CLK_48M,
 	input wire CLK_6M,
+	output wire CLK_24M_O,
+	output wire CLK_12M_O,
+	output wire CLK_6M_O,
+	output wire CLK_6MD_O,
 	output wire VSYNC,
 	output wire HSYNC,
 	output wire VBLANK,
@@ -54,14 +51,12 @@ endgenerate
 	reg cus27_9p_6m_latched;
 	
 	// CUS27 - CLOCK DIVIDER
-	CUS27 
+	cus27 
 		CUS_27_CLKDIV_9P(
-			if (C_USE_HARDWARE_CLOCKS == 0) generate
-				.CLK_48M(CLK_48M), 
-				.CLK_24M_O(CLK_24M_O),
-				.CLK_12M_O(CLK_12M_O),
-				.CLK_6M_O(CLK_6M_O),
-			endgenerate
+			.CLK_48M(CLK_48M), 
+			.CLK_24M_O(CLK_24M_O),
+			.CLK_12M_O(CLK_12M_O),
+			.CLK_6M_O(CLK_6M_O),
 			//.CLK_6M(cus27_9p_6m_latched),
 			.CLK_6M(CLK_6M_O),
 			.VSYNC(VSYNC),
@@ -82,7 +77,7 @@ endgenerate
 
 	// == TTL glue logic
     
-	LS74 
+	ls74 
 		ls74_8u(
 			.PRE2(GND),
 			.CLK2(CLK_4H),
@@ -94,11 +89,12 @@ endgenerate
 	assign COMPSYNC = HSYNC || VSYNC;	// via LS08 (3H) and'ing of negated signals
 	
 
-	if (C_USE_HARDWARE_CLOCKS == 0) generate
+generate
+	if (C_USE_HARDWARE_CLOCKS == 0)
 		always @(*) begin
 			// Timing hack - is this still required?
 			cus27_9p_6m_latched = CLK_6M_O;
 		end
-	endgenerate
+endgenerate
 	
 endmodule

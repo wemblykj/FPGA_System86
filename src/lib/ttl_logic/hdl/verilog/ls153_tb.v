@@ -23,7 +23,7 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module LS153_tb;
+module ls153_tb;
 
 	// Inputs
 	reg S0;
@@ -44,7 +44,7 @@ module LS153_tb;
 	wire Zb;
 
 	// Instantiate the Unit Under Test (UUT)
-	LS153 uut (
+	ls153 uut (
 		.S0(S0), 
 		.S1(S1), 
 		.Ea(Ea), 

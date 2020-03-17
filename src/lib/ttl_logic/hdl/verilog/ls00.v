@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS00(
+module ls00(
         input wire A1,
         input wire B1,
         input wire A2,

@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS157(
+module ls157(
         input wire G,
         input wire SELA,
         input wire [3:0] A,

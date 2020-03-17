@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module CUS43(
+module cus43(
         input wire [2:0] PRI,
         input wire [7:0] CLI,
         input wire [2:0] DTI,

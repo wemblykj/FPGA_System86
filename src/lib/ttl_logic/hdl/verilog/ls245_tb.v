@@ -23,7 +23,7 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module LS245_tb;
+module lsS245_tb;
 
 	// Inputs
 	reg DIR;
@@ -40,7 +40,7 @@ module LS245_tb;
 	assign B = ~DIR ? BIn : 8'bZ;
 	
 	// Instantiate the Unit Under Test (UUT)
-	LS245 uut (
+	ls245 uut (
 		.DIR(DIR), 
 		.OE(OE), 
 		.A(A),

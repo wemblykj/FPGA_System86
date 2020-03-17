@@ -20,8 +20,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-`include "common/defines.vh"
-
 module clut_subsystem 
 #(
 )
@@ -42,7 +40,7 @@ module clut_subsystem
     
     input wire [3:0] prom_3s_data,
     output wire [8:0] prom_3s_addr,
-    output wire prom_3s_ce,
+    output wire prom_3s_ce
 );
 	
 	assign R = prom_3r_data[3:0];
@@ -50,7 +48,7 @@ module clut_subsystem
 	assign B = prom_3s_data;
 	
 	wire [7:0] ls273_4u_d;
-	LS273 LS273_4U(
+	ls273 LS273_4U(
 		.CLK(CLK_6M),
 		.CLR(CLR),
 		.D(D),
@@ -60,10 +58,10 @@ module clut_subsystem
     // == hardware abstraction - memory buses ==
     
     assign prom_3r_addr = {BANK, ls273_4u_d};
-    assign prom_3r_ce = VCC;
+    assign prom_3r_ce = 1;
     
     assign prom_3s_addr = {BANK, ls273_4u_d};
-    assign prom_3s_ce = VCC;
+    assign prom_3s_ce = 1;
     	
 endmodule
 

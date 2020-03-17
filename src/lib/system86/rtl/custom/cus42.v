@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module CUS42(
+module cus42(
         input wire CLK_6M,
         input wire CLK_2H,
         input wire HSYNC,

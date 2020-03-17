@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS139(
+module ls139(
         input wire Ea,
         input wire A0a,
         input wire A1a,

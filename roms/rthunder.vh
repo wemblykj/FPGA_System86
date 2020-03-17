@@ -20,6 +20,7 @@
 `define ROM_7S `MAKE_ROM_PATH(`RTHUNDER, "rt1_8.7s")
 
 `define ROM_9C `MAKE_ROM_PATH(`RTHUNDER, "rt3_1b.9c")
+`define ROM_9D `MAKE_ROM_PATH(`RTHUNDER, "rt3_1b.9d")
 
 `define ROM_12C `MAKE_ROM_PATH(`RTHUNDER, "rt3_2b.12c")
 `define ROM_12D `MAKE_ROM_PATH(`RTHUNDER, "rt3_3.12d")

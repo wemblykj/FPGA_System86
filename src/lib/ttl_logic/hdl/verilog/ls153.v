@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module LS153(
+module ls153(
         input wire S0,
         input wire S1,
         input wire Ea,
