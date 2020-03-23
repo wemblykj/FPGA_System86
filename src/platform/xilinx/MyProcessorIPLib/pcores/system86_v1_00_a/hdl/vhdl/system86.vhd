@@ -245,7 +245,7 @@ end component;
 	
 component Test_Pattern_Gen
 generic(
-	VIDEO_WIDTH 		: integer := 3;
+	COMPONENT_DEPTH 		: integer := 3;
    TOTAL_COLS  		: integer := 384;
    TOTAL_ROWS   		: integer := 264;
    ACTIVE_COLS  		: integer := 288;
@@ -261,14 +261,15 @@ generic(
 );
 port (
 	i_Clk : in std_logic;
+	i_Rst : in std_logic;
    i_Pattern : in std_logic_vector(3 downto 0);
    i_HSync : in std_logic;
    i_VSync : in std_logic;
    o_HSync : out std_logic;
    o_VSync : out std_logic;
-   o_Red_Video  : out std_logic_vector(VIDEO_WIDTH-1 downto 0);
-   o_Grn_Video  : out std_logic_vector(VIDEO_WIDTH-1 downto 0);
-   o_Blu_Video  : out std_logic_vector(VIDEO_WIDTH-1 downto 0)
+   o_Red_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
+   o_Grn_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
+   o_Blu_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0)
 );
 
 end component;
@@ -322,7 +323,7 @@ begin
 	Inst_Test_Pattern_Gen: Test_Pattern_Gen
 	generic map
 	(
-		VIDEO_WIDTH 	=> 4,
+		COMPONENT_DEPTH 	=> 4,
 		TOTAL_COLS  	=> 384,
 		TOTAL_ROWS   	=> 288,
 		ACTIVE_COLS  	=> 288,
@@ -331,6 +332,7 @@ begin
 	port map
 	(
 		i_Clk 			=> clk_6m_t,
+		i_Rst				=> rst,
 		i_Pattern 		=> vid_pattern,
 		i_HSync 			=> cus27_hsync,
 		i_VSync 			=> cus27_vsync,

@@ -98,58 +98,60 @@ module system86_tb;
 		//)
 		output_sync_gen (
 			.i_Clk(clk_25m),
+			.i_Rst(rst),
 			.o_HSync(out_hsync),
 			.o_VSync(out_vsync)
 		);
 		
-	upscaler
+	Upscaler
 		#(
-			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
-			.C_LINE_BUFFER_COUNT(8),
-			.C_DELTA_WIDTH_PRECISION(12),
-			.C_DELTA_HEIGHT_PRECISION(12)
+			.COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
+			.LINE_BUFFER_COUNT(8),
+			.SCALE_PRECISION_WIDTH(12),
+			.SCALE_PRECISION_HEIGHT(12)
 		)
-		upscaler (
-			.rst(rst),
+		Upscaler (
+			.i_Rst(rst),
 			
-			.pixel_clk_a(s86_vid_clk),
+			.i_ClkA(s86_vid_clk),
 			
-			.red_a(s86_vid_red),
-			.green_a(s86_vid_green),
-			.blue_a(s86_vid_blue),
-			.hsync_a(s86_hsync),
-			.vsync_a(s86_vsync),
-			.hblank_a(s86_hblank),
-			.vblank_a(s86_vblank),
+			.i_RedA(s86_vid_red),
+			.i_GreenA(s86_vid_green),
+			.i_BlueA(s86_vid_blue),
+			.i_HSyncA(s86_hsync),
+			.i_VSyncA(s86_vsync),
+			.i_HBlankA(s86_hblank),
+			.i_VBlankA(s86_vblank),
 			
-			.pixel_clk_b(clk_25m),
-			.hsync_b(out_hsync),
-			.vsync_b(out_vsync),
-			.hblank_b(out_hblank),
-			.vblank_b(out_vblank),
+			.i_ClkB(clk_25m),
+			.i_HSyncB(out_hsync),
+			.i_VSyncB(out_vsync),
+			.i_HBlankB(out_hblank),
+			.i_VBlankB(out_vblank),
 			
-			.red_b(out_vid_red),
-			.green_b(out_vid_green),
-			.blue_b(out_vid_blue)
+			.o_RedB(out_vid_red),
+			.o_GreenB(out_vid_green),
+			.o_BlueB(out_vid_blue)
 		);
 		
-	vga_logger
+	Video_Logger
 		#(
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
 		)
 		logger (
-			.pixel_clk(clk_25m),
-			.output_enable(~rst),
-			.red(out_vid_red),
-			.green(out_vid_green),
-			.blue(out_vid_blue),
-			.hsync(out_hsync),
-			.vsync(out_vsync)
+			.i_Rst(rst),
+			.i_Clk(clk_25m),
+			.i_OutputEnable(~rst),
+			.i_Red(out_vid_red),
+			.i_Green(out_vid_green),
+			.i_Blue(out_vid_blue),
+			.i_HSync(out_hsync),
+			.i_VSync(out_vsync)
 		);
 		
 	initial begin
 		// Initialize Inputs
-		clk_6m = 0;
+		//clk_6m = 0;
 		clk_25m = 0;
 		rst = 1;
 
@@ -161,7 +163,7 @@ module system86_tb;
 	end
       
 	// generate our 6Mhz input clock
-	always #81.38 clk_6m = ~clk_6m;
+	//always #81.38 clk_6m = ~clk_6m;
 
 	// generate our 25Mhz VGA clock
 	always #19.5313 clk_25m = ~clk_25m;
