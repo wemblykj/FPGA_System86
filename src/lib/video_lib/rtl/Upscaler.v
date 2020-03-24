@@ -349,6 +349,7 @@ always @(negedge i_ClkB) begin
 	if (w_B_VActiveLine && w_B_HActivePixelB) begin
 		// map active input data to active output data
 
+		w_B_Red <= line_buffer_red[w_B_VBufferLineIndex][w_B_HBufferPixelIndex];
 		w_B_Green <= line_buffer_green[w_B_VBufferLineIndex][w_B_HBufferPixelIndex];
 		w_B_Blue <= line_buffer_blue[w_B_VBufferLineIndex][w_B_HBufferPixelIndex];
 	end else begin

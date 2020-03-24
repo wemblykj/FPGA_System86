@@ -252,6 +252,8 @@ port (
    i_VSync : in std_logic;
    o_HSync : out std_logic;
    o_VSync : out std_logic;
+	o_HBlank : out std_logic;
+   o_VBlank : out std_logic;
    o_Red_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
    o_Grn_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
    o_Blu_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0)
@@ -295,10 +297,11 @@ begin
 	generic map
 	(
 		COMPONENT_DEPTH 	=> 4,
-		TOTAL_COLS  	=> 384,
-		TOTAL_ROWS   	=> 288,
-		ACTIVE_COLS  	=> 288,
-		ACTIVE_ROWS  	=> 224
+		USE_BLANKING		=> 1,
+		TOTAL_COLS  		=> 384,
+		TOTAL_ROWS   		=> 288,
+		ACTIVE_COLS  		=> 288,
+		ACTIVE_ROWS  		=> 224
 	)
 	port map
 	(
@@ -309,6 +312,8 @@ begin
 		i_VSync 			=> cus27_vsync,
 		o_HSync 			=> vid_hsync,
 		o_VSync 			=> vid_vsync,
+		o_HBlank			=> vid_hblank,
+		o_VBlank			=> vid_vblank,
 		o_Red_Video  	=> vid_red(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
 		o_Grn_Video  	=> vid_green(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
 		o_Blu_Video		=> vid_blue(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4)

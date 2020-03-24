@@ -46,13 +46,21 @@ module system86_tb;
 	wire [3:0] out_vid_red;
 	wire [3:0] out_vid_green;
 	wire [3:0] out_vid_blue;
-	wire out_hsync;
-	wire out_hblank;
-	wire out_vsync;
-	wire out_vblank;
+	wire in_vid_locked;
+	wire [11:0] in_vid_width;
+	wire [11:0] in_vid_height;
+	wire out_vid_locked;
+	wire [11:0] out_vid_width;
+	wire [11:0] out_vid_height;
+	wire out1_hsync;
+	wire out1_vsync;
+	wire out2_hsync;
+	wire out2_vsync;
+	wire out2_hblank;
+	wire out2_vblank;
 	
-	assign out_hsync_n = ~out_hsync;
-	assign out_vsync_n = ~out_vsync;
+	assign out_hsync_n = ~out2_hsync;
+	assign out_vsync_n = ~out2_vsync;
 	
 	// Instantiate the Unit Under Test (UUT)
 	system86 
@@ -115,13 +123,27 @@ module system86_tb;
 		output_sync_gen (
 			.i_Clk(clk_25m),
 			.i_Rst(rst),
-			.o_HSync(out_hsync),
-			.o_VSync(out_vsync)
+			.o_HSync(out1_hsync),
+			.o_VSync(out1_vsync)
+		);
+	
+	Sync_To_Blanking
+		output_blanking (
+			.i_Clk(clk_25m),
+			.i_Rst(rst),
+			.i_HSync(out1_hsync),
+			.i_VSync(out1_vsync),
+			.o_HSync(out2_hsync),
+			.o_VSync(out2_vsync),
+			.o_HBlank(out2_hblank),
+			.o_VBlank(out2_vblank)
 		);
 		
 	Upscaler
 		#(
 			.COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
+			.USE_BLANKING_A(1),
+			.USE_BLANKING_B(1),
 			.LINE_BUFFER_COUNT(8),
 			.SCALE_PRECISION_WIDTH(12),
 			.SCALE_PRECISION_HEIGHT(12)
@@ -130,7 +152,6 @@ module system86_tb;
 			.i_Rst(rst),
 			
 			.i_ClkA(s86_vid_clk),
-			
 			.i_RedA(s86_vid_red),
 			.i_GreenA(s86_vid_green),
 			.i_BlueA(s86_vid_blue),
@@ -140,11 +161,17 @@ module system86_tb;
 			.i_VBlankA(s86_vblank),
 			
 			.i_ClkB(clk_25m),
-			.i_HSyncB(out_hsync),
-			.i_VSyncB(out_vsync),
-			.i_HBlankB(out_hblank),
-			.i_VBlankB(out_vblank),
+			.i_HSyncB(out2_hsync),
+			.i_VSyncB(out2_vsync),
+			.i_HBlankB(out2_hblank),
+			.i_VBlankB(out2_vblank),
 			
+			.o_LockedA(in_vid_locked),
+			.o_WidthA(in_vid_width),
+			.o_HeightA(in_vid_height),
+			.o_LockedB(out_vid_locked),
+			.o_WidthB(out_vid_width),
+			.o_HeightB(out_vid_height),
 			.o_RedB(out_vid_red),
 			.o_GreenB(out_vid_green),
 			.o_BlueB(out_vid_blue)
@@ -158,12 +185,12 @@ module system86_tb;
 		vga_logger (
 			.i_Rst(rst),
 			.i_Clk(clk_25m),
-			.i_OutputEnable(~rst),
+			.i_OutputEnable(out_vid_locked),
 			.i_Red(out_vid_red),
 			.i_Green(out_vid_green),
 			.i_Blue(out_vid_blue),
-			.i_HSync(out_hsync),
-			.i_VSync(out_vsync)
+			.i_HSync(out2_hsync),
+			.i_VSync(out2_vsync)
 		);
 		
 	initial begin
