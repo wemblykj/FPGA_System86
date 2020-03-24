@@ -79,7 +79,6 @@ use ieee.numeric_std.all;
 entity system86 is
 	generic
 	(
-		C_USE_HARDWARE_CLOCKS 		: integer	:= 0;
 		C_VIDEO_COMPONENT_DEPTH		: integer	:= 8;
 		
 		C_EPROM_7116_ADDR_WIDTH 	: integer	:= 9;
@@ -96,11 +95,6 @@ entity system86 is
 
 		rst		: in	std_logic;
 		clk_48m		: in	std_logic;
-		
-		-- hardware generated clocks
-		clk_24m		: in	std_logic;
-		clk_12m		: in	std_logic;
-		clk_6m		: in	std_logic;
 		
 		-- Component Video
 		vid_clk		: out    std_logic;
@@ -159,9 +153,6 @@ attribute SIGIS : string;
 attribute SIGIS of rst : signal is "Rst"; 
 
 attribute SIGIS of clk_48m : signal is "Clk"; 
-attribute SIGIS of clk_24m : signal is "Clk"; 
-attribute SIGIS of clk_12m : signal is "Clk"; 
-attribute SIGIS of clk_6m : signal is "Clk"; 
 
 attribute SIGIS of vid_clk : signal is "Clk"; 
 
@@ -186,12 +177,9 @@ end system86;
 architecture rtl of system86 is
 
 -- system clocks
-signal clk_24m_t		: std_logic;
-signal clk_12m_t		: std_logic;
 signal clk_6m_t		: std_logic;
 
 -- cus27 outputs
-signal cus27_clk_48m		: std_logic;
 signal cus27_clk_24m		: std_logic;
 signal cus27_clk_12m		: std_logic;
 signal cus27_clk_6m		: std_logic;
@@ -211,9 +199,6 @@ signal cus27_pclk_s1h	: std_logic;
 signal vid_pattern		: std_logic_vector(3 downto 0) := "0101";	-- 0110 black recangle with white border
 
 component cus27
-generic(
-	C_USE_HARDWARE_CLOCKS	: integer := 0
-);
 port(
 	-- global reset
 	rst 			: in std_logic;
@@ -275,33 +260,19 @@ port (
 end component;
 begin
 
-	NO_HARDWARE_CLOCKS: if C_USE_HARDWARE_CLOCKS = 0 generate
-		clk_24m_t <= cus27_clk_24m;
-		clk_12m_t <= cus27_clk_12m;
-		clk_6m_t <= cus27_clk_6m;
-	end generate;
-	
-	HARDWARE_CLOCKS: if C_USE_HARDWARE_CLOCKS = 1 generate
-		clk_24m_t <= clk_24m;
-		clk_12m_t <= clk_12m;
-		clk_6m_t <= clk_6m;
-	end generate;
+	clk_6m_t <= cus27_clk_6m;
 
 	-- video generation
 	vid_clk <= clk_6m_t;
 	
 	Inst_Cus27: cus27
-   generic map
-	(
-		C_USE_HARDWARE_CLOCKS	=> C_USE_HARDWARE_CLOCKS
-	)
-	port map
+   port map
 	(
 		-- global reset
 		rst			=> rst,
 		-- input clocks
 		clk_48m		=> clk_48m,
-		clk_6m		=> clk_6m_t,
+		clk_6m		=> cus27_clk_6m,
 		-- soft generated clocks
 		clk_24m_o	=> cus27_clk_24m,
 		clk_12m_o	=> cus27_clk_12m,
@@ -331,7 +302,7 @@ begin
 	)
 	port map
 	(
-		i_Clk 			=> clk_6m_t,
+		i_Clk 			=> cus27_clk_6m,
 		i_Rst				=> rst,
 		i_Pattern 		=> vid_pattern,
 		i_HSync 			=> cus27_hsync,

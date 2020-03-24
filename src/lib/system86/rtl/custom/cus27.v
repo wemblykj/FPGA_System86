@@ -20,9 +20,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module cus27
-#(
-	parameter C_USE_HARDWARE_CLOCKS = 0
-)
 (
 	// global reset
 	input wire rst,
@@ -69,27 +66,19 @@ module cus27
 	reg vblank_next = 0;
 	reg vreset_next = 0;
 	
-	generate
-		if (C_USE_HARDWARE_CLOCKS == 0) begin
-			reg [2:0] master_counter = 0;
-		
-			always @(posedge clk_48m) begin
-				if (rst) begin
-					master_counter <= 0;
-				end else begin
-					master_counter <= master_counter + 1;
-				end
-			end
+	reg [2:0] master_counter = 0;
 
-			assign clk_24m_o = master_counter[0];
-			assign clk_12m_o = master_counter[1];
-			assign clk_6m_o = master_counter[2];	
+	always @(posedge clk_48m) begin
+		if (rst) begin
+			master_counter <= 0;
 		end else begin
-			assign clk_24m_o = 0;
-			assign clk_12m_o = 0;
-			assign clk_6m_o = 0;	
+			master_counter <= master_counter + 1;
 		end
-	endgenerate
+	end
+
+	assign clk_24m_o = master_counter[0];
+	assign clk_12m_o = master_counter[1];
+	assign clk_6m_o = master_counter[2];	
 	
 	always @(*) begin
 		if (rst) begin

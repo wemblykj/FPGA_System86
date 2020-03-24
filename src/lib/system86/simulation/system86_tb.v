@@ -28,6 +28,7 @@ module system86_tb;
 
 	// Inputs
 	reg clk_48m;
+	reg clk_6m;	// just ref atm
 	reg rst;
 
 	reg clk_25m;
@@ -56,7 +57,6 @@ module system86_tb;
 	// Instantiate the Unit Under Test (UUT)
 	system86 
 		#(
-			.C_USE_HARDWARE_CLOCKS(0),
 			.C_VIDEO_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
 		)
 		uut (
@@ -67,11 +67,27 @@ module system86_tb;
 			.vid_green(s86_vid_green),
 			.vid_blue(s86_vid_blue),
 			.vid_hsync(s86_hsync),
-			.vid_hblank(s86_hblank),
 			.vid_vsync(s86_vsync),
+			.vid_hblank(s86_hblank),
 			.vid_vblank(s86_vblank)
 		);
 
+		Video_Logger
+		#(
+			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
+			.C_FILE_NAME("raw.txt")
+		)
+		raw_logger (
+			.i_Rst(rst),
+			.i_Clk(s86_vid_clk),
+			.i_OutputEnable(~rst),
+			.i_Red(s86_vid_red),
+			.i_Green(s86_vid_green),
+			.i_Blue(s86_vid_blue),
+			.i_HSync(s86_hsync),
+			.i_VSync(s86_vsync)
+		);
+		
 	/*scan_doubler
 		#(
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
@@ -136,9 +152,10 @@ module system86_tb;
 		
 	Video_Logger
 		#(
-			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
+			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
+			.C_FILE_NAME("scaled.txt")
 		)
-		logger (
+		vga_logger (
 			.i_Rst(rst),
 			.i_Clk(clk_25m),
 			.i_OutputEnable(~rst),
@@ -151,7 +168,8 @@ module system86_tb;
 		
 	initial begin
 		// Initialize Inputs
-		//clk_6m = 0;
+		clk_48m = 0;
+		clk_6m = 0;
 		clk_25m = 0;
 		rst = 1;
 
@@ -161,9 +179,13 @@ module system86_tb;
 		// Add stimulus here
 		rst = 0;
 	end
-      
-	// generate our 6Mhz input clock
+
+	// generate our 49.125Mhz input clock
+	always #10.1725 clk_48m = ~clk_48m;     
+	
+	// generate our 6.14025Mhz input clock
 	//always #81.38 clk_6m = ~clk_6m;
+	always #81.4299 clk_6m = ~clk_6m;
 
 	// generate our 25Mhz VGA clock
 	always #19.5313 clk_25m = ~clk_25m;
