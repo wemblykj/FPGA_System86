@@ -5,11 +5,11 @@
 // 
 // Create Date:    11:16:41 05/12/2018 
 // Design Name:    clut_subsystem
-// Module Name:    system86/subsystem/clut_subsystem.v 
+// Module Name:    system86/subsystem/videogen_subsystem.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:    CLUT subsystem - 8-bit to 12-bit (RGB) CLUT
+// Description:    videogen subsystem - 8-bit index to 4-bit RGB via CLUT
 //
 // Dependencies: 
 //
@@ -20,17 +20,17 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module clut_subsystem 
+module videogen_subsystem 
 #(
 )
 (
-    input CLK_6M,
+    input CLK_6MD,
     input CLR,
     input [7:0] D,
     input BANK,
-    output wire [3:0] R,
-    output wire [3:0] G,
-    output wire [3:0] B,
+    output wire [3:0] RED,
+    output wire [3:0] GREEN,
+    output wire [3:0] BLUE,
     
     // == hardware abstraction - memory buses ==
     
@@ -43,25 +43,49 @@ module clut_subsystem
     output wire prom_3s_ce
 );
 	
-	assign R = prom_3r_data[3:0];
-	assign G = prom_3r_data[7:4];
-	assign B = prom_3s_data;
+	assign BLUE = ls173_3v_d[7:4];
+	assign GREEN = ls173_3u_d[7:4];
+	assign RED = ls173_3t_d[7:4];
 	
 	wire [7:0] ls273_4u_d;
-	ls273 LS273_4U(
-		.CLK(CLK_6M),
+	ls273 ls273_4u(
+		.CLK(CLK_6MD),
 		.CLR(CLR),
 		.D(D),
 		.Q(ls273_4u_d)
 		);
 	
-    // == hardware abstraction - memory buses ==
+	wire [7:0] ls173_3v_d;
+	ls173 ls173_3v(
+		.CLK(CLK_6MD),
+		.CLR(CLR),
+		.D({prom_3s_data, 3'b0}),
+		.Q(ls173_3v_d)
+		);
+		
+	wire [7:0] ls173_3u_d;
+	ls173 ls173_3u(
+		.CLK(CLK_6MD),
+		.CLR(CLR),
+		.D({prom_3r_data[7:4], 3'b0}),
+		.Q(ls173_3u_d)
+		);
+		
+	wire [7:0] ls173_3t_d;
+	ls173 ls173_3t(
+		.CLK(CLK_6MD),
+		.CLR(CLR),
+		.D({prom_3r_data[3:0], 3'b0}),
+		.Q(ls173_3t_d)
+		);
+		
+	// == hardware abstraction - memory buses ==
     
-    assign prom_3r_addr = {BANK, ls273_4u_d};
-    assign prom_3r_ce = 1;
+	assign prom_3r_addr = {BANK, ls273_4u_d};
+	assign prom_3r_ce = 1;
     
-    assign prom_3s_addr = {BANK, ls273_4u_d};
-    assign prom_3s_ce = 1;
+	assign prom_3s_addr = {BANK, ls273_4u_d};
+	assign prom_3s_ce = 1;
     	
 endmodule
 

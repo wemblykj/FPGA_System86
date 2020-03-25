@@ -68,8 +68,8 @@ module system86_tb;
 			.C_VIDEO_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
 		)
 		uut (
-			.clk_48m(clk_48m), 
-			.rst(rst),
+			.reset(reset),
+			.CLK_48M(clk_48m), 
 			.vid_clk(s86_vid_clk),
 			.vid_red(s86_vid_red),
 			.vid_green(s86_vid_green),
@@ -172,6 +172,7 @@ module system86_tb;
 			.o_LockedB(out_vid_locked),
 			.o_WidthB(out_vid_width),
 			.o_HeightB(out_vid_height),
+			
 			.o_RedB(out_vid_red),
 			.o_GreenB(out_vid_green),
 			.o_BlueB(out_vid_blue)

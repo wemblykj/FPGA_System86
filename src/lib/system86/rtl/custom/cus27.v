@@ -21,31 +21,36 @@
 //////////////////////////////////////////////////////////////////////////////////
 module cus27
 (
-	// global reset
-	input wire rst,
+	// simulation control
+	input wire reset,
+	input wire enable,
+	
 	// input clocks
-	input wire clk_48m,
-	input wire clk_6m,
+	input wire CLK_48M,
+	input wire CLK_6M_IN,
+	
 	// generated clocks
-   output wire clk_24m_o,
-   output wire clk_12m_o,
-   output wire clk_6m_o,
+   output wire CLK_24M,
+   output wire CLK_12M,
+   output wire CLK_6M,
+	
 	// video synchronisation
-	output reg vsync,
-	output reg hsync,
-	output reg vblank,
-	output reg hblank,
-	output reg vreset,
-	output reg hreset,
-	// pixel clocks
-	output reg pclk_8v_o,
-	output reg pclk_4v_o,
-	output reg pclk_1v_o,
-	output reg pclk_4h_o,
-	output reg pclk_2h_o,
-	output reg pclk_1h_o,
-	output reg pclk_s2h_o,
-	output reg pclk_s1h_o
+	output reg VSYNC,
+	output reg HSYNC,
+	output reg VBLANK,
+	output reg HBLANK,
+	output reg VRESET,
+	output reg HRESET,
+	
+	// video timing signals
+	output reg CLK_8V,
+	output reg CLK_4V,
+	output reg CLK_1V,
+	output reg CLK_4H,
+	output reg CLK_2H,
+	output reg CLK_1H,
+	output reg CLK_S2H,
+	output reg CLK_S1H
 );
 
 	reg [8:0] horizontal_counter = 0;
@@ -68,61 +73,64 @@ module cus27
 	
 	reg [2:0] master_counter = 0;
 
-	always @(posedge clk_48m) begin
-		if (rst) begin
+	always @(posedge CLK_48M) begin
+		if (!enable) begin
+		end else if (reset) begin
 			master_counter <= 0;
 		end else begin
 			master_counter <= master_counter + 1;
 		end
 	end
 
-	assign clk_24m_o = master_counter[0];
-	assign clk_12m_o = master_counter[1];
-	assign clk_6m_o = master_counter[2];	
+	assign CLK_24M = master_counter[0];
+	assign CLK_12M = master_counter[1];
+	assign CLK_6M = master_counter[2];	
 	
 	always @(*) begin
-		if (rst) begin
+		if (!enable) begin
+		end else if (reset) begin
 			horizontal_counter <= 0;
 			horizontal_counter_next = 0;
-			hsync <= 1;
+			HSYNC <= 1;
 			hsync_next <= 1;
-			hblank <= 0;
+			HBLANK <= 0;
 			hblank_next <= 0;
-			hreset <= 0;
+			HRESET <= 0;
 			hreset_next <= 0;
 		end else begin
 			horizontal_counter <= horizontal_counter_next;
-			hsync <= hsync_next;
-			hblank <= hblank_next;
-			hreset <= hreset_next;
+			HSYNC <= hsync_next;
+			HBLANK <= hblank_next;
+			HRESET <= hreset_next;
 		end
 	end
 	
 	always @(*) begin
-		if (rst) begin
+		if (!enable) begin
+		end else if (reset) begin
 			//vresetH <= 0;
 			vertical_counter <= 0;
 			vertical_counter_next <= 0;
-			vsync <= 1;
+			VSYNC <= 1;
 			vsync_next <= 1;
-			vblank <= 0;
+			VBLANK <= 0;
 			vblank_next <= 0;
-			vreset <= 0;
+			VRESET <= 0;
 			vreset_next <= 0;
 		end else begin
 			vertical_counter <= vertical_counter_next;
-			vsync <= vsync_next;
-			vblank <= vblank_next;
-			vreset <= vreset_next;
+			VSYNC <= vsync_next;
+			VBLANK <= vblank_next;
+			VRESET <= vreset_next;
 		end
 	end
 	
 	// inspired by information found @ http://www.ukvac.com/forum/namco-cus27-in-fpga-cus130-wip_topic362440.html
-	always @(negedge clk_6m) begin
+	always @(negedge CLK_6M_IN) begin
 		horizontal_counter_next <= horizontal_counter + 1;
 	end
 		
-	always @(posedge clk_6m) begin
+	always @(posedge CLK_6M_IN) begin
 		if (horizontal_counter[8:3] === 6'b110000) 	// ~384
 			horizontal_counter <= 0;
 	
@@ -143,21 +151,21 @@ module cus27
 		// hreset
 		hreset_next <= (horizontal_counter[8:0] === 9'b000001111) ? 1'b1 : 1'b0;	// ~15
 		
-		pclk_1h_o <= horizontal_counter[0];	// 3.0 Mhz
-		pclk_s1h_o <= horizontal_counter[0];	// is this in phase?
-		pclk_2h_o <= horizontal_counter[1];	// 1.5 Mhz
-		pclk_s2h_o <= horizontal_counter[1];	// is this in phase?
-		pclk_4h_o <= horizontal_counter[2];	// 0.75 Mhz
+		CLK_1H <= horizontal_counter[0];	// 3.0 Mhz
+		CLK_S1H <= horizontal_counter[0];	// is this in phase?
+		CLK_2H <= horizontal_counter[1];	// 1.5 Mhz
+		CLK_S2H <= horizontal_counter[1];	// is this in phase?
+		CLK_4H <= horizontal_counter[2];	// 0.75 Mhz
 	end
 	
-	always @(posedge hsync) begin
+	always @(posedge HSYNC) begin
 		vertical_counter_next <= vertical_counter + 1;
 		
 		// vreset when back to start of line 0
 		vreset_next <= (vresetH && (vertical_counter[8:0] === 9'b000000000)) ? 1'b1 : 1'b0;
 	end
 	
-	always @(negedge hsync) begin
+	always @(negedge HSYNC) begin
 		if (vertical_counter[8:3] === 6'b100001)	// ~264
 			vertical_counter <= 0;
 	
@@ -175,9 +183,9 @@ module cus27
 		if (vertical_counter[8:3] === 6'b000010) // ~16	
 			vblank_next <= 0;			
 			
-		pclk_1v_o <= vertical_counter[0];
-		pclk_4v_o <= vertical_counter[3];
-		pclk_8v_o <= vertical_counter[7];
+		CLK_1V <= vertical_counter[0];
+		CLK_4V <= vertical_counter[3];
+		CLK_8V <= vertical_counter[7];
 	end
 	
 endmodule

@@ -91,22 +91,37 @@ entity system86 is
 	);
 	port 
 	(
-		-- Global Ports
-
-		rst		: in	std_logic;
-		clk_48m		: in	std_logic;
+		--
+		-- simulation
+		--
 		
-		-- Component Video
-		vid_clk		: out    std_logic;
-		vid_data		: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
-		vid_red		: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		vid_green	: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		vid_blue		: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		vid_hblank	: out    std_logic;
-		vid_vblank	: out    std_logic;
-		vid_csync	: out    std_logic;
-		vid_hsync	: out    std_logic;
-		vid_vsync	: out    std_logic;
+		-- simulation control
+		reset 				: in std_logic;					-- hard reset the simulation
+		enable 				: in std_logic;					-- enable the simulation
+
+		-- simulation video
+		vid_clk				: out    std_logic;
+		vid_data				: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
+		vid_red				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_green			: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_blue				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_hsync			: out    std_logic;
+		vid_vsync			: out    std_logic;
+		vid_hblank			: out    std_logic;
+		vid_vblank			: out    std_logic;
+		
+		-- simulation generated  system clock
+		CLK_48M				: in	std_logic;					-- 49.152 MHz system clock
+		
+		--
+		-- System 86 external connectors
+		--
+		
+		-- System 86 native video (albeit 4-bit digital equivalent before resister ladder conversion)
+		SYNC					: out    std_logic;
+		RED					: out    std_logic_vector(3 downto 0);
+		GREEN					: out    std_logic_vector(3 downto 0);
+		BLUE					: out    std_logic_vector(3 downto 0);
 
 		-- J4 connector to sub PCB (34 pin)
 		conn_j4_reset		: out    std_logic;				-- pin 18 - system reset
@@ -121,40 +136,45 @@ entity system86 is
 		--conn_j5_clk_6m        : out    std_logic;
 		--conn_j5_vreset        : out    std_logic;
 		--conn_j5_hreset        : out    std_logic;
-		--conn_j5_clk_48m       : out    std_logic;
+		--conn_j5_CLK_48M       : out    std_logic;
 		--conn_j5_pr            : inout  std_logic_vector(2 downto 0);
 		--conn_j5_cl            : inout  std_logic_vector(7 downto 0);
 		--conn_j5_dt            : inout  std_logic_vector(2 downto 0);
 		--conn_j5_backcolor     : out    std_logic;
 		--conn_j5_backcolor_t   : in     std_logic;			-- disable backcolor buffer
 		
+		--
+		-- pluggable chips 
+		-- (imagine the board has been socketed and the chips are simply external modules with independent busses!)
+		--
+		
 		-- SRAM 4r
-		sram_4r_ce     : in	std_logic;
-		sram_4r_we     : in	std_logic;
-		sram_4r_oe     : in	std_logic;
-		sram_4r_addr   : in	std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0);
-		sram_4r_data   : inout	std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0);
+		sram_4r_ce     	: in	std_logic;
+		sram_4r_we     	: in	std_logic;
+		sram_4r_oe     	: in	std_logic;
+		sram_4r_addr   	: in	std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0);
+		sram_4r_data   	: inout	std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0);
 		
 		-- EPROM 3R
-		eprom_3r_ce     : in	std_logic;
-		eprom_3r_oe     : in	std_logic;
-		eprom_3r_addr   : in	std_logic_vector(C_EPROM_7124_ADDR_WIDTH-1 downto 0);
-		eprom_3r_data   : out	std_logic_vector(C_EPROM_7124_DATA_WIDTH-1 downto 0);
+		eprom_3r_ce     	: in	std_logic;
+		eprom_3r_oe     	: in	std_logic;
+		eprom_3r_addr   	: in	std_logic_vector(C_EPROM_7124_ADDR_WIDTH-1 downto 0);
+		eprom_3r_data   	: out	std_logic_vector(C_EPROM_7124_DATA_WIDTH-1 downto 0);
 		
 		-- EPROM 3S
-		eprom_3s_ce     : in	std_logic;
-		eprom_3s_oe     : in	std_logic;
-		eprom_3s_addr   : in	std_logic_vector(C_EPROM_7116_ADDR_WIDTH-1 downto 0);
-		eprom_3s_data   : out	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0)
+		eprom_3s_ce     	: in	std_logic;
+		eprom_3s_oe     	: in	std_logic;
+		eprom_3s_addr   	: in	std_logic_vector(C_EPROM_7116_ADDR_WIDTH-1 downto 0);
+		eprom_3s_data   	: out	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0)
 		
 	);
 
 attribute SIGIS : string; 
-attribute SIGIS of rst : signal is "Rst"; 
+attribute SIGIS of reset : signal is "Rst"; 
 
-attribute SIGIS of clk_48m : signal is "Clk"; 
+attribute SIGIS of CLK_48M : signal is "Clk"; 
 
-attribute SIGIS of vid_clk : signal is "Clk"; 
+--attribute SIGIS of clk_6m : signal is "Clk"; 
 
 end system86;
 
@@ -176,55 +196,68 @@ end system86;
 
 architecture rtl of system86 is
 
--- system clocks
-signal clk_6m_t		: std_logic;
+-- timing subsystem outputs
+signal clk_24m		: std_logic;
+signal clk_12m		: std_logic;
+signal clk_6m		: std_logic;
 
--- cus27 outputs
-signal cus27_clk_24m		: std_logic;
-signal cus27_clk_12m		: std_logic;
-signal cus27_clk_6m		: std_logic;
+signal hsync		: std_logic;
+signal vsync		: std_logic;
+signal vblank		: std_logic;
+signal blanking	: std_logic;
+signal hreset		: std_logic;
+signal vreset		: std_logic;
 
-signal cus27_hsync		: std_logic;
-signal cus27_vsync		: std_logic;
+signal clk_8v		: std_logic;
+signal clk_4v		: std_logic;
+signal clk_1v		: std_logic;
+signal clk_4h		: std_logic;
+signal clk_2h		: std_logic;
+signal clk_1h		: std_logic;
+signal clk_s2h		: std_logic;
+signal clk_s1h		: std_logic;
 
-signal cus27_pclk_8v		: std_logic;
-signal cus27_pclk_4v		: std_logic;
-signal cus27_pclk_1v		: std_logic;
-signal cus27_pclk_4h		: std_logic;
-signal cus27_pclk_2h		: std_logic;
-signal cus27_pclk_1h		: std_logic;
-signal cus27_pclk_s2h	: std_logic;
-signal cus27_pclk_s1h	: std_logic;
+signal tpg_pattern		: std_logic_vector(3 downto 0) := "0101";	-- 0110 black recangle with white border
+signal tpg_RED				: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+signal tpg_green			: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+signal tpg_blue			: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+signal tpg_hsync			: std_logic;
+signal tpg_vsync			: std_logic;
+signal tpg_hblank			: std_logic;
+signal tpg_vblank			: std_logic;
 
-signal vid_pattern		: std_logic_vector(3 downto 0) := "0101";	-- 0110 black recangle with white border
-
-component cus27
+component timing_subsystem
 port(
-	-- global reset
-	rst 			: in std_logic;
+	-- simulation control
+	reset 			: in std_logic;
+	enable 			: in std_logic;
+	
 	-- input clocks
-	clk_48m 		: in std_logic;
-	clk_6m 		: in std_logic;
+	CLK_48M 		: in std_logic;
+	
 	-- soft generated clocks
-	clk_24m_o	: out std_logic;
-	clk_12m_o	: out std_logic;
-	clk_6m_o 	: out std_logic;
+	CLK_24M		: out std_logic;
+	CLK_12M		: out std_logic;
+	CLK_6M 		: out std_logic;
+	
 	-- video synchronisation
-	vsync			: out std_logic;
-	hsync			: out std_logic;
-	vblank		: out std_logic;
-	hblank		: out std_logic;
-	vreset		: out std_logic;
-	hreset		: out std_logic;
-	-- pixel clocks
-	pclk_8v_o	: out std_logic;
-	pclk_4v_o	: out std_logic;
-	pclk_1v_o	: out std_logic;
-	pclk_4h_o	: out std_logic;
-	pclk_2h_o	: out std_logic;
-	pclk_1h_o	: out std_logic;
-	pclk_s2h_o	: out std_logic;
-	pclk_s1h_o	: out std_logic
+	VSYNC			: out std_logic;
+	HSYNC			: out std_logic;
+	VBLANK		: out std_logic;
+	VRESET		: out std_logic;
+	HRESET		: out std_logic;
+	BLANKING		: out std_logic;
+	COMPSYNC		: out std_logic;
+	
+	-- video clocks
+	CLK_8V	: out std_logic;
+	CLK_4V	: out std_logic;
+	CLK_1V	: out std_logic;
+	CLK_4H	: out std_logic;
+	CLK_2H	: out std_logic;
+	CLK_1H	: out std_logic;
+	CLK_s2H	: out std_logic;
+	CLK_s1H	: out std_logic
 );
 end component;
 	
@@ -254,7 +287,7 @@ port (
    o_VSync : out std_logic;
 	o_HBlank : out std_logic;
    o_VBlank : out std_logic;
-   o_Red_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
+   o_RED_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
    o_Grn_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
    o_Blu_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0)
 );
@@ -262,35 +295,36 @@ port (
 end component;
 begin
 
-	clk_6m_t <= cus27_clk_6m;
-
-	-- video generation
-	vid_clk <= clk_6m_t;
-	
-	Inst_Cus27: cus27
+	timing_subsys: timing_subsystem
    port map
 	(
-		-- global reset
-		rst			=> rst,
+		-- simulation reset
+		reset			=> reset,
+		enable		=> enable,
+		
 		-- input clocks
-		clk_48m		=> clk_48m,
-		clk_6m		=> cus27_clk_6m,
+		CLK_48M		=> CLK_48M,
+		
 		-- soft generated clocks
-		clk_24m_o	=> cus27_clk_24m,
-		clk_12m_o	=> cus27_clk_12m,
-		clk_6m_o		=> cus27_clk_6m,
+		CLK_24M		=> clk_24m,
+		CLK_12M		=> clk_12m,
+		CLK_6M		=> clk_6m,
+		
 		-- video synchronisation
-		hsync 		=> cus27_hsync,
-		vsync 		=> cus27_vsync,
+		HSYNC 		=> hsync,
+		VSYNC 		=> vsync,
+		VBLANK		=> vblank,
+		BLANKING		=> blanking,
+		
 		-- pixel clocks
-		pclk_8v_o	=> cus27_pclk_8v,
-		pclk_4v_o	=> cus27_pclk_4v,
-		pclk_1v_o	=> cus27_pclk_1v,
-		pclk_4h_o	=> cus27_pclk_4h,
-		pclk_2h_o	=> cus27_pclk_2h,
-		pclk_1h_o	=> cus27_pclk_1h,
-		pclk_s2h_o	=> cus27_pclk_s2h,
-		pclk_s1h_o	=> cus27_pclk_s1h
+		CLK_8V	=> clk_8v,
+		CLK_4V	=> clk_4v,
+		CLK_1V	=> clk_1v,
+		CLK_4H	=> clk_4h,
+		CLK_2H	=> clk_2h,
+		CLK_1H	=> clk_1h,
+		CLK_S2H	=> clk_s2h,
+		CLK_S1H	=> clk_s1h
 	);
 	
 	Inst_Test_Pattern_Gen: Test_Pattern_Gen
@@ -305,18 +339,27 @@ begin
 	)
 	port map
 	(
-		i_Clk 			=> cus27_clk_6m,
-		i_Rst				=> rst,
-		i_Pattern 		=> vid_pattern,
-		i_HSync 			=> cus27_hsync,
-		i_VSync 			=> cus27_vsync,
-		o_HSync 			=> vid_hsync,
-		o_VSync 			=> vid_vsync,
-		o_HBlank			=> vid_hblank,
-		o_VBlank			=> vid_vblank,
-		o_Red_Video  	=> vid_red(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
-		o_Grn_Video  	=> vid_green(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
-		o_Blu_Video		=> vid_blue(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4)
+		i_Clk 			=> clk_6m,
+		i_Rst				=> reset,
+		i_Pattern 		=> tpg_pattern,
+		i_HSync 			=> hsync,
+		i_VSync 			=> vsync,
+		o_HSync 			=> tpg_hsync,
+		o_VSync 			=> tpg_vsync,
+		o_HBlank			=> tpg_hblank,
+		o_VBlank			=> tpg_vblank,
+		o_RED_Video  	=> tpg_RED(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
+		o_Grn_Video  	=> tpg_green(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
+		o_Blu_Video		=> tpg_blue(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4)
 	);
+	
+	vid_clk <= clk_6m;
+	vid_hsync <= tpg_hsync;
+	vid_vsync <= tpg_vsync;
+	vid_hblank <= tpg_hblank;
+	vid_vblank <= tpg_vblank;
+	vid_red <= tpg_RED;
+	vid_green <= tpg_green;
+	vid_blue <= tpg_blue;
 	
 end architecture rtl;
