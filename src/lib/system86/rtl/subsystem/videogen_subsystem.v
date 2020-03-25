@@ -24,21 +24,25 @@ module videogen_subsystem
 #(
 )
 (
+	input wire reset,
+	input wire enable,
+	
     input CLK_6MD,
     input CLR,
     input [7:0] D,
     input BANK,
+	 output wire SYNC,
     output wire [3:0] RED,
     output wire [3:0] GREEN,
     output wire [3:0] BLUE,
     
     // == hardware abstraction - memory buses ==
     
-    input wire [7:0] prom_3r_data,
+    input [7:0] prom_3r_data = 0,
     output wire [8:0] prom_3r_addr,
     output wire prom_3r_ce,
     
-    input wire [3:0] prom_3s_data,
+    input [3:0] prom_3s_data = 0,
     output wire [8:0] prom_3s_addr,
     output wire prom_3s_ce
 );

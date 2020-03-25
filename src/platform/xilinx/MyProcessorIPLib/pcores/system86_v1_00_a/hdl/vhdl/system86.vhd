@@ -118,11 +118,11 @@ entity system86 is
 		--
 		
 		-- System 86 native video (albeit 4-bit digital equivalent before resister ladder conversion)
-		SYNC					: out    std_logic;
-		RED					: out    std_logic_vector(3 downto 0);
-		GREEN					: out    std_logic_vector(3 downto 0);
-		BLUE					: out    std_logic_vector(3 downto 0);
-
+		conn_j2_sync		: out    std_logic;
+		conn_j2_red			: out    std_logic_vector(3 downto 0);
+		conn_j2_green		: out    std_logic_vector(3 downto 0);
+		conn_j2_blue		: out    std_logic_vector(3 downto 0);
+		
 		-- J4 connector to sub PCB (34 pin)
 		conn_j4_reset		: out    std_logic;				-- pin 18 - system reset
 		conn_j4_ce			: out    std_logic;				-- pin 4  - sub PCB bus 'chip enable'
@@ -133,9 +133,9 @@ entity system86 is
 		conn_j4_voice		: in     std_logic;				-- pin 1  - audio
 
 		-- J5 connector (20 pin, tile layer expansion?)
-		--conn_j5_clk_6m        : out    std_logic;
-		--conn_j5_vreset        : out    std_logic;
-		--conn_j5_hreset        : out    std_logic;
+		--conn_j5_CLK_6M        : out    std_logic;
+		--conn_j5_VRESET        : out    std_logic;
+		--conn_j5_HRESET        : out    std_logic;
 		--conn_j5_CLK_48M       : out    std_logic;
 		--conn_j5_pr            : inout  std_logic_vector(2 downto 0);
 		--conn_j5_cl            : inout  std_logic_vector(7 downto 0);
@@ -174,7 +174,7 @@ attribute SIGIS of reset : signal is "Rst";
 
 attribute SIGIS of CLK_48M : signal is "Clk"; 
 
---attribute SIGIS of clk_6m : signal is "Clk"; 
+--attribute SIGIS of CLK_6M : signal is "Clk"; 
 
 end system86;
 
@@ -196,17 +196,26 @@ end system86;
 
 architecture rtl of system86 is
 
--- timing subsystem outputs
-signal clk_24m		: std_logic;
-signal clk_12m		: std_logic;
-signal clk_6m		: std_logic;
+--
+-- global signals
+--
 
-signal hsync		: std_logic;
-signal vsync		: std_logic;
-signal vblank		: std_logic;
-signal blanking	: std_logic;
-signal hreset		: std_logic;
-signal vreset		: std_logic;
+-- timing subsystem outputs
+signal CLK_24M		: std_logic;
+signal CLK_12M		: std_logic;
+signal CLK_6M		: std_logic;
+signal CLK_6MD		: std_logic;
+
+signal HSYNC		: std_logic;
+signal VSYNC		: std_logic;
+signal VBLANK		: std_logic;
+signal BLANKING	: std_logic;
+signal HRESET		: std_logic;
+signal VRESET		: std_logic;
+signal SYNC			: std_logic;
+signal RED			: std_logic_vector(3 downto 0);
+signal GREEN		: std_logic_vector(3 downto 0);
+signal BLUE			: std_logic_vector(3 downto 0);
 
 signal clk_8v		: std_logic;
 signal clk_4v		: std_logic;
@@ -217,8 +226,21 @@ signal clk_1h		: std_logic;
 signal clk_s2h		: std_logic;
 signal clk_s1h		: std_logic;
 
-signal tpg_pattern		: std_logic_vector(3 downto 0) := "0101";	-- 0110 black recangle with white border
-signal tpg_RED				: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+
+signal DOT			: std_logic_vector(7 downto 0);
+signal BANK			: std_logic;
+
+--
+-- internal signals
+--
+
+signal vid_active			: std_logic;
+signal vid_active_col	: std_logic_vector(9 downto 0);
+signal vid_active_row	: std_logic_vector(9 downto 0);
+signal vidgen_pattern	: std_logic_vector(3 downto 0) := "0001";
+
+signal tpg_pattern		: std_logic_vector(3 downto 0) := "0000"; --"0101";	-- 0110 black recangle with white border
+signal tpg_red				: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
 signal tpg_green			: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
 signal tpg_blue			: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
 signal tpg_hsync			: std_logic;
@@ -229,8 +251,8 @@ signal tpg_vblank			: std_logic;
 component timing_subsystem
 port(
 	-- simulation control
-	reset 			: in std_logic;
-	enable 			: in std_logic;
+	reset 		: in std_logic := '0';
+	enable 		: in std_logic := '1';
 	
 	-- input clocks
 	CLK_48M 		: in std_logic;
@@ -239,6 +261,7 @@ port(
 	CLK_24M		: out std_logic;
 	CLK_12M		: out std_logic;
 	CLK_6M 		: out std_logic;
+	CLK_6MD 		: out std_logic;
 	
 	-- video synchronisation
 	VSYNC			: out std_logic;
@@ -260,7 +283,48 @@ port(
 	CLK_s1H	: out std_logic
 );
 end component;
+
+component videogen_subsystem
+port(
+	-- simulation control
+	reset 			: in std_logic := '0';
+	enable 			: in std_logic := '1';
 	
+	-- input clocks
+	CLK_6MD 			: in std_logic;
+	CLR				: in std_logic := '0';
+	D					: in std_logic_vector(7 downto 0);
+	BANK				: in std_logic;
+	SYNC				: out std_logic;
+	RED				: out std_logic_vector(3 downto 0);
+	GREEN				: out std_logic_vector(3 downto 0);
+	BLUE				: out std_logic_vector(3 downto 0)
+);
+end component;
+
+component Blanking_To_Count
+generic(
+	ACTIVE_COLS  		: integer := 640;
+   ACTIVE_ROWS  		: integer := 480
+);
+port (
+	i_Clk : in std_logic;
+	i_Rst : in std_logic;
+   i_HSync : in std_logic;
+   i_VSync : in std_logic;
+	i_HBlank : out std_logic;
+   i_VBlank : out std_logic;
+	o_Locked : out std_logic;
+   o_HSync : out std_logic;
+   o_VSync : out std_logic;
+	o_HBlank : out std_logic;
+   o_VBlank : out std_logic;
+	o_Active : out std_logic;
+   o_Col_Count  : out std_logic_vector(9 downto 0);
+   o_Row_Count  : out std_logic_vector(9 downto 0)
+);
+end component;
+
 component Test_Pattern_Gen
 generic(
 	COMPONENT_DEPTH 		: integer := 3;
@@ -287,12 +351,12 @@ port (
    o_VSync : out std_logic;
 	o_HBlank : out std_logic;
    o_VBlank : out std_logic;
-   o_RED_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
+   o_Red_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
    o_Grn_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
    o_Blu_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0)
 );
-
 end component;
+
 begin
 
 	timing_subsys: timing_subsystem
@@ -306,17 +370,18 @@ begin
 		CLK_48M		=> CLK_48M,
 		
 		-- soft generated clocks
-		CLK_24M		=> clk_24m,
-		CLK_12M		=> clk_12m,
-		CLK_6M		=> clk_6m,
+		CLK_24M		=> CLK_24M,
+		CLK_12M		=> CLK_12M,
+		CLK_6M		=> CLK_6M,
+		CLK_6MD		=> CLK_6MD,
 		
 		-- video synchronisation
-		HSYNC 		=> hsync,
-		VSYNC 		=> vsync,
-		VBLANK		=> vblank,
-		BLANKING		=> blanking,
+		HSYNC 		=> HSYNC,
+		VSYNC 		=> VSYNC,
+		VBLANK		=> VBLANK,
+		BLANKING		=> BLANKING,
 		
-		-- pixel clocks
+		-- video timings
 		CLK_8V	=> clk_8v,
 		CLK_4V	=> clk_4v,
 		CLK_1V	=> clk_1v,
@@ -325,6 +390,46 @@ begin
 		CLK_1H	=> clk_1h,
 		CLK_S2H	=> clk_s2h,
 		CLK_S1H	=> clk_s1h
+	);
+	
+	videogen_subsys: videogen_subsystem
+   port map
+	(
+		-- simulation reset
+		reset			=> reset,
+		enable		=> enable,
+		
+		-- input clocks
+		CLK_6MD		=> CLK_6MD,
+		--CLR			=> 0,
+		D				=> DOT,
+		BANK			=> BANK,
+		RED			=> RED,
+		GREEN			=> GREEN,
+		BLUE			=> BLUE
+	);
+	
+	--
+	-- Testing
+	--
+	
+	InstBlankingToCount: Blanking_To_Count
+	generic map
+	(
+		ACTIVE_COLS  		=> 288,
+		ACTIVE_ROWS  		=> 224
+	)
+	port map
+	(
+		i_Clk 			=> CLK_6M,
+		i_Rst				=> reset,
+		i_HSync 			=> HSYNC,
+		i_VSync 			=> VSYNC,
+		i_HBlank 		=> BLANKING,
+		i_VBlank 		=> VBLANK,
+		o_Active			=> vid_active,
+		o_Col_Count		=> vid_active_col,
+		o_Row_Count		=> vid_active_row
 	);
 	
 	Inst_Test_Pattern_Gen: Test_Pattern_Gen
@@ -339,27 +444,75 @@ begin
 	)
 	port map
 	(
-		i_Clk 			=> clk_6m,
+		i_Clk 			=> CLK_6M,
 		i_Rst				=> reset,
 		i_Pattern 		=> tpg_pattern,
-		i_HSync 			=> hsync,
-		i_VSync 			=> vsync,
+		i_HSync 			=> HSYNC,
+		i_VSync 			=> VSYNC,
 		o_HSync 			=> tpg_hsync,
 		o_VSync 			=> tpg_vsync,
 		o_HBlank			=> tpg_hblank,
 		o_VBlank			=> tpg_vblank,
-		o_RED_Video  	=> tpg_RED(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
+		o_Red_Video  	=> tpg_RED(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
 		o_Grn_Video  	=> tpg_green(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
 		o_Blu_Video		=> tpg_blue(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4)
 	);
 	
-	vid_clk <= clk_6m;
-	vid_hsync <= tpg_hsync;
-	vid_vsync <= tpg_vsync;
-	vid_hblank <= tpg_hblank;
-	vid_vblank <= tpg_vblank;
-	vid_red <= tpg_RED;
-	vid_green <= tpg_green;
-	vid_blue <= tpg_blue;
+	process(CLK_6M)
+	begin
+		if CLK_6M'event then
+			if CLK_6M='0' then
+				if vidgen_pattern /= "0" then
+					if vid_active = '0' then
+						DOT <= "00000000";
+						BANK <= '0';
+					else
+						--DOT <= ((vid_active_row srl 3) sll 5) & (vid_active_col srl 5);
+						--BANK <= (vid_active_row srl 4); -- = "111";
+						--DOT <= vid_active_col(9 downto 5);
+						
+						DOT <= vid_active_col(9 downto 5);
+						if vid_active_row(6 downto 4) = "111" then
+							 BANK <= '1';
+						else 
+							BANK <= '0';
+						end if;
+						
+							
+					end if;
+				end if;
+			else
+				if tpg_pattern /= "0" then
+					vid_hsync <= tpg_hsync;
+					vid_vsync <= tpg_vsync;
+					vid_hblank <= tpg_hblank;
+					vid_vblank <= tpg_vblank;
+					vid_red <= tpg_red;
+					vid_green <= tpg_green;
+					vid_blue <= tpg_blue;
+				else
+					vid_hsync <= HSYNC;
+					vid_vsync <= VSYNC;
+					vid_hblank <= BLANKING;
+					vid_vblank <= VBLANK;
+					vid_red <= RED;
+					vid_green <= GREEN;
+					vid_blue <= BLUE;				
+				end if;
+			end if;
+			
+			vid_clk <= CLK_6M;
+		end if;
+	end process;
+	
+	--
+	-- assign connection outputs
+	--
+	
+	-- video
+	conn_j2_sync <= SYNC;
+	conn_j2_red <= RED;
+	conn_j2_green <= GREEN;
+	conn_j2_blue <= BLUE;
 	
 end architecture rtl;

@@ -26,6 +26,7 @@ module timing_subsystem
 (
 	input wire reset,
 	input wire enable,
+	
 	input wire CLK_48M,
 	
 	// generated clocks
@@ -96,6 +97,7 @@ module timing_subsystem
 			.Q2(BLANKING)
 		);
 
+	assign CLK_6MD = CLK_6M;
 	assign COMPSYNC = HSYNC | VSYNC;	// via LS08 (3H) and'ing of negated signals
 	
 endmodule

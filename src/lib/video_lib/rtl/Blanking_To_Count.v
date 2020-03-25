@@ -15,9 +15,9 @@ module Blanking_To_Count
 	output reg       o_Locked = 0,
 	output reg       o_HSync = 1,
    output reg       o_VSync = 1,
-	output reg       o_Active = 0,
    output reg       o_HBlank = 0,
    output reg       o_VBlank = 0,
+	output reg       o_Active = 0,
    output reg [9:0] o_Col_Count = 0,
    output reg [9:0] o_Row_Count = 0);
    
