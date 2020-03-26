@@ -69,7 +69,10 @@ module system86_tb;
 		)
 		uut (
 			.reset(reset),
+			.enable(1),
+			
 			.CLK_48M(clk_48m), 
+			
 			.vid_clk(s86_vid_clk),
 			.vid_red(s86_vid_red),
 			.vid_green(s86_vid_green),
@@ -77,7 +80,17 @@ module system86_tb;
 			.vid_hsync(s86_hsync),
 			.vid_vsync(s86_vsync),
 			.vid_hblank(s86_hblank),
-			.vid_vblank(s86_vblank)
+			.vid_vblank(s86_vblank),
+			
+			.eprom_3r_ce(),
+			.eprom_3r_oe(),
+			.eprom_3r_addr(),
+			.eprom_3r_data(),
+			
+			.eprom_3s_ce(),
+			.eprom_3s_oe(),
+			.eprom_3s_addr(),
+			.eprom_3s_data(),
 		);
 
 		Video_Logger

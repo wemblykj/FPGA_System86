@@ -156,16 +156,16 @@ entity system86 is
 		sram_4r_data   	: inout	std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0);
 		
 		-- EPROM 3R
-		eprom_3r_ce     	: in	std_logic;
-		eprom_3r_oe     	: in	std_logic;
-		eprom_3r_addr   	: in	std_logic_vector(C_EPROM_7124_ADDR_WIDTH-1 downto 0);
-		eprom_3r_data   	: out	std_logic_vector(C_EPROM_7124_DATA_WIDTH-1 downto 0);
+		eprom_3r_ce     	: out	std_logic;
+		eprom_3r_oe     	: out	std_logic;
+		eprom_3r_addr   	: out	std_logic_vector(C_EPROM_7124_ADDR_WIDTH-1 downto 0);
+		eprom_3r_data   	: in	std_logic_vector(C_EPROM_7124_DATA_WIDTH-1 downto 0);
 		
 		-- EPROM 3S
-		eprom_3s_ce     	: in	std_logic;
-		eprom_3s_oe     	: in	std_logic;
-		eprom_3s_addr   	: in	std_logic_vector(C_EPROM_7116_ADDR_WIDTH-1 downto 0);
-		eprom_3s_data   	: out	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0)
+		eprom_3s_ce     	: out	std_logic;
+		eprom_3s_oe     	: out	std_logic;
+		eprom_3s_addr   	: out	std_logic_vector(C_EPROM_7116_ADDR_WIDTH-1 downto 0);
+		eprom_3s_data   	: in	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0)
 		
 	);
 
@@ -218,14 +218,14 @@ signal RED			: std_logic_vector(3 downto 0);
 signal GREEN		: std_logic_vector(3 downto 0);
 signal BLUE			: std_logic_vector(3 downto 0);
 
-signal clk_8v		: std_logic;
-signal clk_4v		: std_logic;
-signal clk_1v		: std_logic;
-signal clk_4h		: std_logic;
-signal clk_2h		: std_logic;
-signal clk_1h		: std_logic;
-signal clk_s2h		: std_logic;
-signal clk_s1h		: std_logic;
+signal CLK_8V		: std_logic;
+signal CLK_4V		: std_logic;
+signal CLK_1V		: std_logic;
+signal CLK_4H		: std_logic;
+signal CLK_2H		: std_logic;
+signal CLK_1H		: std_logic;
+signal CLK_S2H		: std_logic;
+signal CLK_S1H		: std_logic;
 
 
 signal DOT			: std_logic_vector(7 downto 0) := "00000000";
@@ -281,8 +281,8 @@ port(
 	CLK_4H	: out std_logic;
 	CLK_2H	: out std_logic;
 	CLK_1H	: out std_logic;
-	CLK_s2H	: out std_logic;
-	CLK_s1H	: out std_logic
+	CLK_S2H	: out std_logic;
+	CLK_S1H	: out std_logic
 );
 end component;
 
@@ -297,8 +297,16 @@ port(
 	nCLR				: in std_logic := '1';
 	D					: in std_logic_vector(7 downto 0) := "00000000";
 	BANK				: in std_logic;
-	prom_3r_data	: in std_logic_vector(7 downto 0) := "00000000";
-	prom_3s_data   : in std_logic_vector(3 downto 0) := "0000";
+	
+	eprom_3r_ce		: out std_logic;
+	eprom_3r_oe		: out std_logic;
+	eprom_3r_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	eprom_3r_data	: in  std_logic_vector(7 downto 0) := "00000000";
+	
+	eprom_3s_ce		: out std_logic;
+	eprom_3s_oe		: out std_logic;
+	eprom_3s_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	eprom_3s_data  : in  std_logic_vector(3 downto 0) := "0000";
 	
 	SYNC				: out std_logic;
 	RED				: out std_logic_vector(3 downto 0);
@@ -390,14 +398,14 @@ begin
 		nVRESET 		=> nVRESET,
 		
 		-- video timings
-		CLK_8V	=> clk_8v,
-		CLK_4V	=> clk_4v,
-		CLK_1V	=> clk_1v,
-		CLK_4H	=> clk_4h,
-		CLK_2H	=> clk_2h,
-		CLK_1H	=> clk_1h,
-		CLK_S2H	=> clk_s2h,
-		CLK_S1H	=> clk_s1h
+		CLK_8V	=> CLK_8V,
+		CLK_4V	=> CLK_4V,
+		CLK_1V	=> CLK_1V,
+		CLK_4H	=> CLK_4H,
+		CLK_2H	=> CLK_2H,
+		CLK_1H	=> CLK_1H,
+		CLK_S2H	=> CLK_S2H,
+		CLK_S1H	=> CLK_S1H
 	);
 	
 	videogen_subsys: videogen_subsystem
@@ -415,8 +423,16 @@ begin
 		RED			=> RED,
 		GREEN			=> GREEN,
 		BLUE			=> BLUE,
-		prom_3r_data => "00000000",
-		prom_3s_data => "0000"
+		
+		eprom_3r_ce		=> eprom_3r_ce,
+		eprom_3r_oe		=> eprom_3r_oe,
+		eprom_3r_addr 	=> eprom_3r_addr,
+		eprom_3r_data 	=> eprom_3r_data,
+		
+		eprom_3s_ce		=> eprom_3s_ce,
+		eprom_3s_oe		=> eprom_3s_oe,
+		eprom_3s_addr 	=> eprom_3s_addr,
+		eprom_3s_data 	=> eprom_3s_data
 	);
 	
 	--
