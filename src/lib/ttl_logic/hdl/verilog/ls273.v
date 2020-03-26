@@ -9,7 +9,7 @@
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description: 
+// Description: 	 LS273 - Octal D-Type Positive-Edge-Triggered Flip-Flops With Clear
 //
 // Dependencies: 
 //
@@ -21,13 +21,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 module ls273(
         input wire CLK,
-        input wire CLR,
+        input wire nCLR,
         input wire [7:0] D,
         output reg [7:0] Q
     );
 
-	always @(posedge CLK) begin
-		if (CLR)
+	always @(posedge CLK or nCLR) begin
+		if (!nCLR)
 			Q = 8'b0;
 		else
 			Q = D;

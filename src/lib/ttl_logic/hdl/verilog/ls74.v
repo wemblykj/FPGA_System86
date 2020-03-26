@@ -20,12 +20,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module ls74(
-        input wire CLR1,
-        input wire CLR2,
+        input wire nCLR1,
+        input wire nCLR2,
         input wire CLK1,
         input wire CLK2,
-        input wire PRE1,
-        input wire PRE2,
+        input wire nPRE1,
+        input wire nPRE2,
         input wire D1,
         input wire D2,
         output reg Q1,
@@ -34,33 +34,43 @@ module ls74(
         output reg nQ2
     );
 
-	reg Q1Next = 0;
-	reg Q2Next = 0;
-	
-	always @(posedge CLK1) begin
-		Q1Next <= D1;
-	end
-	
-	always @(posedge CLK2) begin
-		Q2Next <= D2;
-	end
-	
-	always @(PRE1 or CLR1 or Q1Next) begin
-		if (!PRE1 && !CLR1) begin
-			Q1 <= Q1Next;
+	always @(posedge CLK1 or nPRE1 or nCLR1) begin
+		if (nPRE1 && nCLR1) begin
+			Q1 <= D1;
+			nQ1 <= ~D1;
+		/*else if (!nPRE1 && nCLR1) begin
+			Q1 <= 1;
+			nQ1 <= 0;
+		end else if (nPRE1 && !nCLR1) begin
+			Q1 <= 0;
+			nQ1 <= 1;
+		end else if (!nPRE1 && !nCLR1) begin
+			Q1 <= 1;
+			nQ1 <= 1;*/
 		end else begin
-			Q1 <= PRE1;
-			nQ1 <= PRE1 || !CLR1;
+			Q1 <= ~nPRE1;
+			nQ1 <= nPRE1 || !nCLR1;
 		end
+			
 	end
 	
-	always @(PRE2 or CLR2 or Q2Next) begin
-		if (!PRE2 && !CLR2) begin
-			Q2 <= Q2Next;
+	always @(posedge CLK2 or nPRE2 or nCLR2) begin
+		if (nPRE2 && nCLR2) begin
+			Q2 <= D2;
+			nQ2 <= ~D2;
+		/*end else if (!nPRE2 && nCLR2) begin
+			Q2 <= 1;
+			nQ2 <= 0;
+		end else if (nPRE2 && !nCLR2) begin
+			Q2 <= 0;
+			nQ2 <= 1;
+		end else if (!nPRE2 && !nCLR2) begin
+			Q2 <= 1;
+			nQ2 <= 1;*/
 		end else begin
-			Q2 <= PRE2;
-			nQ2 <= PRE2 || !CLR2;
-		end
+			Q2 <= ~nPRE2;
+			nQ2 <= nPRE2 || !nCLR2;
+		end			
 	end
 	
 endmodule

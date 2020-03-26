@@ -28,7 +28,7 @@ module videogen_subsystem
 	input wire enable,
 	
     input CLK_6MD,
-    input CLR,
+    input nCLR,
     input [7:0] D,
     input BANK,
 	 output wire SYNC,
@@ -38,48 +38,60 @@ module videogen_subsystem
     
     // == hardware abstraction - memory buses ==
     
-    input [7:0] prom_3r_data = 0,
+    input [7:0] prom_3r_data,
     output wire [8:0] prom_3r_addr,
     output wire prom_3r_ce,
     
-    input [3:0] prom_3s_data = 0,
+    input [3:0] prom_3s_data,
     output wire [8:0] prom_3s_addr,
     output wire prom_3s_ce
 );
 	
-	assign BLUE = ls173_3v_d[7:4];
-	assign GREEN = ls173_3u_d[7:4];
-	assign RED = ls173_3t_d[7:4];
+	assign BLUE = ls173_3v_d;
+	assign GREEN = ls173_3u_d;
+	assign RED = ls173_3t_d;
 	
 	wire [7:0] ls273_4u_d;
 	ls273 ls273_4u(
 		.CLK(CLK_6MD),
-		.CLR(CLR),
+		.nCLR(nCLR),
 		.D(D),
 		.Q(ls273_4u_d)
 		);
 	
-	wire [7:0] ls173_3v_d;
+	wire [3:0] ls173_3v_d;
 	ls173 ls173_3v(
 		.CLK(CLK_6MD),
-		.CLR(CLR),
-		.D({prom_3s_data, 3'b0}),
+		.CLR(GND),
+		.nG1(GND),
+		.nG2(GND),
+		.M(GND),
+		.N(GND),
+		.D(prom_3s_data),
 		.Q(ls173_3v_d)
 		);
 		
-	wire [7:0] ls173_3u_d;
+	wire [3:0] ls173_3u_d;
 	ls173 ls173_3u(
 		.CLK(CLK_6MD),
 		.CLR(CLR),
-		.D({prom_3r_data[7:4], 3'b0}),
+		.nG1(GND),
+		.nG2(GND),
+		.M(GND),
+		.N(GND),
+		.D(prom_3r_data[7:4]),
 		.Q(ls173_3u_d)
 		);
 		
-	wire [7:0] ls173_3t_d;
+	wire [3:0] ls173_3t_d;
 	ls173 ls173_3t(
 		.CLK(CLK_6MD),
 		.CLR(CLR),
-		.D({prom_3r_data[3:0], 3'b0}),
+		.nG1(GND),
+		.nG2(GND),
+		.M(GND),
+		.N(GND),
+		.D(prom_3r_data[3:0]),
 		.Q(ls173_3t_d)
 		);
 		

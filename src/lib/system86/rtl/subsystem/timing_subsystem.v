@@ -36,13 +36,14 @@ module timing_subsystem
 	output wire CLK_6MD,
 	
 	// video synchronisation
-	output wire VSYNC,
-	output wire HSYNC,
-	output wire VBLANK,
-	output wire HRESET,
-	output wire VRESET,
+	output wire nVSYNC,
+	output wire nHSYNC,
+	output wire nHBLANK,
+	output wire nVBLANK,
+	output wire nHRESET,
+	output wire nVRESET,
 	output wire BLANKING,
-	output wire COMPSYNC,
+	output wire nCOMPSYNC,
 	
 	// video timing signals
 	output wire CLK_8V,
@@ -51,8 +52,10 @@ module timing_subsystem
 	output wire CLK_4H,
 	output wire CLK_2H,
 	output wire CLK_1H,
+	output wire CLK_n1H,
 	output wire CLK_S2H,
-	output wire CLK_S1H
+	output wire CLK_S1H,
+	output wire CLK_nS1H
 );
 
 	wire cus27_hblank;
@@ -67,12 +70,12 @@ module timing_subsystem
 			.CLK_24M(CLK_24M),
 			.CLK_12M(CLK_12M),
 			.CLK_6M(CLK_6M),
-			.VSYNC(VSYNC),
-			.HSYNC(HSYNC),
-			.HBLANK(cus27_hblank),
-			.VBLANK(VBLANK),
-			.HRESET(HRESET),
-			.VRESET(VRESET),
+			.VSYNC(nVSYNC),
+			.HSYNC(nHSYNC),
+			.HBLANK(nHBLANK),
+			.VBLANK(nVBLANK),
+			.HRESET(nHRESET),
+			.VRESET(nVRESET),
 			.CLK_8V(CLK_8V),
 			.CLK_4V(CLK_4V),
 			.CLK_1V(CLK_1V),
@@ -87,17 +90,20 @@ module timing_subsystem
     
 	ls74 
 		ls74_8u(
-			.CLK1(GND),
-			.PRE1(GND),
-			.CLR1(GND),
+			.CLK1(CLK_6M),
+			.nPRE1(1'b1),
+			.nCLR1(1'b1),
+			.D1(CLK_1H),
+			.Q1(CLK_n1H),
 			.CLK2(CLK_4H),
-			.PRE2(GND),
-			.CLR2(VBLANK),
-			.D2(cus27_hblank),
-			.Q2(BLANKING)
+			.nPRE2(1'b1),
+			.nCLR2(nVBLANK),
+			.D2(nHBLANK),
+			.nQ2(BLANKING)
 		);
 
 	assign CLK_6MD = CLK_6M;
-	assign COMPSYNC = HSYNC | VSYNC;	// via LS08 (3H) and'ing of negated signals
+	assign CLK_nS1H = ~CLK_S1H;
+	assign nCOMPSYNC = nHSYNC && nVSYNC;	// via LS08 (3H) and'ing of negated signals
 	
 endmodule

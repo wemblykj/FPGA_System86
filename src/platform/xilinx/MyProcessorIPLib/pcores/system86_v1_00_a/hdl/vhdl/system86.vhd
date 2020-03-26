@@ -206,12 +206,13 @@ signal CLK_12M		: std_logic;
 signal CLK_6M		: std_logic;
 signal CLK_6MD		: std_logic;
 
-signal HSYNC		: std_logic;
-signal VSYNC		: std_logic;
-signal VBLANK		: std_logic;
+signal nHSYNC		: std_logic;
+signal nVSYNC		: std_logic;
+signal nVBLANK		: std_logic;
+signal nHBLANK		: std_logic;	-- used for simulation only
 signal BLANKING	: std_logic;
-signal HRESET		: std_logic;
-signal VRESET		: std_logic;
+signal nHRESET		: std_logic;
+signal nVRESET		: std_logic;
 signal SYNC			: std_logic;
 signal RED			: std_logic_vector(3 downto 0);
 signal GREEN		: std_logic_vector(3 downto 0);
@@ -227,8 +228,8 @@ signal clk_s2h		: std_logic;
 signal clk_s1h		: std_logic;
 
 
-signal DOT			: std_logic_vector(7 downto 0);
-signal BANK			: std_logic;
+signal DOT			: std_logic_vector(7 downto 0) := "00000000";
+signal BANK			: std_logic := '0';
 
 --
 -- internal signals
@@ -264,13 +265,14 @@ port(
 	CLK_6MD 		: out std_logic;
 	
 	-- video synchronisation
-	VSYNC			: out std_logic;
-	HSYNC			: out std_logic;
-	VBLANK		: out std_logic;
-	VRESET		: out std_logic;
-	HRESET		: out std_logic;
+	nVSYNC			: out std_logic;
+	nHSYNC			: out std_logic;
+	nHBLANK		: out std_logic;	-- used for simulation only
+	nVBLANK		: out std_logic;
+	nVRESET		: out std_logic;
+	nHRESET		: out std_logic;
 	BLANKING		: out std_logic;
-	COMPSYNC		: out std_logic;
+	nCOMPSYNC		: out std_logic;
 	
 	-- video clocks
 	CLK_8V	: out std_logic;
@@ -292,9 +294,12 @@ port(
 	
 	-- input clocks
 	CLK_6MD 			: in std_logic;
-	CLR				: in std_logic := '0';
-	D					: in std_logic_vector(7 downto 0);
+	nCLR				: in std_logic := '1';
+	D					: in std_logic_vector(7 downto 0) := "00000000";
 	BANK				: in std_logic;
+	prom_3r_data	: in std_logic_vector(7 downto 0) := "00000000";
+	prom_3s_data   : in std_logic_vector(3 downto 0) := "0000";
+	
 	SYNC				: out std_logic;
 	RED				: out std_logic_vector(3 downto 0);
 	GREEN				: out std_logic_vector(3 downto 0);
@@ -312,8 +317,8 @@ port (
 	i_Rst : in std_logic;
    i_HSync : in std_logic;
    i_VSync : in std_logic;
-	i_HBlank : out std_logic;
-   i_VBlank : out std_logic;
+	i_HBlank : in std_logic;
+   i_VBlank : in std_logic;
 	o_Locked : out std_logic;
    o_HSync : out std_logic;
    o_VSync : out std_logic;
@@ -362,7 +367,7 @@ begin
 	timing_subsys: timing_subsystem
    port map
 	(
-		-- simulation reset
+		-- simulation control
 		reset			=> reset,
 		enable		=> enable,
 		
@@ -376,10 +381,13 @@ begin
 		CLK_6MD		=> CLK_6MD,
 		
 		-- video synchronisation
-		HSYNC 		=> HSYNC,
-		VSYNC 		=> VSYNC,
-		VBLANK		=> VBLANK,
+		nHSYNC 		=> nHSYNC,
+		nVSYNC 		=> nVSYNC,
+		nHBLANK		=> nHBLANK,	-- artistic licence - brought out for simulation
+		nVBLANK		=> nVBLANK,
 		BLANKING		=> BLANKING,
+		nHRESET 		=> nHRESET,
+		nVRESET 		=> nVRESET,
 		
 		-- video timings
 		CLK_8V	=> clk_8v,
@@ -401,12 +409,14 @@ begin
 		
 		-- input clocks
 		CLK_6MD		=> CLK_6MD,
-		--CLR			=> 0,
+		nCLR			=> '1',
 		D				=> DOT,
 		BANK			=> BANK,
 		RED			=> RED,
 		GREEN			=> GREEN,
-		BLUE			=> BLUE
+		BLUE			=> BLUE,
+		prom_3r_data => "00000000",
+		prom_3s_data => "0000"
 	);
 	
 	--
@@ -423,10 +433,10 @@ begin
 	(
 		i_Clk 			=> CLK_6M,
 		i_Rst				=> reset,
-		i_HSync 			=> HSYNC,
-		i_VSync 			=> VSYNC,
-		i_HBlank 		=> BLANKING,
-		i_VBlank 		=> VBLANK,
+		i_HSync 			=> nHSYNC,
+		i_VSync 			=> nVSYNC,
+		i_HBlank 		=> nHBLANK,
+		i_VBlank 		=> nVBLANK,
 		o_Active			=> vid_active,
 		o_Col_Count		=> vid_active_col,
 		o_Row_Count		=> vid_active_row
@@ -447,13 +457,13 @@ begin
 		i_Clk 			=> CLK_6M,
 		i_Rst				=> reset,
 		i_Pattern 		=> tpg_pattern,
-		i_HSync 			=> HSYNC,
-		i_VSync 			=> VSYNC,
+		i_HSync 			=> nHSYNC,
+		i_VSync 			=> nVSYNC,
 		o_HSync 			=> tpg_hsync,
 		o_VSync 			=> tpg_vsync,
 		o_HBlank			=> tpg_hblank,
 		o_VBlank			=> tpg_vblank,
-		o_Red_Video  	=> tpg_RED(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
+		o_Red_Video  	=> tpg_red(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
 		o_Grn_Video  	=> tpg_green(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
 		o_Blu_Video		=> tpg_blue(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4)
 	);
@@ -465,20 +475,13 @@ begin
 				if vidgen_pattern /= "0" then
 					if vid_active = '0' then
 						DOT <= "00000000";
-						BANK <= '0';
 					else
-						--DOT <= ((vid_active_row srl 3) sll 5) & (vid_active_col srl 5);
-						--BANK <= (vid_active_row srl 4); -- = "111";
-						--DOT <= vid_active_col(9 downto 5);
-						
-						DOT <= vid_active_col(9 downto 5);
-						if vid_active_row(6 downto 4) = "111" then
-							 BANK <= '1';
-						else 
+						DOT <= vid_active_row(6 downto 4) & vid_active_col(9 downto 5);
+						if vid_active_row(6 downto 0) = "1110000" then
+							BANK <= '1';
+						elsif vid_active_row(6 downto 0) = "0000000" then
 							BANK <= '0';
-						end if;
-						
-							
+						end if;			
 					end if;
 				end if;
 			else
@@ -491,10 +494,10 @@ begin
 					vid_green <= tpg_green;
 					vid_blue <= tpg_blue;
 				else
-					vid_hsync <= HSYNC;
-					vid_vsync <= VSYNC;
-					vid_hblank <= BLANKING;
-					vid_vblank <= VBLANK;
+					vid_hsync <= nHSYNC;
+					vid_vsync <= nVSYNC;
+					vid_hblank <= nHBLANK;
+					vid_vblank <= nVBLANK;
 					vid_red <= RED;
 					vid_green <= GREEN;
 					vid_blue <= BLUE;				
