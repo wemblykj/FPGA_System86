@@ -156,16 +156,14 @@ entity system86 is
 		sram_4r_data   	: inout	std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0);
 		
 		-- EPROM 3R
-		eprom_3r_ce     	: out	std_logic;
-		eprom_3r_oe     	: out	std_logic;
-		eprom_3r_addr   	: out	std_logic_vector(C_EPROM_7124_ADDR_WIDTH-1 downto 0);
-		eprom_3r_data   	: in	std_logic_vector(C_EPROM_7124_DATA_WIDTH-1 downto 0);
+		prom_3r_ce     	: out	std_logic;
+		prom_3r_addr   	: out	std_logic_vector(C_EPROM_7124_ADDR_WIDTH-1 downto 0);
+		prom_3r_data   	: in	std_logic_vector(C_EPROM_7124_DATA_WIDTH-1 downto 0);
 		
 		-- EPROM 3S
-		eprom_3s_ce     	: out	std_logic;
-		eprom_3s_oe     	: out	std_logic;
-		eprom_3s_addr   	: out	std_logic_vector(C_EPROM_7116_ADDR_WIDTH-1 downto 0);
-		eprom_3s_data   	: in	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0)
+		prom_3s_ce     	: out	std_logic;
+		prom_3s_addr   	: out	std_logic_vector(C_EPROM_7116_ADDR_WIDTH-1 downto 0);
+		prom_3s_data   	: in	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0)
 		
 	);
 
@@ -241,6 +239,7 @@ signal vid_active_row	: std_logic_vector(9 downto 0);
 signal vidgen_pattern	: std_logic_vector(3 downto 0) := "0001";
 
 signal tpg_pattern		: std_logic_vector(3 downto 0) := "0000"; --"0101";	-- 0110 black recangle with white border
+--signal tpg_pattern		: std_logic_vector(3 downto 0) := "0101";	-- 0110 black recangle with white border
 signal tpg_red				: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
 signal tpg_green			: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
 signal tpg_blue			: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
@@ -298,15 +297,13 @@ port(
 	D					: in std_logic_vector(7 downto 0) := "00000000";
 	BANK				: in std_logic;
 	
-	eprom_3r_ce		: out std_logic;
-	eprom_3r_oe		: out std_logic;
-	eprom_3r_addr	: out std_logic_vector(8 downto 0) := "000000000";
-	eprom_3r_data	: in  std_logic_vector(7 downto 0) := "00000000";
+	prom_3r_ce		: out std_logic;
+	prom_3r_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	prom_3r_data	: in  std_logic_vector(7 downto 0) := "00000000";
 	
-	eprom_3s_ce		: out std_logic;
-	eprom_3s_oe		: out std_logic;
-	eprom_3s_addr	: out std_logic_vector(8 downto 0) := "000000000";
-	eprom_3s_data  : in  std_logic_vector(3 downto 0) := "0000";
+	prom_3s_ce		: out std_logic;
+	prom_3s_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	prom_3s_data  : in  std_logic_vector(3 downto 0) := "0000";
 	
 	SYNC				: out std_logic;
 	RED				: out std_logic_vector(3 downto 0);
@@ -424,15 +421,13 @@ begin
 		GREEN			=> GREEN,
 		BLUE			=> BLUE,
 		
-		eprom_3r_ce		=> eprom_3r_ce,
-		eprom_3r_oe		=> eprom_3r_oe,
-		eprom_3r_addr 	=> eprom_3r_addr,
-		eprom_3r_data 	=> eprom_3r_data,
+		prom_3r_ce		=> prom_3r_ce,
+		prom_3r_addr 	=> prom_3r_addr,
+		prom_3r_data 	=> prom_3r_data,
 		
-		eprom_3s_ce		=> eprom_3s_ce,
-		eprom_3s_oe		=> eprom_3s_oe,
-		eprom_3s_addr 	=> eprom_3s_addr,
-		eprom_3s_data 	=> eprom_3s_data
+		prom_3s_ce		=> prom_3s_ce,
+		prom_3s_addr 	=> prom_3s_addr,
+		prom_3s_data 	=> prom_3s_data
 	);
 	
 	--
@@ -486,42 +481,42 @@ begin
 	
 	process(CLK_6M)
 	begin
-		if CLK_6M'event then
-			if CLK_6M='0' then
-				if vidgen_pattern /= "0" then
-					if vid_active = '0' then
-						DOT <= "00000000";
-					else
-						DOT <= vid_active_row(6 downto 4) & vid_active_col(9 downto 5);
-						if vid_active_row(6 downto 0) = "1110000" then
-							BANK <= '1';
-						elsif vid_active_row(6 downto 0) = "0000000" then
-							BANK <= '0';
-						end if;			
-					end if;
-				end if;
-			else
-				if tpg_pattern /= "0" then
-					vid_hsync <= tpg_hsync;
-					vid_vsync <= tpg_vsync;
-					vid_hblank <= tpg_hblank;
-					vid_vblank <= tpg_vblank;
-					vid_red <= tpg_red;
-					vid_green <= tpg_green;
-					vid_blue <= tpg_blue;
+		if falling_edge(CLK_6M) then
+			if vidgen_pattern /= "0000" then
+				if vid_active = '0' then
+					DOT <= "00000000";
 				else
-					vid_hsync <= nHSYNC;
-					vid_vsync <= nVSYNC;
-					vid_hblank <= nHBLANK;
-					vid_vblank <= nVBLANK;
-					vid_red <= RED;
-					vid_green <= GREEN;
-					vid_blue <= BLUE;				
+					DOT <= vid_active_row(6 downto 4) & vid_active_col(9 downto 5);
+					if vid_active_row(6 downto 0) = "1110000" then
+						BANK <= '1';
+					elsif vid_active_row(6 downto 0) = "0000000" then
+						BANK <= '0';
+					else
+						BANK <= BANK;
+					end if;			
 				end if;
 			end if;
-			
-			vid_clk <= CLK_6M;
+		elsif rising_edge(CLK_6M) then
+			if tpg_pattern /= "0000" then
+				vid_hsync <= tpg_hsync;
+				vid_vsync <= tpg_vsync;
+				vid_hblank <= tpg_hblank;
+				vid_vblank <= tpg_vblank;
+				vid_red <= tpg_red;
+				vid_green <= tpg_green;
+				vid_blue <= tpg_blue;
+			else
+				vid_hsync <= nHSYNC;
+				vid_vsync <= nVSYNC;
+				vid_hblank <= nHBLANK;
+				vid_vblank <= nVBLANK;
+				vid_red <= RED;
+				vid_green <= GREEN;
+				vid_blue <= BLUE;				
+			end if;
 		end if;
+		
+		vid_clk <= CLK_6M;
 	end process;
 	
 	--

@@ -22,6 +22,9 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
+`define ROM_PATH "../../../../../../../../roms"
+`include "../../../../roms/rthunder.vh"
+
 module system86_tb;
 
 	parameter C_VIDEO_COMPONENT_DEPTH = 4;
@@ -41,6 +44,13 @@ module system86_tb;
 	wire s86_hblank;
 	wire s86_vsync;
 	wire s86_vblank;
+	
+	wire s86_prom_3r_ce;
+	wire [8:0] s86_prom_3r_addr;
+	wire [7:0] s86_prom_3r_data;
+	wire s86_prom_3s_ce;
+	wire [8:0] s86_prom_3s_addr;
+	wire [3:0] s86_prom_3s_data;
 	
 	//wire x2_vid_clk;
 	wire [3:0] out_vid_red;
@@ -68,8 +78,8 @@ module system86_tb;
 			.C_VIDEO_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
 		)
 		uut (
-			.reset(reset),
-			.enable(1),
+			.reset(rst),
+			.enable(1'b1),
 			
 			.CLK_48M(clk_48m), 
 			
@@ -82,17 +92,26 @@ module system86_tb;
 			.vid_hblank(s86_hblank),
 			.vid_vblank(s86_vblank),
 			
-			.eprom_3r_ce(),
-			.eprom_3r_oe(),
-			.eprom_3r_addr(),
-			.eprom_3r_data(),
+			.prom_3r_ce(s86_prom_3r_ce),
+			.prom_3r_addr(s86_prom_3r_addr),
+			.prom_3r_data(s86_prom_3r_data),
 			
-			.eprom_3s_ce(),
-			.eprom_3s_oe(),
-			.eprom_3s_addr(),
-			.eprom_3s_data(),
+			.prom_3s_ce(s86_prom_3s_ce),
+			.prom_3s_addr(s86_prom_3s_addr),
+			.prom_3s_data(s86_prom_3s_data)
 		);
 
+		// clut
+		PROM_7116 #(`ROM_3S) prom_3s(
+			.E(s86_prom_3s_ce), 
+			.A(s86_prom_3s_addr), 
+			.Q(s86_prom_3s_data));
+			
+		PROM_7124 #(`ROM_3R) prom_3r(
+			.E(s86_prom_3r_ce), 
+			.A(s86_prom_3r_addr), 
+			.Q(s86_prom_3r_data));	
+		
 		Video_Logger
 		#(
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
