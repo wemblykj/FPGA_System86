@@ -62,11 +62,11 @@ module videogen_subsystem
 	wire [3:0] ls173_3v_d;
 	ls173 ls173_3v(
 		.CLK(CLK_6MD),
-		.CLR(0),
-		.nG1(0),
-		.nG2(0),
-		.M(0),
-		.N(0),
+		.CLR(1'b0),
+		.nG1(1'b0),
+		.nG2(1'b0),
+		.M(1'b0),
+		.N(1'b0),
 		.D(prom_3s_data),
 		.Q(ls173_3v_d)
 		);
@@ -74,11 +74,11 @@ module videogen_subsystem
 	wire [3:0] ls173_3u_d;
 	ls173 ls173_3u(
 		.CLK(CLK_6MD),
-		.CLR(0),
-		.nG1(0),
-		.nG2(0),
-		.M(0),
-		.N(0),
+		.CLR(1'b0),
+		.nG1(1'b0),
+		.nG2(1'b0),
+		.M(1'b0),
+		.N(1'b0),
 		.D(prom_3r_data[7:4]),
 		.Q(ls173_3u_d)
 		);
@@ -86,11 +86,11 @@ module videogen_subsystem
 	wire [3:0] ls173_3t_d;
 	ls173 ls173_3t(
 		.CLK(CLK_6MD),
-		.CLR(0),
-		.nG1(0),
-		.nG2(0),
-		.M(0),
-		.N(0),
+		.CLR(1'b0),
+		.nG1(1'b0),
+		.nG2(1'b0),
+		.M(1'b0),
+		.N(1'b0),
 		.D(prom_3r_data[3:0]),
 		.Q(ls173_3t_d)
 		);

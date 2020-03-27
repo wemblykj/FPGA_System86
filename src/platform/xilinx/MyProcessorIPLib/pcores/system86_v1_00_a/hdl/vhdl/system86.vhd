@@ -51,6 +51,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
 
 -------------------------------------------------------------------------------------
 --
@@ -225,7 +226,8 @@ signal CLK_1H		: std_logic;
 signal CLK_S2H		: std_logic;
 signal CLK_S1H		: std_logic;
 
-
+signal dot_lsb_acc	: std_logic_vector(15 downto 0) := "0000000000000000";
+signal dot_msb_acc	: std_logic_vector(15 downto 0) := "0000000000000000";
 signal DOT			: std_logic_vector(7 downto 0) := "00000000";
 signal BANK			: std_logic := '0';
 
@@ -483,36 +485,47 @@ begin
 	begin
 		if falling_edge(CLK_6M) then
 			if vidgen_pattern /= "0000" then
-				if vid_active = '0' then
-					DOT <= "00000000";
-				else
-					DOT <= vid_active_row(6 downto 4) & vid_active_col(9 downto 5);
-					if vid_active_row(6 downto 0) = "1110000" then
-						BANK <= '1';
-					elsif vid_active_row(6 downto 0) = "0000000" then
-						BANK <= '0';
+				if vid_active_row(8 downto 0) = "001110000" then
+					BANK <= '1';
+				elsif vid_active_row(8 downto 0) = "000000000" then
+					BANK <= '0';
+				end if;			
+				
+				if vid_active /= '0' then
+					DOT <= dot_msb_acc(15 downto 13) & dot_lsb_acc(15 downto 11);
+					
+					if (vid_active_col = 287) then
+						dot_lsb_acc <= "0000000000000000";
+						dot_msb_acc <= dot_msb_acc + 590;
 					else
-						BANK <= BANK;
-					end if;			
+						dot_lsb_acc <= dot_lsb_acc + 228;
+					end if;
+					
+					if (vid_active_row = 111 or vid_active_row = 223) then
+						dot_lsb_acc <= "0000000000000000";
+						dot_msb_acc <= "0000000000000000";
+					end if;
+				else
+					DOT <= "00000000";
 				end if;
 			end if;
 		elsif rising_edge(CLK_6M) then
 			if tpg_pattern /= "0000" then
-				vid_hsync <= tpg_hsync;
-				vid_vsync <= tpg_vsync;
-				vid_hblank <= tpg_hblank;
-				vid_vblank <= tpg_vblank;
-				vid_red <= tpg_red;
-				vid_green <= tpg_green;
-				vid_blue <= tpg_blue;
+				vid_hsync 	<= tpg_hsync;
+				vid_vsync 	<= tpg_vsync;
+				vid_hblank 	<= tpg_hblank;
+				vid_vblank 	<= tpg_vblank;
+				vid_red 		<= tpg_red;
+				vid_green 	<= tpg_green;
+				vid_blue 	<= tpg_blue;
 			else
-				vid_hsync <= nHSYNC;
-				vid_vsync <= nVSYNC;
-				vid_hblank <= nHBLANK;
-				vid_vblank <= nVBLANK;
-				vid_red <= RED;
-				vid_green <= GREEN;
-				vid_blue <= BLUE;				
+				vid_hsync 	<= nHSYNC;
+				vid_vsync 	<= nVSYNC;
+				vid_hblank 	<= nHBLANK;
+				vid_vblank 	<= nVBLANK;
+				vid_red 		<= RED;
+				vid_green 	<= GREEN;
+				vid_blue 	<= BLUE;				
 			end if;
 		end if;
 		

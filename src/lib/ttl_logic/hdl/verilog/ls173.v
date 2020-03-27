@@ -30,7 +30,7 @@ module ls173(
         inout wire [3:0] Q
     );
 
-	reg QLatched = 0;
+	reg [3:0] QLatched = 0;
 	
 	always @(posedge CLK or CLR) begin
 		if (CLR)
