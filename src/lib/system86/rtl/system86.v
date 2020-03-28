@@ -23,7 +23,81 @@
 //`include "common/defines.vh"
 
 //`include "../../../../ttl_mem/mem.vh"
-`define PINS_27256	1:28
+`define PINS_MB7112		1:16
+`define DATA_MB7112(pins)		{ pins[9], pins[7:1] }
+`define ADDR_MB7112(pins)		{ pins[14:10] }
+`define nCS_MB7112(pins)		{ pins[15] }
+`define GND_MB7112(pins)		{ pins[8] }
+`define VCC_MB7112(pins)		{ pins[16] }
+
+`define PINS_MB7116		1:16
+`define DATA_MB7116(pins)		{ pins[9:12] }
+`define ADDR_MB7116(pins)		{ pins[1:4], pins[7:5] }
+`define nCS_MB7116(pins)		{ pins[13] }
+`define CS_MB7116(pins)			{ ~pins[13] }
+`define GND_MB7116(pins)		{ pins[8] }
+`define VCC_MB7116(pins)		{ pins[16] }
+
+`define PINS_MB7124		1:20
+`define DATA_MB7124(pins)		{ pins[14:11], pins[5:1] }
+`define ADDR_MB7124(pins)		{ pins[19:16], pins[5:1] }
+`define nCS_MB7124(pins)		{ pins[15] }
+`define CS_MB7124(pins)			{ ~pins[15] }
+`define GND_MB7124(pins)		{ pins[10] }
+`define VCC_MB7124(pins)		{ pins[20] }
+
+`define PINS_MB7138		1:24
+`define DATA_MB7138(pins)		{ pins[17:13], pins[11:9] }
+`define ADDR_MB7138(pins)		{ pins[21:23], pins[1:8] }
+`define CS_MB7138(pins)			{ pins[20] }
+`define nCE1_MB7138(pins)		{ ~pins[20] }
+`define CE2_MB7138(pins)		{ pins[19] }
+`define CE3_MB7138(pins)		{ pins[18] }
+`define GND_MB7138(pins)		{ pins[22] }
+`define VCC_MB7138(pins)		{ pins[24] }
+
+`define PINS_M27128	1:28
+`define DATA_M27128(pins)		{ pins[19:15], pins[13:11] }
+`define ADDR_M27128(pins)		{ pin[26], pin[2], pin[23], pin[21], pins[24:25], pins[3:10] }
+`define nCS_M27128(pins)		{ pins[20] }
+`define CS_M27128(pins)			{ ~pins[20] }
+`define nOE_M27128(pins)		{ pins[22] }
+`define OE_M27128(pins)			{ ~pins[22] }
+`define GND_M27128(pins)		{ pins[14] }
+`define VCC_M27128(pins)		{ pins[28] }
+
+
+`define PINS_M27256	1:28
+`define DATA_M27256(pins)		{ pins[19:15], pins[13:11] }
+`define ADDR_M27256(pins)		{ pin[27], pin[26], pin[2], pin[23], pin[21], pins[24:25], pins[3:10] }
+`define nCS_M27256(pins)		{ pins[20] }
+`define CS_M27256(pins)			{ ~pins[20] }
+`define nOE_M27256(pins)		{ pins[22] }
+`define OE_M27256(pins)			{ ~pins[22] }
+`define GND_M27256(pins)		{ pins[14] }
+`define VCC_M27256(pins)		{ pins[28] }
+
+`define PINS_M27512	1:28
+`define DATA_M27512(pins)		{ pins[19:15], pins[13:11] }
+`define ADDR_M27512(pins)		{ pin[1], pin[27], pin[26], pin[2], pin[23], pin[21], pins[24:25], pins[3:10] }
+`define nCS_M27512(pins)		{ pins[20] }
+`define CS_M27512(pins)			{ ~pins[20] }
+`define nOE_M27512(pins)		{ pins[22] }
+`define OE_M27512(pins)			{ ~pins[22] }
+`define GND_M27512(pins)		{ pins[14] }
+`define VCC_M27512(pins)		{ pins[28] }
+
+`define PINS_CY6264	1:28
+
+`define PINS(type)	`PINS_``type``
+`define SOCKET(type, name)	inout wire [`PINS_``type``] name
+`define DATA(type, pins) `DATA_``type``(pins)
+`define ADDR(type, pins) `ADDR_``type``(pins)
+`define nCS(type, pins) `nCS_``type``(pins)
+`define CS(type, pins) `CS_``type``(pins)
+`define nOE(type, pins) `nOE_``type``(pins)
+`define OE(type, pins) `OE_``type``(pins)
+
 `include "../../../../roms/rthunder.vh"
 
 module system86
@@ -48,30 +122,29 @@ module system86
 		inout wire [1:40] conn_j34p,		// 40 pin
 		
 		// == Pluggable proms
-		inout wire [1:20] prom_3r			// 7124 - 20 pin DIP/DIL
-		inout wire [1:16] prom_3s, 		// 7116 - 16 pin DIP/DIL		
-		inout wire  prom_4v,					// 7138
-		inout wire  prom_5v,					// 7138
-		inout wire  prom_6u,					// 7112
+		
+		`SOCKET(MB7124, prom_3r),			// 7124 - 20 pin DIP/DIL
+		`SOCKET(MB7124, prom_3s), 			// 7116 - 16 pin DIP/DIL		
+		`SOCKET(MB7138, prom_4v),				// 7138
+		`SOCKET(MB7138, prom_5v),				// 7138
+		`SOCKET(MB7112, prom_6u),				// 7112
 		
 		// PROG
-		inout wire [`PINS_27256] eprom_9c,		// 27256
-		inout wire [1:28] eprom_9d,		// 27256
-		inout wire [1:28] eprom_12c,		// 27256
-		inout wire [1:28] eprom_12d,		// 27256
+		`SOCKET(M27256, eprom_9c),
+		`SOCKET(M27256, eprom_9d),
+		`SOCKET(M27256, eprom_12c),
+		`SOCKET(M27256, eprom_12d),
 		
 		// GFX
-		inout wire [1:28] eprom_7r,		// 27512
-		inout wire [1:28] eprom_7s,		// 27256
-		inout wire [1:28] eprom_4r,		// 27256
-		inout wire [1:28] eprom_4s,		// 27128
+		`SOCKET(M27512, eprom_7r),
+		`SOCKET(M27256, eprom_7s),
+		`SOCKET(M27256, eprom_4r),
+		`SOCKET(M27128, eprom_4s),
 		
 		// SRAM
-		inout wire [1:28] sram_4n,			// CY6264
-		inout wire [1:28] sram_7n,			// CY6264
-		inout wire [1:28] sram_10m,		// CY6264
-
-
+		`SOCKET(CY6264, sram_4n),
+		`SOCKET(CY6264, sram_7n),
+		`SOCKET(CY6264, sram_10m)
 	);
 	
 	// == global signals ==
@@ -93,6 +166,7 @@ module system86
 	
 	wire BLANKING;
 	wire nHRESET;
+	wire nVRESET;
 	
 	// == [not so] global signals ==
 	wire [7:0] MD;		// master CPU data bus to backcolor latch
@@ -203,12 +277,12 @@ module system86
 	//assign SPR = cus43_6n_pro;
 	//assign SCRWIN = ls85_7v_altb;	
 	
-	assign DOT = prom_4v_d ;//| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
+	assign DOT = `DATA(MB7138, prom_4v); //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
 	
 	// diagnostics I/O (driven as documented)
 	assign conn_j5[16] = CLK_6M;
 	assign conn_j5[7] = CLK_48M;	
-	assign conn_j5[12] = ~HRESET;
-	assign conn_j5[11] = ~VRESET;
+	assign conn_j5[12] = nHRESET;
+	assign conn_j5[11] = nVRESET;
 
 endmodule
