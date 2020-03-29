@@ -22,133 +22,79 @@
 
 //`include "common/defines.vh"
 
-//`include "../../../../ttl_mem/mem.vh"
-`define PINS_MB7112		1:16
-`define DATA_MB7112(pins)		{ pins[9], pins[7:1] }
-`define ADDR_MB7112(pins)		{ pins[14:10] }
-`define nCS_MB7112(pins)		{ pins[15] }
-`define GND_MB7112(pins)		{ pins[8] }
-`define VCC_MB7112(pins)		{ pins[16] }
+`include "../../ttl_mem/mb7112.vh"
+`include "../../ttl_mem/mb7116.vh"
+`include "../../ttl_mem/mb7124.vh"
+`include "../../ttl_mem/mb7138.vh"
 
-`define PINS_MB7116		1:16
-`define DATA_MB7116(pins)		{ pins[9:12] }
-`define ADDR_MB7116(pins)		{ pins[1:4], pins[7:5] }
-`define nCS_MB7116(pins)		{ pins[13] }
-`define CS_MB7116(pins)			{ ~pins[13] }
-`define GND_MB7116(pins)		{ pins[8] }
-`define VCC_MB7116(pins)		{ pins[16] }
+`include "../../ttl_mem/m27128.vh"
+`include "../../ttl_mem/m27256.vh"
+`include "../../ttl_mem/m27512.vh"
 
-`define PINS_MB7124		1:20
-`define DATA_MB7124(pins)		{ pins[14:11], pins[5:1] }
-`define ADDR_MB7124(pins)		{ pins[19:16], pins[5:1] }
-`define nCS_MB7124(pins)		{ pins[15] }
-`define CS_MB7124(pins)			{ ~pins[15] }
-`define GND_MB7124(pins)		{ pins[10] }
-`define VCC_MB7124(pins)		{ pins[20] }
+`include "../../ttl_mem/cy6264.vh"
 
-`define PINS_MB7138		1:24
-`define DATA_MB7138(pins)		{ pins[17:13], pins[11:9] }
-`define ADDR_MB7138(pins)		{ pins[21:23], pins[1:8] }
-`define CS_MB7138(pins)			{ pins[20] }
-`define nCE1_MB7138(pins)		{ ~pins[20] }
-`define CE2_MB7138(pins)		{ pins[19] }
-`define CE3_MB7138(pins)		{ pins[18] }
-`define GND_MB7138(pins)		{ pins[22] }
-`define VCC_MB7138(pins)		{ pins[24] }
-
-`define PINS_M27128	1:28
-`define DATA_M27128(pins)		{ pins[19:15], pins[13:11] }
-`define ADDR_M27128(pins)		{ pin[26], pin[2], pin[23], pin[21], pins[24:25], pins[3:10] }
-`define nCS_M27128(pins)		{ pins[20] }
-`define CS_M27128(pins)			{ ~pins[20] }
-`define nOE_M27128(pins)		{ pins[22] }
-`define OE_M27128(pins)			{ ~pins[22] }
-`define GND_M27128(pins)		{ pins[14] }
-`define VCC_M27128(pins)		{ pins[28] }
-
-
-`define PINS_M27256	1:28
-`define DATA_M27256(pins)		{ pins[19:15], pins[13:11] }
-`define ADDR_M27256(pins)		{ pin[27], pin[26], pin[2], pin[23], pin[21], pins[24:25], pins[3:10] }
-`define nCS_M27256(pins)		{ pins[20] }
-`define CS_M27256(pins)			{ ~pins[20] }
-`define nOE_M27256(pins)		{ pins[22] }
-`define OE_M27256(pins)			{ ~pins[22] }
-`define GND_M27256(pins)		{ pins[14] }
-`define VCC_M27256(pins)		{ pins[28] }
-
-`define PINS_M27512	1:28
-`define DATA_M27512(pins)		{ pins[19:15], pins[13:11] }
-`define ADDR_M27512(pins)		{ pin[1], pin[27], pin[26], pin[2], pin[23], pin[21], pins[24:25], pins[3:10] }
-`define nCS_M27512(pins)		{ pins[20] }
-`define CS_M27512(pins)			{ ~pins[20] }
-`define nOE_M27512(pins)		{ pins[22] }
-`define OE_M27512(pins)			{ ~pins[22] }
-`define GND_M27512(pins)		{ pins[14] }
-`define VCC_M27512(pins)		{ pins[28] }
-
-`define PINS_CY6264	1:28
-
-`define PINS(type)	`PINS_``type``
-`define SOCKET(type, name)	inout wire [`PINS_``type``] name
-`define DATA(type, pins) `DATA_``type``(pins)
-`define ADDR(type, pins) `ADDR_``type``(pins)
-`define nCS(type, pins) `nCS_``type``(pins)
-`define CS(type, pins) `CS_``type``(pins)
-`define nOE(type, pins) `nOE_``type``(pins)
-`define OE(type, pins) `OE_``type``(pins)
+`include "../../ttl_mem/ttl_mem.vh"
 
 `include "../../../../roms/rthunder.vh"
 
 module system86
+	#(
+		parameter VIDEO_COMPONENT_DEPTH = 8
+	)
 	(
-		input wire CLK_48M,
-		input wire RST,
-				
-		// == Native 4 bit RGB output and composite sync signals ==
-		output wire [3:0] RED,
-		output wire [3:0] GREEN,
-		output wire [3:0] BLUE,
-		output wire SYNC,
+		// == Simulation inputs
+		input wire rst,				// master reset
+		input wire clk,				// System 86 master clock @ 49.125 MHz
 		
-		// Simulation only video
-		output wire nHSYNC,
-		output wire nVSYNC,
-		output wire nHBLANK,
-		output wire nVBLANK,
- 
+		// == Simulation outputs
+		output wire vid_clk,
+		output wire vid_hsync_n,
+		output wire vid_vsync_n,
+		output wire vid_hblank_n,
+		output wire vid_vblank_n,
+		output wire [VIDEO_COMPONENT_DEPTH-1:0] vid_red,
+		output wire [VIDEO_COMPONENT_DEPTH-1:0] vid_green,
+		output wire [VIDEO_COMPONENT_DEPTH-1:0] vid_blue,
+
+		// == Native 4 bit RGB output and composite sync signals ==
+		output wire [3:0] conn_j2_red,
+		output wire [3:0] conn_j2_green,
+		output wire [3:0] conn_j2_blue,
+		output wire conn_j2_sync,
+		
 		// == External boards connectors
 		inout wire [1:20] conn_j5,			// 20 pin
 		inout wire [1:40] conn_j34p,		// 40 pin
 		
 		// == Pluggable proms
 		
-		`SOCKET(MB7124, prom_3r),			// 7124 - 20 pin DIP/DIL
-		`SOCKET(MB7124, prom_3s), 			// 7116 - 16 pin DIP/DIL		
-		`SOCKET(MB7138, prom_4v),				// 7138
-		`SOCKET(MB7138, prom_5v),				// 7138
-		`SOCKET(MB7112, prom_6u),				// 7112
+		`PORT(MB7124, prom_3r),			// 7124 - 20 pin DIP/DIL
+		`PORT(MB7116, prom_3s), 			// 7116 - 16 pin DIP/DIL		
+		`PORT(MB7138, prom_4v),				// 7138
+		`PORT(MB7138, prom_5v),				// 7138
+		`PORT(MB7112, prom_6u),				// 7112
 		
 		// PROG
-		`SOCKET(M27256, eprom_9c),
-		`SOCKET(M27256, eprom_9d),
-		`SOCKET(M27256, eprom_12c),
-		`SOCKET(M27256, eprom_12d),
+		`PORT(M27256, eprom_9c),
+		`PORT(M27256, eprom_9d),
+		`PORT(M27256, eprom_12c),
+		`PORT(M27256, eprom_12d),
 		
 		// GFX
-		`SOCKET(M27512, eprom_7r),
-		`SOCKET(M27256, eprom_7s),
-		`SOCKET(M27256, eprom_4r),
-		`SOCKET(M27128, eprom_4s),
+		`PORT(M27512, eprom_7r),
+		`PORT(M27256, eprom_7s),
+		`PORT(M27256, eprom_4r),
+		`PORT(M27128, eprom_4s),
 		
 		// SRAM
-		`SOCKET(CY6264, sram_4n),
-		`SOCKET(CY6264, sram_7n),
-		`SOCKET(CY6264, sram_10m)
+		`PORT(CY6264, sram_4n),
+		`PORT(CY6264, sram_7n),
+		`PORT(CY6264, sram_10m)
 	);
 	
 	// == global signals ==
 	wire RESET;
+	wire CLK_48M;
 	wire CLK_6M;
 	wire CLK_1H;
 	wire CLK_S1H;
@@ -164,9 +110,19 @@ module system86
 	wire BACKCOLOR;
 	wire WE;
 	
+	wire nHSYNC;
+	wire nVSYNC;
+	wire nHBLANK;
+	wire nVBLANK;
+ 
 	wire BLANKING;
 	wire nHRESET;
 	wire nVRESET;
+	
+	wire SYNC;
+	wire [3:0] RED;
+	wire [3:0] GREEN;
+	wire [3:0] BLUE;
 	
 	// == [not so] global signals ==
 	wire [7:0] MD;		// master CPU data bus to backcolor latch
@@ -183,7 +139,7 @@ module system86
 			.nHSYNC(nHSYNC),
 			.nHBLANK(nHBLANK),
 			.nVBLANK(nVBLANK),
-			.VRESET(VRESET),
+			.nVRESET(nVRESET),
 			.BLANKING(BLANKING),
 			.nCOMPSYNC(nCOMPSYNC),
 			.CLK_1H(CLK_1H),
@@ -261,23 +217,86 @@ module system86
 	videogen_subsystem
 		videogen_subsystem(
 			// input
-			.CLK_6M(CLK_6M), 
-			.CLR(GND), //.CLR(ls174_6v_q6), 
+			.CLK_6MD(CLK_6MD), 
+			.nCLR(1'b1), //.CLR(ls174_6v_q6), 
 			.D(DOT), 
-			.BANK(GND), //.BANK(ls174_9v_q5), 
+			.BANK(1'b0), //.BANK(ls174_9v_q5), 
 			// output
+			.SYNC(SYNC),
 			.RED(RED), 
 			.GREEN(GREEN), 
-			.BLUE(BLUE)
+			.BLUE(BLUE),
+			
+			.prom_3r(prom_3r),
+			.prom_3s(prom_3r)
 						
 			// == hardware abstraction - memory buses ==
+		);	
+	
+	reg vid_active = 0;
+	reg [9:0] vid_active_col = 0;
+	reg [9:0] vid_active_row = 0;
+	
+	Blanking_To_Count
+		#(
+			.ACTIVE_COLS(288),
+			.ACTIVE_ROWS(224)
+		)
+		Blanking_To_Count
+		(
+			.i_Clk(CLK_6M),
+			.i_Rst(rst),
+			.i_HSync(nHSYNC),
+			.i_VSync(nVSYNC),
+			.i_HBlank(nHBLANK),
+			.i_VBlank(nVBLANK),
+			.o_Active(vid_active),
+			.o_Col_Count(vid_active_col),
+			.o_Row_Count(vid_active_row)
 		);
 		
+	reg [15:0] dot_lsb_acc = 0;
+	reg [15:0] dot_msb_acc = 0;
+	reg [7:0] dot_test = 0;
+	reg BANK = 0;
+	
+	always @(negedge CLK_6M) begin
+		if (vid_active_row[8:0] === 9'b001110000)
+			BANK <= 1'b1;
+		else if (vid_active_row[8:0] === 9'b000000000)
+			BANK <= 1'b0;
+				
+		if (vid_active !== 1'b0) begin
+			dot_test <= { dot_msb_acc[15:13], dot_lsb_acc[15:11] };
+					
+			if (vid_active_col === 287) begin
+				dot_lsb_acc <= 16'b0;
+				dot_msb_acc <= dot_msb_acc + 590;
+			end else
+				dot_lsb_acc <= dot_lsb_acc + 228;
+					
+			if (vid_active_row === 111 || vid_active_row === 223) begin
+				dot_lsb_acc <= 16'b0;
+				dot_msb_acc <= 16'b0;
+			end
+		end else
+			dot_test <= 8'b0;
+	end
 	
 	//assign SPR = cus43_6n_pro;
 	//assign SCRWIN = ls85_7v_altb;	
 	
-	assign DOT = `DATA(MB7138, prom_4v); //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
+	assign DOT = dot_test; //`DATA(MB7138, prom_4v); //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
+	
+	
+	// == assign external connections
+	
+	assign CLK_48M = clk;
+	
+	assign conn_j2_red = RED;
+	assign conn_j2_green = GREEN;
+	assign conn_j2_blue = BLUE;
+	assign conn_j2_sync_n = SYNC;
 	
 	// diagnostics I/O (driven as documented)
 	assign conn_j5[16] = CLK_6M;
@@ -285,4 +304,14 @@ module system86
 	assign conn_j5[12] = nHRESET;
 	assign conn_j5[11] = nVRESET;
 
+	// simulation outputs
+	assign vid_clk = CLK_6M;
+	assign vid_red[VIDEO_COMPONENT_DEPTH-1:VIDEO_COMPONENT_DEPTH-4] = RED;
+	assign vid_green[VIDEO_COMPONENT_DEPTH-1:VIDEO_COMPONENT_DEPTH-4] = GREEN;
+	assign vid_blue[VIDEO_COMPONENT_DEPTH-1:VIDEO_COMPONENT_DEPTH-4] = BLUE;
+	assign vid_hsync_n = nHSYNC;
+	assign vid_vsync_n = nVSYNC;
+	assign vid_hblank_n = nHBLANK;
+	assign vid_vblank_n = nVBLANK;
+	
 endmodule

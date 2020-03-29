@@ -27,7 +27,7 @@ module PROM_7124
         parameter tDIS = 15:15:30
     )
     (
-        input wire E,
+        input wire nE,
         input wire [8:0] A,
         output wire [7:0] Q
     );
@@ -35,8 +35,8 @@ module PROM_7124
 	supply1 VCC;
 	
 	GENERIC_PROM #(9, 8, FILE_NAME, tAA, tAA, tEN, tDIS) prom(
-		.E(E),
-		.G(VCC),
+		.nE(nE),
+		.nG(1'b1),
 		.A(A),
 		.Q(Q)
 	);

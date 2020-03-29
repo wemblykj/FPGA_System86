@@ -20,6 +20,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
+`include "../../../ttl_mem/mb7116.vh"
+`include "../../../ttl_mem/mb7124.vh"
+
+`include "../../../ttl_mem/ttl_mem.vh"
+
 module videogen_subsystem 
 #(
 )
@@ -37,19 +42,17 @@ module videogen_subsystem
     output wire [3:0] BLUE,
     
     // == hardware abstraction - memory buses ==
-    
-	 output wire prom_3r_ce,
-	 output wire [8:0] prom_3r_addr,
-	 input [7:0] prom_3r_data,
-    
-    output wire prom_3s_ce,
-	 output wire [8:0] prom_3s_addr,
-    input [3:0] prom_3s_data
+   
+	 `PORT(MB7124, prom_3r),
+	 `PORT(MB7116, prom_3s)
 );
 	
 	assign BLUE = ls173_3v_d;
 	assign GREEN = ls173_3u_d;
 	assign RED = ls173_3t_d;
+	
+	`BREAKOUT_DATA(MB7124, prom_3r);
+	`BREAKOUT_DATA(MB7116, prom_3s);
 	
 	wire [7:0] ls273_4u_d;
 	ls273 ls273_4u(
@@ -97,11 +100,9 @@ module videogen_subsystem
 		
 	// == hardware abstraction - memory buses ==
     
-	assign prom_3r_addr = {BANK, ls273_4u_d};
-	assign prom_3r_ce = 1;
-	 
-	assign prom_3s_addr = {BANK, ls273_4u_d};
-	assign prom_3s_ce = 1;
+	assign `ADDR(MB7124, prom_3r) = {BANK, ls273_4u_d};
+	assign `ADDR(MB7116, prom_3s) = {BANK, ls273_4u_d};
+
 	 	
 endmodule
 

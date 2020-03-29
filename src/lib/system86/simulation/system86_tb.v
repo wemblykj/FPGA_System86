@@ -22,6 +22,11 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
+`include "../../ttl_mem/mb7116.vh"
+`include "../../ttl_mem/mb7124.vh"
+
+`include "../../ttl_mem/ttl_mem.vh"
+
 `define ROM_PATH "../../../../../../../../roms"
 `include "../../../../roms/rthunder.vh"
 
@@ -45,12 +50,12 @@ module system86_tb;
 	wire s86_vsync;
 	wire s86_vblank;
 	
-	wire s86_prom_3r_ce;
-	wire [8:0] s86_prom_3r_addr;
-	wire [7:0] s86_prom_3r_data;
-	wire s86_prom_3s_ce;
-	wire [8:0] s86_prom_3s_addr;
-	wire [3:0] s86_prom_3s_data;
+	
+	`WIRE(MB7124, s86_prom_3r);
+	`BREAKOUT(MB7124, s86_prom_3r);
+	
+	`WIRE(MB7116, s86_prom_3s);
+	`BREAKOUT(MB7116, s86_prom_3s);
 	
 	//wire x2_vid_clk;
 	wire [3:0] out_vid_red;
@@ -75,40 +80,33 @@ module system86_tb;
 	// Instantiate the Unit Under Test (UUT)
 	system86 
 		#(
-			.C_VIDEO_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
+			.VIDEO_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
 		)
 		uut (
-			.reset(rst),
-			.enable(1'b1),
-			
-			.CLK_48M(clk_48m), 
+			.clk(clk_48m), 
+			.rst(rst),
 			
 			.vid_clk(s86_vid_clk),
 			.vid_red(s86_vid_red),
 			.vid_green(s86_vid_green),
 			.vid_blue(s86_vid_blue),
-			.vid_hsync(s86_hsync),
-			.vid_vsync(s86_vsync),
-			.vid_hblank(s86_hblank),
-			.vid_vblank(s86_vblank),
+			.vid_hsync_n(s86_hsync),
+			.vid_vsync_n(s86_vsync),
+			.vid_hblank_n(s86_hblank),
+			.vid_vblank_n(s86_vblank),
 			
-			.prom_3r_ce(s86_prom_3r_ce),
-			.prom_3r_addr(s86_prom_3r_addr),
-			.prom_3r_data(s86_prom_3r_data),
-			
-			.prom_3s_ce(s86_prom_3s_ce),
-			.prom_3s_addr(s86_prom_3s_addr),
-			.prom_3s_data(s86_prom_3s_data)
+			.prom_3r(s86_prom_3r),
+			.prom_3s(s86_prom_3s)
 		);
 
 		// clut
 		PROM_7116 #(`ROM_3S) prom_3s(
-			.E(s86_prom_3s_ce), 
+			.nE(s86_prom_3s_ce), 
 			.A(s86_prom_3s_addr), 
 			.Q(s86_prom_3s_data));
 			
 		PROM_7124 #(`ROM_3R) prom_3r(
-			.E(s86_prom_3r_ce), 
+			.nE(s86_prom_3r_ce), 
 			.A(s86_prom_3r_addr), 
 			.Q(s86_prom_3r_data));	
 		

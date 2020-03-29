@@ -32,8 +32,8 @@ module GENERIC_PROM
         parameter tGHQZ = 0
     )
     (
-        input wire E,
-        input wire G,
+        input wire nE,
+        input wire nG,
         input wire [ADDR_WIDTH-1:0] A,
         output wire [DATA_WIDTH-1:0] Q
     );
@@ -44,9 +44,9 @@ module GENERIC_PROM
 
     // retaining datasheet's naming convention due to active low signals
     assign #(tAVQV, tAXQX) AV = A;	
-    assign #(tELQV, tEHQZ) ELQV = E;	
-    assign #(tGLQV, tGHQZ) GLQV = G;
-    assign QV = ELQV && GLQV;
+    assign #(tELQV, tEHQZ) ELQV = nE;	
+    assign #(tGLQV, tGHQZ) GLQV = nG;
+    assign QV = !(ELQV || GLQV);
 
     assign Q = QV ? DOut : {(DATA_WIDTH){1'bZ}};
 
