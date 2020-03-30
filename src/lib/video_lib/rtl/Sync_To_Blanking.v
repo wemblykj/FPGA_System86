@@ -40,17 +40,21 @@ module Sync_To_Blanking #(
   wire [9:0] w_Col_Count;
   wire [9:0] w_Row_Count;
   
-  Sync_To_Count #(.TOTAL_COLS(TOTAL_COLS),
-                  .TOTAL_ROWS(TOTAL_ROWS)) UUT 
-  (.i_Rst		(i_Rst),
-   .i_Clk      (i_Clk),
-   .i_HSync    (i_HSync),
-   .i_VSync    (i_VSync),
-	.o_Locked   (w_Locked),
-   .o_HSync    (w_HSync),
-   .o_VSync    (w_VSync),
-   .o_Col_Count(w_Col_Count),
-   .o_Row_Count(w_Row_Count)
+  Sync_To_Count 
+	#(
+		.TOTAL_COLS(TOTAL_COLS),
+      .TOTAL_ROWS(TOTAL_ROWS))
+		Sync_To_Count 
+	(
+		.i_Rst		(i_Rst),
+		.i_Clk      (i_Clk),
+		.i_HSync    (i_HSync),
+		.i_VSync    (i_VSync),
+		.o_Locked   (w_Locked),
+		.o_HSync    (w_HSync),
+		.o_VSync    (w_VSync),
+		.o_Col_Count(w_Col_Count),
+		.o_Row_Count(w_Row_Count)
   );
 	  
   // Purpose: Modifies the HSync and VSync signals to include Front/Back Porch

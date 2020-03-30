@@ -36,7 +36,6 @@ module system86_tb;
 
 	// Inputs
 	reg clk_48m;
-	reg clk_6m;	// just ref atm
 	reg rst;
 
 	reg clk_25m;
@@ -223,7 +222,6 @@ module system86_tb;
 	initial begin
 		// Initialize Inputs
 		clk_48m = 0;
-		clk_6m = 0;
 		clk_25m = 0;
 		rst = 1;
 
@@ -237,10 +235,6 @@ module system86_tb;
 	// generate our 49.125Mhz input clock
 	always #10.1725 clk_48m = ~clk_48m;     
 	
-	// generate our 6.14025Mhz input clock
-	//always #81.38 clk_6m = ~clk_6m;
-	always #81.4299 clk_6m = ~clk_6m;
-
 	// generate our 25Mhz VGA clock
 	always #19.5313 clk_25m = ~clk_25m;
 	

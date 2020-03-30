@@ -1,0 +1,226 @@
+`timescale 1ns/1fs
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:       Paul Wightmore
+//
+// Create Date:    20:57:30 04/12/2018
+// Design Name:    system86_tb
+// Module Name:    system86/simulation/subsystem/videogen_subsystem_tb.v
+// Project Name:   Namco System86 simulation
+// Target Device:  
+// Tool versions:  
+// Description:   Top-level Namco System86 board simulation - test bench
+//
+// Verilog Test Fixture created by ISE for module: videogen_subsystem
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// License:        https://www.apache.org/licenses/LICENSE-2.0
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+`include "../../../ttl_mem/mb7116.vh"
+`include "../../../ttl_mem/mb7124.vh"
+
+`include "../../../ttl_mem/ttl_mem.vh"
+
+`define ROM_PATH "../../../../../../../../roms"
+`include "../../../../../roms/rthunder.vh"
+
+module videogen_subsystem_tb;
+
+	// Inputs
+	reg clk;
+	reg rst;
+	
+	`WIRE_DEFS(MB7124, prom_3r);
+	`WIRE_DEFS(MB7116, prom_3s);
+	
+	wire HSYNC;
+	wire VSYNC;
+	wire HBLANK;
+	wire VBLANK;
+ 
+	wire SYNC;
+	wire [3:0] RED;
+	wire [3:0] GREEN;
+	wire [3:0] BLUE;
+	
+	// == [not so] global signals ==
+	wire [7:0] DOT;			// multiplexed tilemap color index and sprite color index
+			
+	// == Timing subsystem ==
+	/*timing_subsystem
+		timing_subsystem(
+			.CLK_48M(clk),
+			.CLK_6M(CLK_6M),
+			.CLK_6MD(CLK_6MD),	// secondary driver? in phase with 6M
+			.nVSYNC(nVSYNC),
+			.nHSYNC(nHSYNC),
+			.nHBLANK(nHBLANK),
+			.nVBLANK(nVBLANK),
+			.nVRESET(nVRESET),
+			.BLANKING(BLANKING),
+			.nCOMPSYNC(nCOMPSYNC),
+			.CLK_1H(CLK_1H),
+			.CLK_S1H(CLK_S1H),	// secondary driver? in phase with 1H
+			.CLK_2H(CLK_2H),
+			.CLK_S2H(CLK_S2H),	// secondary driver? in phase with 2H
+			.CLK_4H(CLK_4H)
+		);
+	*/
+	
+	// clut
+	PROM_7116 #(`ROM_3S) prom_3s(
+		.nE(prom_3s_ce_n), 
+		.A(prom_3s_addr), 
+		.Q(prom_3s_data));
+		
+	PROM_7124 #(`ROM_3R) prom_3r(
+		.nE(prom_3r_ce_n), 
+		.A(prom_3r_addr), 
+		.Q(prom_3r_data));	
+		
+	videogen_subsystem
+		uut(
+			.rst(rst),
+			
+			// input
+			.CLK_6MD(clk), 
+			.nCLR(1'b1), //.CLR(ls174_6v_q6), 
+			.D(DOT), 
+			.BANK(1'b0), //.BANK(ls174_9v_q5), 
+			// output
+			.SYNC(SYNC),
+			.RED(RED), 
+			.GREEN(GREEN), 
+			.BLUE(BLUE),
+			
+			`CONNECTION_DEFS(prom_3r, prom_3r),
+			`CONNECTION_DEFS(prom_3s, prom_3s)
+						
+			// == hardware abstraction - memory buses ==
+		);	
+	
+	VGA_Sync_Pulses
+		#(
+			.TOTAL_COLS(384),
+			.TOTAL_ROWS(288),
+			.ACTIVE_COLS(288),
+			.ACTIVE_ROWS(224)
+		)
+		VGA_Sync_Pulses
+		(
+			.i_Clk(clk),
+			.i_Rst(rst),
+			.o_HSync(HSYNC),
+			.o_VSync(VSYNC)
+		);
+		
+	Sync_To_Blanking
+		#(
+			.TOTAL_COLS(384),
+			.TOTAL_ROWS(288),
+			.ACTIVE_COLS(288),
+			.ACTIVE_ROWS(224),
+			.SYNC_PULSE_HORZ(96),
+			.SYNC_PULSE_VERT(2),
+			.FRONT_PORCH_HORZ(16),
+			.BACK_PORCH_HORZ(48),
+			.FRONT_PORCH_VERT(10),
+			.BACK_PORCH_VERT(33)
+		)
+		Sync_To_Blanking
+		(
+			.i_Clk(clk),
+			.i_Rst(rst),
+			.i_HSync(HSYNC),
+			.i_VSync(VSYNC),
+			.o_HBlank(HBLANK),
+			.o_VBlank(VBLANK)
+		);
+		
+	wire vid_locked;
+	wire vid_active;
+	wire [9:0] vid_active_col;
+	wire [9:0] vid_active_row;
+	
+	Blanking_To_Count
+		#(
+			.ACTIVE_COLS(288),
+			.ACTIVE_ROWS(224)
+		)
+		Blanking_To_Count
+		(
+			.i_Clk(clk),
+			.i_Rst(rst),
+			.i_HSync(HSYNC),
+			.i_VSync(VSYNC),
+			.i_HBlank(HBLANK),
+			.i_VBlank(VBLANK),
+			.o_Locked(vid_locked),
+			.o_Active(vid_active),
+			.o_Col_Count(vid_active_col),
+			.o_Row_Count(vid_active_row)
+		);
+		
+	reg [15:0] dot_lsb_acc = 0;
+	reg [15:0] dot_msb_acc = 0;
+	reg BANK = 0;
+	
+	always @(negedge clk) begin
+		if (vid_active_row[8:0] === 9'b001110000)
+			BANK <= 1'b1;
+		else if (vid_active_row[8:0] === 9'b000000000)
+			BANK <= 1'b0;
+			
+		if (vid_active_col === 0) begin
+			dot_lsb_acc <= 16'b0;
+				
+			if (vid_active_row === 112 || vid_active_row === 0)
+				dot_msb_acc <= 16'b0;
+			else
+				dot_msb_acc <= dot_msb_acc + 590;
+		end else
+			dot_lsb_acc <= dot_lsb_acc + 228;			
+	end
+	
+	assign DOT = (vid_active !== 1'b0) ? { dot_msb_acc[15:13], dot_lsb_acc[15:11] } : 8'b0;
+		
+	Video_Logger
+	#(
+		.C_COMPONENT_DEPTH(4),
+		.C_FILE_NAME("raw.txt")
+	)
+	raw_logger (
+		.i_Rst(rst),
+		.i_Clk(clk),
+		.i_OutputEnable(vid_locked),
+		.i_Red(RED),
+		.i_Green(GREEN),
+		.i_Blue(BLUE),
+		.i_HSync(HSYNC),
+		.i_VSync(VSYNC)
+	);
+				
+	initial begin
+		// Initialize Inputs
+		clk = 0;
+		rst = 1;
+
+		// Wait 1000 ns for global reset to finish
+		#100;
+        
+		// Add stimulus here
+		rst = 0;
+	end
+
+	// generate our 6.14025Mhz input clock
+	//always #81.38 clk_6m = ~clk;
+	always #81.4299 clk = ~clk;
+
+endmodule
+
