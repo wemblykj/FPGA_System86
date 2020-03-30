@@ -50,12 +50,8 @@ module system86_tb;
 	wire s86_vsync;
 	wire s86_vblank;
 	
-	
-	`WIRE(MB7124, s86_prom_3r);
-	`BREAKOUT(MB7124, s86_prom_3r);
-	
-	`WIRE(MB7116, s86_prom_3s);
-	`BREAKOUT(MB7116, s86_prom_3s);
+	`WIRE_DEFS(MB7124, s86_prom_3r);
+	`WIRE_DEFS(MB7116, s86_prom_3s);
 	
 	//wire x2_vid_clk;
 	wire [3:0] out_vid_red;
@@ -95,18 +91,18 @@ module system86_tb;
 			.vid_hblank_n(s86_hblank),
 			.vid_vblank_n(s86_vblank),
 			
-			.prom_3r(s86_prom_3r),
-			.prom_3s(s86_prom_3s)
+			`CONNECTION_DEFS(prom_3r, s86_prom_3r),
+			`CONNECTION_DEFS(prom_3s, s86_prom_3s)
 		);
 
 		// clut
 		PROM_7116 #(`ROM_3S) prom_3s(
-			.nE(s86_prom_3s_ce), 
+			.nE(s86_prom_3s_ce_n), 
 			.A(s86_prom_3s_addr), 
 			.Q(s86_prom_3s_data));
 			
 		PROM_7124 #(`ROM_3R) prom_3r(
-			.nE(s86_prom_3r_ce), 
+			.nE(s86_prom_3r_ce_n), 
 			.A(s86_prom_3r_addr), 
 			.Q(s86_prom_3r_data));	
 		
@@ -174,7 +170,7 @@ module system86_tb;
 			.COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
 			.USE_BLANKING_A(1),
 			.USE_BLANKING_B(1),
-			.LINE_BUFFER_COUNT(8),
+			.LINE_BUFFER_COUNT(16),
 			.SCALE_PRECISION_WIDTH(12),
 			.SCALE_PRECISION_HEIGHT(12)
 		)

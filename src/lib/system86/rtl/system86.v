@@ -68,28 +68,28 @@ module system86
 		
 		// == Pluggable proms
 		
-		`PORT(MB7124, prom_3r),			// 7124 - 20 pin DIP/DIL
-		`PORT(MB7116, prom_3s), 			// 7116 - 16 pin DIP/DIL		
-		`PORT(MB7138, prom_4v),				// 7138
-		`PORT(MB7138, prom_5v),				// 7138
-		`PORT(MB7112, prom_6u),				// 7112
+		`OUTPUT_DEFS(MB7124, prom_3r),			// 7124 - 20 pin DIP/DIL
+		`OUTPUT_DEFS(MB7116, prom_3s), 			// 7116 - 16 pin DIP/DIL		
+		`OUTPUT_DEFS(MB7138, prom_4v),				// 7138
+		`OUTPUT_DEFS(MB7138, prom_5v),				// 7138
+		`OUTPUT_DEFS(MB7112, prom_6u),				// 7112
 		
 		// PROG
-		`PORT(M27256, eprom_9c),
-		`PORT(M27256, eprom_9d),
-		`PORT(M27256, eprom_12c),
-		`PORT(M27256, eprom_12d),
+		`OUTPUT_DEFS(M27256, eprom_9c),
+		`OUTPUT_DEFS(M27256, eprom_9d),
+		`OUTPUT_DEFS(M27256, eprom_12c),
+		`OUTPUT_DEFS(M27256, eprom_12d),
 		
 		// GFX
-		`PORT(M27512, eprom_7r),
-		`PORT(M27256, eprom_7s),
-		`PORT(M27256, eprom_4r),
-		`PORT(M27128, eprom_4s),
+		`OUTPUT_DEFS(M27512, eprom_7r),
+		`OUTPUT_DEFS(M27256, eprom_7s),
+		`OUTPUT_DEFS(M27256, eprom_4r),
+		`OUTPUT_DEFS(M27128, eprom_4s),
 		
 		// SRAM
-		`PORT(CY6264, sram_4n),
-		`PORT(CY6264, sram_7n),
-		`PORT(CY6264, sram_10m)
+		`OUTPUT_DEFS(CY6264, sram_4n),
+		`OUTPUT_DEFS(CY6264, sram_7n),
+		`OUTPUT_DEFS(CY6264, sram_10m)
 	);
 	
 	// == global signals ==
@@ -227,15 +227,15 @@ module system86
 			.GREEN(GREEN), 
 			.BLUE(BLUE),
 			
-			.prom_3r(prom_3r),
-			.prom_3s(prom_3r)
+			`CONNECTION_DEFS(prom_3r, prom_3r),
+			`CONNECTION_DEFS(prom_3s, prom_3s)
 						
 			// == hardware abstraction - memory buses ==
 		);	
 	
-	reg vid_active = 0;
-	reg [9:0] vid_active_col = 0;
-	reg [9:0] vid_active_row = 0;
+	wire vid_active;
+	wire [9:0] vid_active_col;
+	wire [9:0] vid_active_row;
 	
 	Blanking_To_Count
 		#(
@@ -257,7 +257,6 @@ module system86
 		
 	reg [15:0] dot_lsb_acc = 0;
 	reg [15:0] dot_msb_acc = 0;
-	reg [7:0] dot_test = 0;
 	reg BANK = 0;
 	
 	always @(negedge CLK_6M) begin
@@ -265,28 +264,24 @@ module system86
 			BANK <= 1'b1;
 		else if (vid_active_row[8:0] === 9'b000000000)
 			BANK <= 1'b0;
+			
+		if (vid_active_col === 0) begin
+			dot_lsb_acc <= 16'b0;
 				
-		if (vid_active !== 1'b0) begin
-			dot_test <= { dot_msb_acc[15:13], dot_lsb_acc[15:11] };
-					
-			if (vid_active_col === 287) begin
-				dot_lsb_acc <= 16'b0;
-				dot_msb_acc <= dot_msb_acc + 590;
-			end else
-				dot_lsb_acc <= dot_lsb_acc + 228;
-					
-			if (vid_active_row === 111 || vid_active_row === 223) begin
-				dot_lsb_acc <= 16'b0;
+			if (vid_active_row === 112 || vid_active_row === 0)
 				dot_msb_acc <= 16'b0;
-			end
+			else
+				dot_msb_acc <= dot_msb_acc + 590;
 		end else
-			dot_test <= 8'b0;
+			dot_lsb_acc <= dot_lsb_acc + 228;			
 	end
+	
+	assign DOT = (vid_active !== 1'b0) ? { dot_msb_acc[15:13], dot_lsb_acc[15:11] } : 8'b0;
 	
 	//assign SPR = cus43_6n_pro;
 	//assign SCRWIN = ls85_7v_altb;	
 	
-	assign DOT = dot_test; //`DATA(MB7138, prom_4v); //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
+	//assign DOT = dot_test; //`DATA(MB7138, prom_4v); //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
 	
 	
 	// == assign external connections

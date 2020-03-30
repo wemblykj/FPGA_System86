@@ -29,8 +29,7 @@ module videogen_subsystem
 #(
 )
 (
-	input wire reset,
-	input wire enable,
+	 input wire rst,
 	
     input CLK_6MD,
     input nCLR,
@@ -43,16 +42,16 @@ module videogen_subsystem
     
     // == hardware abstraction - memory buses ==
    
-	 `PORT(MB7124, prom_3r),
-	 `PORT(MB7116, prom_3s)
+	 `OUTPUT_DEFS(MB7124, prom_3r),
+	 `OUTPUT_DEFS(MB7116, prom_3s)
 );
 	
 	assign BLUE = ls173_3v_d;
 	assign GREEN = ls173_3u_d;
 	assign RED = ls173_3t_d;
 	
-	`BREAKOUT_DATA(MB7124, prom_3r);
-	`BREAKOUT_DATA(MB7116, prom_3s);
+	//`BREAKOUT_DATA(MB7124, prom_3r);
+	//`BREAKOUT_DATA(MB7116, prom_3s);
 	
 	wire [7:0] ls273_4u_d;
 	ls273 ls273_4u(
@@ -100,8 +99,8 @@ module videogen_subsystem
 		
 	// == hardware abstraction - memory buses ==
     
-	assign `ADDR(MB7124, prom_3r) = {BANK, ls273_4u_d};
-	assign `ADDR(MB7116, prom_3s) = {BANK, ls273_4u_d};
+	assign prom_3r_addr = {BANK, ls273_4u_d};
+	assign prom_3s_addr = {BANK, ls273_4u_d};
 
 	 	
 endmodule

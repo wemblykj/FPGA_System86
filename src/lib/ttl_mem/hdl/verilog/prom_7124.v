@@ -32,11 +32,9 @@ module PROM_7124
         output wire [7:0] Q
     );
 
-	supply1 VCC;
-	
 	GENERIC_PROM #(9, 8, FILE_NAME, tAA, tAA, tEN, tDIS) prom(
 		.nE(nE),
-		.nG(1'b1),
+		.nG(1'b0),
 		.A(A),
 		.Q(Q)
 	);
