@@ -13,3 +13,4 @@
 src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/scaled.txt
 src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb
 src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/xilinxsim.ini
+src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/raw.txt
