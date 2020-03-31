@@ -132,6 +132,7 @@ module system86
 	// == Timing subsystem ==
 	timing_subsystem
 		timing_subsystem(
+			.rst(rst),
 			.CLK_48M(CLK_48M),
 			.CLK_6M(CLK_6M),
 			.CLK_6MD(CLK_6MD),	// secondary driver? in phase with 6M
@@ -152,6 +153,8 @@ module system86
 	/*tilegen_subsystem
 		tilegen_subsystem
 		(
+			.rst(rst),
+			
 			// input
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
@@ -216,6 +219,7 @@ module system86
 	
 	videogen_subsystem
 		videogen_subsystem(
+			.rst(rst),
 			// input
 			.CLK_6MD(CLK_6MD), 
 			.nCLR(1'b1), //.CLR(ls174_6v_q6), 
@@ -246,8 +250,8 @@ module system86
 		(
 			.i_Clk(CLK_6M),
 			.i_Rst(rst),
-			.i_HSync(nHSYNC),
-			.i_VSync(nVSYNC),
+			.i_nHSync(nHSYNC),
+			.i_nVSync(nVSYNC),
 			.i_HBlank(nHBLANK),
 			.i_VBlank(nVBLANK),
 			.o_Active(vid_active),

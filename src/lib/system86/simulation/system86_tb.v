@@ -44,15 +44,14 @@ module system86_tb;
 	wire [3:0] s86_vid_red;
 	wire [3:0] s86_vid_green;
 	wire [3:0] s86_vid_blue;
-	wire s86_hsync;
+	wire s86_hsync_n;
+	wire s86_vsync_n;
 	wire s86_hblank;
-	wire s86_vsync;
 	wire s86_vblank;
 	
 	`WIRE_DEFS(MB7124, s86_prom_3r);
 	`WIRE_DEFS(MB7116, s86_prom_3s);
 	
-	//wire x2_vid_clk;
 	wire [3:0] out_vid_red;
 	wire [3:0] out_vid_green;
 	wire [3:0] out_vid_blue;
@@ -62,15 +61,14 @@ module system86_tb;
 	wire out_vid_locked;
 	wire [11:0] out_vid_width;
 	wire [11:0] out_vid_height;
-	wire out1_hsync;
-	wire out1_vsync;
-	wire out2_hsync;
-	wire out2_vsync;
+	wire out_vid_hsync_n;
+	wire out_vid_vsync_n;
+	wire out1_hsync_n;
+	wire out1_vsync_n;
+	wire out2_hsync_n;
+	wire out2_vsync_n;
 	wire out2_hblank;
 	wire out2_vblank;
-	
-	assign out_hsync_n = ~out2_hsync;
-	assign out_vsync_n = ~out2_vsync;
 	
 	// Instantiate the Unit Under Test (UUT)
 	system86 
@@ -85,8 +83,8 @@ module system86_tb;
 			.vid_red(s86_vid_red),
 			.vid_green(s86_vid_green),
 			.vid_blue(s86_vid_blue),
-			.vid_hsync_n(s86_hsync),
-			.vid_vsync_n(s86_vsync),
+			.vid_hsync_n(s86_hsync_n),
+			.vid_vsync_n(s86_vsync_n),
 			.vid_hblank_n(s86_hblank),
 			.vid_vblank_n(s86_vblank),
 			
@@ -117,8 +115,8 @@ module system86_tb;
 			.i_Red(s86_vid_red),
 			.i_Green(s86_vid_green),
 			.i_Blue(s86_vid_blue),
-			.i_HSync(s86_hsync),
-			.i_VSync(s86_vsync)
+			.i_nHSync(s86_hsync_n),
+			.i_nVSync(s86_vsync_n)
 		);
 		
 	/*scan_doubler
@@ -148,18 +146,18 @@ module system86_tb;
 		output_sync_gen (
 			.i_Clk(clk_25m),
 			.i_Rst(rst),
-			.o_HSync(out1_hsync),
-			.o_VSync(out1_vsync)
+			.o_nHSync(out1_hsync_n),
+			.o_nVSync(out1_vsync_n)
 		);
 	
 	Sync_To_Blanking
 		output_blanking (
 			.i_Clk(clk_25m),
 			.i_Rst(rst),
-			.i_HSync(out1_hsync),
-			.i_VSync(out1_vsync),
-			.o_HSync(out2_hsync),
-			.o_VSync(out2_vsync),
+			.i_nHSync(out1_hsync_n),
+			.i_nVSync(out1_vsync_n),
+			.o_nHSync(out2_hsync_n),
+			.o_nVSync(out2_vsync_n),
 			.o_HBlank(out2_hblank),
 			.o_VBlank(out2_vblank)
 		);
@@ -180,14 +178,14 @@ module system86_tb;
 			.i_RedA(s86_vid_red),
 			.i_GreenA(s86_vid_green),
 			.i_BlueA(s86_vid_blue),
-			.i_HSyncA(s86_hsync),
-			.i_VSyncA(s86_vsync),
+			.i_nHSyncA(s86_hsync_n),
+			.i_nVSyncA(s86_vsync_n),
 			.i_HBlankA(s86_hblank),
 			.i_VBlankA(s86_vblank),
 			
 			.i_ClkB(clk_25m),
-			.i_HSyncB(out2_hsync),
-			.i_VSyncB(out2_vsync),
+			.i_nHSyncB(out2_hsync_n),
+			.i_nVSyncB(out2_vsync_n),
 			.i_HBlankB(out2_hblank),
 			.i_VBlankB(out2_vblank),
 			
@@ -197,6 +195,9 @@ module system86_tb;
 			.o_LockedB(out_vid_locked),
 			.o_WidthB(out_vid_width),
 			.o_HeightB(out_vid_height),
+			
+			.o_nHSyncB(out_vid_hsync_n),
+			.o_nVSyncB(out_vid_vsync_n),
 			
 			.o_RedB(out_vid_red),
 			.o_GreenB(out_vid_green),
@@ -215,8 +216,8 @@ module system86_tb;
 			.i_Red(out_vid_red),
 			.i_Green(out_vid_green),
 			.i_Blue(out_vid_blue),
-			.i_HSync(out2_hsync),
-			.i_VSync(out2_vsync)
+			.i_nHSync(out_vid_hsync_n),
+			.i_nVSync(out_vid_vsync_n)
 		);
 		
 	initial begin

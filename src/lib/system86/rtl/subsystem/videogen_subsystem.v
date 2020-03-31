@@ -50,9 +50,6 @@ module videogen_subsystem
 	assign GREEN = ls173_3u_d;
 	assign RED = ls173_3t_d;
 	
-	//`BREAKOUT_DATA(MB7124, prom_3r);
-	//`BREAKOUT_DATA(MB7116, prom_3s);
-	
 	wire [7:0] ls273_4u_d;
 	ls273 ls273_4u(
 		.CLK(CLK_6MD),

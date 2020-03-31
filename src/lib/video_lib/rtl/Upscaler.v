@@ -19,8 +19,8 @@ module Upscaler
 	
 	// input timings
 	input wire i_ClkA,
-	input wire i_HSyncA,
-	input wire i_VSyncA,
+	input wire i_nHSyncA,
+	input wire i_nVSyncA,
 	input wire i_HBlankA,
 	input wire i_VBlankA,
 	
@@ -31,8 +31,8 @@ module Upscaler
 	
 	// output reference timings
 	input wire i_ClkB,
-	input wire i_HSyncB,
-	input wire i_VSyncB,
+	input wire i_nHSyncB,
+	input wire i_nVSyncB,
 	input wire i_HBlankB,
 	input wire i_VBlankB,
 	
@@ -45,8 +45,8 @@ module Upscaler
 	output reg [VERTICAL_COUNTER_DEPTH_B-1:0] o_HeightB,
 	
 	// output timings
-	output reg o_HSyncB,
-	output reg o_VSyncB,
+	output reg o_nHSyncB,
+	output reg o_nVSyncB,
 	output reg o_HBlankB,
 	output reg o_VBlankB,
 	
@@ -118,11 +118,11 @@ reg w_B_VActiveLineTrigger_latched = 0;
 
 reg w_B_FrameLocked = 0;
 reg w_B_FrameLocked_alpha = 0;
-reg w_B_HSync = 1;
-reg w_B_VSync = 1;
+reg w_B_nHSync = 1;
+reg w_B_nVSync = 1;
 reg w_B_HBlank = 0;
 reg w_B_VBlank = 0;
-reg [VERTICAL_SYNC_DELAY-1:0] w_B_VSync_delay = {VERTICAL_SYNC_DELAY{1'b1}};
+reg [VERTICAL_SYNC_DELAY-1:0] w_B_nVSync_delay = {VERTICAL_SYNC_DELAY{1'b1}};
 reg [VERTICAL_SYNC_DELAY-1:0] w_B_VBlank_delay = 0;
 
 reg [COMPONENT_DEPTH-1:0] w_B_Red = 0;
@@ -134,25 +134,25 @@ assign o_LockedB = w_B_FrameLocked;
 
 generate
 	if (USE_BLANKING_A == 1) begin
-		assign w_A_HActivePixelTrigger = ~i_HSyncA;
-		assign w_A_VActiveLineTrigger = ~i_VSyncA;
+		assign w_A_HActivePixelTrigger = ~i_nHSyncA;
+		assign w_A_VActiveLineTrigger = ~i_nVSyncA;
 		assign w_A_HActivePixel = ~i_HBlankA;
 		assign w_A_VActiveLine = ~i_VBlankA;
 	end else begin
-		assign w_A_HActivePixelTrigger = ~i_HSyncA;
-		assign w_A_VActiveLineTrigger = ~i_VSyncA;
+		assign w_A_HActivePixelTrigger = ~i_nHSyncA;
+		assign w_A_VActiveLineTrigger = ~i_nVSyncA;
 		assign w_A_HActivePixel = 1;
 		assign w_A_VActiveLine = 1;
 	end
 
 	if (USE_BLANKING_B == 1) begin
-		assign w_B_HActivePixelTrigger = ~i_HSyncB;
-		assign w_B_VActiveLineTrigger = ~w_B_VSync_delay[VERTICAL_SYNC_DELAY-1];
+		assign w_B_HActivePixelTrigger = ~i_nHSyncB;
+		assign w_B_VActiveLineTrigger = ~w_B_nVSync_delay[VERTICAL_SYNC_DELAY-1];
 		assign w_B_HActivePixelB = ~i_HBlankB;
 		assign w_B_VActiveLine = ~w_B_VBlank_delay[VERTICAL_SYNC_DELAY-1];
 	end else begin
-		assign w_B_HActivePixelTrigger = ~i_HSyncB;
-		assign w_B_VActiveLineTrigger = ~w_B_VSync_delay[VERTICAL_SYNC_DELAY-1];
+		assign w_B_HActivePixelTrigger = ~i_nHSyncB;
+		assign w_B_VActiveLineTrigger = ~w_B_nVSync_delay[VERTICAL_SYNC_DELAY-1];
 		assign w_B_HActivePixelB = 1;
 		assign w_B_VActiveLine = 1;
 	end
@@ -230,13 +230,13 @@ always @(negedge i_ClkA) begin
 	w_A_VActiveLineTrigger_latched <= w_A_VActiveLineTrigger;
 end
 
-always @(negedge i_HSyncB) begin
+always @(negedge i_nHSyncB) begin
 	if (i_Rst) begin
-		w_B_VSync_delay <= {VERTICAL_SYNC_DELAY{1'b1}};
+		w_B_nVSync_delay <= {VERTICAL_SYNC_DELAY{1'b1}};
 		w_B_VBlank_delay <= 0;
 	end else begin
-		w_B_VSync_delay = w_B_VSync_delay << 1;
-		w_B_VSync_delay[0] = i_VSyncB;
+		w_B_nVSync_delay = w_B_nVSync_delay << 1;
+		w_B_nVSync_delay[0] = i_nVSyncB;
 		
 		w_B_VBlank_delay = w_B_VBlank_delay << 1;
 		w_B_VBlank_delay[0] = i_VBlankB;
@@ -251,8 +251,8 @@ always @(posedge i_ClkB) begin
 	o_LockedB <= w_B_FrameLocked;
 	o_WidthB <= w_B_HActiveWidth;
 	o_HeightB <= w_B_VActiveHeight;*/
-	o_HSyncB <= w_B_HSync;
-	o_VSyncB <= w_B_VSync;
+	o_nHSyncB <= w_B_nHSync;
+	o_nVSyncB <= w_B_nVSync;
 	o_HBlankB <= w_B_HBlank;
 	o_VBlankB <= w_B_VBlank;
 	o_RedB <= w_B_Red;
@@ -275,8 +275,8 @@ always @(negedge i_ClkB) begin
 		// outputs
 		w_B_FrameLocked <= 0;
 		w_B_FrameLocked_alpha <= 0;
-		w_B_HSync <= 1;
-		w_B_VSync <= 1;
+		w_B_nHSync <= 1;
+		w_B_nVSync <= 1;
 		w_B_HBlank <= 0;
 		w_B_VBlank <= 0;
 		w_B_Red <= 0;
@@ -359,8 +359,8 @@ always @(negedge i_ClkB) begin
 	end
 	
 	// assign output timings
-	w_B_HSync <= i_HSyncB;
-	w_B_VSync <= w_B_VSync_delay[VERTICAL_SYNC_DELAY-1];
+	w_B_nHSync <= i_nHSyncB;
+	w_B_nVSync <= w_B_nVSync_delay[VERTICAL_SYNC_DELAY-1];
 	w_B_HBlank <= i_HBlankB;
 	w_B_VBlank <= w_B_VBlank_delay[VERTICAL_SYNC_DELAY-1];
 		
