@@ -8,31 +8,36 @@ module Blanking_To_Count
    parameter ACTIVE_ROWS = 480)
   (input            i_Rst,
    input            i_Clk,
-	input       	  i_HSync,
-   input            i_VSync,
+	input       	  i_nHSync,
+   input            i_nVSync,
    input            i_HBlank,
    input            i_VBlank, 
 	output reg       o_Locked = 0,
-	output reg       o_HSync = 1,
-   output reg       o_VSync = 1,
+	output reg       o_nHSync = 1,
+   output reg       o_nVSync = 1,
    output reg       o_HBlank = 0,
    output reg       o_VBlank = 0,
 	output reg       o_Active = 0,
    output reg [9:0] o_Col_Count = 0,
-   output reg [9:0] o_Row_Count = 0);
+   output reg [9:0] o_Row_Count = 0
+	);
    
    wire w_Frame_Start;
 	wire w_Line_Start;
-	reg [9:0] w_Col_Count = 0;
-   reg [9:0] w_Row_Count = 0;
-	reg w_Locked = 0;
+	reg [9:0] w_Col_Count;
+   reg [9:0] w_Row_Count;
+	reg w_Locked;
+	reg w_nHSync;
+	reg w_nVSync;
+	reg w_HBlank;
+	reg w_VBlank;
 	
   // Register syncs to align with output data.
 always @(posedge i_Clk) begin
-	o_HSync <= i_HSync;
-	o_VSync <= i_VSync;
-	o_VBlank <= i_VBlank;
-	o_HBlank <= i_HBlank;
+	o_nHSync <= w_nHSync;
+	o_nVSync <= w_nVSync;
+	o_VBlank <= w_VBlank;
+	o_HBlank <= w_HBlank;
 	o_Active <= ~i_VBlank & ~i_HBlank;
 	o_Col_Count <= ~i_VBlank & ~i_HBlank ? w_Col_Count : 10'bX;
 	o_Row_Count <= ~i_VBlank & ~i_HBlank ? w_Row_Count : 10'bX; 
@@ -43,6 +48,10 @@ end
 always @(negedge i_Clk) begin
 	if (i_Rst) begin
 		w_Locked <= 0;
+		w_nHSync <= 1;
+		w_nVSync <= 1;
+		w_VBlank <= 0;
+		w_HBlank <= 0;
 		w_Col_Count <= 0;
 		w_Row_Count <= 0;
 	end else begin
@@ -62,11 +71,16 @@ always @(negedge i_Clk) begin
 		end else begin
 		w_Col_Count <= w_Col_Count + 1;
 		end
+		
+		w_nHSync <= i_nHSync;
+		w_nVSync <= i_nVSync;
+		w_VBlank <= i_VBlank;
+		w_HBlank <= i_HBlank;
 	end
 end
     
 // Look for rising edge on Vertical Sync to reset the counters
-assign w_Frame_Start = (o_VBlank & ~i_VBlank);
-assign w_Line_Start = (o_HBlank & ~i_HBlank);
+assign w_Frame_Start = (w_VBlank & ~i_VBlank);
+assign w_Line_Start = (w_HBlank & ~i_HBlank);
 
 endmodule

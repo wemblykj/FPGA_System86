@@ -23,22 +23,25 @@ module Sync_To_Blanking #(
 								parameter BACK_PORCH_VERT  = 33)
   (input i_Clk,
    input i_Rst,
-   input i_HSync,
-   input i_VSync,
-	output reg o_Locked,
-   output reg o_HSync,
-   output reg o_VSync,
-	output reg o_HBlank,
-   output reg o_VBlank
+   input i_nHSync,
+   input i_nVSync,
+	output reg o_Locked = 0,
+   output reg o_nHSync = 1,
+   output reg o_nVSync = 1,
+	output reg o_HBlank = 0,
+   output reg o_VBlank = 0,
+	output reg [9:0] o_Col_Count = 0, 
+   output reg [9:0] o_Row_Count = 0
    );
 
   wire w_Locked;
-  wire w_HSync;
-  wire w_VSync;
-  
-  
+  wire w_nHSync;
+  wire w_nVSync;
   wire [9:0] w_Col_Count;
   wire [9:0] w_Row_Count;
+  
+  reg w_HBlank;
+  reg w_VBlank;
   
   Sync_To_Count 
 	#(
@@ -48,34 +51,52 @@ module Sync_To_Blanking #(
 	(
 		.i_Rst		(i_Rst),
 		.i_Clk      (i_Clk),
-		.i_HSync    (i_HSync),
-		.i_VSync    (i_VSync),
+		.i_nHSync    (i_nHSync),
+		.i_nVSync    (i_nVSync),
 		.o_Locked   (w_Locked),
-		.o_HSync    (w_HSync),
-		.o_VSync    (w_VSync),
+		.o_nHSync    (w_nHSync),
+		.o_nVSync    (w_nVSync),
 		.o_Col_Count(w_Col_Count),
 		.o_Row_Count(w_Row_Count)
   );
 	  
+  always @(posedge i_Clk) begin
+  	 o_Locked <= w_Locked;
+	 o_nHSync <= w_nHSync;
+	 o_nVSync <= w_nVSync;
+	 o_HBlank <= w_HBlank;
+	 o_VBlank <= w_VBlank;
+	 o_Col_Count <= w_Col_Count;
+	 o_Row_Count <= w_Row_Count;
+  end	 
+  
   // Purpose: Modifies the HSync and VSync signals to include Front/Back Porch
-  always @(posedge i_Clk)
+  always @(negedge i_Clk)
   begin
-    if ((w_Col_Count < SYNC_PULSE_HORZ + BACK_PORCH_HORZ) || 
-        (w_Col_Count > TOTAL_COLS - FRONT_PORCH_HORZ - 1))
-      o_HBlank <= 1'b1;
-    else
-      o_HBlank <= 1'b0;
+	 if (i_Rst) begin
+		/*w_Locked <= 0;
+		w_nHSync <= 1'b1;
+		w_nVSync <= 1'b1;
+		w_Col_Count <= 0;
+		w_Row_Count <= 0;*/
+	 end else begin
+      if ((w_Col_Count < SYNC_PULSE_HORZ + BACK_PORCH_HORZ) || 
+          (w_Col_Count > TOTAL_COLS - FRONT_PORCH_HORZ - 1))
+        w_HBlank <= 1'b1;
+      else
+        w_HBlank <= 1'b0;
     
-	 o_HSync <= w_HSync;
+	   //w_nHSync <= i_nHSync;
 	 
-    if ((w_Row_Count < SYNC_PULSE_VERT + BACK_PORCH_VERT) ||
-        (w_Row_Count > TOTAL_ROWS - FRONT_PORCH_VERT - 1))
-      o_VBlank <= 1'b1;
-    else
-      o_VBlank <= 1'b0;
+      if ((w_Row_Count < SYNC_PULSE_VERT + BACK_PORCH_VERT) ||
+          (w_Row_Count > TOTAL_ROWS - FRONT_PORCH_VERT - 1))
+        w_VBlank <= 1'b1;
+      else
+        w_VBlank <= 1'b0;
 		
-	 o_VSync <= w_VSync;
-	 o_Locked <= w_Locked;
+	   //w_nVSync <= i_nVSync;
+	   //w_Locked <= i_Locked;
+	 end
   end
   
   //assign o_HSync = w_HSync;

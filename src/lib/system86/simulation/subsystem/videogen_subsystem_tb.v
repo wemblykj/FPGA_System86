@@ -39,10 +39,17 @@ module videogen_subsystem_tb;
 	`WIRE_DEFS(MB7124, prom_3r);
 	`WIRE_DEFS(MB7116, prom_3s);
 	
-	wire HSYNC;
-	wire VSYNC;
-	wire HBLANK;
-	wire VBLANK;
+	wire nHSYNC;
+	wire nVSYNC;
+	wire nHSYNC_2;
+	wire nVSYNC_2;
+	wire HBLANK_2;
+	wire VBLANK_2;
+	wire nHSYNC_3;
+	wire nVSYNC_3;
+	wire HBLANK_3;
+	wire VBLANK_3;
+	
  
 	wire SYNC;
 	wire [3:0] RED;
@@ -109,15 +116,15 @@ module videogen_subsystem_tb;
 		#(
 			.TOTAL_COLS(384),
 			.TOTAL_ROWS(288),
-			.ACTIVE_COLS(288),
-			.ACTIVE_ROWS(224)
+			.SYNC_PULSE_HORZ(32),
+			.SYNC_PULSE_VERT(8)
 		)
 		VGA_Sync_Pulses
 		(
 			.i_Clk(clk),
 			.i_Rst(rst),
-			.o_HSync(HSYNC),
-			.o_VSync(VSYNC)
+			.o_nHSync(nHSYNC),
+			.o_nVSync(nVSYNC)
 		);
 		
 	Sync_To_Blanking
@@ -126,21 +133,23 @@ module videogen_subsystem_tb;
 			.TOTAL_ROWS(288),
 			.ACTIVE_COLS(288),
 			.ACTIVE_ROWS(224),
-			.SYNC_PULSE_HORZ(96),
-			.SYNC_PULSE_VERT(2),
-			.FRONT_PORCH_HORZ(16),
-			.BACK_PORCH_HORZ(48),
-			.FRONT_PORCH_VERT(10),
-			.BACK_PORCH_VERT(33)
+			.SYNC_PULSE_HORZ(32),
+			.SYNC_PULSE_VERT(8),
+			.FRONT_PORCH_HORZ(32),
+			.BACK_PORCH_HORZ(32),
+			.FRONT_PORCH_VERT(48),
+			.BACK_PORCH_VERT(8)
 		)
 		Sync_To_Blanking
 		(
 			.i_Clk(clk),
 			.i_Rst(rst),
-			.i_HSync(HSYNC),
-			.i_VSync(VSYNC),
-			.o_HBlank(HBLANK),
-			.o_VBlank(VBLANK)
+			.i_nHSync(nHSYNC),
+			.i_nVSync(nVSYNC),
+			.o_nHSync(nHSYNC_2),
+			.o_nVSync(nVSYNC_2),
+			.o_HBlank(HBLANK_2),
+			.o_VBlank(VBLANK_2)
 		);
 		
 	wire vid_locked;
@@ -157,12 +166,16 @@ module videogen_subsystem_tb;
 		(
 			.i_Clk(clk),
 			.i_Rst(rst),
-			.i_HSync(HSYNC),
-			.i_VSync(VSYNC),
-			.i_HBlank(HBLANK),
-			.i_VBlank(VBLANK),
+			.i_nHSync(nHSYNC_2),
+			.i_nVSync(nVSYNC_2),
+			.i_HBlank(HBLANK_2),
+			.i_VBlank(VBLANK_2),
 			.o_Locked(vid_locked),
 			.o_Active(vid_active),
+			.o_nHSync(nHSYNC_3),
+			.o_nVSync(nVSYNC_3),
+			.o_HBlank(HBLANK_3),
+			.o_VBlank(VBLANK_3),
 			.o_Col_Count(vid_active_col),
 			.o_Row_Count(vid_active_row)
 		);
@@ -202,8 +215,8 @@ module videogen_subsystem_tb;
 		.i_Red(RED),
 		.i_Green(GREEN),
 		.i_Blue(BLUE),
-		.i_HSync(HSYNC),
-		.i_VSync(VSYNC)
+		.i_nHSync(nHSYNC_3),
+		.i_nVSync(nVSYNC_3)
 	);
 				
 	initial begin

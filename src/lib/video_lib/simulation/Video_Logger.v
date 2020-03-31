@@ -13,8 +13,8 @@ module Video_Logger
 	input wire [C_COMPONENT_DEPTH-1:0] i_Red,
 	input wire [C_COMPONENT_DEPTH-1:0] i_Green,
 	input wire [C_COMPONENT_DEPTH-1:0] i_Blue,
-	input wire i_HSync,
-	input wire i_VSync
+	input wire i_nHSync,
+	input wire i_nVSync
 );
 
 reg i_Rst_latched;
@@ -33,7 +33,7 @@ always @(posedge i_Clk) begin
 		end
 	end else begin
 		if ((rgb_fd !== -1) & i_OutputEnable) begin
-			$fwrite(rgb_fd, "%0d ns: %b %b %b %b %b\n", $time, i_HSync, i_VSync, i_Red, i_Green, i_Blue);
+			$fwrite(rgb_fd, "%0d ns: %b %b %b %b %b\n", $time, i_nHSync, i_nVSync, i_Red, i_Green, i_Blue);
 		end
 	end
 	
