@@ -177,6 +177,8 @@ module tilegen_subsystem
 			// inputs
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_2H), 
+			.nHSYNC(nHSYNC),
+			.nVSYNC(nVSYNC),
 			.nRCS(nSCROLL0),
 			.nGCS(1'b1),	// held high (inactive) on schematics
 			.nLATCH(nLATCH0),
@@ -209,7 +211,7 @@ module tilegen_subsystem
    assign eprom_7s_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:1] };
    assign eprom_7s_ce_n = 1'b0;
     
-   ls158 ls158();
+   //ls158 ls158();
 	
 	// auxillary select
 	wire [2:0] cus43_8n_pr_in;
@@ -296,4 +298,5 @@ module tilegen_subsystem
 	// to auxillary color drivers over J5
 	assign J5[6] = nBACKCOLOR;
 
+	//assign sram_7n_ce_n = 1'b0;
 endmodule

@@ -35,9 +35,8 @@
 `define DATA_DEF(type, name) [`DATA_WIDTH(``type``)-1:0] ``name``_data
 `define ADDR_DEF(type, name) [`ADDR_WIDTH(``type``)-1:0] ``name``_addr
 
-`define WIRE_DEFS(type, name) \
-	`define TYPE_DEF_``name`` ``type``;\
-	wire ``name``_ce_n = 0;\
+`define PROM_WIRE_DEFS(type, name) \
+	wire ``name``_ce_n = 1'b0;\
 	wire `ADDR_DEF(``type``, ``name``);\
 	wire `DATA_DEF(``type``, ``name``)
 	
@@ -51,6 +50,12 @@
 	input wire `ADDR_DEF(``type``, ``name``),\
 	output wire `DATA_DEF(``type``, ``name``)
 
+`define EPROM_WIRE_DEFS(type, name) \
+	wire ``name``_ce_n = 1'b0;\
+	wire ``name``_oe_n = 1'b0;\
+	wire `ADDR_DEF(``type``, ``name``);\
+	wire `DATA_DEF(``type``, ``name``)
+
 `define EPROM_OUTPUT_DEFS(type, name) \
 	output wire ``name``_ce_n,\
 	output wire ``name``_oe_n,\
@@ -62,6 +67,13 @@
 	input wire ``name``_oe_n,\
 	input wire `ADDR_DEF(``type``, ``name``),\
 	output wire `DATA_DEF(``type``, ``name``)
+
+`define SRAM_WIRE_DEFS(type, name) \
+	wire ``name``_ce_n = 1'b0;\
+	wire ``name``_oe_n = 1'b0;\
+	wire ``name``_we_n = 1'b0;\
+	wire `ADDR_DEF(``type``, ``name``);\
+	wire `DATA_DEF(``type``, ``name``)\
 	
 `define SRAM_OUTPUT_DEFS(type, name) \
 	output wire ``name``_ce_n,\

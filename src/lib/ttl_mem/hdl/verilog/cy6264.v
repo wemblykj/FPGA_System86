@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cy6264
+module sram_cy6264
     #(
         parameter FILE_NAME = "",
         // CY6264 timing and naming conventions (or thereabouts)

@@ -22,8 +22,12 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
+`include "../../ttl_mem/mb7112.vh"
 `include "../../ttl_mem/mb7116.vh"
 `include "../../ttl_mem/mb7124.vh"
+`include "../../ttl_mem/mb7138.vh"
+
+`include "../../ttl_mem/cy6264.vh"
 
 `include "../../ttl_mem/ttl_mem.vh"
 
@@ -49,8 +53,12 @@ module system86_tb;
 	wire s86_hblank;
 	wire s86_vblank;
 	
-	`WIRE_DEFS(MB7124, s86_prom_3r);
-	`WIRE_DEFS(MB7116, s86_prom_3s);
+	`PROM_WIRE_DEFS(MB7124, prom_3r);
+	`PROM_WIRE_DEFS(MB7116, prom_3s);
+	`PROM_WIRE_DEFS(MB7138, prom_4v);
+	`PROM_WIRE_DEFS(MB7112, prom_6u);
+	`SRAM_WIRE_DEFS(CY6264, sram_4n);
+	`SRAM_WIRE_DEFS(CY6264, sram_7n);
 	
 	wire [3:0] out_vid_red;
 	wire [3:0] out_vid_green;
@@ -88,38 +96,82 @@ module system86_tb;
 			.vid_hblank_n(s86_hblank),
 			.vid_vblank_n(s86_vblank),
 			
-			`PROM_CONNECTION_DEFS(prom_3r, s86_prom_3r),
-			`PROM_CONNECTION_DEFS(prom_3s, s86_prom_3s)
+			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
+			`PROM_CONNECTION_DEFS(prom_3s, prom_3s)
 		);
 
 		// clut
-		PROM_7116 #(`ROM_3S) prom_3s(
-			.nE(s86_prom_3s_ce_n), 
-			.A(s86_prom_3s_addr), 
-			.Q(s86_prom_3s_data));
+	prom_mb7116 
+		#(
+			`ROM_3S
+		) 
+			prom_3s
+		(
+			.nE(prom_3s_ce_n), 
+			.A(prom_3s_addr), 
+			.Q(prom_3s_data)
+		);
 			
-		PROM_7124 #(`ROM_3R) prom_3r(
-			.nE(s86_prom_3r_ce_n), 
-			.A(s86_prom_3r_addr), 
-			.Q(s86_prom_3r_data));	
+	prom_mb7124 
+		#(
+			`ROM_3R
+		)
+		prom_3r
+		(
+			.nE(prom_3r_ce_n), 
+			.A(prom_3r_addr), 
+			.Q(prom_3r_data)
+		);	
+		
+	prom_mb7138 
+		#(
+			`ROM_4V
+		) 
+		prom_4v
+		(
+			.nE(prom_4v_ce_n), 
+			.A(prom_4v_addr), 
+			.Q(prom_4v_data)
+		);	
+		
+	prom_mb7112 
+		#(
+			`ROM_6U
+		) 
+		prom_6u
+		(
+			.nE(prom_6u_ce_n), 
+			.A(prom_6u_addr), 
+			.Q(prom_6u_data)
+		);	
 		
 		// tile ram
-		cy6264 sram_4n(
+	sram_cy6264 
+		#(
+			"../../../../../../../../snapshots/rthunder_gfx2_002.bin"
+		)
+		sram_4n
+		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(s86_sram_4n_we_n),
-			.nOE(s86_sram_4n_oe_n),
-			.A(s86_sram_4n_addr),
-			.D(s86_sram_4n_data)
+			.nWE(sram_4n_we_n),
+			.nOE(sram_4n_oe_n),
+			.A(sram_4n_addr),
+			.D(sram_4n_data)
 		);
 		
-		cy6264 sram_7n(
+	sram_cy6264 
+		#(
+			"../../../../../../../../snapshots/rthunder_gfx1_002.bin"
+		)
+		sram_7n
+		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(s86_sram_7n_we_n),
-			.nOE(s86_sram_7n_oe_n),
-			.A(s86_sram_7n_addr),
-			.D(s86_sram_7n_data)
+			.nWE(sram_7n_we_n),
+			.nOE(sram_7n_oe_n),
+			.A(sram_7n_addr),
+			.D(sram_7n_data)
 		);
 		
 		Video_Logger
@@ -181,12 +233,12 @@ module system86_tb;
 			.o_VBlank(out2_vblank)
 		);
 		
-	/*Upscaler
+	Upscaler
 		#(
 			.COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
 			.USE_BLANKING_A(1),
 			.USE_BLANKING_B(1),
-			.LINE_BUFFER_COUNT(16),
+			.LINE_BUFFER_COUNT(64),
 			.SCALE_PRECISION_WIDTH(12),
 			.SCALE_PRECISION_HEIGHT(12)
 		)
@@ -238,7 +290,7 @@ module system86_tb;
 			.i_nHSync(out_vid_hsync_n),
 			.i_nVSync(out_vid_vsync_n)
 		);
-		*/
+		
 	initial begin
 		// Initialize Inputs
 		clk_48m = 0;

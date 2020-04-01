@@ -36,8 +36,8 @@ module videogen_subsystem_tb;
 	reg clk;
 	reg rst;
 	
-	`WIRE_DEFS(MB7124, prom_3r);
-	`WIRE_DEFS(MB7116, prom_3s);
+	`PROM_WIRE_DEFS(MB7124, prom_3r);
+	`PROM_WIRE_DEFS(MB7116, prom_3s);
 	
 	wire nHSYNC;
 	wire nVSYNC;

@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module PROM_7124
+module prom_mb7124
     #(
         parameter FILE_NAME = "",
         // Type E (45ns) timings

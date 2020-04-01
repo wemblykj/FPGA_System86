@@ -93,7 +93,7 @@ module system86
 	);
 	
 	// == global signals ==
-	wire RESET;
+	//wire RESET;
 	wire CLK_48M;
 	wire CLK_6M;
 	wire CLK_1H;
@@ -102,13 +102,14 @@ module system86
 	wire CLK_S2H;
 	wire [12:0] A;
 	wire [7:0] D;
-	wire nSCROLL0;
-	wire nSCROLL1;
-	wire OBJECT;
-	wire nLATCH0;
-	wire nLATCH1;
-	wire nBACKCOLOR;
-	wire nWE;
+	wire nSCROLL0 = 1'b1;
+	wire nSCROLL1 = 1'b1;
+	wire OBJECT = 1'b0;
+	wire nLATCH0 = 1'b1;
+	wire nLATCH1 = 1'b1;
+	wire nBACKCOLOR = 1'b1;
+	wire nWE = 1'b1;
+	wire BANK = 1'b0;
 	
 	wire nHSYNC;
 	wire nVSYNC;
@@ -125,14 +126,15 @@ module system86
 	wire [3:0] BLUE;
 	
 	// == [not so] global signals ==
-	wire [7:0] MD;		// master CPU data bus to backcolor latch
-	wire [2:0] SPR;			// CUS43 tile generator to sprite enable logic
+	wire [7:0] MD = 8'b0;				// master CPU data bus to backcolor latch
+	wire [2:0] SPR = 3'b0;			// CUS43 tile generator to sprite enable logic
 	wire [7:0] DOT;			// multiplexed tilemap color index and sprite color index
 			
 	// == Timing subsystem ==
 	timing_subsystem
 		timing_subsystem(
 			.rst(rst),
+			
 			.CLK_48M(CLK_48M),
 			.CLK_6M(CLK_6M),
 			.CLK_6MD(CLK_6MD),	// secondary driver? in phase with 6M
@@ -178,8 +180,7 @@ module system86
 			.SPR(SPR),
 			.DOT(DOT),
 						
-			// == hardware abstraction - memory buses ==
-			
+			// == hardware abstraction - memory buses ==			
 			`EPROM_CONNECTION_DEFS(eprom_4r, eprom_4r),
 			`EPROM_CONNECTION_DEFS(eprom_4s, eprom_4s),
 			`PROM_CONNECTION_DEFS(prom_4v, prom_4v),
@@ -190,28 +191,29 @@ module system86
 			`SRAM_CONNECTION_DEFS(sram_7n, sram_7n)
 		);
 	
-	reg videogen_bank = 0;
+	reg ls174_9v_q5 = 1'b0;	// videogen_bank
+	reg ls174_6v_q6 = 1'b1;	// videogen_clear
 	
 	videogen_subsystem
 		videogen_subsystem(
 			.rst(rst),
 			// input
 			.CLK_6MD(CLK_6MD), 
-			.nCLR(1'b1), //.CLR(ls174_6v_q6), 
+			.nCLR(ls174_6v_q6),
 			.D(DOT), 
-			.BANK(videogen_bank), //.BANK(ls174_9v_q5), 
+			.BANK(ls174_9v_q5), 
 			// output
 			.SYNC(SYNC),
 			.RED(RED), 
 			.GREEN(GREEN), 
 			.BLUE(BLUE),
 			
+			// == hardware abstraction - memory buses ==
 			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
 			`PROM_CONNECTION_DEFS(prom_3s, prom_3s)
-						
-			// == hardware abstraction - memory buses ==
 		);	
-	
+		
+	/*
 	wire vid_active;
 	wire [9:0] vid_active_col;
 	wire [9:0] vid_active_row;
@@ -253,13 +255,13 @@ module system86
 		end else
 			dot_lsb_acc <= dot_lsb_acc + 228;			
 	end
-	
-	assign DOT = (vid_active !== 1'b0) ? { dot_msb_acc[15:13], dot_lsb_acc[15:11] } : 8'b0;
+	*/
 	
 	//assign SPR = cus43_6n_pro;
 	//assign SCRWIN = ls85_7v_altb;	
 	
-	//assign DOT = dot_test; //`DATA(MB7138, prom_4v); //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
+	//assign DOT = (vid_active !== 1'b0) ? { dot_msb_acc[15:13], dot_lsb_acc[15:11] } : 8'b0;
+	assign DOT = prom_4v_data; //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
 	
 	
 	// == assign external connections

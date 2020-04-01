@@ -17,7 +17,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module PROM_7138
+module prom_mb7138
     #(
         parameter FILE_NAME = "",
         // Type E (45ns) timings
@@ -26,7 +26,7 @@ module PROM_7138
         parameter tDIS = 15:15:40
     )
     (
-        input wire E,
+        input wire nE,
         input wire [10:0] A,
         output wire [7:0] Q
     );
@@ -34,8 +34,8 @@ module PROM_7138
 	supply1 VCC;
 	
 	GENERIC_PROM #(11, 8, FILE_NAME, tAA, tAA, tEN, tDIS) prom(
-		.E(E),
-		.G(VCC),
+		.nE(nE),
+		.nG(1'b0),
 		.A(A),
 		.Q(Q)
 	);
