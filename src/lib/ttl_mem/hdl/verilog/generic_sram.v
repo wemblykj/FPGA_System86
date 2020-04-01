@@ -35,9 +35,9 @@ module GENERIC_SRAM
         parameter tHZOE = "0"	    // OE to output high-Z
     )
     (
-        input wire CE,
-        input wire OE,	 
-        input wire WE,
+        input wire nCE,
+        input wire nOE,	 
+        input wire nWE,
         input wire [ADDR_WIDTH-1:0] A,
         inout wire [DATA_WIDTH-1:0] D
     );
@@ -47,15 +47,16 @@ module GENERIC_SRAM
 	wire [ADDR_WIDTH-1:0] ACC;
 	
 	assign #(tAA, tOHA) ACC = A;
-	assign #(tLZCE, tACE) LZCE = CE;
-	assign #(tACE, tHZCE) ACE = CE;
-	assign #(tLZOE, tDOE) LZOE = OE;
-	assign #(tDOE, tHZOE) OEV = OE;
+	// negate the active low signal for now - need to revisit this logic
+	assign #(tLZCE, tACE) LZCE = ~nCE;
+	assign #(tACE, tHZCE) ACE = ~nCE;
+	assign #(tLZOE, tDOE) LZOE = ~nOE;
+	assign #(tDOE, tHZOE) OEV = ~nOE;
 	
 	assign DLZ = LZCE && tLZOE;
 	assign DV = ACE && OEV;
 	
-	assign D = WE ? {(DATA_WIDTH){1'bZ}} : DV ? DOut : DLZ ? {(DATA_WIDTH){1'bX}} : {(DATA_WIDTH){1'bZ}};
+	assign D = ~nWE ? {(DATA_WIDTH){1'bZ}} : DV ? DOut : DLZ ? {(DATA_WIDTH){1'bX}} : {(DATA_WIDTH){1'bZ}};
 	
 	integer fd;
     integer i;
@@ -86,16 +87,16 @@ module GENERIC_SRAM
 		$fclose(fd);
 	end
 
-	always @(A or D or ACE or WE or !WE) 
+	always @(A or D or ACE or nWE) 
 	begin : MEM_WRITE
-		if (ACE && WE) begin
+		if (ACE && ~nWE) begin
 			mem[A] = D;
 		end
 	end
 
-	always @(WE or DV or ACC) 
+	always @(nWE or DV or ACC) 
 	begin : MEM_READ
-		if (!WE && DV) begin
+		if (nWE && DV) begin
 			DOut = mem[ACC];
 		end
 	end

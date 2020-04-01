@@ -33,10 +33,10 @@ module cy6264
         parameter tHZOE = 0:35:35	    // OE to output high-Z
     )
     (
-        input wire CE1,
+        input wire nCE1,
         input wire CE2,
-        input wire OE,
-        input wire WE,
+        input wire nOE,
+        input wire nWE,
         input wire [12:0] A,
         inout wire [7:0] D
     );
@@ -48,9 +48,9 @@ module cy6264
 		tACE, tLZCE, tHZCE,
 		tDOE,	tLZOE, tHZOE
 		) sram(
-			.CE(CE1 && CE2),
-			.OE(OE), 
-			.WE(WE),
+			.nCE(nCE1 && ~CE2),
+			.nOE(nOE), 
+			.nWE(nWE),
 			.A(A),
 			.D(D)
 			

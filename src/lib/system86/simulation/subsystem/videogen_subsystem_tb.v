@@ -99,15 +99,15 @@ module videogen_subsystem_tb;
 			.CLK_6MD(clk), 
 			.nCLR(1'b1), //.CLR(ls174_6v_q6), 
 			.D(DOT), 
-			.BANK(1'b0), //.BANK(ls174_9v_q5), 
+			.BANK(clut_bank), //.BANK(ls174_9v_q5), 
 			// output
 			.SYNC(SYNC),
 			.RED(RED), 
 			.GREEN(GREEN), 
 			.BLUE(BLUE),
 			
-			`CONNECTION_DEFS(prom_3r, prom_3r),
-			`CONNECTION_DEFS(prom_3s, prom_3s)
+			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
+			`PROM_CONNECTION_DEFS(prom_3s, prom_3s)
 						
 			// == hardware abstraction - memory buses ==
 		);	
@@ -182,13 +182,13 @@ module videogen_subsystem_tb;
 		
 	reg [15:0] dot_lsb_acc = 0;
 	reg [15:0] dot_msb_acc = 0;
-	reg BANK = 0;
+	reg clut_bank = 0;
 	
 	always @(negedge clk) begin
 		if (vid_active_row[8:0] === 9'b001110000)
-			BANK <= 1'b1;
+			clut_bank <= 1'b1;
 		else if (vid_active_row[8:0] === 9'b000000000)
-			BANK <= 1'b0;
+			clut_bank <= 1'b0;
 			
 		if (vid_active_col === 0) begin
 			dot_lsb_acc <= 16'b0;

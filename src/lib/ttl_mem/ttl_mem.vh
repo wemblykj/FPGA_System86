@@ -41,19 +41,56 @@
 	wire `ADDR_DEF(``type``, ``name``);\
 	wire `DATA_DEF(``type``, ``name``)
 	
-`define OUTPUT_DEFS(type, name) \
-	`define TYPE_DEF_``name`` ``type``;\
+`define PROM_OUTPUT_DEFS(type, name) \
 	output wire ``name``_ce_n,\
 	output wire `ADDR_DEF(``type``, ``name``),\
 	input wire `DATA_DEF(``type``, ``name``)\
 
-`define INPUT_DEFS(type, name) \
-	`define TYPE_DEF_``name`` ``type``;\
+`define PROM_INPUT_DEFS(type, name) \
 	input wire ``name``_ce_n,\
 	input wire `ADDR_DEF(``type``, ``name``),\
 	output wire `DATA_DEF(``type``, ``name``)
 
-`define CONNECTION_DEFS(port, signal) \
-	.``port``_ce_n(``signal``_ce_n),\
+`define EPROM_OUTPUT_DEFS(type, name) \
+	output wire ``name``_ce_n,\
+	output wire ``name``_oe_n,\
+	output wire `ADDR_DEF(``type``, ``name``),\
+	input wire `DATA_DEF(``type``, ``name``)\
+
+`define EPROM_INPUT_DEFS(type, name) \
+	input wire ``name``_ce_n,\
+	input wire ``name``_oe_n,\
+	input wire `ADDR_DEF(``type``, ``name``),\
+	output wire `DATA_DEF(``type``, ``name``)
+	
+`define SRAM_OUTPUT_DEFS(type, name) \
+	output wire ``name``_ce_n,\
+	output wire ``name``_oe_n,\
+	output wire ``name``_we_n,\
+	output wire `ADDR_DEF(``type``, ``name``),\
+	inout wire `DATA_DEF(``type``, ``name``)\
+
+`define SRAM_INPUT_DEFS(type, name) \
+	input wire ``name``_ce_n,\
+	input wire ``name``_oe_n,\
+	input wire ``name``_we_n,\
+	input wire `ADDR_DEF(``type``, ``name``),\
+	inout wire `DATA_DEF(``type``, ``name``)
+
+`define MEM_CONNECTION_DEFS(port, signal) \
 	.``port``_addr(``signal``_addr),\
 	.``port``_data(``signal``_data)
+
+`define PROM_CONNECTION_DEFS(port, signal) \
+	`MEM_CONNECTION_DEFS(``port``, ``signal``),\
+	.``port``_ce_n(``signal``_ce_n)
+	
+`define EPROM_CONNECTION_DEFS(port, signal) \
+	`PROM_CONNECTION_DEFS(``port``, ``signal``),\
+	.``port``_oe_n(``signal``_ce_n)
+
+`define SRAM_CONNECTION_DEFS(port, signal) \
+	`MEM_CONNECTION_DEFS(``port``, ``signal``),\
+	.``port``_ce_n(``signal``_ce_n),\
+	.``port``_oe_n(``signal``_oe_n),\
+	.``port``_we_n(``signal``_we_n)

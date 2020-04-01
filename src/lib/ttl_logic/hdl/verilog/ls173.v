@@ -31,15 +31,21 @@ module ls173(
     );
 
 	reg [3:0] QLatched = 0;
+	reg [3:0] QOut = 0;
 	
-	always @(posedge CLK or CLR) begin
-		if (CLR)
-			QLatched <= 4'b0;
-		else if (!(nG1 && nG2))
+	always @(posedge CLK) begin
+		if (!CLR && !(nG1 || nG2))
 			QLatched <= D;
 	end
 	
+	always @(CLR or QLatched) begin
+		if (CLR)
+			QOut <= 4'b0;
+		else
+			QOut <= QLatched;
+	end
+	
 	// handle high impedence state if M or N are high - does not affect latching logic, only output
-	assign Q = (M || N) ? 4'bZ : QLatched;
+	assign Q = (M || N) ? 4'bZ : QOut;
 	
 endmodule

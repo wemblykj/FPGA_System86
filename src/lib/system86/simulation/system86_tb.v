@@ -88,8 +88,8 @@ module system86_tb;
 			.vid_hblank_n(s86_hblank),
 			.vid_vblank_n(s86_vblank),
 			
-			`CONNECTION_DEFS(prom_3r, s86_prom_3r),
-			`CONNECTION_DEFS(prom_3s, s86_prom_3s)
+			`PROM_CONNECTION_DEFS(prom_3r, s86_prom_3r),
+			`PROM_CONNECTION_DEFS(prom_3s, s86_prom_3s)
 		);
 
 		// clut
@@ -102,6 +102,25 @@ module system86_tb;
 			.nE(s86_prom_3r_ce_n), 
 			.A(s86_prom_3r_addr), 
 			.Q(s86_prom_3r_data));	
+		
+		// tile ram
+		cy6264 sram_4n(
+			.nCE1(1'b0),
+			.CE2(1'b1),
+			.nWE(s86_sram_4n_we_n),
+			.nOE(s86_sram_4n_oe_n),
+			.A(s86_sram_4n_addr),
+			.D(s86_sram_4n_data)
+		);
+		
+		cy6264 sram_7n(
+			.nCE1(1'b0),
+			.CE2(1'b1),
+			.nWE(s86_sram_7n_we_n),
+			.nOE(s86_sram_7n_oe_n),
+			.A(s86_sram_7n_addr),
+			.D(s86_sram_7n_data)
+		);
 		
 		Video_Logger
 		#(
@@ -162,7 +181,7 @@ module system86_tb;
 			.o_VBlank(out2_vblank)
 		);
 		
-	Upscaler
+	/*Upscaler
 		#(
 			.COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
 			.USE_BLANKING_A(1),
@@ -219,7 +238,7 @@ module system86_tb;
 			.i_nHSync(out_vid_hsync_n),
 			.i_nVSync(out_vid_vsync_n)
 		);
-		
+		*/
 	initial begin
 		// Initialize Inputs
 		clk_48m = 0;

@@ -68,28 +68,28 @@ module system86
 		
 		// == Pluggable proms
 		
-		`OUTPUT_DEFS(MB7124, prom_3r),			// 7124 - 20 pin DIP/DIL
-		`OUTPUT_DEFS(MB7116, prom_3s), 			// 7116 - 16 pin DIP/DIL		
-		`OUTPUT_DEFS(MB7138, prom_4v),				// 7138
-		`OUTPUT_DEFS(MB7138, prom_5v),				// 7138
-		`OUTPUT_DEFS(MB7112, prom_6u),				// 7112
+		`PROM_OUTPUT_DEFS(MB7124, prom_3r),			// 7124 - 20 pin DIP/DIL
+		`PROM_OUTPUT_DEFS(MB7116, prom_3s), 		// 7116 - 16 pin DIP/DIL		
+		`PROM_OUTPUT_DEFS(MB7138, prom_4v),			// 7138
+		`PROM_OUTPUT_DEFS(MB7138, prom_5v),			// 7138
+		`PROM_OUTPUT_DEFS(MB7112, prom_6u),			// 7112
 		
 		// PROG
-		`OUTPUT_DEFS(M27256, eprom_9c),
-		`OUTPUT_DEFS(M27256, eprom_9d),
-		`OUTPUT_DEFS(M27256, eprom_12c),
-		`OUTPUT_DEFS(M27256, eprom_12d),
+		`EPROM_OUTPUT_DEFS(M27256, eprom_9c),
+		`EPROM_OUTPUT_DEFS(M27256, eprom_9d),
+		`EPROM_OUTPUT_DEFS(M27256, eprom_12c),
+		`EPROM_OUTPUT_DEFS(M27256, eprom_12d),
 		
 		// GFX
-		`OUTPUT_DEFS(M27512, eprom_7r),
-		`OUTPUT_DEFS(M27256, eprom_7s),
-		`OUTPUT_DEFS(M27256, eprom_4r),
-		`OUTPUT_DEFS(M27128, eprom_4s),
+		`EPROM_OUTPUT_DEFS(M27512, eprom_7r),
+		`EPROM_OUTPUT_DEFS(M27256, eprom_7s),
+		`EPROM_OUTPUT_DEFS(M27512, eprom_4r),
+		`EPROM_OUTPUT_DEFS(M27256, eprom_4s),
 		
 		// SRAM
-		`OUTPUT_DEFS(CY6264, sram_4n),
-		`OUTPUT_DEFS(CY6264, sram_7n),
-		`OUTPUT_DEFS(CY6264, sram_10m)
+		`SRAM_OUTPUT_DEFS(CY6264, sram_4n),
+		`SRAM_OUTPUT_DEFS(CY6264, sram_7n),
+		`SRAM_OUTPUT_DEFS(CY6264, sram_10m)
 	);
 	
 	// == global signals ==
@@ -102,13 +102,13 @@ module system86
 	wire CLK_S2H;
 	wire [12:0] A;
 	wire [7:0] D;
-	wire SCROLL0;
-	wire SCROLL1;
+	wire nSCROLL0;
+	wire nSCROLL1;
 	wire OBJECT;
-	wire LATCH0;
-	wire LATCH1;
-	wire BACKCOLOR;
-	wire WE;
+	wire nLATCH0;
+	wire nLATCH1;
+	wire nBACKCOLOR;
+	wire nWE;
 	
 	wire nHSYNC;
 	wire nVSYNC;
@@ -150,7 +150,7 @@ module system86
 			.CLK_4H(CLK_4H)
 		);
 	
-	/*tilegen_subsystem
+	tilegen_subsystem
 		tilegen_subsystem
 		(
 			.rst(rst),
@@ -158,64 +158,39 @@ module system86
 			// input
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
-			.SCROLL0(SCROLL0),
-			.SCROLL1(SCROLL1),
-			.LATCH0(LATCH0),
-			.LATCH1(LATCH1),
-			.HSYNC(HSYNC),
-			.VSYNC(HSYNC),
+			.nSCROLL0(nSCROLL0),
+			.nSCROLL1(nSCROLL1),
+			.nLATCH0(nLATCH0),
+			.nLATCH1(nLATCH1),
+			.nHSYNC(nHSYNC),
+			.nVSYNC(nHSYNC),
 			.FLIP(FLIP),
 			.BANK(BANK),
 			.SRCWIN(SRCWIN),
-			.BACKCOLOR(BACKCOLOR),
+			.nBACKCOLOR(nBACKCOLOR),
 			.A(A[12:0]),
-			.WE(WE),
+			.nWE(nWE),
 			.MD(MD),
 			// inout
 			.D(D),
-			.J5(J5),
+			.J5(conn_j5),
 			// output
 			.SPR(SPR),
 			.DOT(DOT),
 						
 			// == hardware abstraction - memory buses ==
 			
-			.eeprom_4r_addr(eeprom_4r_addr),
-			.eeprom_4r_data(eeprom_4r_data),
-			.eeprom_4r_ce(eeprom_4r_ce),
-			
-			.eeprom_4s_addr(eeprom_4s_addr),
-			.eeprom_4s_data(eeprom_4s_data),
-			.eeprom_4s_ce(eeprom_4s_ce),
-			
-			.prom_4v_addr(prom_4v_addr),
-			.prom_4v_data(prom_4v_data),
-			.prom_4v_ce(prom_4v_ce),
-			
-			.prom_6u_addr(prom_6u_addr),
-			.prom_6u_data(prom_6u_data),
-			.prom_6u_ce(prom_6u_ce),
-			
-			.eeprom_7r_addr(eeprom_7r_addr),
-			.eeprom_7r_data(eeprom_7r_data),
-			.eeprom_7r_ce(eeprom_7r_ce),
-			
-			.eeprom_7s_addr(eeprom_7s_addr),
-			.eeprom_7s_data(eeprom_7s_data),
-			.eeprom_7s_ce(eeprom_7s_ce),
-			
-			.sram_10m_data(sram_4n_data),
-			.sram_10m_addr(sram_4n_addr),
-			.sram_10m_ce(sram_4n_ce),
-			.sram_10m_we(sram_4n_we),
-			.sram_10me(sram_4ne),
-			
-			.sram_10m_data(sram_7n_data),
-			.sram_10m_addr(sram_7n_addr),
-			.sram_10m_ce(sram_7n_ce),
-			.sram_10m_we(sram_7n_we),
-			.sram_10me(sram_7ne)
-		);*/
+			`EPROM_CONNECTION_DEFS(eprom_4r, eprom_4r),
+			`EPROM_CONNECTION_DEFS(eprom_4s, eprom_4s),
+			`PROM_CONNECTION_DEFS(prom_4v, prom_4v),
+			`PROM_CONNECTION_DEFS(prom_6u, prom_6u),
+			`EPROM_CONNECTION_DEFS(eprom_7r, eprom_7r),
+			`EPROM_CONNECTION_DEFS(eprom_7s, eprom_7s),
+			`SRAM_CONNECTION_DEFS(sram_4n, sram_4n),
+			`SRAM_CONNECTION_DEFS(sram_7n, sram_7n)
+		);
+	
+	reg videogen_bank = 0;
 	
 	videogen_subsystem
 		videogen_subsystem(
@@ -224,15 +199,15 @@ module system86
 			.CLK_6MD(CLK_6MD), 
 			.nCLR(1'b1), //.CLR(ls174_6v_q6), 
 			.D(DOT), 
-			.BANK(1'b0), //.BANK(ls174_9v_q5), 
+			.BANK(videogen_bank), //.BANK(ls174_9v_q5), 
 			// output
 			.SYNC(SYNC),
 			.RED(RED), 
 			.GREEN(GREEN), 
 			.BLUE(BLUE),
 			
-			`CONNECTION_DEFS(prom_3r, prom_3r),
-			`CONNECTION_DEFS(prom_3s, prom_3s)
+			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
+			`PROM_CONNECTION_DEFS(prom_3s, prom_3s)
 						
 			// == hardware abstraction - memory buses ==
 		);	
@@ -261,13 +236,12 @@ module system86
 		
 	reg [15:0] dot_lsb_acc = 0;
 	reg [15:0] dot_msb_acc = 0;
-	reg BANK = 0;
-	
+
 	always @(negedge CLK_6M) begin
 		if (vid_active_row[8:0] === 9'b001110000)
-			BANK <= 1'b1;
+			videogen_bank <= 1'b1;
 		else if (vid_active_row[8:0] === 9'b000000000)
-			BANK <= 1'b0;
+			videogen_bank <= 1'b0;
 			
 		if (vid_active_col === 0) begin
 			dot_lsb_acc <= 16'b0;

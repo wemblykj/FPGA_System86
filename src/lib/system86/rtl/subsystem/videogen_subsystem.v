@@ -42,8 +42,8 @@ module videogen_subsystem
     
     // == hardware abstraction - memory buses ==
    
-	 `OUTPUT_DEFS(MB7124, prom_3r),
-	 `OUTPUT_DEFS(MB7116, prom_3s)
+	 `PROM_OUTPUT_DEFS(MB7124, prom_3r),
+	 `PROM_OUTPUT_DEFS(MB7116, prom_3s)
 );
 	
 	assign BLUE = ls173_3v_d;

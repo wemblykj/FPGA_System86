@@ -20,67 +20,55 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
+`include "../../../ttl_mem/mb7112.vh"
+`include "../../../ttl_mem/mb7116.vh"
+`include "../../../ttl_mem/mb7138.vh"
+
+`include "../../../ttl_mem/m27512.vh"
+`include "../../../ttl_mem/m27256.vh"
+
+`include "../../../ttl_mem/cy6264.vh"
+
+`include "../../../ttl_mem/ttl_mem.vh"
+
 module tilegen_subsystem
 	#(
 	)
 	(
+		input wire rst,
+	
 		input wire CLK_6M,
 		input wire CLK_2H,
-		input wire SCROLL0,
-		input wire SCROLL1,
-		input wire LATCH0,
-		input wire LATCH1,
-		input wire HSYNC,
-		input wire VSYNC,
+		input wire nSCROLL0,
+		input wire nSCROLL1,
+		input wire nLATCH0,
+		input wire nLATCH1,
+		input wire nHSYNC,
+		input wire nVSYNC,
 		input wire FLIP,
 		input wire SRCWIN,
 		input wire BANK,
-		input wire BACKCOLOR,
+		input wire nBACKCOLOR,
 		input wire [12:0] A,
-		input wire WE,
+		input wire nWE,
 		input wire [7:0] MD,
 		inout wire [7:0] D,
 		inout wire [20:1] J5,
 		output wire [2:0] SPR,
 		output wire [7:0] DOT, 
         
-        // == hardware abstraction - memory buses ==
+      // == hardware abstraction - memory buses ==
+		`EPROM_OUTPUT_DEFS(M27512, eprom_4r),
+		`EPROM_OUTPUT_DEFS(M27256, eprom_4s),
+		
+		`EPROM_OUTPUT_DEFS(M27512, eprom_7r),
+		`EPROM_OUTPUT_DEFS(M27256, eprom_7s),
+		
+		`PROM_OUTPUT_DEFS(MB7138, prom_4v),
+		`PROM_OUTPUT_DEFS(MB7112, prom_6u),
         
-        input wire [7:0] eeprom_4r_data,
-        output wire [15:0] eeprom_4r_addr,
-        output wire eeprom_4r_ce,
-        
-        input wire [7:0] eeprom_4s_data,
-        output wire [14:0] eeprom_4s_addr,
-        output wire eeprom_4s_ce,
-        
-        input wire [7:0] prom_4v_data,
-        output wire [10:0] prom_4v_addr,
-        output wire prom_4v_ce,
-        
-        input wire [7:0] prom_6u_data,
-        output wire [4:0] prom_6u_addr,
-        output wire prom_6u_ce,
-        
-        input wire [7:0] eeprom_7r_data,
-        output wire [16:0] eeprom_7r_addr,
-        output wire eeprom_7r_ce,
-        
-        input wire [7:0] eeprom_7s_data,
-        output wire [15:0] eeprom_7s_addr,
-        output wire eeprom_7s_ce,
-        
-        inout wire [7:0] sram_4n_data,
-        output wire [12:0] sram_4n_addr,
-        output wire sram_4n_ce,
-        output wire sram_4n_we,
-        output wire sram_4n_oe,
-        
-        inout wire [7:0] sram_7n_data,
-        output wire [12:0] sram_7n_addr,
-        output wire sram_7n_ce,
-        output wire sram_7n_we,
-        output wire sram_7n_oe
+		`SRAM_OUTPUT_DEFS(CY6264, sram_4n),
+		`SRAM_OUTPUT_DEFS(CY6264, sram_7n)
     );
 
 	
@@ -92,16 +80,16 @@ module tilegen_subsystem
 	// == Layer 1 & 2 =
 	
 	wire [13:0] cus42_7k_ga;
-	wire cus42_7k_rwe;
-	wire cus42_7k_roe;
-	wire [12:0] cus42_7k_ra;
-	wire [7:0] cus42_7k_rd;
+	//wire cus42_7k_rwe;
+	//wire cus42_7k_roe;
+	//wire [12:0] cus42_7k_ra;
+	//wire [7:0] cus42_7k_rd;
 	
 	wire [13:0] cus42_5k_ga;
-	wire cus42_5k_rwe;
-	wire cus42_5k_roe;
-	wire [12:0] cus42_5k_ra;
-	wire [7:0] cus42_5k_rd;
+	//wire cus42_5k_rwe;
+	//wire cus42_5k_roe;
+	//wire [12:0] cus42_5k_ra;
+	//wire [7:0] cus42_5k_rd;
 	
 	// (possibly priority lut based on Mame's system 1 description)
 	// b4-8 - layer 2 & 4
@@ -168,8 +156,8 @@ module tilegen_subsystem
 	
 	// background color latch
 	ls374 LS374_8H(
-			.OC(~J5[5]),		// disable background color driver from auxillary driver over J5
-			.CLK(~BACKCOLOR),	// latches on negative edge
+			.nOC(J5[5]),		// disable background color driver from auxillary driver over J5
+			.CLK(nBACKCOLOR),	// latches on negative edge
 			.D(MD),
 			.Q(ls374_8h_q)
 		);
@@ -177,11 +165,11 @@ module tilegen_subsystem
     // tile address decoder (used at runtime) 0x1400 - 0x0020
 	// possibly similar functionality to system 1 functionality as described in Mame	
     assign prom_6u_addr = { CLK_2H, cus42_7k_ga[13:12], cus42_5k_ga[13:12] };
-    assign prom_6u_ce = VCC;
+    assign prom_6u_ce_n = 1'b0;
 	
     // tile map palette prom
     assign prom_4v_addr = { cus43_6n_clo, cus43_6n_dto };
-    assign prom_4v_ce = VCC;  // SCRWIN
+    assign prom_4v_ce_n = 1'b0;  // SCRWIN
     
 	// == Layer 1 & 2 =
 	
@@ -189,39 +177,39 @@ module tilegen_subsystem
 			// inputs
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_2H), 
-			.RCS(SCROLL0),
-			.GCS(GND),	// held high (inactive) on schematics
-			.LATCH(LATCH0),
-			.CA( { GND, A[12:0] } ),
-			.WE(WE),
+			.nRCS(nSCROLL0),
+			.nGCS(1'b1),	// held high (inactive) on schematics
+			.nLATCH(nLATCH0),
+			.CA( { 1'b0, A[12:0] } ),
+			.nWE(nWE),
 			.CD(D),
 			// outputs
 			.GA(cus42_7k_ga),
-			.RA(cus42_7k_ra),
-			.RWE(cus42_7k_rwe),
-			.RD(cus42_7k_rd),
-			.ROE(cus42_7k_roe)
+			.RA(sram_7n_addr),
+			.RWE(sram_7n_we_n),
+			.RD(sram_7n_data),
+			.ROE(sram_7n_oe_n)
 		);
 	
 	// tile ram
-	cy6264 CY6264_7N(
-			.CE1(VCC),
-			.CE2(VCC),
-			.WE(cus42_7k_rwe),
-			.OE(cus42_7k_roe),
+	/*cy6264 CY6264_7N(
+			.nCE1(1'b0),
+			.CE2(1'b1),
+			.nWE(cus42_7k_rwe),
+			.nOE(cus42_7k_roe),
 			.A(cus42_7k_ra),
 			.D(cus42_7k_rd)
-		);
+		);*/
 	
     // layer 1/2 - red and green channels (4-bit per channel)
-	assign eeprom_7r_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:0] };
-    assign eeprom_7r_ce = VCC;
+	assign eprom_7r_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:0] };
+   assign eprom_7r_ce_n = 1'b0;
     
-    // layer 1/2 - blue channel (4-bit per channel with two pixels per address)
-    assign eeprom_7s_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:1] };
-    assign eeprom_7s_ce = VCC;
+   // layer 1/2 - blue channel (4-bit per channel with two pixels per address)
+   assign eprom_7s_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:1] };
+   assign eprom_7s_ce_n = 1'b0;
     
-    ls158 ls158();
+   ls158 ls158();
 	
 	// auxillary select
 	wire [2:0] cus43_8n_pr_in;
@@ -242,8 +230,8 @@ module tilegen_subsystem
 			.CLI( cus43_8n_cl_in ),
 			.DTI( cus43_8n_dt_in ),
 			.CA(A[2:0]),
-			.WE(WE),
-			.LATCH(LATCH0),
+			.nWE(nWE),
+			.LATCH(nLATCH0),
 			.FLIP(FLIP),
 			.PRO(PR),
 			.CLO(CL),
@@ -256,38 +244,38 @@ module tilegen_subsystem
 	cus42 CUS42_5K(
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_2H), 
-			.HSYNC(HSYNC),
-			.VSYNC(VSYNC),
-			.GCS(GND),	// held high (inactive) on schematics
-			.RCS(SCROLL1),
-			.LATCH(LATCH1),
-			.CA( { GND, A[12:0] } ),
-			.WE(WE),
+			.nHSYNC(nHSYNC),
+			.nVSYNC(nVSYNC),
+			.nGCS(1'b1),	// held high (inactive) on schematics
+			.nRCS(nSCROLL1),
+			.nLATCH(nLATCH1),
+			.CA( { 1'b0, A[12:0] } ),
+			.nWE(nWE),
 			.CD(D),
 			.GA(cus42_5k_ga),
-			.RWE(cus42_5k_rwe),
-			.ROE(cus42_5k_roe),
-			.RA(cus42_5k_ra),
-			.RD(cus42_5k_rd)
+			.RWE(sram_4n_we_n),
+			.ROE(sram_4n_oe_n),
+			.RA(sram_4n_addr),
+			.RD(sram_4n_data)
 		);
 		
 	// tile ram 1
-	cy6264 CY6264_4N(
-			.CE1(VCC),
-			.CE2(VCC),
-			.WE(cus42_5k_rwe),
-			.OE(cus42_5k_roe),
+	/*cy6264 CY6264_4N(
+			.nCE1(1'b0),
+			.CE2(1'b1),
+			.nWE(cus42_5k_rwe),
+			.nOE(cus42_5k_roe),
 			.A(cus42_5k_ra),
 			.D(cus42_5k_rd)
-		);
+		);*/
 	
     // layer 3/4 - red and green channels (4-bit per channel)
-	assign eeprom_4r_addr = { prom_6u_data[7:5], cus42_5k_ga[11:0] };
-   assign eeprom_4r_ce = VCC;
+	assign eprom_4r_addr = { prom_6u_data[7:5], cus42_5k_ga[11:0] };
+   assign eprom_4r_ce_n = 1'b0;
     
    // layer 3/4 - blue channel (4-bit per channel with two pixels per address)
-   assign eeprom_4s_addr = { prom_6u_data[7:5], cus42_5k_ga[11:1] };
-   assign eeprom_4s_ce = VCC;
+   assign eprom_4s_addr = { prom_6u_data[7:5], cus42_5k_ga[11:1] };
+   assign eprom_4s_ce_n = 1'b0;
     
 	// tile generator
 	cus43 CUS43_6N(
@@ -297,8 +285,8 @@ module tilegen_subsystem
 			.CLI(CL),
 			.DTI(DT),
 			.CA(A[2:0]),
-			.WE(WE),
-			.LATCH(LATCH1),
+			.nWE(nWE),
+			.LATCH(nLATCH1),
 			.FLIP(FLIP),
 			.PRO(cus43_6n_pro),
 			.CLO(cus43_6n_clo),
@@ -306,6 +294,6 @@ module tilegen_subsystem
 		);
 	
 	// to auxillary color drivers over J5
-	assign J5[6] = ~BACKCOLOR;
+	assign J5[6] = nBACKCOLOR;
 
 endmodule

@@ -26,11 +26,19 @@ module ls273(
         output reg [7:0] Q
     );
 
-	always @(posedge CLK or nCLR) begin
+	reg [3:0] QLatched = 0;
+	reg [3:0] QOut = 0;
+	
+	always @(posedge CLK) begin
+		if (!nCLR)
+			QLatched = D;
+	end
+	
+	always @(nCLR or QLatched) begin
 		if (!nCLR)
 			Q = 8'b0;
 		else
-			Q = D;
+			Q = QLatched;
 	end
 	
 endmodule

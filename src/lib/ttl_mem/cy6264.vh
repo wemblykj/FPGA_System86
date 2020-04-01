@@ -20,5 +20,5 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 `define PINS_CY6264	1:28
-`define DATA_WIDTH_CY6264	8
-`define ADDR_WIDTH_CY6264	8
+`define DATA_WIDTH_CY6264	13
+`define ADDR_WIDTH_CY6264	13

@@ -22,14 +22,14 @@
 module cus42(
         input wire CLK_6M,
         input wire CLK_2H,
-        input wire HSYNC,
-        input wire VSYNC,
-        input wire GCS,
-        input wire RCS,
-        input wire LATCH,
+        input wire nHSYNC,
+        input wire nVSYNC,
+        input wire nGCS,
+        input wire nRCS,
+        input wire nLATCH,
         input wire FLIP,
         input wire [13:0] CA,
-        input wire WE,
+        input wire nWE,
         inout wire [7:0] CD,
         inout wire [7:0] RD,
         output wire [13:0] GA,
@@ -56,8 +56,8 @@ module cus42(
 	reg HA_ref;          // ? nibble or layer specific signal
     reg HB_ref;          // ? alternative nibble or layer specific signal
 	
-	reg hsyncLast = 0;
-	reg vsyncLast = 0;
+	reg hsyncLast = 1;
+	reg vsyncLast = 1;
 	
 	// screen space
 	reg [8:0] hCounter = 0;	// 9 bits
@@ -123,7 +123,7 @@ module cus42(
 	
     // Handle CPU control requests
 	always @(*) begin
-		if (LATCH) begin
+		if (nLATCH == 1'b0) begin
 			if (!CA[1])
 				// set lower 8 bits
 				hScrollOffset[CA[2]][7:0] = CD;
@@ -148,17 +148,17 @@ module cus42(
 		//HBOut <= 0;
         
 		// handle pixel counters and resets
-		hsyncLast <= HSYNC;
-		vsyncLast <= VSYNC;
+		hsyncLast <= nHSYNC;
+		vsyncLast <= nVSYNC;
 		
         
-		if (HSYNC && !hsyncLast) begin
+		if (~nHSYNC && hsyncLast) begin
 			hCounter <= 0;
 			vCounter <= vCounter + 1;
 		end else
 			hCounter <= hCounter + 1;
 			
-		if (VSYNC && !vsyncLast) begin
+		if (~nVSYNC && vsyncLast) begin
 			vCounter <= 0;
 			// HACK to scroll each frame
 			hScrollOffset[0] <= hScrollOffset[0] + 1;
@@ -250,9 +250,9 @@ module cus42(
 	assign HA2 = HAOut;
 	assign HB2 = HBOut;
 	
-	assign RWE = RCS ? WE : 1'b0;
-	assign ROE = RCS ? !WE : 1'b1;
-	assign RD = RCS && WE ? CD : 8'bZ;
-	assign CD = RCS && !WE ? RD : 8'bZ;
+	/*assign nRWE = nRCS ? 1'b0 : nWE;
+	assign nROE = nRCS ? 1'b1 : ~nWE;
+	assign RD = ~nRCS && ~nWE ? CD : 8'bZ;
+	assign CD = ~nRCS && nWE ? RD : 8'bZ;*/
 
 endmodule

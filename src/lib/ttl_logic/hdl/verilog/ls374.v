@@ -20,14 +20,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module ls374(
-        input wire OC,
+        input wire nOC,
         input wire CLK,
         input wire [1:8] D,
         output reg [1:8] Q
     );
 
 	always @(posedge CLK) begin
-		if (OC)
+		if (nOC)
 			Q = D;
 		else
 			Q = 8'bZ;
