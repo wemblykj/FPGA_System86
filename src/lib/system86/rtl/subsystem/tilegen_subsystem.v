@@ -188,9 +188,9 @@ module tilegen_subsystem
 			// outputs
 			.GA(cus42_7k_ga),
 			.RA(sram_7n_addr),
-			.RWE(sram_7n_we_n),
+			.nRWE(sram_7n_we_n),
 			.RD(sram_7n_data),
-			.ROE(sram_7n_oe_n)
+			.nROE(sram_7n_oe_n)
 		);
 	
 	// tile ram
@@ -255,8 +255,8 @@ module tilegen_subsystem
 			.nWE(nWE),
 			.CD(D),
 			.GA(cus42_5k_ga),
-			.RWE(sram_4n_we_n),
-			.ROE(sram_4n_oe_n),
+			.nRWE(sram_4n_we_n),
+			.nROE(sram_4n_oe_n),
 			.RA(sram_4n_addr),
 			.RD(sram_4n_data)
 		);

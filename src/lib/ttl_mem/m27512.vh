@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 `define DATA_WIDTH_M27512		8
-`define ADDR_WIDTH_M27512		15
+`define ADDR_WIDTH_M27512		16
 `define PINS_M27512				1:28
 `define DATA_M27512(pins)		{ pins[19 -: 5], pins[13 -: 3] }
 `define ADDR_M27512(pins)		{ pin[1], pin[27], pin[26], pin[2], pin[23], pin[21], pins[24 +: 2], pins[3 +: 8] }

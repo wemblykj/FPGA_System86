@@ -214,9 +214,12 @@ module system86
 		);	
 		
 	
-	wire vid_active;
+	/*wire vid_active;
 	wire [9:0] vid_active_col;
 	wire [9:0] vid_active_row;
+	
+	reg [9:0] temp_active_col = 0;
+	reg [9:0] temp_active_row = 0;
 	
 	Blanking_To_Count
 		#(
@@ -247,21 +250,22 @@ module system86
 			
 		if (vid_active_col === 0) begin
 			dot_lsb_acc <= 16'b0;
-				
+			
 			if (vid_active_row === 112 || vid_active_row === 0)
 				dot_msb_acc <= 16'b0;
 			else
 				dot_msb_acc <= dot_msb_acc + 590;
-		end else
+		end else begin
 			dot_lsb_acc <= dot_lsb_acc + 228;			
+		end
 	end
-	
+	*/
 	
 	//assign SPR = cus43_6n_pro;
 	//assign SCRWIN = ls85_7v_altb;	
 	
-	assign DOT = (vid_active !== 1'b0) ? { dot_msb_acc[15:13], dot_lsb_acc[15:11] } : 8'b0;
-	//assign DOT = prom_4v_data; //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
+	//assign DOT = (vid_active !== 1'b0) ? { dot_msb_acc[15:13], dot_lsb_acc[15:11] } : 8'b0;
+	assign DOT = prom_4v_data; //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
 	
 	
 	// == assign external connections

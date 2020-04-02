@@ -34,8 +34,8 @@ module cus42(
         inout wire [7:0] RD,
         output wire [13:0] GA,
         output wire [12:0] RA,
-        output wire RWE,
-        output wire ROE,
+        output wire nRWE,
+        output wire nROE,
         output wire HA2,
         output wire HB2
     );
@@ -250,9 +250,9 @@ module cus42(
 	assign HA2 = HAOut;
 	assign HB2 = HBOut;
 	
-	/*assign nRWE = nRCS ? 1'b0 : nWE;
+	assign nRWE = nRCS ? 1'b1 : nWE;
 	assign nROE = nRCS ? 1'b1 : ~nWE;
 	assign RD = ~nRCS && ~nWE ? CD : 8'bZ;
-	assign CD = ~nRCS && nWE ? RD : 8'bZ;*/
+	assign CD = ~nRCS && nWE ? RD : 8'bZ;
 
 endmodule

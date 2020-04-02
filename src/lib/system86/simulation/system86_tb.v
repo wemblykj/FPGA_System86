@@ -27,6 +27,9 @@
 `include "../../ttl_mem/mb7124.vh"
 `include "../../ttl_mem/mb7138.vh"
 
+`include "../../ttl_mem/m27512.vh"
+`include "../../ttl_mem/m27256.vh"
+
 `include "../../ttl_mem/cy6264.vh"
 
 `include "../../ttl_mem/ttl_mem.vh"
@@ -57,6 +60,12 @@ module system86_tb;
 	`PROM_WIRE_DEFS(MB7116, prom_3s);
 	`PROM_WIRE_DEFS(MB7138, prom_4v);
 	`PROM_WIRE_DEFS(MB7112, prom_6u);
+	
+	`EPROM_WIRE_DEFS(M27512, eprom_4r);
+	`EPROM_WIRE_DEFS(M27256, eprom_4s);
+	`EPROM_WIRE_DEFS(M27512, eprom_7r);
+	`EPROM_WIRE_DEFS(M27256, eprom_7s);
+	
 	`SRAM_WIRE_DEFS(CY6264, sram_4n);
 	`SRAM_WIRE_DEFS(CY6264, sram_7n);
 	
@@ -97,7 +106,23 @@ module system86_tb;
 			.vid_vblank_n(s86_vblank_n),
 			
 			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
-			`PROM_CONNECTION_DEFS(prom_3s, prom_3s)
+			`PROM_CONNECTION_DEFS(prom_3s, prom_3s),
+			
+			`PROM_CONNECTION_DEFS(prom_4v, prom_4v),
+			`PROM_CONNECTION_DEFS(prom_6u, prom_6u),
+			
+			`EPROM_CONNECTION_DEFS(eprom_4r, eprom_4r),
+			`EPROM_CONNECTION_DEFS(eprom_4s, eprom_4s),
+			`EPROM_CONNECTION_DEFS(eprom_7r, eprom_7r),
+			`EPROM_CONNECTION_DEFS(eprom_7s, eprom_7s),
+			
+			//`EPROM_CONNECTION_DEFS(eprom_9c, eprom_9c),
+			//`EPROM_CONNECTION_DEFS(eprom_9d, eprom_9d),
+			//`EPROM_CONNECTION_DEFS(eprom_12c, eprom_12c),
+			//`EPROM_CONNECTION_DEFS(eprom_12d, eprom_12d),
+			
+			`SRAM_CONNECTION_DEFS(sram_4n, sram_4n),
+			`SRAM_CONNECTION_DEFS(sram_7n, sram_7n)
 		);
 
 		// clut
@@ -144,7 +169,51 @@ module system86_tb;
 			.A(prom_6u_addr), 
 			.Q(prom_6u_data)
 		);	
+	
+	eprom_m27512 
+		#(
+			`ROM_4R
+		) 
+		eprom_4r
+		(
+			.nE(eprom_4r_ce_n), 
+			.A(eprom_4r_addr), 
+			.Q(eprom_4r_data)
+		);	
 		
+	eprom_m27256 
+		#(
+			`ROM_4S
+		) 
+		eprom_4s
+		(
+			.nE(eprom_4s_ce_n), 
+			.A(eprom_4s_addr), 
+			.Q(eprom_4s_data)
+		);	
+	
+eprom_m27512 
+		#(
+			`ROM_7R
+		) 
+		eprom_7r
+		(
+			.nE(eprom_7r_ce_n), 
+			.A(eprom_7r_addr), 
+			.Q(eprom_7r_data)
+		);	
+		
+	eprom_m27256 
+		#(
+			`ROM_7S
+		) 
+		eprom_7s
+		(
+			.nE(eprom_7s_ce_n), 
+			.A(eprom_7s_addr), 
+			.Q(eprom_7s_data)
+		);	
+			
 		// tile ram
 	sram_cy6264 
 		#(

@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module EPROM_27512
+module eprom_m27512
     #(
         parameter FILE_NAME = "",
         // timings (250ns - blank, -25) 
@@ -30,15 +30,15 @@ module EPROM_27512
         parameter tGHQZ = 0:60:60   // (using worst case for typical)
     )
     (
-        input wire G,
-        input wire E,
+        input wire nG,
+        input wire nE,
         input wire [15:0] A,
         output wire [7:0] Q
     );
         
     GENERIC_PROM #(16, 8, FILE_NAME, tAVQV, tAXQX, tELQV, tEHQZ, tGLQV, tGHQZ) fprom(
-        .G(G),
-        .E(E),
+        .nG(nG),
+        .nE(nE),
         .A(A),
         .Q(Q)
     );
