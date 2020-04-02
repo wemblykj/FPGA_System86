@@ -64,7 +64,6 @@ module timing_subsystem
 	cus27 
 		cus27_9p_clock_divider(
 			.rst(rst),
-			.enable(enable),
 			.CLK_48M(CLK_48M), 
 			.CLK_6M_IN(CLK_6M),
 			.CLK_24M(CLK_24M),
@@ -72,8 +71,8 @@ module timing_subsystem
 			.CLK_6M(CLK_6M),
 			.nVSYNC(nVSYNC),
 			.nHSYNC(nHSYNC),
-			.HBLANK(nHBLANK),
-			.VBLANK(nVBLANK),
+			.nHBLANK(nHBLANK),
+			.nVBLANK(nVBLANK),
 			.nHRESET(nHRESET),
 			.nVRESET(nVRESET),
 			.CLK_8V(CLK_8V),

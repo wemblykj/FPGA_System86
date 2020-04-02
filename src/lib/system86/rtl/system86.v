@@ -213,7 +213,7 @@ module system86
 			`PROM_CONNECTION_DEFS(prom_3s, prom_3s)
 		);	
 		
-	/*
+	
 	wire vid_active;
 	wire [9:0] vid_active_col;
 	wire [9:0] vid_active_row;
@@ -229,8 +229,8 @@ module system86
 			.i_Rst(rst),
 			.i_nHSync(nHSYNC),
 			.i_nVSync(nVSYNC),
-			.i_HBlank(nHBLANK),
-			.i_VBlank(nVBLANK),
+			.i_HBlank(~nHBLANK),
+			.i_VBlank(~nVBLANK),
 			.o_Active(vid_active),
 			.o_Col_Count(vid_active_col),
 			.o_Row_Count(vid_active_row)
@@ -241,9 +241,9 @@ module system86
 
 	always @(negedge CLK_6M) begin
 		if (vid_active_row[8:0] === 9'b001110000)
-			videogen_bank <= 1'b1;
+			ls174_9v_q5 <= 1'b1;
 		else if (vid_active_row[8:0] === 9'b000000000)
-			videogen_bank <= 1'b0;
+			ls174_9v_q5 <= 1'b0;
 			
 		if (vid_active_col === 0) begin
 			dot_lsb_acc <= 16'b0;
@@ -255,13 +255,13 @@ module system86
 		end else
 			dot_lsb_acc <= dot_lsb_acc + 228;			
 	end
-	*/
+	
 	
 	//assign SPR = cus43_6n_pro;
 	//assign SCRWIN = ls85_7v_altb;	
 	
-	//assign DOT = (vid_active !== 1'b0) ? { dot_msb_acc[15:13], dot_lsb_acc[15:11] } : 8'b0;
-	assign DOT = prom_4v_data; //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
+	assign DOT = (vid_active !== 1'b0) ? { dot_msb_acc[15:13], dot_lsb_acc[15:11] } : 8'b0;
+	//assign DOT = prom_4v_data; //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
 	
 	
 	// == assign external connections

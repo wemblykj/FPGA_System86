@@ -50,8 +50,8 @@ module system86_tb;
 	wire [3:0] s86_vid_blue;
 	wire s86_hsync_n;
 	wire s86_vsync_n;
-	wire s86_hblank;
-	wire s86_vblank;
+	wire s86_hblank_n;
+	wire s86_vblank_n;
 	
 	`PROM_WIRE_DEFS(MB7124, prom_3r);
 	`PROM_WIRE_DEFS(MB7116, prom_3s);
@@ -93,8 +93,8 @@ module system86_tb;
 			.vid_blue(s86_vid_blue),
 			.vid_hsync_n(s86_hsync_n),
 			.vid_vsync_n(s86_vsync_n),
-			.vid_hblank_n(s86_hblank),
-			.vid_vblank_n(s86_vblank),
+			.vid_hblank_n(s86_hblank_n),
+			.vid_vblank_n(s86_vblank_n),
 			
 			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
 			`PROM_CONNECTION_DEFS(prom_3s, prom_3s)

@@ -59,6 +59,8 @@ module videogen_subsystem_tb;
 	// == [not so] global signals ==
 	wire [7:0] DOT;			// multiplexed tilemap color index and sprite color index
 			
+	reg clut_bank = 1'b0;
+	
 	// == Timing subsystem ==
 	/*timing_subsystem
 		timing_subsystem(
@@ -81,12 +83,12 @@ module videogen_subsystem_tb;
 	*/
 	
 	// clut
-	PROM_7116 #(`ROM_3S) prom_3s(
+	prom_mb7116 #(`ROM_3S) prom_3s(
 		.nE(prom_3s_ce_n), 
 		.A(prom_3s_addr), 
 		.Q(prom_3s_data));
 		
-	PROM_7124 #(`ROM_3R) prom_3r(
+	prom_mb7124 #(`ROM_3R) prom_3r(
 		.nE(prom_3r_ce_n), 
 		.A(prom_3r_addr), 
 		.Q(prom_3r_data));	
@@ -182,7 +184,6 @@ module videogen_subsystem_tb;
 		
 	reg [15:0] dot_lsb_acc = 0;
 	reg [15:0] dot_msb_acc = 0;
-	reg clut_bank = 0;
 	
 	always @(negedge clk) begin
 		if (vid_active_row[8:0] === 9'b001110000)
