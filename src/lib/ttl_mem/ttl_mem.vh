@@ -36,7 +36,7 @@
 `define ADDR_DEF(type, name) [`ADDR_WIDTH(``type``)-1:0] ``name``_addr
 
 `define PROM_WIRE_DEFS(type, name) \
-	wire ``name``_ce_n = 1'b0;\
+	wire ``name``_ce_n;\
 	wire `ADDR_DEF(``type``, ``name``);\
 	wire `DATA_DEF(``type``, ``name``)
 	
@@ -51,8 +51,8 @@
 	output wire `DATA_DEF(``type``, ``name``)
 
 `define EPROM_WIRE_DEFS(type, name) \
-	wire ``name``_ce_n = 1'b0;\
-	wire ``name``_oe_n = 1'b0;\
+	wire ``name``_ce_n;\
+	wire ``name``_oe_n;\
 	wire `ADDR_DEF(``type``, ``name``);\
 	wire `DATA_DEF(``type``, ``name``)
 
@@ -69,9 +69,9 @@
 	output wire `DATA_DEF(``type``, ``name``)
 
 `define SRAM_WIRE_DEFS(type, name) \
-	wire ``name``_ce_n = 1'b0;\
-	wire ``name``_oe_n = 1'b0;\
-	wire ``name``_we_n = 1'b0;\
+	wire ``name``_ce_n;\
+	wire ``name``_oe_n;\
+	wire ``name``_we_n;\
 	wire `ADDR_DEF(``type``, ``name``);\
 	wire `DATA_DEF(``type``, ``name``)\
 	
@@ -99,7 +99,7 @@
 	
 `define EPROM_CONNECTION_DEFS(port, signal) \
 	`PROM_CONNECTION_DEFS(``port``, ``signal``),\
-	.``port``_oe_n(``signal``_ce_n)
+	.``port``_oe_n(``signal``_oe_n)
 
 `define SRAM_CONNECTION_DEFS(port, signal) \
 	`MEM_CONNECTION_DEFS(``port``, ``signal``),\

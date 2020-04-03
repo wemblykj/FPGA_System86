@@ -177,6 +177,7 @@ module system86_tb;
 		eprom_4r
 		(
 			.nE(eprom_4r_ce_n), 
+			.nG(eprom_4r_oe_n), 
 			.A(eprom_4r_addr), 
 			.Q(eprom_4r_data)
 		);	
@@ -188,17 +189,19 @@ module system86_tb;
 		eprom_4s
 		(
 			.nE(eprom_4s_ce_n), 
+			.nG(eprom_4s_oe_n), 
 			.A(eprom_4s_addr), 
 			.Q(eprom_4s_data)
 		);	
 	
-eprom_m27512 
+	eprom_m27512 
 		#(
 			`ROM_7R
 		) 
 		eprom_7r
 		(
 			.nE(eprom_7r_ce_n), 
+			.nG(eprom_7r_oe_n), 
 			.A(eprom_7r_addr), 
 			.Q(eprom_7r_data)
 		);	
@@ -210,6 +213,7 @@ eprom_m27512
 		eprom_7s
 		(
 			.nE(eprom_7s_ce_n), 
+			.nG(eprom_7s_oe_n), 
 			.A(eprom_7s_addr), 
 			.Q(eprom_7s_data)
 		);	
@@ -242,7 +246,7 @@ eprom_m27512
 			.A(sram_7n_addr),
 			.D(sram_7n_data)
 		);
-		
+
 		Video_Logger
 		#(
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
@@ -307,7 +311,7 @@ eprom_m27512
 			.COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
 			.USE_BLANKING_A(1),
 			.USE_BLANKING_B(1),
-			.LINE_BUFFER_COUNT(64),
+			.LINE_BUFFER_COUNT(128),
 			.SCALE_PRECISION_WIDTH(12),
 			.SCALE_PRECISION_HEIGHT(12)
 		)

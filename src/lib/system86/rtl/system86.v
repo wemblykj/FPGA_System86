@@ -265,7 +265,7 @@ module system86
 	//assign SCRWIN = ls85_7v_altb;	
 	
 	//assign DOT = (vid_active !== 1'b0) ? { dot_msb_acc[15:13], dot_lsb_acc[15:11] } : 8'b0;
-	assign DOT = prom_4v_data; //| prom_5v_d; // need to check how this behaves when one is valid and the other is high imp. (Z)
+	assign DOT = prom_4v_data; //| prom_5v_data; // need to check how this behaves when one is valid and the other is high imp. (Z)
 	
 	
 	// == assign external connections

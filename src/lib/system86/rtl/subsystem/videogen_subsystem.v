@@ -97,8 +97,11 @@ module videogen_subsystem
 	// == hardware abstraction - memory buses ==
     
 	assign prom_3r_addr = {BANK, ls273_4u_d};
+	assign prom_3r_ce_n = 1'b0;
+	
 	assign prom_3s_addr = {BANK, ls273_4u_d};
-
+	assign prom_3s_ce_n = 1'b0;
+	
 	 	
 endmodule
 

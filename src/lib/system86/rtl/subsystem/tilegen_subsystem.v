@@ -84,12 +84,16 @@ module tilegen_subsystem
 	//wire cus42_7k_roe;
 	//wire [12:0] cus42_7k_ra;
 	//wire [7:0] cus42_7k_rd;
+	wire cus42_7k_ha2;
+	wire cus42_7k_hb2;
 	
 	wire [13:0] cus42_5k_ga;
 	//wire cus42_5k_rwe;
 	//wire cus42_5k_roe;
 	//wire [12:0] cus42_5k_ra;
 	//wire [7:0] cus42_5k_rd;
+	wire cus42_5k_ha2;
+	wire cus42_5k_hb2;
 	
 	// (possibly priority lut based on Mame's system 1 description)
 	// b4-8 - layer 2 & 4
@@ -189,29 +193,33 @@ module tilegen_subsystem
 			.GA(cus42_7k_ga),
 			.RA(sram_7n_addr),
 			.nRWE(sram_7n_we_n),
+			.nROE(sram_7n_oe_n),
 			.RD(sram_7n_data),
-			.nROE(sram_7n_oe_n)
+			.HA2(cus42_7k_ha2),
+			.HB2(cus42_7k_hb2)
 		);
 	
 	// tile ram
-	/*cy6264 CY6264_7N(
-			.nCE1(1'b0),
-			.CE2(1'b1),
-			.nWE(cus42_7k_rwe),
-			.nOE(cus42_7k_roe),
-			.A(cus42_7k_ra),
-			.D(cus42_7k_rd)
-		);*/
+	assign sram_7n_ce_n = 1'b0;
 	
-    // layer 1/2 - red and green channels (4-bit per channel)
+   // layer 1/2 - red and green channels (4-bit per channel)
 	assign eprom_7r_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:0] };
    assign eprom_7r_ce_n = 1'b0;
+	assign eprom_7r_oe_n = 1'b0;
     
    // layer 1/2 - blue channel (4-bit per channel with two pixels per address)
    assign eprom_7s_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:1] };
    assign eprom_7s_ce_n = 1'b0;
+	assign eprom_7s_oe_n = 1'b0;
     
-   //ls158 ls158();
+   wire [3:0] ls158_7u_y;
+	ls158 ls158_7u(
+			.nG(prom_6u_data[0]),
+			.nSELA(cus42_7k_ga[0]),
+			.A(eprom_7s_data[7:4]),
+			.B(eprom_7s_data[3:0]),
+			.Y(ls158_7u_y)
+			);
 	
 	// auxillary select
 	wire [2:0] cus43_8n_pr_in;
@@ -231,13 +239,17 @@ module tilegen_subsystem
 			.PRI( cus43_8n_pr_in ),
 			.CLI( cus43_8n_cl_in ),
 			.DTI( cus43_8n_dt_in ),
+			.GDI( { ls158_7u_y, eprom_7r_data } ),
+			.MDI( sram_7n_data ),
 			.CA(A[2:0]),
 			.nWE(nWE),
 			.LATCH(nLATCH0),
 			.FLIP(FLIP),
 			.PRO(PR),
 			.CLO(CL),
-			.DTO(DT)
+			.DTO(DT),
+			.HA2(cus42_7k_ha2),
+			.HB2(cus42_7k_hb2)
 		);
 		
 	// == Layer 3 & 4 =
@@ -258,27 +270,33 @@ module tilegen_subsystem
 			.nRWE(sram_4n_we_n),
 			.nROE(sram_4n_oe_n),
 			.RA(sram_4n_addr),
-			.RD(sram_4n_data)
+			.RD(sram_4n_data),
+			.HA2(cus42_5k_ha2),
+			.HB2(cus42_5k_hb2)
 		);
 		
 	// tile ram 1
-	/*cy6264 CY6264_4N(
-			.nCE1(1'b0),
-			.CE2(1'b1),
-			.nWE(cus42_5k_rwe),
-			.nOE(cus42_5k_roe),
-			.A(cus42_5k_ra),
-			.D(cus42_5k_rd)
-		);*/
+	assign sram_4n_ce_n = 1'b0;
 	
     // layer 3/4 - red and green channels (4-bit per channel)
 	assign eprom_4r_addr = { prom_6u_data[7:5], cus42_5k_ga[11:0] };
    assign eprom_4r_ce_n = 1'b0;
+	assign eprom_4r_oe_n = 1'b0;
     
    // layer 3/4 - blue channel (4-bit per channel with two pixels per address)
    assign eprom_4s_addr = { prom_6u_data[7:5], cus42_5k_ga[11:1] };
    assign eprom_4s_ce_n = 1'b0;
+	assign eprom_4s_oe_n = 1'b0;
     
+	wire [3:0] ls158_5u_y;
+	ls158 ls158_5u(
+			.nG(prom_6u_data[4]),
+			.nSELA(cus42_5k_ga[0]),
+			.A(eprom_4s_data[7:4]),
+			.B(eprom_4s_data[3:0]),
+			.Y(ls158_5u_y)
+			);
+			
 	// tile generator
 	cus43 CUS43_6N(
 			.CLK_6M(CLK_6M),
@@ -286,13 +304,17 @@ module tilegen_subsystem
 			.PRI(PR),
 			.CLI(CL),
 			.DTI(DT),
+			.GDI( { ls158_5u_y, eprom_4r_data } ),
+			.MDI( sram_4n_data ),
 			.CA(A[2:0]),
 			.nWE(nWE),
 			.LATCH(nLATCH1),
 			.FLIP(FLIP),
 			.PRO(cus43_6n_pro),
 			.CLO(cus43_6n_clo),
-			.DTO(cus43_6n_dto)
+			.DTO(cus43_6n_dto),
+			.HA2(cus42_5k_ha2),
+			.HB2(cus42_5k_hb2)
 		);
 	
 	// to auxillary color drivers over J5

@@ -251,7 +251,7 @@ module cus42(
 	assign HB2 = HBOut;
 	
 	assign nRWE = nRCS ? 1'b1 : nWE;
-	assign nROE = nRCS ? 1'b1 : ~nWE;
+	assign nROE = nRCS ? 1'b0 : ~nWE;
 	assign RD = ~nRCS && ~nWE ? CD : 8'bZ;
 	assign CD = ~nRCS && nWE ? RD : 8'bZ;
 
