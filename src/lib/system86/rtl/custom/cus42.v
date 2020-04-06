@@ -71,9 +71,9 @@ module cus42(
 	
 	// screen space
 	reg [8:0] hCounter = 0;	// 9 bits
-	reg [7:0] vCounter = 0; // 8 bits
+	reg [8:0] vCounter = 0; // 9 bits
 	wire [5:0] screen_column = hCounter[8:3];
-	wire [4:0] screen_row = vCounter[7:3];
+	wire [5:0] screen_row = vCounter[8:3];
 	wire [11:0] screen_tile = (screen_row*8) + screen_column;
 	
 	assign layer = CLK_2H;
@@ -88,10 +88,10 @@ module cus42(
 	//reg [8:0] hScrollCounter [0:1];	// 2 layers 9 bits 
 	//reg [7:0] vScrollCounter [0:1]; // 2 layers 8 bits
 	reg [5:0] tilemap_column [0:1];
-	reg [4:0] tilemap_row [0:1];
+	reg [5:0] tilemap_row [0:1];
 	
 	// tile space
-	reg [4:0] tile_row [0:1];		// the row of the tile
+	reg [3:0] tile_row [0:1];		// the row of the tile
 	reg [3:0] tile_column [0:1];
 	reg tile_column_nibble [0:1];	// which nibble of the tile row MSB or LSB
 	
@@ -163,7 +163,7 @@ module cus42(
 				(vScrollCounter[8:3]*48) + 	// row select,	0 - 35 vCounter/8
 				hScrollCounter[8:3];				// column select, 0 - 47 hCounter/8
 				
-			ra_byte = hCounter[0]; 						// byte select, first or second alternates every two pixels
+			ra_byte = hCounter[1]; 						// byte select, first or second alternates every two pixels
 			
 			// PROM address
 			ga_nibble = hScrollCounter[2];
