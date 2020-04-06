@@ -41,54 +41,42 @@ module cus43(
     );
 
 	reg [7:0] mdi_latched [1:0];
-	reg	[7:0] plane0_latched [1:0];
-	reg	[7:0] plane1_latched [1:0];
-	reg	[7:0] plane2_latched [1:0];
+	reg [3:0] plane0_latched [1:0];
+	reg [3:0] plane1_latched [1:0];
+	reg [3:0] plane2_latched [1:0];
 	
 	reg [7:0] mdi [1:0];
-	reg	[7:0] plane0_shift [1:0];
-	reg	[7:0] plane1_shift [1:0];
-	reg	[7:0] plane2_shift [1:0];
-	
-	reg [11:0] gdiALatched;
-	reg [7:0] mdiALatched;
-	reg [11:0] gdiBLatched;
+	// 3 planes, 4 bits (4 pixels)
+	reg [3:0] plane0_shift [1:0];
+	reg [3:0] plane1_shift [1:0];
+	reg [3:0] plane2_shift [1:0];
 	
 	// layer 1 (A)
 	reg [2:0] PR_A;
 	reg [7:0] CL_A;
-	// 3 planes, 4 bits (4 pixels) with 4-bit delay line
-	reg [3:0] DT_A_PLANE0_BUFFER;
-	reg [3:0] DT_A_PLANE1_BUFFER;
-	reg [3:0] DT_A_PLANE2_BUFFER;
 
 	// first bit of each plane buffer
-	//wire [2:0] DT_A = { DT_A_PLANE2_BUFFER[0], DT_A_PLANE1_BUFFER[0], DT_A_PLANE0_BUFFER[0] };	
-	wire [2:0] DT_A = { plane2_shift[0][7], plane1_shift[0][7], plane0_shift[0][7] };	
-	wire [2:0] DT_A_ref = { DT_A_PLANE2_BUFFER[3], DT_A_PLANE1_BUFFER[3], DT_A_PLANE0_BUFFER[3] };	
+	wire [2:0] DT_A = { plane2_shift[0][3], plane1_shift[0][3], plane0_shift[0][3] };	
 	
 	
 	// layer 2 (B)
 	reg [2:0] PR_B;
 	reg [7:0] CL_B;
-	// 3 planes, 4 bits (4 pixels)
-	reg [3:0] DT_B_PLANE0_BUFFER;
-	reg [3:0] DT_B_PLANE1_BUFFER;
-	reg [3:0] DT_B_PLANE2_BUFFER;
-
+	
 	// first bit of each plane buffer
-	wire [2:0] DT_B = { DT_B_PLANE2_BUFFER[3], DT_B_PLANE1_BUFFER[3], DT_B_PLANE0_BUFFER[3] };	
+	wire [2:0] DT_B = { plane2_shift[1][3], plane1_shift[1][3], plane0_shift[1][3] };	
 	
 	// perform priorty selection of layers (layer A or B)
-	wire [13:0] MUX1 = /*(DT_B != 7) && (PR_B > PR_A) ? { PR_B, CL_B, DT_B } :*/ { PR_A, CL_A, DT_A };
+	//wire [13:0] MUX1 = { PR_B, CL_B, DT_B };///*(DT_B != 7) && (PR_B > PR_A) ? { PR_B, CL_B, DT_B } :*/ { PR_A, CL_A, DT_A };
 	// assign highest priority layer [or input] to output
 	//assign {PRO, CLO, DTO } = (MUX1[2:0] != 7) && (MUX1[13:10] > PRI) ? MUX1 : { PRI, CLI, DTI };
 	
-	// Layer 1 only
+	// Layer A only
 	assign {PRO, CLO, DTO } = { PR_A, CL_A, DT_A };
+	// Layer B only
 	//assign {PRO, CLO, DTO } = { PR_B, CL_B, DT_B };
 	
-	wire layer = CLK_2H;
+	wire layer = ~CLK_2H;
 
 	initial begin
 		mdi[0] = 0;
@@ -101,44 +89,19 @@ module cus43(
 		plane2_latched[1] = 0;
 		PR_A = 3'b0;
 		CL_A = 3'b0;
-		DT_A_PLANE0_BUFFER = 4'b0;
-		DT_A_PLANE1_BUFFER = 4'b0;
-		DT_A_PLANE2_BUFFER = 4'b0;
-		gdiALatched = 0;
-		mdiALatched = 0;
-		gdiBLatched = 0;
 	end
 	
-	reg haSig = 0;
-	reg haLast = 0;
-	reg hbSig = 0;
-	reg hbLast = 0;
-	
-	/*always @(posedge layer, negedge layer) begin
-		mdi_latched[layer] <= MDI;
-		plane0_latched[layer][3:0] <= plane0_latched[layer][7:4];
-		plane1_latched[layer][3:0] <= plane1_latched[layer][7:4];
-		plane2_latched[layer][3:0] <= plane2_latched[layer][7:4];
-		plane0_latched[layer][7:4] <= GDI[3:0];
-		plane1_latched[layer][7:4] <= GDI[7:4];
-		plane2_latched[layer][7:4] <= GDI[11:8];
-	end*/
-	
-	reg l = 0;
+	always @(posedge layer or negedge layer) begin
+		// changed to new layer
+		// latch the values for the previous layer
+		mdi_latched[layer] = MDI;
+		plane0_latched[layer][3:0] = GDI[3:0];
+		plane1_latched[layer][3:0] = GDI[7:4];
+		plane2_latched[layer][3:0] = GDI[11:8];
+	end
+		
 	always @(negedge CLK_6M) begin
-		l <= layer;
-		if (layer != l) begin
-			mdi_latched[layer] <= MDI;
-			plane0_latched[layer][3:0] <= plane0_latched[layer][7:4];
-			plane1_latched[layer][3:0] <= plane1_latched[layer][7:4];
-			plane2_latched[layer][3:0] <= plane2_latched[layer][7:4];
-			plane0_latched[layer][7:4] <= GDI[3:0];
-			plane1_latched[layer][7:4] <= GDI[7:4];
-			plane2_latched[layer][7:4] <= GDI[11:8];
-		end
-	end
-	
-	always @(posedge CLK_6M) begin
+		// layer A latch request
 		if (HA2) begin
 			mdi[0] <= mdi_latched[0];
 			plane0_shift[0] <= plane0_latched[0];
@@ -150,6 +113,7 @@ module cus43(
 			plane2_shift[0] <= plane2_shift[0] << 1;
 		end
 		
+		// layer B latch request
 		if (HB2) begin
 			mdi[1] <= mdi_latched[1];
 			plane0_shift[1] <= plane0_latched[1];
@@ -161,55 +125,9 @@ module cus43(
 			plane2_shift[1] <= plane2_shift[1] << 1;
 		end
 	end
-	
-	always @(HA2) begin
-		if (HA2) begin
-			mdiALatched <= MDI;
-			gdiALatched <= GDI;
-			haSig <= 0;
-		end else begin
-			haSig <= 1;
-		end
-	end
-	
-	always @(HB2) begin
-		if (HB2) begin
-			gdiBLatched <= GDI;
-			hbSig <= 0;
-		end else begin
-			hbSig <= 1;
-		end
-	end
-	
-	always @(posedge CLK_6M) begin
-
-		haLast <= (haSig);
-		hbLast <= (hbSig);
 		
-		if (haSig && !haLast) begin
-			DT_A_PLANE0_BUFFER <= gdiALatched[3:0];
-			DT_A_PLANE1_BUFFER <= gdiALatched[7:4];
-			DT_A_PLANE2_BUFFER <= gdiALatched[11:8];
-
-			CL_A <= mdiALatched;
-		end else if (hbSig && !hbLast) begin
-			DT_A_PLANE0_BUFFER <= gdiBLatched[3:0];
-			DT_A_PLANE1_BUFFER <= gdiBLatched[7:4];
-			DT_A_PLANE2_BUFFER <= gdiBLatched[11:8];
-		end else begin
-			// when not loading we are forever shifting
-			// TODO: flip support
-			//DT_A_PLANE0_BUFFER <= DT_A_PLANE0_BUFFER >> 1;
-			//DT_A_PLANE1_BUFFER <= DT_A_PLANE1_BUFFER >> 1;
-			//DT_A_PLANE2_BUFFER <= DT_A_PLANE2_BUFFER >> 1;
-			DT_A_PLANE0_BUFFER <= DT_A_PLANE0_BUFFER << 1;
-			DT_A_PLANE1_BUFFER <= DT_A_PLANE1_BUFFER << 1;
-			DT_A_PLANE2_BUFFER <= DT_A_PLANE2_BUFFER << 1;
-		end
-
-	end
-	
 	always @(LATCH or CA or MDI) begin
+		// latch priority assignments from the CPU
 		if (LATCH) begin
 			if (!CA[2:0] == 3'b001) begin
 				PR_A = MDI[3:1];

@@ -165,7 +165,7 @@ module system86
 			.nLATCH0(nLATCH0),
 			.nLATCH1(nLATCH1),
 			.nHSYNC(nHSYNC),
-			.nVSYNC(nHSYNC),
+			.nVSYNC(nVSYNC),
 			.FLIP(FLIP),
 			.BANK(BANK),
 			.SRCWIN(SRCWIN),

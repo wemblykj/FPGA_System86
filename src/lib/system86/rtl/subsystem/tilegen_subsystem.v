@@ -178,6 +178,8 @@ module tilegen_subsystem
 	// == Layer 1 & 2 =
 	
 	cus42 CUS42_7K(
+			.rst(rst),
+			
 			// inputs
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_2H), 
@@ -256,6 +258,8 @@ module tilegen_subsystem
 	
 	// tile address generator
 	cus42 CUS42_5K(
+			.rst(rst),
+			
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_2H), 
 			.nHSYNC(nHSYNC),
