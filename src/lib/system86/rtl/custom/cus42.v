@@ -117,6 +117,17 @@ module cus42(
 	integer hScrollCounter;
 	integer vScrollCounter;
 	
+	reg nHSYNCON = 0;
+	reg nVSYNCON = 0;
+
+	always @(negedge nHSYNC) begin
+		nHSYNCON <= nHSYNC;
+	end
+	
+	always @(negedge nVSYNC or posedge nVSYNC) begin
+		nVSYNCON <= nVSYNC;
+	end
+	
 	always @(posedge CLK_6M or rst) begin
 		if (rst) begin
 			pri = 3'b0;
@@ -134,13 +145,13 @@ module cus42(
 			HA2 = 0;
 			HB2 = 0;
 		end else begin
-			if (~nHSYNC && hsyncLast) begin
+			hCounter = hCounter + 1;
+			if ((!nHSYNC || !nHSYNCON) && hsyncLast) begin
 				hCounter = 0;
 				vCounter = vCounter + 1;
-			end else
-				hCounter = hCounter + 1;
+			end
 				
-			if (~nVSYNC && vsyncLast) begin
+			if ((!nVSYNC || !nVSYNCON) && vsyncLast) begin
 				vCounter = 0;
 				// HACK to scroll each frame
 				//hScrollOffset[0] = hScrollOffset[0] + 1;

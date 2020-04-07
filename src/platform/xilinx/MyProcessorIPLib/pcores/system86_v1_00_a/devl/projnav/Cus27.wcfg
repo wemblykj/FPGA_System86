@@ -3,14 +3,14 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="C:/Users/paulw/OneDrive/Documents/Development/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
+      <db_ref path="/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh1.wdb" id="1" type="auto">
          <top_modules>
             <top_module name="glbl" />
             <top_module name="system86_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="24" />
+   <WVObjectSize size="27" />
    <wvobject fp_name="/system86_tb/uut/timing_subsystem/cus27_9p_clock_divider/rst" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
@@ -59,6 +59,22 @@
       <obj_property name="ElementShortName">nHRESET</obj_property>
       <obj_property name="ObjectShortName">nHRESET</obj_property>
    </wvobject>
+   <wvobject fp_name="/system86_tb/uut/timing_subsystem/cus27_9p_clock_divider/VRESET" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">VRESET</obj_property>
+      <obj_property name="ObjectShortName">VRESET</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/timing_subsystem/cus27_9p_clock_divider/VRESETH" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">VRESETH</obj_property>
+      <obj_property name="ObjectShortName">VRESETH</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/timing_subsystem/cus27_9p_clock_divider/nHSYNCON" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">nHSYNCON</obj_property>
+      <obj_property name="ObjectShortName">nHSYNCON</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/timing_subsystem/cus27_9p_clock_divider/nHBLON" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">nHBLON</obj_property>
+      <obj_property name="ObjectShortName">nHBLON</obj_property>
+   </wvobject>
    <wvobject fp_name="/system86_tb/uut/timing_subsystem/cus27_9p_clock_divider/CLK_8V" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">CLK_8V</obj_property>
       <obj_property name="ObjectShortName">CLK_8V</obj_property>
@@ -100,10 +116,6 @@
       <obj_property name="ElementShortName">vertical_counter[8:0]</obj_property>
       <obj_property name="ObjectShortName">vertical_counter[8:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/timing_subsystem/cus27_9p_clock_divider/nVRESETH" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">nVRESETH</obj_property>
-      <obj_property name="ObjectShortName">nVRESETH</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/timing_subsystem/cus27_9p_clock_divider/master_counter" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">master_counter[2:0]</obj_property>
