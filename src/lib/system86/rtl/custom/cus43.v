@@ -45,7 +45,7 @@ module cus43(
 	reg [3:0] plane1_latched [1:0];
 	reg [3:0] plane2_latched [1:0];
 	
-	reg [7:0] mdi [1:0];
+	reg [7:0] attr [1:0];
 	// 3 planes, 4 bits (4 pixels)
 	reg [3:0] plane0_shift [1:0];
 	reg [3:0] plane1_shift [1:0];
@@ -53,7 +53,8 @@ module cus43(
 	
 	// layer 1 (A)
 	reg [2:0] PR_A;
-	reg [7:0] CL_A;
+	
+	wire [7:0] CL_A = attr[0];
 
 	// first bit of each plane buffer
 	wire [2:0] DT_A = { plane2_shift[0][3], plane1_shift[0][3], plane0_shift[0][3] };	
@@ -61,7 +62,8 @@ module cus43(
 	
 	// layer 2 (B)
 	reg [2:0] PR_B;
-	reg [7:0] CL_B;
+	
+	wire [7:0] CL_B = attr[1];
 	
 	// first bit of each plane buffer
 	wire [2:0] DT_B = { plane2_shift[1][3], plane1_shift[1][3], plane0_shift[1][3] };	
@@ -76,11 +78,12 @@ module cus43(
 	// Layer B only
 	//assign {PRO, CLO, DTO } = { PR_B, CL_B, DT_B };
 	
-	wire layer = ~CLK_2H;
-
+	wire layer = CLK_2H;
+	reg layer_latched = 0;
+	
 	initial begin
-		mdi[0] = 0;
-		mdi[1] = 0;
+		attr[0] = 0;
+		attr[1] = 0;
 		plane0_latched[0] = 0;
 		plane1_latched[0] = 0;
 		plane2_latched[0] = 0;
@@ -88,22 +91,38 @@ module cus43(
 		plane1_latched[1] = 0;
 		plane2_latched[1] = 0;
 		PR_A = 3'b0;
-		CL_A = 3'b0;
+		//CL_A = 3'b0;
+		PR_B = 3'b0;
+		//CL_B = 3'b0;
 	end
 	
-	always @(posedge layer or negedge layer) begin
-		// changed to new layer
-		// latch the values for the previous layer
+	/*always @(MDI) begin
+		// latch the values for the current layer
 		mdi_latched[layer] = MDI;
+	end
+	
+	always @(GDI) begin
+		// latch the values for the current layer
 		plane0_latched[layer][3:0] = GDI[3:0];
 		plane1_latched[layer][3:0] = GDI[7:4];
 		plane2_latched[layer][3:0] = GDI[11:8];
-	end
-		
+	end*/
+
 	always @(negedge CLK_6M) begin
+		if (layer !== layer_latched) begin
+			mdi_latched[layer_latched] = MDI;
+			plane0_latched[layer_latched][3:0] = GDI[3:0];
+			plane1_latched[layer_latched][3:0] = GDI[7:4];
+			plane2_latched[layer_latched][3:0] = GDI[11:8];
+		end
+		
+		layer_latched <= layer;
+	end
+	
+	always @(posedge CLK_6M) begin
 		// layer A latch request
 		if (HA2) begin
-			mdi[0] <= mdi_latched[0];
+			attr[0] <= mdi_latched[0];
 			plane0_shift[0] <= plane0_latched[0];
 			plane1_shift[0] <= plane1_latched[0];
 			plane2_shift[0] <= plane2_latched[0];
@@ -115,7 +134,7 @@ module cus43(
 		
 		// layer B latch request
 		if (HB2) begin
-			mdi[1] <= mdi_latched[1];
+			attr[1] <= mdi_latched[1];
 			plane0_shift[1] <= plane0_latched[1];
 			plane1_shift[1] <= plane1_latched[1];
 			plane2_shift[1] <= plane2_latched[1];

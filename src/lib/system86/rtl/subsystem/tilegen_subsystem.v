@@ -173,6 +173,7 @@ module tilegen_subsystem
 	
     // tile map palette prom
     assign prom_4v_addr = { cus43_6n_clo, cus43_6n_dto };
+	 //assign prom_4v_addr = { CL, DT };
     assign prom_4v_ce_n = 1'b0;  // SCRWIN
     
 	// == Layer 1 & 2 =
@@ -325,4 +326,5 @@ module tilegen_subsystem
 	assign J5[6] = nBACKCOLOR;
 
 	//assign sram_7n_ce_n = 1'b0;
+	assign DOT = prom_4v_data;
 endmodule

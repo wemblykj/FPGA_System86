@@ -117,18 +117,7 @@ module cus42(
 	integer hScrollCounter;
 	integer vScrollCounter;
 	
-	reg nHSYNCON = 0;
-	reg nVSYNCON = 0;
-
-	always @(negedge nHSYNC) begin
-		nHSYNCON <= nHSYNC;
-	end
-	
-	always @(negedge nVSYNC or posedge nVSYNC) begin
-		nVSYNCON <= nVSYNC;
-	end
-	
-	always @(posedge CLK_6M or rst) begin
+	always @(negedge CLK_6M or rst) begin
 		if (rst) begin
 			pri = 3'b0;
 			hScrollOffset[0] = 0;
@@ -146,20 +135,20 @@ module cus42(
 			HB2 = 0;
 		end else begin
 			hCounter = hCounter + 1;
-			if ((!nHSYNC || !nHSYNCON) && hsyncLast) begin
+			if (!nHSYNC && hsyncLast) begin
 				hCounter = 0;
 				vCounter = vCounter + 1;
 			end
 				
-			if ((!nVSYNC || !nVSYNCON) && vsyncLast) begin
+			if (!nVSYNC && vsyncLast) begin
 				vCounter = 0;
 				// HACK to scroll each frame
 				//hScrollOffset[0] = hScrollOffset[0] + 1;
 				//hScrollOffset[1] = hScrollOffset[1] + 1;
 			end 
 			
-			HA2 <= (hCounter[1:0] + hScrollOffset[0][1:0]) === 2'b11;
-			HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b11;
+			HA2 <= (hCounter[1:0] + hScrollOffset[0][1:0]) === 2'b00;
+			HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b00;
 			
 			hsyncLast <= nHSYNC;
 			vsyncLast <= nVSYNC;
@@ -169,12 +158,14 @@ module cus42(
 			vScrollCounter = vCounter + vScrollOffset[layer];
 			
 			// Assign SRAM address				// changes every two pixels
-			ra_layer = layer;	
+			if (hCounter[0] === 2'b0)
+				ra_layer = layer;					// latch the layer on first pixel
+				
 			ra_index = 
 				(vScrollCounter[8:3]*48) + 	// row select,	0 - 35 vCounter/8
 				hScrollCounter[8:3];				// column select, 0 - 47 hCounter/8
 				
-			ra_byte = hCounter[1]; 						// byte select, first or second alternates every two pixels
+			ra_byte = hCounter[0];				// byte select, first or second alternates every pixel
 			
 			// PROM address
 			ga_nibble = hScrollCounter[2];

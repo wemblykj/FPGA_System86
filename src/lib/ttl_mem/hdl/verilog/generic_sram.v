@@ -46,7 +46,8 @@ module GENERIC_SRAM
 	reg [DATA_WIDTH-1:0] DOut;
 	wire [ADDR_WIDTH-1:0] ACC;
 	
-	assign #(tAA, tOHA) ACC = A;
+	//assign #(tAA, tOHA) ACC = A;
+	assign #tAA ACC = A;
 	// negate the active low signal for now - need to revisit this logic
 	assign #(tLZCE, tACE) LZCE = ~nCE;
 	assign #(tACE, tHZCE) ACE = ~nCE;

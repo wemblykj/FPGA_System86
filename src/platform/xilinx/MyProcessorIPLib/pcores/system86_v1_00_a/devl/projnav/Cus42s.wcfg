@@ -3,7 +3,7 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="C:/Users/paulw/OneDrive/Documents/Development/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
+      <db_ref path="/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
          <top_modules>
             <top_module name="glbl" />
             <top_module name="system86_tb" />
@@ -187,14 +187,17 @@
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_5K/RD" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">RD[7:0]</obj_property>
          <obj_property name="ObjectShortName">RD[7:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_5K/GA" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">GA[13:0]</obj_property>
          <obj_property name="ObjectShortName">GA[13:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_5K/RA" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">RA[12:0]</obj_property>
          <obj_property name="ObjectShortName">RA[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_5K/nRWE" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">nRWE</obj_property>
