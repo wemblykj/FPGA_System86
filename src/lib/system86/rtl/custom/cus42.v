@@ -51,8 +51,8 @@ module cus42(
 	// 7-1 x-offset (6 bits)
 	// 0 - byte select
 	reg ra_layer = 0;
-	reg [5:0] ra_tilemap_row = 0;
-	reg [6:0] ra_tilemap_column = 0;
+	reg [4:0] ra_tilemap_row = 0;
+	reg [5:0] ra_tilemap_column = 0;
 	reg ra_tilemap_byte = 0;
 	assign RA = { ra_layer, ra_tilemap_row, ra_tilemap_column, ra_tilemap_byte };
 	
@@ -77,7 +77,7 @@ module cus42(
 	reg [8:0] hCounter = 0;	// 9 bits
 	reg [8:0] vCounter = 0; // 9 bits
 	wire [5:0] screen_column = hCounter[8:3];
-	wire [5:0] screen_row = vCounter[8:3];
+	wire [4:0] screen_row = vCounter[7:3];
 	wire [11:0] screen_tile = (screen_row*8) + screen_column;
 	
 	assign layer = CLK_2H;
@@ -92,11 +92,11 @@ module cus42(
 	//reg [8:0] hScrollCounter [0:1];	// 2 layers 9 bits 
 	//reg [7:0] vScrollCounter [0:1]; // 2 layers 8 bits
 	reg [5:0] tilemap_column [0:1];
-	reg [5:0] tilemap_row [0:1];
+	reg [4:0] tilemap_row [0:1];
 	
 	// tile space
-	reg [3:0] tile_row [0:1];		// the row of the tile
-	reg [3:0] tile_column [0:1];
+	reg [2:0] tile_row [0:1];		// the row of the tile
+	reg [2:0] tile_column [0:1];
 	reg tile_column_nibble [0:1];	// which nibble of the tile row MSB or LSB
 	
 	// priority layer 1 & 2, may not be used here (see CUS43)
@@ -152,8 +152,8 @@ module cus42(
 				//hScrollOffset[1] = hScrollOffset[1] + 1;
 			end 
 			
-			HA2 <= (hCounter[1:0] + hScrollOffset[0][1:0]) === 2'b00;
-			HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b00;
+			HA2 <= (hCounter[2:0] + hScrollOffset[0][2:0]) === 3'b000;
+			HB2 <= (hCounter[2:0] + hScrollOffset[1][2:0]) === 3'b000;
 			
 			hsyncLast <= nHSYNC;
 			vsyncLast <= nVSYNC;
@@ -167,7 +167,7 @@ module cus42(
 				ra_layer = layer;					// latch the layer on first pixel
 				
 			ra_tilemap_row = 
-				vScrollCounter[8:3];		 	// row select,	0 - 35 vCounter/8
+				vScrollCounter[7:3];		 	// row select,	0 - 31 vCounter/8
 				
 			ra_tilemap_column = 
 				hScrollCounter[8:3];				// column select, 0 - 47 hCounter/8
@@ -177,24 +177,26 @@ module cus42(
 			// PROM address
 			ga_tile_column_nibble = hScrollCounter[2];
 			ga_tile_row = vScrollCounter[2:0]; 	// row select
-			
-			// Data read - read on second pixel
-			if (hCounter[1:0] === 2'b01)
-				ga_tile_index <= RD;					// read byte 1 into tile index
-			else if (hCounter[1:0] === 2'b11)
-				ga_tile_attrs <= RD[1:0];				// read byte 2 lsb into tile index	
 				
 			// per layer debugging outputs
 			
 			// tilemap space
 			tilemap_column[layer] <= hScrollCounter[8:3];
-			tilemap_row[layer] <= vScrollCounter[8:3];
+			tilemap_row[layer] <= vScrollCounter[7:3];
 		
 			// tile space
 			tile_row[layer] <= vScrollCounter[2:0];
 			tile_column[layer] <= hScrollCounter[2:0];
 			tile_column_nibble[layer] <= hScrollCounter[2];
 		end
+	end
+	
+	always @(posedge CLK_6M or rst) begin
+		// Data read - read on second pixel
+			if (hCounter[1:0] === 2'b01)
+				ga_tile_index <= RD;					// read byte 1 into tile index
+			else if (hCounter[1:0] === 2'b10)
+				ga_tile_attrs <= RD[1:0];				// read byte 2 lsb into tile index	
 	end
 	
 	assign nRWE = nRCS ? 1'b1 : nWE;
