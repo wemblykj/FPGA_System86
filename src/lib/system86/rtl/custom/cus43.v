@@ -57,7 +57,8 @@ module cus43(
 	wire [7:0] CL_A = attr[0];
 
 	// first bit of each plane buffer
-	wire [2:0] DT_A = { plane2_shift[0][3], plane1_shift[0][3], plane0_shift[0][3] };	
+	//wire [2:0] DT_A = { plane2_shift[0][3], plane1_shift[0][3], plane0_shift[0][3] };	
+	wire [2:0] DT_A = { plane2_shift[0][0], plane1_shift[0][0], plane0_shift[0][0] };
 	
 	
 	// layer 2 (B)
@@ -66,7 +67,8 @@ module cus43(
 	wire [7:0] CL_B = attr[1];
 	
 	// first bit of each plane buffer
-	wire [2:0] DT_B = { plane2_shift[1][3], plane1_shift[1][3], plane0_shift[1][3] };	
+	//wire [2:0] DT_B = { plane2_shift[1][3], plane1_shift[1][3], plane0_shift[1][3] };	
+	wire [2:0] DT_B = { plane2_shift[1][0], plane1_shift[1][0], plane0_shift[1][0] };	
 	
 	// perform priorty selection of layers (layer A or B)
 	//wire [13:0] MUX1 = { PR_B, CL_B, DT_B };///*(DT_B != 7) && (PR_B > PR_A) ? { PR_B, CL_B, DT_B } :*/ { PR_A, CL_A, DT_A };
@@ -127,9 +129,12 @@ module cus43(
 			plane1_shift[0] <= plane1_latched[0];
 			plane2_shift[0] <= plane2_latched[0];
 		end else begin
-			plane0_shift[0] <= plane0_shift[0] << 1;
+			/*plane0_shift[0] <= plane0_shift[0] << 1;
 			plane1_shift[0] <= plane1_shift[0] << 1;
-			plane2_shift[0] <= plane2_shift[0] << 1;
+			plane2_shift[0] <= plane2_shift[0] << 1;*/
+			plane0_shift[0] <= plane0_shift[0] >> 1;
+			plane1_shift[0] <= plane1_shift[0] >> 1;
+			plane2_shift[0] <= plane2_shift[0] >> 1;
 		end
 		
 		// layer B latch request
@@ -139,9 +144,12 @@ module cus43(
 			plane1_shift[1] <= plane1_latched[1];
 			plane2_shift[1] <= plane2_latched[1];
 		end else begin
-			plane0_shift[1] <= plane0_shift[1] << 1;
+			/*plane0_shift[1] <= plane0_shift[1] << 1;
 			plane1_shift[1] <= plane1_shift[1] << 1;
-			plane2_shift[1] <= plane2_shift[1] << 1;
+			plane2_shift[1] <= plane2_shift[1] << 1;*/
+			plane0_shift[1] <= plane0_shift[1] >> 1;
+			plane1_shift[1] <= plane1_shift[1] >> 1;
+			plane2_shift[1] <= plane2_shift[1] >> 1;
 		end
 	end
 		

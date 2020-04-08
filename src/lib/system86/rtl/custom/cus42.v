@@ -47,24 +47,28 @@ module cus42(
 	// 13 bits (2 layers @ 64x32 tiles, 2 byte per tile) 
 	// 12 - layer (0000h or 1000h)
 	// 11-1 y-offset * 48 + x-offset (11 bits)
+	// 11-7 y-offset (5 bits)
+	// 7-1 x-offset (6 bits)
 	// 0 - byte select
 	reg ra_layer = 0;
-	reg [10:0] ra_index = 0;
-	reg ra_byte = 0;
-	assign RA = { ra_layer, ra_index, ra_byte };
+	reg [5:0] ra_tilemap_row = 0;
+	reg [6:0] ra_tilemap_column = 0;
+	reg ra_tilemap_byte = 0;
+	assign RA = { ra_layer, ra_tilemap_row, ra_tilemap_column, ra_tilemap_byte };
 	
    // wire [13:0] GA;   // PROM addr bus
 	// 14 bits (
 	// 12:11 - attr lsb
-	// 10:4 - index
+	// 10:6 - row
+	// 7:4 - column
 	// 3:1 - row
 	// 0 - nibble
-	reg [1:0] ga_attr = 0;
-	reg [7:0] ga_index = 0;
-	reg [2:0] ga_row = 0;
-	reg ga_nibble = 0;
+	reg [1:0] ga_tile_attrs = 0;
+	reg [7:0] ga_tile_index = 0;
+	reg [2:0] ga_tile_row = 0;
+	reg ga_tile_column_nibble = 0;
 			
-	assign GA = { ga_attr, ga_index, ga_row, ga_nibble };
+	assign GA = { ga_tile_attrs, ga_tile_index, ga_tile_row, ga_tile_column_nibble };
 			
 	reg hsyncLast = 1;
 	reg vsyncLast = 1;
@@ -125,12 +129,13 @@ module cus42(
 			hScrollOffset[1] = 0;
 			vScrollOffset[1] = 0;
 			ra_layer = 0;  
-			ra_index = 0;  
-			ra_byte = 0;  
-			ga_attr = 0;
-			ga_index = 0;
-			ga_row = 0;
-			ga_nibble = 0;
+			ra_tilemap_row = 0;  
+			ra_tilemap_column = 0;  
+			ra_tilemap_byte = 0;  
+			ga_tile_attrs = 0;
+			ga_tile_index = 0;
+			ga_tile_row = 0;
+			ga_tile_column_nibble = 0;
 			HA2 = 0;
 			HB2 = 0;
 		end else begin
@@ -161,21 +166,23 @@ module cus42(
 			if (hCounter[0] === 2'b0)
 				ra_layer = layer;					// latch the layer on first pixel
 				
-			ra_index = 
-				(vScrollCounter[8:3]*48) + 	// row select,	0 - 35 vCounter/8
+			ra_tilemap_row = 
+				vScrollCounter[8:3];		 	// row select,	0 - 35 vCounter/8
+				
+			ra_tilemap_column = 
 				hScrollCounter[8:3];				// column select, 0 - 47 hCounter/8
 				
-			ra_byte = hCounter[0];				// byte select, first or second alternates every pixel
+			ra_tilemap_byte = hCounter[0];				// byte select, first or second alternates every pixel
 			
 			// PROM address
-			ga_nibble = hScrollCounter[2];
-			ga_row = vScrollCounter[2:0]; 	// row select
+			ga_tile_column_nibble = hScrollCounter[2];
+			ga_tile_row = vScrollCounter[2:0]; 	// row select
 			
 			// Data read - read on second pixel
 			if (hCounter[1:0] === 2'b01)
-				ga_index <= RD;					// read byte 1 into tile index
+				ga_tile_index <= RD;					// read byte 1 into tile index
 			else if (hCounter[1:0] === 2'b11)
-				ga_attr <= RD[1:0];				// read byte 2 lsb into tile index	
+				ga_tile_attrs <= RD[1:0];				// read byte 2 lsb into tile index	
 				
 			// per layer debugging outputs
 			
