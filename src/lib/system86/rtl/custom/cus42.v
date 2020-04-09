@@ -152,8 +152,10 @@ module cus42(
 				//hScrollOffset[1] = hScrollOffset[1] + 1;
 			end 
 			
-			HA2 <= (hCounter[2:0] + hScrollOffset[0][2:0]) === 3'b000;
-			HB2 <= (hCounter[2:0] + hScrollOffset[1][2:0]) === 3'b000;
+			//HA2 <= (hCounter[2:0] + hScrollOffset[0][2:0]) === 3'b000;
+			//HB2 <= (hCounter[2:0] + hScrollOffset[1][2:0]) === 3'b000;
+			HA2 <= (hCounter[1:0] + hScrollOffset[0][1:0]) === 2'b00;
+			HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b00;
 			
 			hsyncLast <= nHSYNC;
 			vsyncLast <= nVSYNC;
@@ -193,9 +195,9 @@ module cus42(
 	
 	always @(posedge CLK_6M or rst) begin
 		// Data read - read on second pixel
-			if (hCounter[1:0] === 2'b01)
+			if (hCounter[1:0] === 2'b00)
 				ga_tile_index <= RD;					// read byte 1 into tile index
-			else if (hCounter[1:0] === 2'b10)
+			else if (hCounter[1:0] === 2'b01)
 				ga_tile_attrs <= RD[1:0];				// read byte 2 lsb into tile index	
 	end
 	

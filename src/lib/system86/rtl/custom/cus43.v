@@ -41,15 +41,15 @@ module cus43(
     );
 
 	reg [7:0] mdi_latched [1:0];
-	reg [7:0] plane0_latched [1:0];
-	reg [7:0] plane1_latched [1:0];
-	reg [7:0] plane2_latched [1:0];
+	reg [3:0] plane0_latched [1:0];
+	reg [3:0] plane1_latched [1:0];
+	reg [3:0] plane2_latched [1:0];
 	
 	reg [7:0] attr [1:0];
 	// 3 planes, 4 bits (4 pixels)
-	reg [7:0] plane0_shift [1:0];
-	reg [7:0] plane1_shift [1:0];
-	reg [7:0] plane2_shift [1:0];
+	reg [3:0] plane0_shift [1:0];
+	reg [3:0] plane1_shift [1:0];
+	reg [3:0] plane2_shift [1:0];
 	
 	// layer 1 (A)
 	reg [2:0] PR_A;
@@ -57,7 +57,7 @@ module cus43(
 	wire [7:0] CL_A = attr[0];
 
 	// first bit of each plane buffer
-	wire [2:0] DT_A = { plane2_shift[0][7], plane1_shift[0][7], plane0_shift[0][7] };	
+	wire [2:0] DT_A = { plane2_shift[0][3], plane1_shift[0][3], plane0_shift[0][3] };	
 	//wire [2:0] DT_A = { plane2_shift[0][0], plane1_shift[0][0], plane0_shift[0][0] };
 	
 	
@@ -67,7 +67,7 @@ module cus43(
 	wire [7:0] CL_B = attr[1];
 	
 	// first bit of each plane buffer
-	wire [2:0] DT_B = { plane2_shift[1][7], plane1_shift[1][7], plane0_shift[1][7] };	
+	wire [2:0] DT_B = { plane2_shift[1][3], plane1_shift[1][3], plane0_shift[1][3] };	
 	//wire [2:0] DT_B = { plane2_shift[1][0], plane1_shift[1][0], plane0_shift[1][0] };	
 	
 	// perform priorty selection of layers (layer A or B)
@@ -76,9 +76,9 @@ module cus43(
 	//assign {PRO, CLO, DTO } = (MUX1[2:0] != 7) && (MUX1[13:10] > PRI) ? MUX1 : { PRI, CLI, DTI };
 	
 	// Layer A only
-	assign {PRO, CLO, DTO } = { PR_A, CL_A, DT_A };
+	//assign {PRO, CLO, DTO } = { PR_A, CL_A, DT_A };
 	// Layer B only
-	//assign {PRO, CLO, DTO } = { PR_B, CL_B, DT_B };
+	assign {PRO, CLO, DTO } = { PR_B, CL_B, DT_B };
 	
 	wire layer = CLK_2H;
 	reg layer_latched = 0;
@@ -110,23 +110,15 @@ module cus43(
 		plane2_latched[layer][3:0] = GDI[11:8];
 	end*/
 
+	always @(posedge layer or negedge layer) begin
+		mdi_latched[layer] <= MDI;
+	end
+	
 	always @(negedge CLK_6M) begin
 		if (layer !== layer_latched) begin
-			mdi_latched[layer_latched] = MDI;
-			
-			/*plane0_latched[layer_latched] = plane0_latched[layer_latched] >> 4;
-			plane1_latched[layer_latched] = plane1_latched[layer_latched] >> 4;
-			plane2_latched[layer_latched] = plane2_latched[layer_latched] >> 4;
-			plane0_latched[layer_latched][7:4] = GDI[3:0];
-			plane1_latched[layer_latched][7:4] = GDI[7:4];
-			plane2_latched[layer_latched][7:4] = GDI[11:8];*/
-			
-			plane0_latched[layer_latched] = plane0_latched[layer_latched] << 4;
-			plane1_latched[layer_latched] = plane1_latched[layer_latched] << 4;
-			plane2_latched[layer_latched] = plane2_latched[layer_latched] << 4;
-			plane0_latched[layer_latched][3:0] = GDI[3:0];
-			plane1_latched[layer_latched][3:0] = GDI[7:4];
-			plane2_latched[layer_latched][3:0] = GDI[11:8];
+			plane0_latched[~layer][3:0] <= GDI[3:0];
+			plane1_latched[~layer][3:0] <= GDI[7:4];
+			plane2_latched[~layer][3:0] <= GDI[11:8];
 		end
 		
 		layer_latched <= layer;
@@ -143,9 +135,6 @@ module cus43(
 			plane0_shift[0] <= plane0_shift[0] << 1;
 			plane1_shift[0] <= plane1_shift[0] << 1;
 			plane2_shift[0] <= plane2_shift[0] << 1;
-			/*plane0_shift[0] <= plane0_shift[0] >> 1;
-			plane1_shift[0] <= plane1_shift[0] >> 1;
-			plane2_shift[0] <= plane2_shift[0] >> 1;*/
 		end
 		
 		// layer B latch request
@@ -158,9 +147,6 @@ module cus43(
 			plane0_shift[1] <= plane0_shift[1] << 1;
 			plane1_shift[1] <= plane1_shift[1] << 1;
 			plane2_shift[1] <= plane2_shift[1] << 1;
-			/*plane0_shift[1] <= plane0_shift[1] >> 1;
-			plane1_shift[1] <= plane1_shift[1] >> 1;
-			plane2_shift[1] <= plane2_shift[1] >> 1;*/
 		end
 	end
 		

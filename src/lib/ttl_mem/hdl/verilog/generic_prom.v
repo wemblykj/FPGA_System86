@@ -43,11 +43,15 @@ module GENERIC_PROM
     wire [ADDR_WIDTH-1:0] AV;
 
     // retaining datasheet's naming convention due to active low signals
-    assign #(tAVQV, tAXQX) AV = A;	
+    /*assign #(tAVQV, tAXQX) AV = A;	
     assign #(tELQV, tEHQZ) ELQV = nE;	
     assign #(tGLQV, tGHQZ) GLQV = nG;
+    assign QV = !(ELQV || GLQV);*/
+	 assign AV = A;	
+    assign ELQV = nE;	
+    assign GLQV = nG;
     assign QV = !(ELQV || GLQV);
-
+	 
     assign Q = QV ? DOut : {(DATA_WIDTH){1'bZ}};
 
     integer fd;
