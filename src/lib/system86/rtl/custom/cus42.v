@@ -195,9 +195,9 @@ module cus42(
 	
 	always @(posedge CLK_6M or rst) begin
 		// Data read - read on second pixel
-			if (hCounter[1:0] === 2'b00)
+			if (hCounter[0] === 1'b0)
 				ga_tile_index <= RD;					// read byte 1 into tile index
-			else if (hCounter[1:0] === 2'b01)
+			else if (hCounter[1] === 1'b0)
 				ga_tile_attrs <= RD[1:0];				// read byte 2 lsb into tile index	
 	end
 	

@@ -76,9 +76,9 @@ module cus43(
 	//assign {PRO, CLO, DTO } = (MUX1[2:0] != 7) && (MUX1[13:10] > PRI) ? MUX1 : { PRI, CLI, DTI };
 	
 	// Layer A only
-	//assign {PRO, CLO, DTO } = { PR_A, CL_A, DT_A };
+	assign {PRO, CLO, DTO } = { PR_A, CL_A, DT_A };
 	// Layer B only
-	assign {PRO, CLO, DTO } = { PR_B, CL_B, DT_B };
+	//assign {PRO, CLO, DTO } = { PR_B, CL_B, DT_B };
 	
 	wire layer = CLK_2H;
 	reg layer_latched = 0;
@@ -111,7 +111,7 @@ module cus43(
 	end*/
 
 	always @(posedge layer or negedge layer) begin
-		mdi_latched[layer] <= MDI;
+		mdi_latched[~layer] <= MDI;
 	end
 	
 	always @(negedge CLK_6M) begin
