@@ -3,7 +3,7 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
+      <db_ref path="C:/Users/paulw/OneDrive/Documents/Development/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
          <top_modules>
             <top_module name="glbl" />
             <top_module name="system86_tb" />
@@ -399,12 +399,12 @@
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/hCounter" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">hCounter[8:0]</obj_property>
          <obj_property name="ObjectShortName">hCounter[8:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/vCounter" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">vCounter[8:0]</obj_property>
          <obj_property name="ObjectShortName">vCounter[8:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/hScrollOffset" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">hScrollOffset[0:1,8:0]</obj_property>
@@ -565,16 +565,16 @@
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane0_latched" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane0_latched[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane0_latched[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane0_latched[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane0_latched[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane1_latched" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane1_latched[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane1_latched[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane1_latched[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane1_latched[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane2_latched" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane2_latched[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane2_latched[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane2_latched[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane2_latched[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/attr" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">attr[1:0,7:0]</obj_property>
@@ -582,16 +582,16 @@
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane0_shift" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane0_shift[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane0_shift[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane0_shift[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane0_shift[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane1_shift" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane1_shift[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane1_shift[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane1_shift[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane1_shift[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane2_shift" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane2_shift[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane2_shift[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane2_shift[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane2_shift[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/PR_A" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">PR_A[2:0]</obj_property>
@@ -820,32 +820,32 @@
          <obj_property name="ObjectShortName">mdi_latched[1:0,7:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane0_latched" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane0_latched[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane0_latched[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane0_latched[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane0_latched[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane1_latched" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane1_latched[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane1_latched[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane1_latched[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane1_latched[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane2_latched" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane2_latched[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane2_latched[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane2_latched[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane2_latched[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/attr" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">attr[1:0,7:0]</obj_property>
          <obj_property name="ObjectShortName">attr[1:0,7:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane0_shift" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane0_shift[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane0_shift[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane0_shift[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane0_shift[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane1_shift" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane1_shift[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane1_shift[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane1_shift[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane1_shift[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane2_shift" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane2_shift[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">plane2_shift[1:0,7:0]</obj_property>
+         <obj_property name="ElementShortName">plane2_shift[1:0,3:0]</obj_property>
+         <obj_property name="ObjectShortName">plane2_shift[1:0,3:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/PR_A" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">PR_A[2:0]</obj_property>

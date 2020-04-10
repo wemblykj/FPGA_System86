@@ -80,7 +80,7 @@ module cus42(
 	wire [4:0] screen_row = vCounter[7:3];
 	wire [11:0] screen_tile = (screen_row*8) + screen_column;
 	
-	assign layer = CLK_2H;
+	assign layer = ~CLK_2H;
 	
 	// per layer inputs
 	
@@ -197,7 +197,7 @@ module cus42(
 		// Data read - read on second pixel
 			if (hCounter[0] === 1'b0)
 				ga_tile_index <= RD;					// read byte 1 into tile index
-			else if (hCounter[1] === 1'b0)
+			else if (hCounter[0] === 1'b1)
 				ga_tile_attrs <= RD[1:0];				// read byte 2 lsb into tile index	
 	end
 	

@@ -233,8 +233,8 @@ module system86_tb;
 			.D(sram_4n_data)
 		);
 		
-	wire [7:0] sram_7n_data2;
-	assign sram_7n_data = sram_7n_addr[12] ? 8'bX : sram_7n_data2;
+	//wire [7:0] sram_7n_data2;
+	//assign sram_7n_data = sram_7n_addr[12] ? 8'bX : sram_7n_data2;
 	sram_cy6264 
 		#(
 			"../../../../../../../../snapshots/rthunder_gfx1_002.bin"
@@ -246,7 +246,7 @@ module system86_tb;
 			.nWE(sram_7n_we_n),
 			.nOE(sram_7n_oe_n),
 			.A(sram_7n_addr),
-			.D(sram_7n_data2)
+			.D(sram_7n_data)
 		);
 
 		Video_Logger

@@ -73,7 +73,7 @@ module tilegen_subsystem
 
 	
 	// CUS43 inter-connects
-	wire [2:0] PR;		// 'attr' in MAME - transparancy - default can be overridden from diagnosics P5?
+	wire [2:0] PR;		// layer priority
 	wire [7:0] CL;		//	not sure maybe color - certainly defaulted to background color
 	wire [2:0] DT;		// not sure - defaults from J5 and pulled up high - maps to A0-A2 of tilemap clut.
 	
@@ -229,11 +229,11 @@ module tilegen_subsystem
 	wire [7:0] cus43_8n_cl_in;
 	wire [2:0] cus43_8n_dt_in;
 	// priority - held low if no aux
-	assign cus43_8n_pr_in = J5[5] ? { J5[15], J5[14], J5[13] } : 3'b0;	
+	assign cus43_8n_pr_in = 0; //J5[5] ? { J5[15], J5[14], J5[13] } : 3'b0;	
 	// color - from backcolor latch if no aux
-	assign cus43_8n_cl_in = J5[5] ? { J5[4], J5[17], J5[3], J5[18], J5[2], J5[19], J5[1], J5[20] } : ls374_8h_q;
+	assign cus43_8n_cl_in = 0; //J5[5] ? { J5[4], J5[17], J5[3], J5[18], J5[2], J5[19], J5[1], J5[20] } : ls374_8h_q;
 	// dt - held high if no aux
-	assign cus43_8n_dt_in = J5[5] ? { J5[8], J5[9], J5[10] } : 3'b1;		
+	assign cus43_8n_dt_in = 0; //J5[5] ? { J5[8], J5[9], J5[10] } : 3'b1;		
 	
 	// tile generator
 	cus43 CUS43_8N(

@@ -34,9 +34,9 @@ module cus43(
         input wire FLIP,
         input wire HA2,
         input wire HB2,
-        output wire [2:0] PRO,
-        output wire [7:0] CLO,
-        output wire [2:0] DTO,
+        output reg [2:0] PRO,
+        output reg [7:0] CLO,
+        output reg [2:0] DTO,
         output wire CLE			// hard to decipher text from schematics (not used)
     );
 
@@ -58,8 +58,6 @@ module cus43(
 
 	// first bit of each plane buffer
 	wire [2:0] DT_A = { plane2_shift[0][3], plane1_shift[0][3], plane0_shift[0][3] };	
-	//wire [2:0] DT_A = { plane2_shift[0][0], plane1_shift[0][0], plane0_shift[0][0] };
-	
 	
 	// layer 2 (B)
 	reg [2:0] PR_B;
@@ -68,15 +66,14 @@ module cus43(
 	
 	// first bit of each plane buffer
 	wire [2:0] DT_B = { plane2_shift[1][3], plane1_shift[1][3], plane0_shift[1][3] };	
-	//wire [2:0] DT_B = { plane2_shift[1][0], plane1_shift[1][0], plane0_shift[1][0] };	
 	
 	// perform priorty selection of layers (layer A or B)
-	//wire [13:0] MUX1 = { PR_B, CL_B, DT_B };///*(DT_B != 7) && (PR_B > PR_A) ? { PR_B, CL_B, DT_B } :*/ { PR_A, CL_A, DT_A };
+	//wire [13:0] MUX1 = (DT_B != 7) && (PR_B > PR_A) ? { PR_B, CL_B, DT_B } : { PR_A, CL_A, DT_A };
 	// assign highest priority layer [or input] to output
-	//assign {PRO, CLO, DTO } = (MUX1[2:0] != 7) && (MUX1[13:10] > PRI) ? MUX1 : { PRI, CLI, DTI };
+	//assign {PRO, CLO, DTO } = MUX1; //(MUX1[2:0] != 7) && (MUX1[13:10] > PRI) ? MUX1 : { PRI, CLI, DTI };
 	
 	// Layer A only
-	assign {PRO, CLO, DTO } = { PR_A, CL_A, DT_A };
+	//assign {PRO, CLO, DTO } = { PR_A, CL_A, DT_A };
 	// Layer B only
 	//assign {PRO, CLO, DTO } = { PR_B, CL_B, DT_B };
 	
@@ -93,23 +90,9 @@ module cus43(
 		plane1_latched[1] = 0;
 		plane2_latched[1] = 0;
 		PR_A = 3'b0;
-		//CL_A = 3'b0;
-		PR_B = 3'b0;
-		//CL_B = 3'b0;
+		PR_B = 3'b1;
 	end
 	
-	/*always @(MDI) begin
-		// latch the values for the current layer
-		mdi_latched[layer] = MDI;
-	end
-	
-	always @(GDI) begin
-		// latch the values for the current layer
-		plane0_latched[layer][3:0] = GDI[3:0];
-		plane1_latched[layer][3:0] = GDI[7:4];
-		plane2_latched[layer][3:0] = GDI[11:8];
-	end*/
-
 	always @(posedge layer or negedge layer) begin
 		mdi_latched[~layer] <= MDI;
 	end
@@ -124,7 +107,7 @@ module cus43(
 		layer_latched <= layer;
 	end
 	
-	always @(posedge CLK_6M) begin
+	always @(negedge CLK_6M) begin
 		// layer A latch request
 		if (HA2) begin
 			attr[0] <= mdi_latched[0];
@@ -150,6 +133,33 @@ module cus43(
 		end
 	end
 		
+	assign SELB = PR_B>PR_A;
+	assign AVAL = DT_A!==0;
+	assign BVAL = DT_B!==0;
+	wire [4:0] STATE;
+	assign STATE = { (PR_B>PR_A), 1'b1, 1'b1, BVAL, AVAL };
+	
+	always @(posedge CLK_6M) begin
+		//casez ( { PR_B>PR_A, PR_B>PRI, PR_A>PRI, DT_B!==0, DT_A!==0 } )
+		casex ( STATE )
+			5'b11?1?, 5'b01?10 : begin
+					PRO <= PR_B;
+					CLO <= CL_B;
+					DTO <= DT_B;
+				end
+			5'b0?1?1, 5'b1?101 : begin
+					PRO <= PR_A;
+					CLO <= CL_A;
+					DTO <= DT_A;
+				end
+			default : begin
+					PRO <= PRI;
+					CLO <= CLI;
+					DTO <= DTI;
+					end
+		endcase
+	end
+	
 	always @(LATCH or CA or MDI) begin
 		// latch priority assignments from the CPU
 		if (LATCH) begin
