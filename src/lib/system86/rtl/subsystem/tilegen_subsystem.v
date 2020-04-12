@@ -33,6 +33,11 @@
 
 module tilegen_subsystem
 	#(
+		LAYER_DISABLE_MASK = 0,
+		BACKGROUND_LAYER_PRIORITY = 0,
+		FOREGROUND_LAYER_PRIORITY = 0,
+		TEXT_LAYER_PRIORITY = 0,
+		UNKNOWN_LAYER_PRIORITY = 0
 	)
 	(
 		input wire rst,
@@ -172,8 +177,8 @@ module tilegen_subsystem
     assign prom_6u_ce_n = 1'b0;
 	
     // tile map palette prom
-    //assign prom_4v_addr = { cus43_6n_clo, cus43_6n_dto };
-	 assign prom_4v_addr = { CL, DT };
+    assign prom_4v_addr = { cus43_6n_clo, cus43_6n_dto };
+	 //assign prom_4v_addr = { CL, DT };
     assign prom_4v_ce_n = 1'b0;  // SCRWIN
     
 	// == Layer 1 & 2 =
@@ -236,7 +241,14 @@ module tilegen_subsystem
 	assign cus43_8n_dt_in = 0; //J5[5] ? { J5[8], J5[9], J5[10] } : 3'b1;		
 	
 	// tile generator
-	cus43 CUS43_8N(
+	cus43 
+		#(
+			.LAYER_DISABLE_MASK(LAYER_DISABLE_MASK[1:0]),
+			.LAYER_A_PRIORITY(FOREGROUND_LAYER_PRIORITY),
+			.LAYER_B_PRIORITY(BACKGROUND_LAYER_PRIORITY)
+		)
+		cus43_8n
+		(
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
 			.PRI( cus43_8n_pr_in ),
@@ -303,7 +315,14 @@ module tilegen_subsystem
 			);
 			
 	// tile generator
-	cus43 CUS43_6N(
+	cus43 
+		#(
+			.LAYER_DISABLE_MASK(LAYER_DISABLE_MASK[3:2]),
+			.LAYER_A_PRIORITY(TEXT_LAYER_PRIORITY),
+			.LAYER_B_PRIORITY(UNKNOWN_LAYER_PRIORITY)
+		)
+		cus43_6n
+		(
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
 			.PRI(PR),

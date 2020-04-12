@@ -18,7 +18,15 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus43(
+module cus43
+	#(
+			parameter LAYER_DISABLE_MASK = 0,
+			parameter LAYER_A_PRIORITY = 0,
+			parameter LAYER_B_PRIORITY = 0
+	)
+	(
+		  input rst,
+		
         input wire [2:0] PRI,
         input wire [7:0] CLI,
         input wire [2:0] DTI,
@@ -52,7 +60,7 @@ module cus43(
 	reg [3:0] plane2_shift [1:0];
 	
 	// layer 1 (A)
-	reg [2:0] PR_A;
+	reg [2:0] PR_A = LAYER_A_PRIORITY;
 	
 	wire [7:0] CL_A = attr[0];
 
@@ -60,22 +68,12 @@ module cus43(
 	wire [2:0] DT_A = { plane2_shift[0][3], plane1_shift[0][3], plane0_shift[0][3] };	
 	
 	// layer 2 (B)
-	reg [2:0] PR_B;
+	reg [2:0] PR_B = LAYER_B_PRIORITY;
 	
 	wire [7:0] CL_B = attr[1];
 	
 	// first bit of each plane buffer
 	wire [2:0] DT_B = { plane2_shift[1][3], plane1_shift[1][3], plane0_shift[1][3] };	
-	
-	// perform priorty selection of layers (layer A or B)
-	//wire [13:0] MUX1 = (DT_B != 7) && (PR_B > PR_A) ? { PR_B, CL_B, DT_B } : { PR_A, CL_A, DT_A };
-	// assign highest priority layer [or input] to output
-	//assign {PRO, CLO, DTO } = MUX1; //(MUX1[2:0] != 7) && (MUX1[13:10] > PRI) ? MUX1 : { PRI, CLI, DTI };
-	
-	// Layer A only
-	//assign {PRO, CLO, DTO } = { PR_A, CL_A, DT_A };
-	// Layer B only
-	//assign {PRO, CLO, DTO } = { PR_B, CL_B, DT_B };
 	
 	wire layer = CLK_2H;
 	reg layer_latched = 0;
@@ -89,16 +87,27 @@ module cus43(
 		plane0_latched[1] = 0;
 		plane1_latched[1] = 0;
 		plane2_latched[1] = 0;
-		PR_A = 3'b0;
-		PR_B = 3'b1;
+		PR_A = LAYER_A_PRIORITY;
+		PR_B = LAYER_B_PRIORITY;
 	end
 	
 	always @(posedge layer or negedge layer) begin
-		mdi_latched[~layer] <= MDI;
+		if (rst) begin
+			mdi_latched[0] <= 0;
+			mdi_latched[1] <= 0;
+		end else
+			mdi_latched[~layer] <= MDI;
 	end
 	
 	always @(negedge CLK_6M) begin
-		if (layer !== layer_latched) begin
+		if (rst) begin
+			plane0_latched[0] <= 0;
+			plane1_latched[0] <= 0;
+			plane2_latched[0] <= 0;
+			plane0_latched[1] <= 0;
+			plane1_latched[1] <= 0;
+			plane2_latched[1] <= 0;
+		end else if (layer !== layer_latched) begin
 			plane0_latched[~layer][3:0] <= GDI[3:0];
 			plane1_latched[~layer][3:0] <= GDI[7:4];
 			plane2_latched[~layer][3:0] <= GDI[11:8];
@@ -108,8 +117,17 @@ module cus43(
 	end
 	
 	always @(negedge CLK_6M) begin
+		if (rst) begin
+			attr[0] <= 0;
+			plane0_shift[0] <= 0;
+			plane1_shift[0] <= 0;
+			plane1_shift[0] <= 0;
+			attr[1] <= 0;
+			plane0_shift[1] <= 0;
+			plane1_shift[1] <= 0;
+			plane1_shift[1] <= 0;
 		// layer A latch request
-		if (HA2) begin
+		end else if (HA2) begin
 			attr[0] <= mdi_latched[0];
 			plane0_shift[0] <= plane0_latched[0];
 			plane1_shift[0] <= plane1_latched[0];
@@ -134,35 +152,43 @@ module cus43(
 	end
 		
 	assign SELB = PR_B>PR_A;
-	assign AVAL = DT_A!==0;
-	assign BVAL = DT_B!==0;
-	wire [4:0] STATE;
-	assign STATE = { (PR_B>PR_A), 1'b1, 1'b1, BVAL, AVAL };
+	assign AVAL = DT_A!==7;
+	assign BVAL = DT_B!==7;
+	wire [6:0] STATE;
+	assign STATE = { LAYER_DISABLE_MASK, (PR_B>PR_A), (PR_B>PRI), (PR_A>PRI), BVAL, AVAL };
 	
 	always @(posedge CLK_6M) begin
-		//casez ( { PR_B>PR_A, PR_B>PRI, PR_A>PRI, DT_B!==0, DT_A!==0 } )
-		casex ( STATE )
-			5'b11?1?, 5'b01?10 : begin
-					PRO <= PR_B;
-					CLO <= CL_B;
-					DTO <= DT_B;
-				end
-			5'b0?1?1, 5'b1?101 : begin
-					PRO <= PR_A;
-					CLO <= CL_A;
-					DTO <= DT_A;
-				end
-			default : begin
-					PRO <= PRI;
-					CLO <= CLI;
-					DTO <= DTI;
+		if (rst) begin
+			PRO <= 0;
+			CLO <= 0;
+			DTO <= 0;
+		end else begin
+			casex ( STATE )
+				7'b0?11?1?, 7'b0?01?10 : begin
+						PRO <= PR_B;
+						CLO <= CL_B;
+						DTO <= DT_B;
 					end
-		endcase
+				7'b?00?1?1, 7'b?01?101 : begin
+						PRO <= PR_A;
+						CLO <= CL_A;
+						DTO <= DT_A;
+					end
+				default : begin
+						PRO <= PRI;
+						CLO <= CLI;
+						DTO <= DTI;
+					end
+			endcase
+		end
 	end
 	
-	always @(LATCH or CA or MDI) begin
-		// latch priority assignments from the CPU
-		if (LATCH) begin
+	always @(LATCH or CA or MDI or rst) begin
+		if (rst) begin
+			PR_A = LAYER_A_PRIORITY;
+			PR_B = LAYER_B_PRIORITY;
+		end else if (LATCH) begin
+			// latch priority assignments from the CPU
 			if (!CA[2:0] == 3'b001) begin
 				PR_A = MDI[3:1];
 			end else if (!CA[2:0] == 3'b101) begin

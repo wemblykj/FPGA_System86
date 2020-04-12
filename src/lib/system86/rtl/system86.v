@@ -39,7 +39,12 @@
 
 module system86
 	#(
-		parameter VIDEO_COMPONENT_DEPTH = 8
+		parameter VIDEO_COMPONENT_DEPTH = 8,
+		parameter LAYER_DISABLE_MASK = 0,
+		parameter BACKGROUND_LAYER_PRIORITY = 0,
+		parameter FOREGROUND_LAYER_PRIORITY = 0,
+		parameter TEXT_LAYER_PRIORITY = 0,
+		parameter UNKNOWN_LAYER_PRIORITY = 0
 	)
 	(
 		// == Simulation inputs
@@ -153,6 +158,13 @@ module system86
 		);
 	
 	tilegen_subsystem
+		#(
+			.LAYER_DISABLE_MASK(LAYER_DISABLE_MASK),
+			.BACKGROUND_LAYER_PRIORITY(BACKGROUND_LAYER_PRIORITY),
+			.FOREGROUND_LAYER_PRIORITY(FOREGROUND_LAYER_PRIORITY),
+			.TEXT_LAYER_PRIORITY(TEXT_LAYER_PRIORITY),
+			.UNKNOWN_LAYER_PRIORITY(UNKNOWN_LAYER_PRIORITY)
+		)
 		tilegen_subsystem
 		(
 			.rst(rst),
