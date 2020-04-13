@@ -92,6 +92,7 @@ module system86_tb;
 		#(
 			.VIDEO_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
 			.LAYER_DISABLE_MASK(4'b0000),
+			.BACKGROUND_LAYER_AUTOSCROLL(1),
 			.BACKGROUND_LAYER_PRIORITY(1),
 			.FOREGROUND_LAYER_PRIORITY(2),
 			.TEXT_LAYER_PRIORITY(3),
@@ -291,7 +292,7 @@ module system86_tb;
 			.vsync_out(x2_vsync)
 		);*/
 		
-	VGA_Sync_Pulses
+	/*VGA_Sync_Pulses
 		//#(
 		//)
 		output_sync_gen (
@@ -370,6 +371,7 @@ module system86_tb;
 			.i_nHSync(out_vid_hsync_n),
 			.i_nVSync(out_vid_vsync_n)
 		);
+		*/
 		
 	initial begin
 		// Initialize Inputs

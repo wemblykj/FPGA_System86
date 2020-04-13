@@ -19,7 +19,12 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus42(
+module cus42
+	#(
+		parameter LAYER_A_AUTOSCROLL = 0,
+		parameter LAYER_B_AUTOSCROLL = 0
+	)
+	(
 		input wire rst,
 			
 		input wire CLK_6M,
@@ -147,15 +152,18 @@ module cus42(
 				
 			if (!nVSYNC && vsyncLast) begin
 				vCounter = 0;
+				
 				// HACK to scroll each frame
-				//hScrollOffset[0] = hScrollOffset[0] + 1;
-				//hScrollOffset[1] = hScrollOffset[1] + 1;
+				hScrollOffset[0] = hScrollOffset[0] + LAYER_A_AUTOSCROLL;
+				hScrollOffset[1] = hScrollOffset[1] + LAYER_B_AUTOSCROLL;
 			end 
 			
 			//HA2 <= (hCounter[2:0] + hScrollOffset[0][2:0]) === 3'b000;
 			//HB2 <= (hCounter[2:0] + hScrollOffset[1][2:0]) === 3'b000;
 			HA2 <= (hCounter[1:0] + hScrollOffset[0][1:0]) === 2'b00;
 			HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b00;
+			//HA2 <= (hCounter[1:0] + hScrollOffset[0][1:0]) === 2'b11;
+			//HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b11;
 			
 			hsyncLast <= nHSYNC;
 			vsyncLast <= nVSYNC;

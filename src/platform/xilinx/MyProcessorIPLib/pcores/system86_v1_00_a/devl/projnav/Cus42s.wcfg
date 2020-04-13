@@ -334,276 +334,369 @@
    <wvobject fp_name="group114" type="group">
       <obj_property name="label">CUS42_7K</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/RD" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/rst" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">rst</obj_property>
+         <obj_property name="ObjectShortName">rst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/CLK_6M" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">CLK_6M</obj_property>
+         <obj_property name="ObjectShortName">CLK_6M</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/CLK_2H" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">CLK_2H</obj_property>
+         <obj_property name="ObjectShortName">CLK_2H</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/nHSYNC" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">nHSYNC</obj_property>
+         <obj_property name="ObjectShortName">nHSYNC</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/nVSYNC" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">nVSYNC</obj_property>
+         <obj_property name="ObjectShortName">nVSYNC</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/nGCS" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">nGCS</obj_property>
+         <obj_property name="ObjectShortName">nGCS</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/nRCS" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">nRCS</obj_property>
+         <obj_property name="ObjectShortName">nRCS</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/nLATCH" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">nLATCH</obj_property>
+         <obj_property name="ObjectShortName">nLATCH</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/FLIP" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">FLIP</obj_property>
+         <obj_property name="ObjectShortName">FLIP</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/CA" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">CA[13:0]</obj_property>
+         <obj_property name="ObjectShortName">CA[13:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/nWE" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">nWE</obj_property>
+         <obj_property name="ObjectShortName">nWE</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/CD" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">CD[7:0]</obj_property>
+         <obj_property name="ObjectShortName">CD[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/RD" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">RD[7:0]</obj_property>
          <obj_property name="ObjectShortName">RD[7:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/GA" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/GA" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">GA[13:0]</obj_property>
          <obj_property name="ObjectShortName">GA[13:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/RA" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/RA" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">RA[12:0]</obj_property>
          <obj_property name="ObjectShortName">RA[12:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/nRWE" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/nRWE" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">nRWE</obj_property>
          <obj_property name="ObjectShortName">nRWE</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/nROE" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/nROE" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">nROE</obj_property>
          <obj_property name="ObjectShortName">nROE</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/screen_column" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/screen_column" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">screen_column[5:0]</obj_property>
          <obj_property name="ObjectShortName">screen_column[5:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/screen_row" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/screen_row" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">screen_row[4:0]</obj_property>
          <obj_property name="ObjectShortName">screen_row[4:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/screen_tile" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/screen_tile" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">screen_tile[11:0]</obj_property>
          <obj_property name="ObjectShortName">screen_tile[11:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/layer" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/layer" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">layer</obj_property>
          <obj_property name="ObjectShortName">layer</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/HA2" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/HA2" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">HA2</obj_property>
          <obj_property name="ObjectShortName">HA2</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/HB2" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/HB2" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">HB2</obj_property>
          <obj_property name="ObjectShortName">HB2</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/ra_layer" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/ra_layer" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">ra_layer</obj_property>
          <obj_property name="ObjectShortName">ra_layer</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/hsyncLast" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/ra_tilemap_row" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ra_tilemap_row[4:0]</obj_property>
+         <obj_property name="ObjectShortName">ra_tilemap_row[4:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/ra_tilemap_column" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ra_tilemap_column[5:0]</obj_property>
+         <obj_property name="ObjectShortName">ra_tilemap_column[5:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/ra_tilemap_byte" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">ra_tilemap_byte</obj_property>
+         <obj_property name="ObjectShortName">ra_tilemap_byte</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/ga_tile_attrs" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ga_tile_attrs[1:0]</obj_property>
+         <obj_property name="ObjectShortName">ga_tile_attrs[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/ga_tile_index" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ga_tile_index[7:0]</obj_property>
+         <obj_property name="ObjectShortName">ga_tile_index[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/ga_tile_row" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ga_tile_row[2:0]</obj_property>
+         <obj_property name="ObjectShortName">ga_tile_row[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/ga_tile_column_nibble" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">ga_tile_column_nibble</obj_property>
+         <obj_property name="ObjectShortName">ga_tile_column_nibble</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/hsyncLast" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">hsyncLast</obj_property>
          <obj_property name="ObjectShortName">hsyncLast</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/vsyncLast" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/vsyncLast" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">vsyncLast</obj_property>
          <obj_property name="ObjectShortName">vsyncLast</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/hCounter" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/hCounter" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">hCounter[8:0]</obj_property>
          <obj_property name="ObjectShortName">hCounter[8:0]</obj_property>
-         <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/vCounter" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/vCounter" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">vCounter[8:0]</obj_property>
          <obj_property name="ObjectShortName">vCounter[8:0]</obj_property>
-         <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/hScrollOffset" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/hScrollOffset" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">hScrollOffset[0:1,8:0]</obj_property>
          <obj_property name="ObjectShortName">hScrollOffset[0:1,8:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/vScrollOffset" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/vScrollOffset" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">vScrollOffset[0:1,7:0]</obj_property>
          <obj_property name="ObjectShortName">vScrollOffset[0:1,7:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/tilemap_column" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/tilemap_column" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">tilemap_column[0:1,5:0]</obj_property>
          <obj_property name="ObjectShortName">tilemap_column[0:1,5:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/tilemap_row" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/tilemap_row" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">tilemap_row[0:1,4:0]</obj_property>
          <obj_property name="ObjectShortName">tilemap_row[0:1,4:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/tile_row" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/tile_row" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">tile_row[0:1,2:0]</obj_property>
          <obj_property name="ObjectShortName">tile_row[0:1,2:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/tile_column" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/tile_column" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">tile_column[0:1,2:0]</obj_property>
          <obj_property name="ObjectShortName">tile_column[0:1,2:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/tile_column_nibble" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/tile_column_nibble" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">tile_column_nibble[0:1]</obj_property>
          <obj_property name="ObjectShortName">tile_column_nibble[0:1]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/hScrollCounter" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/pri" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pri[2:0]</obj_property>
+         <obj_property name="ObjectShortName">pri[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/hScrollCounter" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">hScrollCounter[31:0]</obj_property>
          <obj_property name="ObjectShortName">hScrollCounter[31:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS42_7K/vScrollCounter" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/vScrollCounter" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">vScrollCounter[31:0]</obj_property>
          <obj_property name="ObjectShortName">vScrollCounter[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/LAYER_A_AUTOSCROLL" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">LAYER_A_AUTOSCROLL[31:0]</obj_property>
+         <obj_property name="ObjectShortName">LAYER_A_AUTOSCROLL[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/LAYER_B_AUTOSCROLL" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">LAYER_B_AUTOSCROLL[31:0]</obj_property>
+         <obj_property name="ObjectShortName">LAYER_B_AUTOSCROLL[31:0]</obj_property>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group175" type="group">
       <obj_property name="label">CUS43_8N</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/PRI" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/rst" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">rst</obj_property>
+         <obj_property name="ObjectShortName">rst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/PRI" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">PRI[2:0]</obj_property>
          <obj_property name="ObjectShortName">PRI[2:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/CLI" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/CLI" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">CLI[7:0]</obj_property>
          <obj_property name="ObjectShortName">CLI[7:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/DTI" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/DTI" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">DTI[2:0]</obj_property>
          <obj_property name="ObjectShortName">DTI[2:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/GDI" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/GDI" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">GDI[11:0]</obj_property>
          <obj_property name="ObjectShortName">GDI[11:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/nOE" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/nOE" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">nOE</obj_property>
          <obj_property name="ObjectShortName">nOE</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/CA" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/CA" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">CA[2:0]</obj_property>
          <obj_property name="ObjectShortName">CA[2:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/nWE" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/nWE" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">nWE</obj_property>
          <obj_property name="ObjectShortName">nWE</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/MDI" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/MDI" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">MDI[7:0]</obj_property>
          <obj_property name="ObjectShortName">MDI[7:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/HA" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/HA" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">HA[2:0]</obj_property>
          <obj_property name="ObjectShortName">HA[2:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/CLK_6M" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/CLK_6M" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">CLK_6M</obj_property>
          <obj_property name="ObjectShortName">CLK_6M</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/CLK_2H" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/CLK_2H" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">CLK_2H</obj_property>
          <obj_property name="ObjectShortName">CLK_2H</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/LATCH" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/LATCH" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">LATCH</obj_property>
          <obj_property name="ObjectShortName">LATCH</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/FLIP" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/FLIP" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">FLIP</obj_property>
          <obj_property name="ObjectShortName">FLIP</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/HA2" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/HA2" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">HA2</obj_property>
          <obj_property name="ObjectShortName">HA2</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/HB2" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/HB2" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">HB2</obj_property>
          <obj_property name="ObjectShortName">HB2</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/PRO" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">PRO[2:0]</obj_property>
-         <obj_property name="ObjectShortName">PRO[2:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/CLO" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">CLO[7:0]</obj_property>
-         <obj_property name="ObjectShortName">CLO[7:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/DTO" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">DTO[2:0]</obj_property>
-         <obj_property name="ObjectShortName">DTO[2:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/CLE" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/CLE" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">CLE</obj_property>
          <obj_property name="ObjectShortName">CLE</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/CL_A" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/CL_A" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">CL_A[7:0]</obj_property>
          <obj_property name="ObjectShortName">CL_A[7:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/DT_A" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/DT_A" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">DT_A[2:0]</obj_property>
          <obj_property name="ObjectShortName">DT_A[2:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/CL_B" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/CL_B" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">CL_B[7:0]</obj_property>
          <obj_property name="ObjectShortName">CL_B[7:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/DT_B" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/DT_B" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">DT_B[2:0]</obj_property>
          <obj_property name="ObjectShortName">DT_B[2:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/layer" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/layer" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">layer</obj_property>
          <obj_property name="ObjectShortName">layer</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/mdi_latched" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/STATE" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">STATE[6:0]</obj_property>
+         <obj_property name="ObjectShortName">STATE[6:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/SELB" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">SELB</obj_property>
+         <obj_property name="ObjectShortName">SELB</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/AVAL" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">AVAL</obj_property>
+         <obj_property name="ObjectShortName">AVAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/BVAL" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">BVAL</obj_property>
+         <obj_property name="ObjectShortName">BVAL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/PRO" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">PRO[2:0]</obj_property>
+         <obj_property name="ObjectShortName">PRO[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/CLO" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">CLO[7:0]</obj_property>
+         <obj_property name="ObjectShortName">CLO[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/DTO" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">DTO[2:0]</obj_property>
+         <obj_property name="ObjectShortName">DTO[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/mdi_latched" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">mdi_latched[1:0,7:0]</obj_property>
          <obj_property name="ObjectShortName">mdi_latched[1:0,7:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane0_latched" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/plane0_latched" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">plane0_latched[1:0,3:0]</obj_property>
          <obj_property name="ObjectShortName">plane0_latched[1:0,3:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane1_latched" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/plane1_latched" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">plane1_latched[1:0,3:0]</obj_property>
          <obj_property name="ObjectShortName">plane1_latched[1:0,3:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane2_latched" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/plane2_latched" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">plane2_latched[1:0,3:0]</obj_property>
          <obj_property name="ObjectShortName">plane2_latched[1:0,3:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/attr" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/attr" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">attr[1:0,7:0]</obj_property>
          <obj_property name="ObjectShortName">attr[1:0,7:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane0_shift" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/plane0_shift" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">plane0_shift[1:0,3:0]</obj_property>
          <obj_property name="ObjectShortName">plane0_shift[1:0,3:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane1_shift" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/plane1_shift" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">plane1_shift[1:0,3:0]</obj_property>
          <obj_property name="ObjectShortName">plane1_shift[1:0,3:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/plane2_shift" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/plane2_shift" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">plane2_shift[1:0,3:0]</obj_property>
          <obj_property name="ObjectShortName">plane2_shift[1:0,3:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/PR_A" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/PR_A" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">PR_A[2:0]</obj_property>
          <obj_property name="ObjectShortName">PR_A[2:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/PR_B" type="array" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/PR_B" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">PR_B[2:0]</obj_property>
          <obj_property name="ObjectShortName">PR_B[2:0]</obj_property>
       </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_8N/layer_latched" type="logic" db_ref_id="1">
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/layer_latched" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">layer_latched</obj_property>
          <obj_property name="ObjectShortName">layer_latched</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/LAYER_DISABLE_MASK" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">LAYER_DISABLE_MASK[1:0]</obj_property>
+         <obj_property name="ObjectShortName">LAYER_DISABLE_MASK[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/LAYER_A_PRIORITY" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">LAYER_A_PRIORITY[31:0]</obj_property>
+         <obj_property name="ObjectShortName">LAYER_A_PRIORITY[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/LAYER_B_PRIORITY" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">LAYER_B_PRIORITY[31:0]</obj_property>
+         <obj_property name="ObjectShortName">LAYER_B_PRIORITY[31:0]</obj_property>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group159" type="group">
@@ -719,145 +812,5 @@
    <wvobject fp_name="group211" type="group">
       <obj_property name="label">CUS43_6N</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/PRI" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">PRI[2:0]</obj_property>
-         <obj_property name="ObjectShortName">PRI[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/CLI" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">CLI[7:0]</obj_property>
-         <obj_property name="ObjectShortName">CLI[7:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/DTI" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">DTI[2:0]</obj_property>
-         <obj_property name="ObjectShortName">DTI[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/GDI" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">GDI[11:0]</obj_property>
-         <obj_property name="ObjectShortName">GDI[11:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/nOE" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">nOE</obj_property>
-         <obj_property name="ObjectShortName">nOE</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/CA" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">CA[2:0]</obj_property>
-         <obj_property name="ObjectShortName">CA[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/nWE" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">nWE</obj_property>
-         <obj_property name="ObjectShortName">nWE</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/MDI" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">MDI[7:0]</obj_property>
-         <obj_property name="ObjectShortName">MDI[7:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/HA" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">HA[2:0]</obj_property>
-         <obj_property name="ObjectShortName">HA[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/CLK_6M" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">CLK_6M</obj_property>
-         <obj_property name="ObjectShortName">CLK_6M</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/CLK_2H" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">CLK_2H</obj_property>
-         <obj_property name="ObjectShortName">CLK_2H</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/LATCH" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">LATCH</obj_property>
-         <obj_property name="ObjectShortName">LATCH</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/FLIP" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">FLIP</obj_property>
-         <obj_property name="ObjectShortName">FLIP</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/HA2" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">HA2</obj_property>
-         <obj_property name="ObjectShortName">HA2</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/HB2" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">HB2</obj_property>
-         <obj_property name="ObjectShortName">HB2</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/PRO" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">PRO[2:0]</obj_property>
-         <obj_property name="ObjectShortName">PRO[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/CLO" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">CLO[7:0]</obj_property>
-         <obj_property name="ObjectShortName">CLO[7:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/DTO" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">DTO[2:0]</obj_property>
-         <obj_property name="ObjectShortName">DTO[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/CLE" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">CLE</obj_property>
-         <obj_property name="ObjectShortName">CLE</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/CL_A" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">CL_A[7:0]</obj_property>
-         <obj_property name="ObjectShortName">CL_A[7:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/DT_A" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">DT_A[2:0]</obj_property>
-         <obj_property name="ObjectShortName">DT_A[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/CL_B" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">CL_B[7:0]</obj_property>
-         <obj_property name="ObjectShortName">CL_B[7:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/DT_B" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">DT_B[2:0]</obj_property>
-         <obj_property name="ObjectShortName">DT_B[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/layer" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">layer</obj_property>
-         <obj_property name="ObjectShortName">layer</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/mdi_latched" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">mdi_latched[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">mdi_latched[1:0,7:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane0_latched" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane0_latched[1:0,3:0]</obj_property>
-         <obj_property name="ObjectShortName">plane0_latched[1:0,3:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane1_latched" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane1_latched[1:0,3:0]</obj_property>
-         <obj_property name="ObjectShortName">plane1_latched[1:0,3:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane2_latched" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane2_latched[1:0,3:0]</obj_property>
-         <obj_property name="ObjectShortName">plane2_latched[1:0,3:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/attr" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">attr[1:0,7:0]</obj_property>
-         <obj_property name="ObjectShortName">attr[1:0,7:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane0_shift" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane0_shift[1:0,3:0]</obj_property>
-         <obj_property name="ObjectShortName">plane0_shift[1:0,3:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane1_shift" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane1_shift[1:0,3:0]</obj_property>
-         <obj_property name="ObjectShortName">plane1_shift[1:0,3:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/plane2_shift" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">plane2_shift[1:0,3:0]</obj_property>
-         <obj_property name="ObjectShortName">plane2_shift[1:0,3:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/PR_A" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">PR_A[2:0]</obj_property>
-         <obj_property name="ObjectShortName">PR_A[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/PR_B" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">PR_B[2:0]</obj_property>
-         <obj_property name="ObjectShortName">PR_B[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/CUS43_6N/layer_latched" type="logic" db_ref_id="1">
-         <obj_property name="ElementShortName">layer_latched</obj_property>
-         <obj_property name="ObjectShortName">layer_latched</obj_property>
-      </wvobject>
    </wvobject>
 </wave_config>

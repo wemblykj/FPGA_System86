@@ -34,6 +34,7 @@
 module tilegen_subsystem
 	#(
 		LAYER_DISABLE_MASK = 0,
+		BACKGROUND_LAYER_AUTOSCROLL = 0,
 		BACKGROUND_LAYER_PRIORITY = 0,
 		FOREGROUND_LAYER_PRIORITY = 0,
 		TEXT_LAYER_PRIORITY = 0,
@@ -183,7 +184,13 @@ module tilegen_subsystem
     
 	// == Layer 1 & 2 =
 	
-	cus42 CUS42_7K(
+	cus42
+		#(
+			.LAYER_A_AUTOSCROLL(BACKGROUND_LAYER_AUTOSCROLL),
+			.LAYER_B_AUTOSCROLL(BACKGROUND_LAYER_AUTOSCROLL)
+		)
+		cus42_7k
+		(
 			.rst(rst),
 			
 			// inputs
