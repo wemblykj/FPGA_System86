@@ -79,23 +79,47 @@ module cus42
 	reg vsyncLast = 1;
 	
 	// screen space
-	reg [8:0] hCounter = 0;	// 9 bits
-	reg [8:0] vCounter = 0; // 9 bits
-	wire [5:0] screen_column = hCounter[8:3];
-	wire [4:0] screen_row = vCounter[7:3];
-	wire [11:0] screen_tile = (screen_row*8) + screen_column;
+	reg [8:0] hCounter = 0;	// 9 bits	0 -> 384
+	reg [8:0] vCounter = 0; // 9 bits	0 -> 264
+	wire [8:0] fhCounter;	// flipped hCounter
 	
-	assign layer = ~CLK_2H;
+	// screen flipping - GnG SCROLL H POSITION 85606 - 8 -  2
+	// note: will probably only be horizontal
+	assign fhCounter = FLIP ? ~hCounter : hCounter;
 	
-	// per layer inputs
+	// per layer processing
 	
-	// scroll layer 1 ;	// 2 layers 9 bits
+	// latched scroll offsets	// 2 layers 9 bits
 	reg [8:0] hScrollOffset[0:1];	// 2 layers 9 bits
 	reg [7:0] vScrollOffset[0:1];	// 2 layers 8 bits
 	
+	// current layer - currently negated so that we are working on the next layer
+	assign layer = ~CLK_2H;
+	
+	wire [8:0] hScrollCounter[0:1];	// 9 bits	0 -> 384
+	wire [8:0] vScrollCounter[0:1];	// 9 bits	0 -> 264
+	
+	// horizontal adder - GnG SCROLL H POSITION 85606 - 8 -  2
+	assign hScrollCounter[0] = hScrollOffset[0] + fhCounter;
+	assign hScrollCounter[1] = hScrollOffset[1] + fhCounter;
+	// vertical adder - assumed to work similar to horizontal (no vertical fliping?)
+	assign vScrollCounter[0] = vScrollOffset[0] + vCounter;
+	assign vScrollCounter[1] = vScrollOffset[1] + vCounter;
+	
+	// priority layer 1 & 2, may not be used here (see CUS43)
+	reg [2:0] pri;						// 2 layers 3 bits
+    
+		
+	//
+	// debug
+	//
+	
+	// screen space
+	wire [5:0] screen_column = fhCounter[8:3];
+	wire [4:0] screen_row = vCounter[7:3];
+	wire [11:0] screen_tile = (screen_row*8) + screen_column;
+	
 	// tilemap space
-	//reg [8:0] hScrollCounter [0:1];	// 2 layers 9 bits 
-	//reg [7:0] vScrollCounter [0:1]; // 2 layers 8 bits
 	reg [5:0] tilemap_column [0:1];
 	reg [4:0] tilemap_row [0:1];
 	
@@ -104,27 +128,54 @@ module cus42
 	reg [2:0] tile_column [0:1];
 	reg tile_column_nibble [0:1];	// which nibble of the tile row MSB or LSB
 	
-	// priority layer 1 & 2, may not be used here (see CUS43)
-	reg [2:0] pri;						// 2 layers 3 bits
-    
-	// Handle CPU control requests
-	always @(*) begin
-		if (nLATCH == 1'b0) begin
-			if (!CA[1])
-				// set lower 8 bits
-				hScrollOffset[CA[2]][7:0] = CD;
-			else if (!CA[1:0] == 2'b01) begin
-				// set 9th bit
-				hScrollOffset[CA[2]][8] = CD[0];
-				pri[CA[2]] = CD[3:1];
-			end else if (!CA[1:0] == 2'b10)
-				// set all 8th bits
-				vScrollOffset[CA[2]][7:0] = CD;
+	//
+	// behaviour
+	//
+	
+	// Synchronous - GnG 65606 - A - 2 - 5/8
+	always @(posedge CLK_6M) begin
+		if (rst) begin
+			hCounter <= 0;
+			vCounter <= 0;
+			hScrollOffset[0] <= 0;
+			vScrollOffset[0] <= 0;
+			hScrollOffset[1] <= 0;
+			vScrollOffset[1] <= 0;
+		end else begin
+			if (!nHSYNC && hsyncLast) begin
+				hCounter = 0;
+				
+				if (!nVSYNC && vsyncLast) begin
+					vCounter = 0;
+					
+					// HACK to scroll each frame
+					hScrollOffset[0] = hScrollOffset[0] + LAYER_A_AUTOSCROLL;
+					hScrollOffset[1] = hScrollOffset[1] + LAYER_B_AUTOSCROLL;
+				end else
+					vCounter = vCounter + 1;
+			end
 		end
-	end	
-
-	integer hScrollCounter;
-	integer vScrollCounter;
+		
+		hsyncLast <= nHSYNC;
+		vsyncLast <= nVSYNC;
+	end
+	
+	// WIP implmentation based on GnG schematics
+	gng_scroll_position layer_a_position
+	(
+		.rst(rst),
+		.H(hCounter),
+		.hScrollOffset(hScrollOffset[0]),
+		.vScrollOffset(vScrollOffset[0])
+	);
+	
+	/*gng_scroll_position layer_b_position
+	(
+		.rst(rst),
+		.H(fhCounter),
+		.hScrollOffset(hScrollOffset[1]),
+		.vScrollOffset(vScrollOffset[1])
+	);*/
 	
 	always @(negedge CLK_6M or rst) begin
 		if (rst) begin
@@ -144,19 +195,7 @@ module cus42
 			HA2 = 0;
 			HB2 = 0;
 		end else begin
-			hCounter = hCounter + 1;
-			if (!nHSYNC && hsyncLast) begin
-				hCounter = 0;
-				vCounter = vCounter + 1;
-			end
-				
-			if (!nVSYNC && vsyncLast) begin
-				vCounter = 0;
-				
-				// HACK to scroll each frame
-				hScrollOffset[0] = hScrollOffset[0] + LAYER_A_AUTOSCROLL;
-				hScrollOffset[1] = hScrollOffset[1] + LAYER_B_AUTOSCROLL;
-			end 
+			
 			
 			//HA2 <= (hCounter[2:0] + hScrollOffset[0][2:0]) === 3'b000;
 			//HB2 <= (hCounter[2:0] + hScrollOffset[1][2:0]) === 3'b000;
@@ -164,13 +203,6 @@ module cus42
 			HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b00;
 			//HA2 <= (hCounter[1:0] + hScrollOffset[0][1:0]) === 2'b11;
 			//HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b11;
-			
-			hsyncLast <= nHSYNC;
-			vsyncLast <= nVSYNC;
-			
-			// get the counters for the current layer
-			hScrollCounter = hCounter + hScrollOffset[layer];
-			vScrollCounter = vCounter + vScrollOffset[layer];
 			
 			// Assign SRAM address				// changes every two pixels
 			if (hCounter[0] === 2'b0)
@@ -208,7 +240,24 @@ module cus42
 			else if (hCounter[0] === 1'b1)
 				ga_tile_attrs <= RD[1:0];				// read byte 2 lsb into tile index	
 	end
+
+	// Handle CPU control requests
+	always @(*) begin
+		if (nLATCH == 1'b0) begin
+			if (!CA[1])
+				// set lower 8 bits
+				hScrollOffset[CA[2]][7:0] = CD;
+			else if (!CA[1:0] == 2'b01) begin
+				// set 9th bit
+				hScrollOffset[CA[2]][8] = CD[0];
+				pri[CA[2]] = CD[3:1];
+			end else if (!CA[1:0] == 2'b10)
+				// set all 8th bits
+				vScrollOffset[CA[2]][7:0] = CD;
+		end
+	end	
 	
+	// CPU/RAM multiplexing
 	assign nRWE = nRCS ? 1'b1 : nWE;
 	assign nROE = nRCS ? 1'b0 : ~nWE;
 	assign RD = ~nRCS && ~nWE ? CD : 8'bZ;
