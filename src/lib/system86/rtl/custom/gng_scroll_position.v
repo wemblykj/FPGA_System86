@@ -9,7 +9,7 @@
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:    Namco CUS42 - GnG SCROLL H POSITION 85606 - 8 - 2 - 7/9
+// Description:    Namco CUS42 - GnG SCROLL H POSITION 85606 - B - 2 - 7/9
 //
 // Dependencies: 
 //
@@ -29,31 +29,36 @@ module gng_scroll_position
 		input wire FLIP,
 		input wire nSCRCS,
 		input wire [8:0] H,	// 9 bits
-		input wire [7:0] V,	// 8 bits
+		input wire [8:0] V,	// 8 bits
 		input wire [8:0] hScrollOffset,	// 9 bits
 		input wire [8:0] vScrollOffset,	// 9 bits
 		output wire [8:0] SH,		// 9 bits	0 -> 384
 		output wire [8:0] SV,		// 9 bits	0 -> 264
-		output wire SH2,
 		output reg S0H,
 		output reg S2H,
 		output reg S4H,
 		output wire nS7H,
-		output reg nSCREN,
-		output reg nMRDY2
+		output wire nSCREN,
+		output wire nMRDY2
 	);
 	
-	wire [2:0] fhScrollLsb;			// 3 bits
+	wire [8:0] fH;
+	wire [8:0] fhCounter;
+	//wire [2:0] fhCounterLsb;			// 3 bits
 	
 	// note: will probably only be horizontal
-	assign fhCounter = FLIP ? ~hCounter : hCounter;
+	assign fH[8:0] = FLIP ? ~H[8:0] : H[8:0];
+	
+	assign fhCounter[6:0] = fH[6:0];
+	assign fhCounter[7] = ((fH[6] ^ ~FLIP) & ~H[8]) ^ fH[7];
+	assign fhCounter[8] = ~H[8];
 	
 	// horizontal adder - GnG SCROLL H POSITION 85606 - 8 -  2
 	assign SH = hScrollOffset + fhCounter;
 	// vertical adder - assumed this would work similar to horizontal (no vertical fliping?)
-	assign SV = vScrollOffset + vCounter;
+	assign SV = vScrollOffset + V;
 	
-	assign fhScrollLsb = FLIP ? ~hScrollCounter[2:0] : hScrollCounter[2:0];
+	//assign fhScrollLsb = FLIP ? ~H[2:0] : H[2:0];
 	
 	//
 	// debug
@@ -72,10 +77,10 @@ module gng_scroll_position
 	// behaviour
 	//
 	
-	wire [7:0] hDemux;
-	always @(fhScrollLsb) begin
-		// horizontal line demux - GnG 10C LS138	
-		case (fhScrollLsb)
+	reg [7:0] hDemux;
+	always @(fhCounter[2:0]) begin
+		// horizontal line demux - LS138 10C	
+		case (fhCounter[2:0])
 			// for now retain negation of LS138
 			3'b000: hDemux <= ~8'b00000001;
 			3'b001: hDemux <= ~8'b00000010;
@@ -100,13 +105,13 @@ module gng_scroll_position
 		// debug
 		
 		// tilemap space
-		tilemap_column <= hScrollCounter[8:3];
-		tilemap_row <= vScrollCounter[7:3];
+		tilemap_column <= SH[8:3];
+		tilemap_row <= SV[7:3];
 		
 		// tile space
-		tile_row <= vScrollCounter[2:0];
-		tile_column <= hScrollCounter[2:0];
-		tile_column_nibble <= hScrollCounter[2];
+		tile_row <= SV[2:0];
+		tile_column <= SH[2:0];
+		tile_column_nibble <= SH[2];
 	end
 	
 	reg gng_ls74_7c_1q;
@@ -125,8 +130,8 @@ module gng_scroll_position
 			gng_ls74_7c_2q <= 1;
 	end
 	
-	assign nMRDY2 = ~(~gng_ls74_7c_2q && ~nRCS);
-	assign nSCREN = ~(gng_ls74_7c_1q && ~nRCS);
-	assign nSH2 = fhScrollLsb[1];	// async
-	assign nS7H = hDemux[7];	// async
+	assign nMRDY2 = ~(~gng_ls74_7c_2q && ~nSCRCS);
+	assign nSCREN = ~(gng_ls74_7c_1q && ~nSCRCS);
+	assign nSH2 = fhCounter[1];	// async
+	assign nS7H = hDemux[7];		// async
 endmodule

@@ -83,15 +83,11 @@ module cus42
 	reg [8:0] vCounter = 0; // 9 bits	0 -> 264
 	wire [8:0] fhCounter;	// flipped hCounter
 	
-	// screen flipping - GnG SCROLL H POSITION 85606 - 8 -  2
-	// note: will probably only be horizontal
-	assign fhCounter = FLIP ? ~hCounter : hCounter;
-	
 	// per layer processing
 	
 	// latched scroll offsets	// 2 layers 9 bits
 	reg [8:0] hScrollOffset[0:1];	// 2 layers 9 bits
-	reg [7:0] vScrollOffset[0:1];	// 2 layers 8 bits
+	reg [8:0] vScrollOffset[0:1];	// 2 layers 9 bits
 	
 	// current layer - currently negated so that we are working on the next layer
 	assign layer = ~CLK_2H;
@@ -100,8 +96,8 @@ module cus42
 	wire [8:0] vScrollCounter[0:1];	// 9 bits	0 -> 264
 	
 	// horizontal adder - GnG SCROLL H POSITION 85606 - 8 -  2
-	assign hScrollCounter[0] = hScrollOffset[0] + fhCounter;
-	assign hScrollCounter[1] = hScrollOffset[1] + fhCounter;
+	assign hScrollCounter[0] = hScrollOffset[0] + hCounter;
+	assign hScrollCounter[1] = hScrollOffset[1] + hCounter;
 	// vertical adder - assumed to work similar to horizontal (no vertical fliping?)
 	assign vScrollCounter[0] = vScrollOffset[0] + vCounter;
 	assign vScrollCounter[1] = vScrollOffset[1] + vCounter;
@@ -115,7 +111,7 @@ module cus42
 	//
 	
 	// screen space
-	wire [5:0] screen_column = fhCounter[8:3];
+	wire [5:0] screen_column = hCounter[8:3];
 	wire [4:0] screen_row = vCounter[7:3];
 	wire [11:0] screen_tile = (screen_row*8) + screen_column;
 	
@@ -160,11 +156,29 @@ module cus42
 		vsyncLast <= nVSYNC;
 	end
 	
+	wire [8:0] H;
+	wire [8:0] V;
+	
 	// WIP implmentation based on GnG schematics
+	gng_synchronous gng_synchronous
+	(
+		.rst(rst),
+		
+		.CLK_6M(CLK_6M),
+		.nHSYNC(nHSYNC),
+		.nVSYNC(nVSYNC),
+		.H(H),
+		.V(V)
+	);
+	
 	gng_scroll_position layer_a_position
 	(
 		.rst(rst),
-		.H(hCounter),
+		
+		.CLK_6M(CLK_6M),
+		.FLIP(FLIP),
+		.H(H),
+		.V(V),
 		.hScrollOffset(hScrollOffset[0]),
 		.vScrollOffset(vScrollOffset[0])
 	);
@@ -172,7 +186,12 @@ module cus42
 	/*gng_scroll_position layer_b_position
 	(
 		.rst(rst),
-		.H(fhCounter),
+		.enable(~CLK_2H),
+		
+		.CLK_6M(CLK_6M),
+		.FLIP(FLIP),
+		.H(H),
+		.V(V),
 		.hScrollOffset(hScrollOffset[1]),
 		.vScrollOffset(vScrollOffset[1])
 	);*/
@@ -209,27 +228,27 @@ module cus42
 				ra_layer = layer;					// latch the layer on first pixel
 				
 			ra_tilemap_row = 
-				vScrollCounter[7:3];		 	// row select,	0 - 31 vCounter/8
+				vScrollCounter[layer][7:3];		 	// row select,	0 - 31 vCounter/8
 				
 			ra_tilemap_column = 
-				hScrollCounter[8:3];				// column select, 0 - 47 hCounter/8
+				hScrollCounter[layer][8:3];				// column select, 0 - 47 hCounter/8
 				
 			ra_tilemap_byte = hCounter[0];				// byte select, first or second alternates every pixel
 			
 			// PROM address
-			ga_tile_column_nibble = hScrollCounter[2];
-			ga_tile_row = vScrollCounter[2:0]; 	// row select
+			ga_tile_column_nibble = hScrollCounter[layer][2];
+			ga_tile_row = vScrollCounter[layer][2:0]; 	// row select
 				
 			// per layer debugging outputs
 			
 			// tilemap space
-			tilemap_column[layer] <= hScrollCounter[8:3];
-			tilemap_row[layer] <= vScrollCounter[7:3];
+			tilemap_column[layer] <= hScrollCounter[layer][8:3];
+			tilemap_row[layer] <= vScrollCounter[layer][7:3];
 		
 			// tile space
-			tile_row[layer] <= vScrollCounter[2:0];
-			tile_column[layer] <= hScrollCounter[2:0];
-			tile_column_nibble[layer] <= hScrollCounter[2];
+			tile_row[layer] <= vScrollCounter[layer][2:0];
+			tile_column[layer] <= hScrollCounter[layer][2:0];
+			tile_column_nibble[layer] <= hScrollCounter[layer][2];
 		end
 	end
 	

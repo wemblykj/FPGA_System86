@@ -195,7 +195,8 @@ module tilegen_subsystem
 			
 			// inputs
 			.CLK_6M(CLK_6M), 
-			.CLK_2H(CLK_2H), 
+			.CLK_2H(CLK_2H),
+			.FLIP(FLIP),
 			.nHSYNC(nHSYNC),
 			.nVSYNC(nVSYNC),
 			.nRCS(nSCROLL0),
@@ -282,6 +283,7 @@ module tilegen_subsystem
 			
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_2H), 
+			.FLIP(FLIP),
 			.nHSYNC(nHSYNC),
 			.nVSYNC(nVSYNC),
 			.nGCS(1'b1),	// held high (inactive) on schematics

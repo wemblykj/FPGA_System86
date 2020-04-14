@@ -116,6 +116,7 @@ module system86
 	wire nBACKCOLOR = 1'b1;
 	wire nWE = 1'b1;
 	wire BANK = 1'b0;
+	wire FLIP = 1'b0;
 	
 	wire nHSYNC;
 	wire nVSYNC;
