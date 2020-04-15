@@ -146,7 +146,7 @@ module cus42
 					
 					// HACK to scroll each frame
 					hScrollOffset[0] = hScrollOffset[0] + LAYER_A_AUTOSCROLL;
-					hScrollOffset[1] = hScrollOffset[1] + LAYER_B_AUTOSCROLL;
+					hScrollOffset[1] = hScrollOffset[1] + 1; //LAYER_B_AUTOSCROLL;
 				end else
 					vCounter = vCounter + 1;
 			end
@@ -171,30 +171,42 @@ module cus42
 		.V(V)
 	);
 	
+	wire [8:0] SHA;
+	wire [8:0] SVA;
+	wire nSCRENA;
 	gng_scroll_position layer_a_position
 	(
 		.rst(rst),
 		
 		.CLK_6M(CLK_6M),
 		.FLIP(FLIP),
+		.nSCRCS(1'b0),
 		.H(H),
 		.V(V),
 		.hScrollOffset(hScrollOffset[0]),
-		.vScrollOffset(vScrollOffset[0])
+		.vScrollOffset(vScrollOffset[0]),
+		.SH(SHA),
+		.SV(SVA),
+		.nSCREN(nSCRENA)
 	);
 	
-	/*gng_scroll_position layer_b_position
+	wire [8:0] SHB;
+	wire [8:0] SVB;
+	wire nSCRENB;
+	gng_scroll_position layer_b_position
 	(
 		.rst(rst),
-		.enable(~CLK_2H),
-		
 		.CLK_6M(CLK_6M),
 		.FLIP(FLIP),
+		.nSCRCS(1'b0),
 		.H(H),
 		.V(V),
 		.hScrollOffset(hScrollOffset[1]),
-		.vScrollOffset(vScrollOffset[1])
-	);*/
+		.vScrollOffset(vScrollOffset[1]),
+		.SH(SHB),
+		.SV(SVB),
+		.nSCREN(nSCRENB)
+	);
 	
 	always @(negedge CLK_6M or rst) begin
 		if (rst) begin

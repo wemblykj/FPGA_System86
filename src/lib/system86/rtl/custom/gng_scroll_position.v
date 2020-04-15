@@ -39,7 +39,8 @@ module gng_scroll_position
 		output reg S4H,
 		output wire nS7H,
 		output wire nSCREN,
-		output wire nMRDY2
+		output wire nMRDY2,
+		output wire [10:0] RA
 	);
 	
 	wire [8:0] fhCounter;
@@ -127,26 +128,35 @@ module gng_scroll_position
 		tile_column_nibble <= SH[2];
 	end
 	
+	reg S4H_last;
 	reg gng_ls74_7c_1q;
-	always @(posedge S4H) begin
-		if (!hDemux[7])
+	wire gng_ls74_7c_1q_n = ~gng_ls74_7c_1q;
+	always @(S0H or S4H) begin
+		if (S0H) // nCLR
 			gng_ls74_7c_1q <= 0;
-		else
+		else if (S4H && !S4H_last)
 			gng_ls74_7c_1q <= 1;
+			
+		S4H_last = S4H;
 	end
 	
+	reg s6h_last;
 	reg gng_ls74_7c_2q;
-	always @(posedge s6h) begin
-		if (!gng_ls74_7c_1q)
+	wire gng_ls74_7c_2q_n = ~gng_ls74_7c_2q;
+	always @(s6h or gng_ls74_7c_1q) begin
+		if (!gng_ls74_7c_1q)	// nCLR
 			gng_ls74_7c_2q <= 0;
-		else
+		else if (s6h && !s6h_last)
 			gng_ls74_7c_2q <= 1;
+			
+		s6h_last = s6h;
 	end
 	
-	assign nMRDY2 = ~(~gng_ls74_7c_2q && ~nSCRCS);
-	assign nSCREN = ~(gng_ls74_7c_1q && ~nSCRCS);
-	assign nSH2 = fhCounter[1];	// async
+	assign nMRDY2 = ~(~gng_ls74_7c_2q & ~nSCRCS);
+	assign nSCREN = ~(~gng_ls74_7c_1q_n & ~nSCRCS);
 	assign nS7H = hDemux[7];		// async
+	assign SH2 = SH[1];		// async
 	assign SH = { hScrollCounter[8:3], FLIP ? ~hScrollCounter[2:0] : hScrollCounter[2:0] };
 	assign SV = vScrollCounter;
+	assign RA = { SH2, SH[8:4], SV[8:4] };	// as per GnG SH2 is offset of 0x400 to attr byte
 endmodule
