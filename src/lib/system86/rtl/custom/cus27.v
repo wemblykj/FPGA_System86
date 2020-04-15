@@ -61,15 +61,16 @@ module cus27
 	reg VRESETH = 0;	// vreset from horizonatal
 	reg VRESET = 0;	// vreset from vertical
 	
-	
 	reg [2:0] master_counter = 0;
 
+	reg rst_last = 0;
 	always @(posedge CLK_48M) begin
-		if (rst) begin
+		if (rst && !rst_last)
 			master_counter <= 0;
-		end else begin
+		else
 			master_counter <= master_counter + 1;
-		end
+			
+		rst_last = rst;
 	end
 
 	assign CLK_24M = master_counter[0];

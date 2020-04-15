@@ -133,9 +133,9 @@ module cus42
 		if (rst) begin
 			hCounter <= 0;
 			vCounter <= 0;
-			hScrollOffset[0] <= 0;
+			hScrollOffset[0] <= 0; //9'b100000000;
 			vScrollOffset[0] <= 0;
-			hScrollOffset[1] <= 0;
+			hScrollOffset[1] <= 0; //9'b100000000;
 			vScrollOffset[1] <= 0;
 		end else begin
 			if (!nHSYNC && hsyncLast) begin
@@ -199,10 +199,10 @@ module cus42
 	always @(negedge CLK_6M or rst) begin
 		if (rst) begin
 			pri = 3'b0;
-			hScrollOffset[0] = 0;
-			vScrollOffset[0] = 0;
-			hScrollOffset[1] = 0;
-			vScrollOffset[1] = 0;
+			//hScrollOffset[0] = 0;
+			//vScrollOffset[0] = 0;
+			//hScrollOffset[1] = 0;
+			//vScrollOffset[1] = 0;
 			ra_layer = 0;  
 			ra_tilemap_row = 0;  
 			ra_tilemap_column = 0;  

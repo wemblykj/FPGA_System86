@@ -42,21 +42,34 @@ module gng_scroll_position
 		output wire nMRDY2
 	);
 	
-	wire [8:0] fH;
 	wire [8:0] fhCounter;
-	//wire [2:0] fhCounterLsb;			// 3 bits
+	wire [8:0] hScrollCounter;
+	wire [8:0] vScrollCounter;
+	/* * cheat for now - see revision in synchronous also
+	wire [8:0] fH;
 	
 	// note: will probably only be horizontal
 	assign fH[8:0] = FLIP ? ~H[8:0] : H[8:0];
 	
 	assign fhCounter[6:0] = fH[6:0];
-	assign fhCounter[7] = ((fH[6] ^ ~FLIP) & ~H[8]) ^ fH[7];
+	
+	// something not quite working here?
+	//assign fhCounter[7] = ((fH[6] ^ ~FLIP) & ~H[8]) ^ fH[7];
+	assign xor_13c_1 = ~FLIP ^ fH[6];
+	assign and_13d_1 = xor_13c_1 & ~H[8];
+	assign xor_13c_2 = and_13d_1 ^ fH[7];
+	assign fhCounter[7] = xor_13c_2;
+	
 	assign fhCounter[8] = ~H[8];
+	*/
+	
+	assign fhCounter = FLIP ? (384 - H) : H;	// * for flip just subtract from width
+	
 	
 	// horizontal adder - GnG SCROLL H POSITION 85606 - 8 -  2
-	assign SH = hScrollOffset + fhCounter;
+	assign hScrollCounter = hScrollOffset + fhCounter;
 	// vertical adder - assumed this would work similar to horizontal (no vertical fliping?)
-	assign SV = vScrollOffset + V;
+	assign vScrollCounter = vScrollOffset + V;
 	
 	//assign fhScrollLsb = FLIP ? ~H[2:0] : H[2:0];
 	
@@ -78,9 +91,9 @@ module gng_scroll_position
 	//
 	
 	reg [7:0] hDemux;
-	always @(fhCounter[2:0]) begin
+	always @(hScrollCounter[2:0]) begin
 		// horizontal line demux - LS138 10C	
-		case (fhCounter[2:0])
+		case (hScrollCounter[2:0])
 			// for now retain negation of LS138
 			3'b000: hDemux <= ~8'b00000001;
 			3'b001: hDemux <= ~8'b00000010;
@@ -98,9 +111,9 @@ module gng_scroll_position
 	always @(posedge CLK_6M) begin
 		// GnG 8C LS175 latch
 		S0H <= ~hDemux[7];
-		s6h <= ~hDemux[3];
+		s6h <= ~hDemux[5];
 		S4H <= ~hDemux[3];
-		S2H <= ~hDemux[3];
+		S2H <= ~hDemux[1];
 		
 		// debug
 		
@@ -134,4 +147,6 @@ module gng_scroll_position
 	assign nSCREN = ~(gng_ls74_7c_1q && ~nSCRCS);
 	assign nSH2 = fhCounter[1];	// async
 	assign nS7H = hDemux[7];		// async
+	assign SH = { hScrollCounter[8:3], FLIP ? ~hScrollCounter[2:0] : hScrollCounter[2:0] };
+	assign SV = vScrollCounter;
 endmodule

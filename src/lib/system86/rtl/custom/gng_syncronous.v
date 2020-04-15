@@ -36,15 +36,18 @@ module gng_synchronous
 	reg vsyncLast;
 	
 	// Synchronous - GnG 65606 - A - 2 - 5/8
+	// *cheat for now - see revision in scroll position also
 	always @(posedge CLK_6M) begin
 		if (rst) begin
 			H <= 0;
 			V <= 0;
 		end else begin
 			if (!nHSYNC && hsyncLast) begin
+				// * H <= 9'b010000000;
 				H <= 0;
 				
 				if (!nVSYNC && vsyncLast)
+					// * V <= 9'b011111010;
 					V <= 0;
 				else
 					V <= V + 1;

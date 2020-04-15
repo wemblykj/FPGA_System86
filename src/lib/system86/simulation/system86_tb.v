@@ -92,7 +92,7 @@ module system86_tb;
 		#(
 			.VIDEO_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
 			.LAYER_DISABLE_MASK(4'b0000),
-			.BACKGROUND_LAYER_AUTOSCROLL(1),
+			.BACKGROUND_LAYER_AUTOSCROLL(0),
 			.BACKGROUND_LAYER_PRIORITY(1),
 			.FOREGROUND_LAYER_PRIORITY(2),
 			.TEXT_LAYER_PRIORITY(3),
@@ -380,7 +380,7 @@ module system86_tb;
 		rst = 1;
 
 		// Wait 1000 ns for global reset to finish
-		#100;
+		#300;
         
 		// Add stimulus here
 		rst = 0;
