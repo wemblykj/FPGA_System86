@@ -21,9 +21,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 module gng_scroll_position
 	#(
+		parameter LAYER = 0
 	)
 	(
 		input wire rst,
+		input wire layer,
 			
 		input wire CLK_6M,
 		input wire FLIP,
@@ -32,15 +34,19 @@ module gng_scroll_position
 		input wire [8:0] V,	// 8 bits
 		input wire [8:0] hScrollOffset,	// 9 bits
 		input wire [8:0] vScrollOffset,	// 9 bits
-		output wire [8:0] SH,		// 9 bits	0 -> 384
+		input wire [7:0] RD,
+		/*output wire [8:0] SH,		// 9 bits	0 -> 384
 		output wire [8:0] SV,		// 9 bits	0 -> 264
 		output reg S0H,
 		output reg S2H,
 		output reg S4H,
 		output wire nS7H,
 		output wire nSCREN,
-		output wire nMRDY2,
-		output wire [10:0] RA
+		output wire nMRDY2,*/
+		// widths as per GnG
+		output wire [11:0] RA,
+		output wire [13:0] GA,
+		output wire nS3H
 	);
 	
 	wire [8:0] fhCounter;
@@ -74,6 +80,14 @@ module gng_scroll_position
 	
 	//assign fhScrollLsb = FLIP ? ~H[2:0] : H[2:0];
 	
+	wire [8:0] SH;		// 9 bits	0 -> 384
+	wire [8:0] SV;		// 9 bits	0 -> 264
+	reg S0H;
+	reg S2H;
+	reg S1H;
+	reg [9:0] AS;
+	//reg s6h;	// internal use only
+	
 	//
 	// debug
 	//
@@ -91,9 +105,11 @@ module gng_scroll_position
 	// behaviour
 	//
 	
-	reg [7:0] hDemux;
+	/*
+	// horizontal line demux - LS138 10C
+	reg [3:0] hDemux;
 	always @(hScrollCounter[2:0]) begin
-		// horizontal line demux - LS138 10C	
+		// horizontal line demux - LS138 10C
 		case (hScrollCounter[2:0])
 			// for now retain negation of LS138
 			3'b000: hDemux <= ~8'b00000001;
@@ -106,15 +122,34 @@ module gng_scroll_position
 			3'b111: hDemux <= ~8'b10000000;
 		endcase
 	end
+	*/
 	
-	reg s6h;	// internal use only
+	reg [3:0] hDemux;
+	always @(hScrollCounter[1:0]) begin
+		case (hScrollCounter[1:0])
+			2'b00: hDemux <= 4'b0001;
+			2'b01: hDemux <= 4'b0010;
+			2'b10: hDemux <= 4'b0100;
+			2'b11: hDemux <= 4'b1000;
+		endcase
+	end
 	
 	always @(posedge CLK_6M) begin
 		// GnG 8C LS175 latch
-		S0H <= ~hDemux[7];
+		/*S0H <= ~hDemux[7];
 		s6h <= ~hDemux[5];
 		S4H <= ~hDemux[3];
-		S2H <= ~hDemux[1];
+		S2H <= ~hDemux[1];*/
+		
+		// System86 equivalent !?!
+		// RAM speed is up from 200ns to 45ns so we can process two layers in the same time period!
+		S0H <= hDemux[4];
+		//s3h <= ~hDemux[3];
+		
+		if (hScrollCounter[2] === LAYER) begin
+			S2H <= hDemux[1];
+			S1H <= hDemux[0];
+		end
 		
 		// debug
 		
@@ -128,7 +163,22 @@ module gng_scroll_position
 		tile_column_nibble <= SH[2];
 	end
 	
-	reg S4H_last;
+	always @(posedge S1H) begin
+		AS[7:0] <= RD;
+	end
+	
+	always @(posedge S2H) begin
+		AS[9:8] <= RD[1:0];
+		
+		/* GnG
+		AS[9:8] <= RD[7:6];
+		SVFLIP <= RD[5];
+		SHFLIP <= RD[4];
+		ATTR <= RD[5:0]
+		*/
+	end
+	
+	/*reg S4H_last;
 	reg gng_ls74_7c_1q;
 	wire gng_ls74_7c_1q_n = ~gng_ls74_7c_1q;
 	always @(S0H or S4H) begin
@@ -155,8 +205,14 @@ module gng_scroll_position
 	assign nMRDY2 = ~(~gng_ls74_7c_2q & ~nSCRCS);
 	assign nSCREN = ~(~gng_ls74_7c_1q_n & ~nSCRCS);
 	assign nS7H = hDemux[7];		// async
-	assign SH2 = SH[1];		// async
+	assign SH2 = SH[1];		// async*/
+	assign nS3H = hDemux[3];		// async
 	assign SH = { hScrollCounter[8:3], FLIP ? ~hScrollCounter[2:0] : hScrollCounter[2:0] };
 	assign SV = vScrollCounter;
+	/* GnG
 	assign RA = { SH2, SH[8:4], SV[8:4] };	// as per GnG SH2 is offset of 0x400 to attr byte
+	assign GA = { AS, V[2:0], SHFLIP ? ~SH[3] : SH[3], SVFLIP ? ~SV[3:0] : SV[3:0] };
+	*/
+	assign RA = { SV[7:3], SH[8:3], SH[0] };
+	assign GA = { AS, SV[2:0], SH[2] };
 endmodule

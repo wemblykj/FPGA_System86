@@ -43,8 +43,8 @@ module cus42
 		output wire [12:0] RA,
 		output wire nRWE,
 		output wire nROE,
-		output reg HA2,
-		output reg HB2
+		output wire HA2,
+		output wire HB2
 	);
 
 	// RA   
@@ -55,11 +55,11 @@ module cus42
 	// 11-7 y-offset (5 bits)
 	// 7-1 x-offset (6 bits)
 	// 0 - byte select
-	reg ra_layer = 0;
-	reg [4:0] ra_tilemap_row = 0;
-	reg [5:0] ra_tilemap_column = 0;
-	reg ra_tilemap_byte = 0;
-	assign RA = { ra_layer, ra_tilemap_row, ra_tilemap_column, ra_tilemap_byte };
+	//reg ra_layer = 0;
+	//reg [4:0] ra_tilemap_row = 0;
+	//reg [5:0] ra_tilemap_column = 0;
+	//reg ra_tilemap_byte = 0;
+	//assign RA = { ra_layer, ra_tilemap_row, ra_tilemap_column, ra_tilemap_byte };
 	
    // wire [13:0] GA;   // PROM addr bus
 	// 14 bits (
@@ -68,19 +68,19 @@ module cus42
 	// 7:4 - column
 	// 3:1 - row
 	// 0 - nibble
-	reg [1:0] ga_tile_attrs = 0;
-	reg [7:0] ga_tile_index = 0;
-	reg [2:0] ga_tile_row = 0;
-	reg ga_tile_column_nibble = 0;
+	reg [1:0] ga_tile_attrs[0:1];
+	reg [7:0] ga_tile_index[0:1];
+	//reg [2:0] ga_tile_row = 0;
+	//reg ga_tile_column_nibble = 0;
 			
-	assign GA = { ga_tile_attrs, ga_tile_index, ga_tile_row, ga_tile_column_nibble };
+	//assign GA = { ga_tile_attrs, ga_tile_index, ga_tile_row, ga_tile_column_nibble };
 			
-	reg hsyncLast = 1;
-	reg vsyncLast = 1;
+	reg hsyncLast;
+	reg vsyncLast;
 	
 	// screen space
-	reg [8:0] hCounter = 0;	// 9 bits	0 -> 384
-	reg [8:0] vCounter = 0; // 9 bits	0 -> 264
+	reg [8:0] hCounter;	// 9 bits	0 -> 384
+	reg [8:0] vCounter; // 9 bits	0 -> 264
 	wire [8:0] fhCounter;	// flipped hCounter
 	
 	// per layer processing
@@ -89,15 +89,16 @@ module cus42
 	reg [8:0] hScrollOffset[0:1];	// 2 layers 9 bits
 	reg [8:0] vScrollOffset[0:1];	// 2 layers 9 bits
 	
-	// current layer - currently negated so that we are working on the next layer
-	assign layer = ~CLK_2H;
+	assign layer = CLK_2H;
 	
 	wire [8:0] hScrollCounter[0:1];	// 9 bits	0 -> 384
 	wire [8:0] vScrollCounter[0:1];	// 9 bits	0 -> 264
 	
+	assign fhCounter = FLIP ? (384 - hCounter) : hCounter;
+	
 	// horizontal adder - GnG SCROLL H POSITION 85606 - 8 -  2
-	assign hScrollCounter[0] = hScrollOffset[0] + hCounter;
-	assign hScrollCounter[1] = hScrollOffset[1] + hCounter;
+	assign hScrollCounter[0] = hScrollOffset[0] + fhCounter;
+	assign hScrollCounter[1] = hScrollOffset[1] + fhCounter;
 	// vertical adder - assumed to work similar to horizontal (no vertical fliping?)
 	assign vScrollCounter[0] = vScrollOffset[0] + vCounter;
 	assign vScrollCounter[1] = vScrollOffset[1] + vCounter;
@@ -111,7 +112,7 @@ module cus42
 	//
 	
 	// screen space
-	wire [5:0] screen_column = hCounter[8:3];
+	wire [5:0] screen_column = fhCounter[8:3];
 	wire [4:0] screen_row = vCounter[7:3];
 	wire [11:0] screen_tile = (screen_row*8) + screen_column;
 	
@@ -129,29 +130,32 @@ module cus42
 	//
 	
 	// Synchronous - GnG 65606 - A - 2 - 5/8
-	always @(posedge CLK_6M) begin
+	reg CLK_6M_last;
+	always @(CLK_6M or nHSYNC or nVSYNC or rst) begin
 		if (rst) begin
 			hCounter <= 0;
 			vCounter <= 0;
-			hScrollOffset[0] <= 0; //9'b100000000;
+			hScrollOffset[0] <= 0;
 			vScrollOffset[0] <= 0;
-			hScrollOffset[1] <= 0; //9'b100000000;
+			hScrollOffset[1] <= 0;
 			vScrollOffset[1] <= 0;
 		end else begin
 			if (!nHSYNC && hsyncLast) begin
-				hCounter = 0;
+				hCounter <= 0;
+				vCounter <= vCounter + 1;
+			end else if (CLK_6M && !CLK_6M_last)
+				hCounter <= hCounter + 1;
 				
-				if (!nVSYNC && vsyncLast) begin
-					vCounter = 0;
-					
-					// HACK to scroll each frame
-					hScrollOffset[0] = hScrollOffset[0] + LAYER_A_AUTOSCROLL;
-					hScrollOffset[1] = hScrollOffset[1] + 1; //LAYER_B_AUTOSCROLL;
-				end else
-					vCounter = vCounter + 1;
+			if (!nVSYNC && vsyncLast) begin
+				vCounter <= 0;
+				
+				// HACK to scroll each frame
+				hScrollOffset[0] <= hScrollOffset[0] + 1; //LAYER_A_AUTOSCROLL;
+				hScrollOffset[1] <= hScrollOffset[1] + 1; //LAYER_B_AUTOSCROLL;
 			end
 		end
 		
+		CLK_6M_last <= CLK_6M;
 		hsyncLast <= nHSYNC;
 		vsyncLast <= nVSYNC;
 	end
@@ -171,42 +175,53 @@ module cus42
 		.V(V)
 	);
 	
-	wire [8:0] SHA;
-	wire [8:0] SVA;
+	wire [11:0] RAA;
+	wire [13:0] GAA;
+	wire nS3HA;
 	wire nSCRENA;
-	gng_scroll_position layer_a_position
-	(
-		.rst(rst),
-		
-		.CLK_6M(CLK_6M),
-		.FLIP(FLIP),
-		.nSCRCS(1'b0),
-		.H(H),
-		.V(V),
-		.hScrollOffset(hScrollOffset[0]),
-		.vScrollOffset(vScrollOffset[0]),
-		.SH(SHA),
-		.SV(SVA),
-		.nSCREN(nSCRENA)
-	);
+	gng_scroll_position 
+		#(
+			.LAYER(0)
+		)
+		layer_a_position
+		(
+			.rst(rst),
+			
+			.CLK_6M(CLK_6M),
+			.FLIP(FLIP),
+			.nSCRCS(1'b0),
+			.H(H),
+			.V(V),
+			.hScrollOffset(hScrollOffset[0]),
+			.vScrollOffset(vScrollOffset[0]),
+			.RD(RD),
+			.RA(RAA),
+			.GA(GAA),
+			.nS3H(nS3HA)
+		);
 	
-	wire [8:0] SHB;
-	wire [8:0] SVB;
+	wire [11:0] RAB;
+	wire [13:0] GAB;
+	wire nS3HB;
 	wire nSCRENB;
-	gng_scroll_position layer_b_position
-	(
-		.rst(rst),
-		.CLK_6M(CLK_6M),
-		.FLIP(FLIP),
-		.nSCRCS(1'b0),
-		.H(H),
-		.V(V),
-		.hScrollOffset(hScrollOffset[1]),
-		.vScrollOffset(vScrollOffset[1]),
-		.SH(SHB),
-		.SV(SVB),
-		.nSCREN(nSCRENB)
-	);
+	gng_scroll_position
+		#(
+			.LAYER(1)
+		)	layer_b_position
+		(
+			.rst(rst),
+			.CLK_6M(CLK_6M),
+			.FLIP(FLIP),
+			.nSCRCS(1'b0),
+			.H(H),
+			.V(V),
+			.hScrollOffset(hScrollOffset[1]),
+			.vScrollOffset(vScrollOffset[1]),
+			.RD(RD),
+			.RA(RAB),
+			.GA(GAB),
+			.nS3H(nS3HB)
+		);
 	
 	always @(negedge CLK_6M or rst) begin
 		if (rst) begin
@@ -215,28 +230,26 @@ module cus42
 			//vScrollOffset[0] = 0;
 			//hScrollOffset[1] = 0;
 			//vScrollOffset[1] = 0;
-			ra_layer = 0;  
-			ra_tilemap_row = 0;  
-			ra_tilemap_column = 0;  
-			ra_tilemap_byte = 0;  
-			ga_tile_attrs = 0;
-			ga_tile_index = 0;
-			ga_tile_row = 0;
-			ga_tile_column_nibble = 0;
-			HA2 = 0;
-			HB2 = 0;
+			//ra_layer = 0;  
+			//ra_tilemap_row = 0;  
+			//ra_tilemap_column = 0;  
+			//ra_tilemap_byte = 0;  
+			ga_tile_attrs[0] = 1'bX;
+			ga_tile_index[0] = 1'bX;
+			ga_tile_attrs[1] = 1'bX;
+			ga_tile_index[1] = 1'bX;
+			//ga_tile_row = 0;
+			//ga_tile_column_nibble = 0;
+			//HA2 = 0;
+			//HB2 = 0;
 		end else begin
 			
-			
-			//HA2 <= (hCounter[2:0] + hScrollOffset[0][2:0]) === 3'b000;
-			//HB2 <= (hCounter[2:0] + hScrollOffset[1][2:0]) === 3'b000;
-			HA2 <= (hCounter[1:0] + hScrollOffset[0][1:0]) === 2'b00;
-			HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b00;
+			// neg edge just before transition to start of next nibble
 			//HA2 <= (hCounter[1:0] + hScrollOffset[0][1:0]) === 2'b11;
 			//HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b11;
 			
 			// Assign SRAM address				// changes every two pixels
-			if (hCounter[0] === 2'b0)
+			/*if (hCounter[0] === 2'b0)
 				ra_layer = layer;					// latch the layer on first pixel
 				
 			ra_tilemap_row = 
@@ -246,10 +259,10 @@ module cus42
 				hScrollCounter[layer][8:3];				// column select, 0 - 47 hCounter/8
 				
 			ra_tilemap_byte = hCounter[0];				// byte select, first or second alternates every pixel
-			
+			*/
 			// PROM address
-			ga_tile_column_nibble = hScrollCounter[layer][2];
-			ga_tile_row = vScrollCounter[layer][2:0]; 	// row select
+			//ga_tile_column_nibble = hScrollCounter[layer][2];
+			//ga_tile_row = vScrollCounter[layer][2:0]; 	// row select
 				
 			// per layer debugging outputs
 			
@@ -264,12 +277,20 @@ module cus42
 		end
 	end
 	
-	always @(posedge CLK_6M or rst) begin
-		// Data read - read on second pixel
-			if (hCounter[0] === 1'b0)
-				ga_tile_index <= RD;					// read byte 1 into tile index
-			else if (hCounter[0] === 1'b1)
-				ga_tile_attrs <= RD[1:0];				// read byte 2 lsb into tile index	
+	always @(hCounter[1:0] or rst) begin
+		if (rst) begin
+			ga_tile_index[0] = 0;
+			ga_tile_attrs[0] = 0;
+			ga_tile_index[1] = 0;
+			ga_tile_attrs[1] = 0;
+		end else begin
+			case(hCounter[1:0])
+				2'b01: ga_tile_index[0] = RD;
+				2'b10: ga_tile_attrs[0] = RD;
+				2'b11: ga_tile_index[1] = RD;
+				2'b00: ga_tile_attrs[1] = RD;
+			endcase
+		end
 	end
 
 	// Handle CPU control requests
@@ -291,7 +312,16 @@ module cus42
 	// CPU/RAM multiplexing
 	assign nRWE = nRCS ? 1'b1 : nWE;
 	assign nROE = nRCS ? 1'b0 : ~nWE;
-	assign RD = ~nRCS && ~nWE ? CD : 8'bZ;
 	assign CD = ~nRCS && nWE ? RD : 8'bZ;
+	
+	assign RD = ~nRCS && ~nWE ? CD : 8'bZ;
+	
+	//assign RA = { layer, vScrollCounter[layer][7:3], hScrollCounter[layer][8:3], hCounter[0] };
+	//assign GA = { ga_tile_attrs[layer], ga_tile_index[layer], vScrollCounter[layer][2:0], hScrollCounter[layer][2] };
+	
+	assign RA = { layer, layer ? RAB : RAA };
+	assign GA = { layer ? GAB : GAA };
 
+	assign HA2 = nS3HA;
+	assign HB2 = nS3HB;
 endmodule

@@ -32,7 +32,7 @@ module GENERIC_SRAM
         parameter tHZCE = "0",	    // CE to output high-Z
         parameter tDOE = "0",	    // OE access time
         parameter tLZOE = "0",	    // OE to output low-Z
-        parameter tHZOE = "0"	    // OE to output high-Z
+        parameter tHZOE = "0"    // OE to output high-Z
     )
     (
         input wire nCE,
@@ -44,31 +44,11 @@ module GENERIC_SRAM
 	
 	reg [DATA_WIDTH-1:0] mem [0:(2**ADDR_WIDTH)-1];
 	reg [DATA_WIDTH-1:0] DOut;
-	wire [ADDR_WIDTH-1:0] ACC;
 	
-	/*assign #(tAA, tOHA) ACC = A;
-	// negate the active low signal for now - need to revisit this logic
-	assign #(tLZCE, tACE) LZCE = ~nCE;
-	assign #(tACE, tHZCE) ACE = ~nCE;
-	assign #(tLZOE, tDOE) LZOE = ~nOE;
-	assign #(tDOE, tHZOE) OEV = ~nOE;*/
-	
-	assign ACC = A;
-	assign LZCE = ~nCE;
-	assign ACE = ~nCE;
-	assign LZOE = ~nOE;
-	assign OEV = ~nOE;
-	
-	assign ACC = A;
-	assign LZCE = ~nCE;
-	assign ACE = ~nCE;
-	assign LZOE = ~nOE;
-	assign OEV = ~nOE;
-	
-	assign DLZ = LZCE && tLZOE;
-	assign DV = ACE && OEV;
-	
-	assign D = ~nWE ? {(DATA_WIDTH){1'bZ}} : DV ? DOut : DLZ ? {(DATA_WIDTH){1'bX}} : {(DATA_WIDTH){1'bZ}};
+	reg CE;
+	reg WE;
+	reg DOE;
+	reg LZOE;
 	
 	integer fd;
     integer i;
@@ -99,18 +79,48 @@ module GENERIC_SRAM
 		$fclose(fd);
 	end
 
-	always @(A or D or ACE or nWE) 
+	always @(nCE) begin
+		if (!nCE)
+			#tACE CE <= 1;
+		else
+			#tLZCE CE <= 0;
+	end
+	
+	always @(nOE) begin
+		if (!nOE) begin
+			#tLZOE LZOE <= 1;
+			#(tDOE-tLZOE) DOE <= 1;
+		end else begin
+			#tHZOE LZOE <= 0; DOE <= 0;
+		end
+	end
+	
+	always @(nWE) begin
+		if (!nWE)
+			WE <= 1;
+		else
+			WE <= 0;
+	end
+	
+	always @(A or D or CE or WE) 
 	begin : MEM_WRITE
-		if (ACE && ~nWE) begin
+		// TODO: timings
+		if (CE && WE) begin
 			mem[A] = D;
 		end
 	end
 
-	always @(nWE or DV or ACC) 
+	always @(CE or WE or A) 
 	begin : MEM_READ
-		if (nWE && DV) begin
-			DOut = mem[ACC];
+		if (!WE && CE) begin
+			// nullify D after OHA
+			#tOHA DOut <= {(DATA_WIDTH){1'bX}};
+			// Assign new value after TAA
+			//f (!A[12]) // layer debugging
+			#(tAA-tOHA) DOut <= mem[A];
 		end
 	end
 
+	assign D = CE ? ((WE || !LZOE) ? {(DATA_WIDTH){1'bZ}} : DOE ? DOut : {(DATA_WIDTH){1'bX}}) : {(DATA_WIDTH){1'bZ}};
+		
 endmodule

@@ -42,18 +42,6 @@ module GENERIC_PROM
     reg [DATA_WIDTH-1:0] DOut;
     wire [ADDR_WIDTH-1:0] AV;
 
-    // retaining datasheet's naming convention due to active low signals
-    /*assign #(tAVQV, tAXQX) AV = A;	
-    assign #(tELQV, tEHQZ) ELQV = nE;	
-    assign #(tGLQV, tGHQZ) GLQV = nG;
-    assign QV = !(ELQV || GLQV);*/
-	 assign AV = A;	
-    assign ELQV = nE;	
-    assign GLQV = nG;
-    assign QV = !(ELQV || GLQV);
-	 
-    assign Q = QV ? DOut : {(DATA_WIDTH){1'bZ}};
-
     integer fd;
     integer i;
 	integer count;
@@ -82,11 +70,33 @@ module GENERIC_PROM
 		
 		$fclose(fd);
     end
-        
-    always @(*) begin
-        if (QV)
-            // latch data on [delayed] change in address
-            DOut = mem[AV];
+    
+	 reg CE;
+	 always @(nE) begin
+		if (!nE)
+			#tELQV CE <= 1;
+		else
+			#tEHQZ CE <= 0;
+	 end
+	 
+	 reg OE;
+	 always @(nG) begin
+		if (!nG)
+			#tGLQV OE <= 1;
+		else
+			#tGHQZ OE <= 0;
+	 end
+	 
+    always @(A) begin
+        if (CE) begin
+			   // nullify D after AXQX
+				#tAXQX DOut = {(DATA_WIDTH){1'bX}};
+				// Assign new value after AVQV
+            #(tAVQV-tAXQX) DOut = mem[A];
+			end
     end
 
+	 assign Q = CE && OE ? DOut : {(DATA_WIDTH){1'bZ}};
+
+    
 endmodule
