@@ -64,8 +64,11 @@ module cus43
 	
 	wire [7:0] CL_A = attr[0];
 
+	// significant bit of the shift register
+	wire sb = FLIP ? 0 : 3;
+
 	// first bit of each plane buffer
-	wire [2:0] DT_A = { plane2_shift[0][3], plane1_shift[0][3], plane0_shift[0][3] };	
+	wire [2:0] DT_A = { plane2_shift[0][sb], plane1_shift[0][sb], plane0_shift[0][sb] };	
 	
 	// layer 2 (B)
 	reg [2:0] PR_B = LAYER_B_PRIORITY;
@@ -73,53 +76,40 @@ module cus43
 	wire [7:0] CL_B = attr[1];
 	
 	// first bit of each plane buffer
-	wire [2:0] DT_B = { plane2_shift[1][3], plane1_shift[1][3], plane0_shift[1][3] };	
+	wire [2:0] DT_B = { plane2_shift[1][sb], plane1_shift[1][sb], plane0_shift[1][sb] };	
 	
 	wire layer = CLK_2H;
 	reg layer_latched = 0;
-	
-	initial begin
-		attr[0] = 0;
-		attr[1] = 0;
-		plane0_latched[0] = 0;
-		plane1_latched[0] = 0;
-		plane2_latched[0] = 0;
-		plane0_latched[1] = 0;
-		plane1_latched[1] = 0;
-		plane2_latched[1] = 0;
-		PR_A = LAYER_A_PRIORITY;
-		PR_B = LAYER_B_PRIORITY;
-	end
 
 	always @(negedge layer) begin
 		if (rst) begin
 			mdi_latched[0] <= 0;
-			
-			//plane0_latched[1] <= 0;
-			//plane1_latched[1] <= 0;
-			//plane2_latched[1] <= 0;
-		end else
+			plane0_latched[1] <= 0;
+			plane1_latched[1] <= 0;
+			plane2_latched[1] <= 0;
+		end else begin
 			mdi_latched[0] <= MDI;
-			
-			//plane0_latched[1][3:0] <= GDI[3:0];
-			//plane1_latched[1][3:0] <= GDI[7:4];
-			//plane2_latched[1][3:0] <= GDI[11:8];
+			plane0_latched[1] <= GDI[3:0];
+			plane1_latched[1] <= GDI[7:4];
+			plane2_latched[1] <= GDI[11:8];
+		end
 	end
 	
 	always @(posedge layer) begin
 		if (rst) begin
 			mdi_latched[1] <= 0;
-			//plane0_latched[0] <= 0;
-			//plane1_latched[0] <= 0;
-			//plane2_latched[0] <= 0;
-		end else
+			plane0_latched[0] <= 0;
+			plane1_latched[0] <= 0;
+			plane2_latched[0] <= 0;
+		end else begin
 			mdi_latched[1] <= MDI;
-			//plane0_latched[0][3:0] <= GDI[3:0];
-			//plane1_latched[0][3:0] <= GDI[7:4];
-			//plane2_latched[0][3:0] <= GDI[11:8];
+			plane0_latched[0] <= GDI[3:0];
+			plane1_latched[0] <= GDI[7:4];
+			plane2_latched[0] <= GDI[11:8];
+		end
 	end
 	
-	always @(negedge CLK_6M) begin
+	always @(posedge CLK_6M) begin
 		if (rst) begin
 			attr[0] <= 0;
 			plane0_shift[0] <= 0;
@@ -130,33 +120,41 @@ module cus43
 			plane1_shift[1] <= 0;
 			plane1_shift[1] <= 0;
 		// layer A latch request
-		end else if (HA2) begin
-			attr[0] <= mdi_latched[0];
-			/*plane0_shift[0] <= plane0_latched[0];
-			plane1_shift[0] <= plane1_latched[0];
-			plane2_shift[0] <= plane2_latched[0];*/
-			plane0_shift[0] <= GDI[3:0];
-			plane1_shift[0] <= GDI[7:4];
-			plane2_shift[0] <= GDI[11:8];
 		end else begin
-			plane0_shift[0] <= plane0_shift[0] << 1;
-			plane1_shift[0] <= plane1_shift[0] << 1;
-			plane2_shift[0] <= plane2_shift[0] << 1;
-		end
-		
-		// layer B latch request
-		if (HB2) begin
-			attr[1] <= mdi_latched[1];
-			/*plane0_shift[1] <= plane0_latched[1];
-			plane1_shift[1] <= plane1_latched[1];
-			plane2_shift[1] <= plane2_latched[1];*/
-			plane0_shift[1] <= GDI[3:0];
-			plane1_shift[1] <= GDI[7:4];
-			plane2_shift[1] <= GDI[11:8];
-		end else begin
-			plane0_shift[1] <= plane0_shift[1] << 1;
-			plane1_shift[1] <= plane1_shift[1] << 1;
-			plane2_shift[1] <= plane2_shift[1] << 1;
+			if (HA2) begin
+				attr[0] <= mdi_latched[0];
+				plane0_shift[0] <= plane0_latched[0];
+				plane1_shift[0] <= plane1_latched[0];
+				plane2_shift[0] <= plane2_latched[0];
+			end else begin
+				if (FLIP) begin
+					plane0_shift[0] <= plane0_shift[0] >> 1;
+					plane1_shift[0] <= plane1_shift[0] >> 1;
+					plane2_shift[0] <= plane2_shift[0] >> 1;
+				end else begin
+					plane0_shift[0] <= plane0_shift[0] << 1;
+					plane1_shift[0] <= plane1_shift[0] << 1;
+					plane2_shift[0] <= plane2_shift[0] << 1;
+				end
+			end
+			
+			// layer B latch request
+			if (HB2) begin
+				attr[1] <= mdi_latched[1];
+				plane0_shift[1] <= plane0_latched[1];
+				plane1_shift[1] <= plane1_latched[1];
+				plane2_shift[1] <= plane2_latched[1];
+			end else begin
+				if (FLIP) begin
+					plane0_shift[1] <= plane0_shift[1] >> 1;
+					plane1_shift[1] <= plane1_shift[1] >> 1;
+					plane2_shift[1] <= plane2_shift[1] >> 1;
+				end else begin
+					plane0_shift[1] <= plane0_shift[1] << 1;
+					plane1_shift[1] <= plane1_shift[1] << 1;
+					plane2_shift[1] <= plane2_shift[1] << 1;
+				end
+			end
 		end
 	end
 		

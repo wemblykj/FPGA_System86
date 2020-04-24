@@ -116,7 +116,9 @@ module GENERIC_SRAM
 			// nullify D after OHA
 			#tOHA DOut <= {(DATA_WIDTH){1'bX}};
 			// Assign new value after TAA
-			//f (!A[12]) // layer debugging
+			
+			// layer debugging
+			//if (!A[ADDR_WIDTH-1])
 			#(tAA-tOHA) DOut <= mem[A];
 		end
 	end

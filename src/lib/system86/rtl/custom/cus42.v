@@ -89,7 +89,8 @@ module cus42
 	reg [8:0] hScrollOffset[0:1];	// 2 layers 9 bits
 	reg [8:0] vScrollOffset[0:1];	// 2 layers 9 bits
 	
-	assign layer = CLK_2H;
+	assign sram_layer = ~CLK_2H;
+	assign prom_layer = CLK_2H;
 	
 	wire [8:0] hScrollCounter[0:1];	// 9 bits	0 -> 384
 	wire [8:0] vScrollCounter[0:1];	// 9 bits	0 -> 264
@@ -164,7 +165,7 @@ module cus42
 	wire [8:0] V;
 	
 	// WIP implmentation based on GnG schematics
-	gng_synchronous gng_synchronous
+	cus42_synchronous synchronous
 	(
 		.rst(rst),
 		
@@ -177,50 +178,52 @@ module cus42
 	
 	wire [11:0] RAA;
 	wire [13:0] GAA;
-	wire nS3HA;
-	wire nSCRENA;
-	gng_scroll_position 
-		#(
-			.LAYER(0)
+	wire S3HA;
+	cus42_layer 
+		#
+		(
+			.ASSIGNED_LAYER(0)
 		)
-		layer_a_position
+		layer_a
 		(
 			.rst(rst),
 			
 			.CLK_6M(CLK_6M),
 			.FLIP(FLIP),
-			.nSCRCS(1'b0),
+			.nLATCH(nLATCH | CA[2]),
+			.CA(CA[1:0]),
+			.CD(CD),
+			.RD(RD),
 			.H(H),
 			.V(V),
-			.hScrollOffset(hScrollOffset[0]),
-			.vScrollOffset(vScrollOffset[0]),
-			.RD(RD),
 			.RA(RAA),
 			.GA(GAA),
-			.nS3H(nS3HA)
+			.S3H(S3HA)
 		);
 	
 	wire [11:0] RAB;
 	wire [13:0] GAB;
-	wire nS3HB;
-	wire nSCRENB;
-	gng_scroll_position
-		#(
-			.LAYER(1)
-		)	layer_b_position
+	wire S3HB;
+	cus42_layer
+		#
+		(
+			.ASSIGNED_LAYER(1)
+		)
+		layer_b
 		(
 			.rst(rst),
+			
 			.CLK_6M(CLK_6M),
 			.FLIP(FLIP),
-			.nSCRCS(1'b0),
+			.nLATCH(nLATCH | ~CA[2]),
+			.CA(CA[1:0]),
+			.CD(CD),
+			.RD(RD),
 			.H(H),
 			.V(V),
-			.hScrollOffset(hScrollOffset[1]),
-			.vScrollOffset(vScrollOffset[1]),
-			.RD(RD),
 			.RA(RAB),
 			.GA(GAB),
-			.nS3H(nS3HB)
+			.S3H(S3HB)
 		);
 	
 	always @(negedge CLK_6M or rst) begin
@@ -267,13 +270,13 @@ module cus42
 			// per layer debugging outputs
 			
 			// tilemap space
-			tilemap_column[layer] <= hScrollCounter[layer][8:3];
-			tilemap_row[layer] <= vScrollCounter[layer][7:3];
+			//tilemap_column[layer] <= hScrollCounter[layer][8:3];
+			//tilemap_row[layer] <= vScrollCounter[layer][7:3];
 		
 			// tile space
-			tile_row[layer] <= vScrollCounter[layer][2:0];
-			tile_column[layer] <= hScrollCounter[layer][2:0];
-			tile_column_nibble[layer] <= hScrollCounter[layer][2];
+			//tile_row[layer] <= vScrollCounter[layer][2:0];
+			//tile_column[layer] <= hScrollCounter[layer][2:0];
+			//tile_column_nibble[layer] <= hScrollCounter[layer][2];
 		end
 	end
 	
@@ -319,9 +322,10 @@ module cus42
 	//assign RA = { layer, vScrollCounter[layer][7:3], hScrollCounter[layer][8:3], hCounter[0] };
 	//assign GA = { ga_tile_attrs[layer], ga_tile_index[layer], vScrollCounter[layer][2:0], hScrollCounter[layer][2] };
 	
-	assign RA = { layer, layer ? RAB : RAA };
-	assign GA = { layer ? GAB : GAA };
+	// includes minor timing hack to replicate general propogation delay that would otherwise result in delayed results form PROM and to a lesser extend the SRAM
+	assign #20 RA = { sram_layer, sram_layer ? RAB : RAA };
+	assign #40 GA = { prom_layer ? GAB : GAA };				
 
-	assign HA2 = nS3HA;
-	assign HB2 = nS3HB;
+	assign HA2 = S3HA;
+	assign HB2 = S3HB;
 endmodule
