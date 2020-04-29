@@ -68,44 +68,44 @@ module cus42
 	// 7:4 - column
 	// 3:1 - row
 	// 0 - nibble
-	reg [1:0] ga_tile_attrs[0:1];
-	reg [7:0] ga_tile_index[0:1];
+	//reg [1:0] ga_tile_attrs[0:1];
+	//reg [7:0] ga_tile_index[0:1];
 	//reg [2:0] ga_tile_row = 0;
 	//reg ga_tile_column_nibble = 0;
 			
 	//assign GA = { ga_tile_attrs, ga_tile_index, ga_tile_row, ga_tile_column_nibble };
 			
-	reg hsyncLast;
-	reg vsyncLast;
+	//reg hsyncLast;
+	//reg vsyncLast;
 	
 	// screen space
-	reg [8:0] hCounter;	// 9 bits	0 -> 384
-	reg [8:0] vCounter; // 9 bits	0 -> 264
-	wire [8:0] fhCounter;	// flipped hCounter
+	//reg [8:0] hCounter;	// 9 bits	0 -> 384
+	//reg [8:0] vCounter; // 9 bits	0 -> 264
+	//wire [8:0] fhCounter;	// flipped hCounter
 	
 	// per layer processing
 	
 	// latched scroll offsets	// 2 layers 9 bits
-	reg [8:0] hScrollOffset[0:1];	// 2 layers 9 bits
-	reg [8:0] vScrollOffset[0:1];	// 2 layers 9 bits
+	//reg [8:0] hScrollOffset[0:1];	// 2 layers 9 bits
+	//reg [8:0] vScrollOffset[0:1];	// 2 layers 9 bits
 	
 	assign sram_layer = ~CLK_2H;
 	assign prom_layer = CLK_2H;
 	
-	wire [8:0] hScrollCounter[0:1];	// 9 bits	0 -> 384
-	wire [8:0] vScrollCounter[0:1];	// 9 bits	0 -> 264
+	//wire [8:0] hScrollCounter[0:1];	// 9 bits	0 -> 384
+	//wire [8:0] vScrollCounter[0:1];	// 9 bits	0 -> 264
 	
-	assign fhCounter = FLIP ? (384 - hCounter) : hCounter;
+	//assign fhCounter = FLIP ? (384 - hCounter) : hCounter;
 	
 	// horizontal adder - GnG SCROLL H POSITION 85606 - 8 -  2
-	assign hScrollCounter[0] = hScrollOffset[0] + fhCounter;
-	assign hScrollCounter[1] = hScrollOffset[1] + fhCounter;
+	//assign hScrollCounter[0] = hScrollOffset[0] + fhCounter;
+	//assign hScrollCounter[1] = hScrollOffset[1] + fhCounter;
 	// vertical adder - assumed to work similar to horizontal (no vertical fliping?)
-	assign vScrollCounter[0] = vScrollOffset[0] + vCounter;
-	assign vScrollCounter[1] = vScrollOffset[1] + vCounter;
+	//assign vScrollCounter[0] = vScrollOffset[0] + vCounter;
+	//assign vScrollCounter[1] = vScrollOffset[1] + vCounter;
 	
 	// priority layer 1 & 2, may not be used here (see CUS43)
-	reg [2:0] pri;						// 2 layers 3 bits
+	//reg [2:0] pri;						// 2 layers 3 bits
     
 		
 	//
@@ -113,25 +113,25 @@ module cus42
 	//
 	
 	// screen space
-	wire [5:0] screen_column = fhCounter[8:3];
-	wire [4:0] screen_row = vCounter[7:3];
-	wire [11:0] screen_tile = (screen_row*8) + screen_column;
+	//wire [5:0] screen_column = fhCounter[8:3];
+	//wire [4:0] screen_row = vCounter[7:3];
+	//wire [11:0] screen_tile = (screen_row*8) + screen_column;
 	
 	// tilemap space
-	reg [5:0] tilemap_column [0:1];
-	reg [4:0] tilemap_row [0:1];
+	//reg [5:0] tilemap_column [0:1];
+	//reg [4:0] tilemap_row [0:1];
 	
 	// tile space
-	reg [2:0] tile_row [0:1];		// the row of the tile
-	reg [2:0] tile_column [0:1];
-	reg tile_column_nibble [0:1];	// which nibble of the tile row MSB or LSB
+	//reg [2:0] tile_row [0:1];		// the row of the tile
+	//reg [2:0] tile_column [0:1];
+	//reg tile_column_nibble [0:1];	// which nibble of the tile row MSB or LSB
 	
 	//
 	// behaviour
 	//
 	
 	// Synchronous - GnG 65606 - A - 2 - 5/8
-	reg CLK_6M_last;
+	/*reg CLK_6M_last;
 	always @(CLK_6M or nHSYNC or nVSYNC or rst) begin
 		if (rst) begin
 			hCounter <= 0;
@@ -159,7 +159,7 @@ module cus42
 		CLK_6M_last <= CLK_6M;
 		hsyncLast <= nHSYNC;
 		vsyncLast <= nVSYNC;
-	end
+	end*/
 	
 	wire [8:0] H;
 	wire [8:0] V;
@@ -226,7 +226,7 @@ module cus42
 			.S3H(S3HB)
 		);
 	
-	always @(negedge CLK_6M or rst) begin
+	/*always @(negedge CLK_6M or rst) begin
 		if (rst) begin
 			pri = 3'b0;
 			//hScrollOffset[0] = 0;
@@ -237,10 +237,10 @@ module cus42
 			//ra_tilemap_row = 0;  
 			//ra_tilemap_column = 0;  
 			//ra_tilemap_byte = 0;  
-			ga_tile_attrs[0] = 1'bX;
+			/ *ga_tile_attrs[0] = 1'bX;
 			ga_tile_index[0] = 1'bX;
 			ga_tile_attrs[1] = 1'bX;
-			ga_tile_index[1] = 1'bX;
+			ga_tile_index[1] = 1'bX;* /
 			//ga_tile_row = 0;
 			//ga_tile_column_nibble = 0;
 			//HA2 = 0;
@@ -252,7 +252,7 @@ module cus42
 			//HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b11;
 			
 			// Assign SRAM address				// changes every two pixels
-			/*if (hCounter[0] === 2'b0)
+			/ *if (hCounter[0] === 2'b0)
 				ra_layer = layer;					// latch the layer on first pixel
 				
 			ra_tilemap_row = 
@@ -262,7 +262,7 @@ module cus42
 				hScrollCounter[layer][8:3];				// column select, 0 - 47 hCounter/8
 				
 			ra_tilemap_byte = hCounter[0];				// byte select, first or second alternates every pixel
-			*/
+			* /
 			// PROM address
 			//ga_tile_column_nibble = hScrollCounter[layer][2];
 			//ga_tile_row = vScrollCounter[layer][2:0]; 	// row select
@@ -279,8 +279,9 @@ module cus42
 			//tile_column_nibble[layer] <= hScrollCounter[layer][2];
 		end
 	end
+	*/
 	
-	always @(hCounter[1:0] or rst) begin
+	/*always @(hCounter[1:0] or rst) begin
 		if (rst) begin
 			ga_tile_index[0] = 0;
 			ga_tile_attrs[0] = 0;
@@ -294,10 +295,10 @@ module cus42
 				2'b00: ga_tile_attrs[1] = RD;
 			endcase
 		end
-	end
+	end*/
 
 	// Handle CPU control requests
-	always @(*) begin
+	/*always @(*) begin
 		if (nLATCH == 1'b0) begin
 			if (!CA[1])
 				// set lower 8 bits
@@ -310,7 +311,7 @@ module cus42
 				// set all 8th bits
 				vScrollOffset[CA[2]][7:0] = CD;
 		end
-	end	
+	end	*/
 	
 	// CPU/RAM multiplexing
 	assign nRWE = nRCS ? 1'b1 : nWE;
@@ -323,8 +324,8 @@ module cus42
 	//assign GA = { ga_tile_attrs[layer], ga_tile_index[layer], vScrollCounter[layer][2:0], hScrollCounter[layer][2] };
 	
 	// includes minor timing hack to replicate general propogation delay that would otherwise result in delayed results form PROM and to a lesser extend the SRAM
-	assign #20 RA = { sram_layer, sram_layer ? RAB : RAA };
-	assign #40 GA = { prom_layer ? GAB : GAA };				
+	assign RA = { sram_layer, sram_layer ? RAB : RAA };
+	assign GA = { prom_layer ? GAB : GAA };				
 
 	assign HA2 = S3HA;
 	assign HB2 = S3HB;

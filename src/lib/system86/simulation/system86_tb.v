@@ -176,9 +176,12 @@ module system86_tb;
 			.Q(prom_6u_data)
 		);	
 	
+	// trying 200ns as per GnG instead of 250ns as documented in Rolling Thunder operators manual
 	eprom_m27512 
 		#(
-			`ROM_4R
+			.FILE_NAME(`ROM_4R),
+			.tAVQV(200),
+			.tAXQX(10)
 		) 
 		eprom_4r
 		(
@@ -190,7 +193,9 @@ module system86_tb;
 		
 	eprom_m27256 
 		#(
-			`ROM_4S
+			.FILE_NAME(`ROM_4S),
+			.tAVQV(200),
+			.tAXQX(10)
 		) 
 		eprom_4s
 		(
@@ -202,7 +207,9 @@ module system86_tb;
 	
 	eprom_m27512 
 		#(
-			`ROM_7R
+			.FILE_NAME(`ROM_7R),
+			.tAVQV(200),
+			.tAXQX(10)
 		) 
 		eprom_7r
 		(
@@ -214,7 +221,9 @@ module system86_tb;
 		
 	eprom_m27256 
 		#(
-			`ROM_7S
+			.FILE_NAME(`ROM_7S),
+			.tAVQV(200),
+			.tAXQX(10)
 		) 
 		eprom_7s
 		(
