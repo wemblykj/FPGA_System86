@@ -35,8 +35,8 @@ module cus42_layer
 		input wire [7:0] RD,		// SRAM data bus
 		input wire [8:0] H,		// 9 bits
 		input wire [8:0] V,		// 8 bits
-		output wire [11:0] RA,	// SRAM address bus
-		output wire [13:0] GA,	// PROM address bus
+		output reg [11:0] RA,	// SRAM address bus
+		output reg [13:0] GA,	// PROM address bus
 		output wire S3H			// latch request
 	);
 	
@@ -78,13 +78,28 @@ module cus42_layer
 	// behaviour
 	//
 
+	reg nibble;
+	
 	always @(H[1:0] or rst) begin
 		if (rst) begin
-			AS[9:0] = 0;
+			AS[9:0] <= 0;
+			RA <= 0;
+			GA <= 0;
+			//nibble = 0;
 		end else begin
 			case ( {ASSIGNED_LAYER, H[1:0]} )
-				3'b011, 3'b101 : AS[7:0] = RD;
-				3'b000, 3'b110 : AS[9:8] = RD[1:0];
+				3'b010, 3'b100 : begin
+					RA <= { SV[7:3], SH[8:3], 1'b0 };
+					GA <= { AS, SV[2:0], nibble };
+					nibble <= SH[2];
+				end
+				3'b011, 3'b101 : begin
+					AS[7:0] <= RD;
+					RA[0] <= 1'b1;
+				end
+				3'b000, 3'b110 : begin
+					AS[9:8] <= RD[1:0];
+				end
 			endcase
 		end
 	end
@@ -111,9 +126,10 @@ module cus42_layer
 	
 	assign SH = { hScrollCounter[8:3], FLIP ? ~hScrollCounter[2:0] : hScrollCounter[2:0] };
 	assign SV = vScrollCounter;
-	assign S3H = SH[1:0] === 2'b11;
-	assign RA = { SV[7:3], SH[8:3], H[0] };
-	assign GA = { AS, SV[2:0], ~SH[2] };
+	assign S3H = SH[1:0] === 2'b00;
+	//assign RA = { SV[7:3], SH[8:3], H[0] };
+	//assign GA = { AS, SV[2:0], ~SH[2] };
+	//assign GA = { AS, SV[2:0], nibble };
 	
 	// debug
 		

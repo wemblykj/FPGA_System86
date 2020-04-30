@@ -118,8 +118,8 @@ module GENERIC_SRAM
 			// Assign new value after TAA
 			
 			// layer debugging
-			if (!A[ADDR_WIDTH-1])
-				#(tAA-tOHA) DOut <= mem[A];
+			//if (A[ADDR_WIDTH-1])
+			#(tAA-tOHA) DOut <= mem[A];
 		end
 	end
 
