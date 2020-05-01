@@ -323,7 +323,6 @@ module cus42
 	//assign RA = { layer, vScrollCounter[layer][7:3], hScrollCounter[layer][8:3], hCounter[0] };
 	//assign GA = { ga_tile_attrs[layer], ga_tile_index[layer], vScrollCounter[layer][2:0], hScrollCounter[layer][2] };
 	
-	// includes minor timing hack to replicate general propogation delay that would otherwise result in delayed results form PROM and to a lesser extend the SRAM
 	assign RA = { sram_layer, sram_layer ? RAB : RAA };
 	assign GA = { prom_layer ? GAB : GAA };				
 

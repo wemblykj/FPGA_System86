@@ -89,7 +89,8 @@ module cus42_layer
 		end else begin
 			case ( {ASSIGNED_LAYER, H[1:0]} )
 				3'b010, 3'b100 : begin
-					RA <= { SV[7:3], SH[8:3], 1'b0 };
+					//RA <= { SV[7:3], SH[8:3], 1'b0 };
+					RA <= { 5'b11001, 6'b010101, 1'b0 };
 					GA <= { AS, SV[2:0], nibble };
 					nibble <= SH[2];
 				end

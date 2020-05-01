@@ -170,7 +170,10 @@ module cus43
 			CLO <= 0;
 			DTO <= 0;
 		end else begin
-			casex ( STATE )
+			PRO <= PR_A;
+			CLO <= CL_A;
+			DTO <= DT_A;
+			/*casex ( STATE )
 				7'b0?11?1?, 7'b0?01?10 : begin
 						PRO <= PR_B;
 						CLO <= CL_B;
@@ -186,7 +189,7 @@ module cus43
 						CLO <= CLI;
 						DTO <= DTI;
 					end
-			endcase
+			endcase*/
 		end
 	end
 	

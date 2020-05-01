@@ -11,6 +11,9 @@
       </db_ref>
    </db_ref_list>
    <WVObjectSize size="2" />
+   <wave_markers>
+      <marker time="32028439339167" label="" />
+   </wave_markers>
    <wvobject fp_name="group114" type="group">
       <obj_property name="label">CUS42_7K</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -370,6 +373,7 @@
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/GDI" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">GDI[11:0]</obj_property>
          <obj_property name="ObjectShortName">GDI[11:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/nOE" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">nOE</obj_property>
