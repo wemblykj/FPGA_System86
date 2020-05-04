@@ -78,8 +78,8 @@ module cus42
 			
 			.CLK_6M(CLK_6M),
 			.FLIP(FLIP),
-			.nLATCH(nLATCH | CA[2]),
-			.CA(CA[1:0]),
+			.nLATCH(nLATCH),
+			.CA(CA[2:0]),
 			.CD(CD),
 			.RD(RD),
 			.H(H),
@@ -103,8 +103,8 @@ module cus42
 			
 			.CLK_6M(CLK_6M),
 			.FLIP(FLIP),
-			.nLATCH(nLATCH | ~CA[2]),
-			.CA(CA[1:0]),
+			.nLATCH(nLATCH),
+			.CA(CA[2:0]),
 			.CD(CD),
 			.RD(RD),
 			.H(H),

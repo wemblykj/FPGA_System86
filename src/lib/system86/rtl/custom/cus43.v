@@ -38,171 +38,68 @@ module cus43
         input wire [2:0] HA, 	// hard to decipher text from schematics
         input wire CLK_6M,
         input wire CLK_2H,
-        input wire LATCH,
+        input wire nLATCH,
         input wire FLIP,
         input wire HA2,
         input wire HB2,
-        output reg [2:0] PRO,
-        output reg [7:0] CLO,
-        output reg [2:0] DTO,
+        output wire [2:0] PRO,
+        output wire [7:0] CLO,
+        output wire [2:0] DTO,
         output wire CLE			// hard to decipher text from schematics (not used)
     );
 
-	reg [7:0] mdi_latched [1:0];
-	reg [3:0] plane0_latched [1:0];
-	reg [3:0] plane1_latched [1:0];
-	reg [3:0] plane2_latched [1:0];
+	wire [2:0] PR_A;
+	wire [7:0] CL_A;
+	wire [2:0] DT_A;
 	
-	reg [7:0] attr [1:0];
-	// 3 planes, 4 bits (4 pixels)
-	reg [3:0] plane0_shift [1:0];
-	reg [3:0] plane1_shift [1:0];
-	reg [3:0] plane2_shift [1:0];
-	
-	// layer 1 (A)
-	reg [2:0] PR_A = LAYER_A_PRIORITY;
-	
-	wire [7:0] CL_A = attr[0];
-
-	// first bit of each plane buffer
-	wire [2:0] DT_A = FLIP ? 
-		  { plane2_shift[0][0], plane1_shift[0][0], plane0_shift[0][0] } 
-		: { plane2_shift[0][3], plane1_shift[0][3], plane0_shift[0][3] };	
-	
-	// layer 2 (B)
-	reg [2:0] PR_B = LAYER_B_PRIORITY;
-	
-	wire [7:0] CL_B = attr[1];
-	
-	// first bit of each plane buffer
-	wire [2:0] DT_B = FLIP ? 
-		  { plane2_shift[1][0], plane1_shift[1][0], plane0_shift[1][0] } 
-		: { plane2_shift[1][3], plane1_shift[1][3], plane0_shift[1][3] };	
-	
-	wire layer = CLK_2H;
-	reg layer_latched = 0;
-
-	always @(negedge layer) begin
-		if (rst) begin
-			mdi_latched[0] <= 0;
-			plane0_latched[1] <= 0;
-			plane1_latched[1] <= 0;
-			plane2_latched[1] <= 0;
-		end else begin
-			mdi_latched[0] <= MDI;
-			plane0_latched[1] <= GDI[3:0];
-			plane1_latched[1] <= GDI[7:4];
-			plane2_latched[1] <= GDI[11:8];
-		end
-	end
-	
-	always @(posedge layer) begin
-		if (rst) begin
-			mdi_latched[1] <= 0;
-			plane0_latched[0] <= 0;
-			plane1_latched[0] <= 0;
-			plane2_latched[0] <= 0;
-		end else begin
-			mdi_latched[1] <= MDI;
-			plane0_latched[0] <= GDI[3:0];
-			plane1_latched[0] <= GDI[7:4];
-			plane2_latched[0] <= GDI[11:8];
-		end
-	end
-	
-	always @(posedge CLK_6M) begin
-		if (rst) begin
-			attr[0] <= 0;
-			plane0_shift[0] <= 0;
-			plane1_shift[0] <= 0;
-			plane1_shift[0] <= 0;
-			attr[1] <= 0;
-			plane0_shift[1] <= 0;
-			plane1_shift[1] <= 0;
-			plane1_shift[1] <= 0;
-		// layer A latch request
-		end else begin
-			if (HA2) begin
-				attr[0] <= mdi_latched[0];
-				plane0_shift[0] <= plane0_latched[0];
-				plane1_shift[0] <= plane1_latched[0];
-				plane2_shift[0] <= plane2_latched[0];
-			end else begin
-				if (FLIP) begin
-					plane0_shift[0] <= plane0_shift[0] >> 1;
-					plane1_shift[0] <= plane1_shift[0] >> 1;
-					plane2_shift[0] <= plane2_shift[0] >> 1;
-				end else begin
-					plane0_shift[0] <= plane0_shift[0] << 1;
-					plane1_shift[0] <= plane1_shift[0] << 1;
-					plane2_shift[0] <= plane2_shift[0] << 1;
-				end
-			end
+	cus43_layer 
+		#(
+			.LAYER_DISABLE_MASK(LAYER_DISABLE_MASK[0]),
+			.LAYER_PRIORITY(LAYER_A_PRIORITY)
+		)
+		layer_a
+		(
+			.rst(rst),
 			
-			// layer B latch request
-			if (HB2) begin
-				attr[1] <= mdi_latched[1];
-				plane0_shift[1] <= plane0_latched[1];
-				plane1_shift[1] <= plane1_latched[1];
-				plane2_shift[1] <= plane2_latched[1];
-			end else begin
-				if (FLIP) begin
-					plane0_shift[1] <= plane0_shift[1] >> 1;
-					plane1_shift[1] <= plane1_shift[1] >> 1;
-					plane2_shift[1] <= plane2_shift[1] >> 1;
-				end else begin
-					plane0_shift[1] <= plane0_shift[1] << 1;
-					plane1_shift[1] <= plane1_shift[1] << 1;
-					plane2_shift[1] <= plane2_shift[1] << 1;
-				end
-			end
-		end
-	end
-		
-	assign SELB = PR_B>PR_A;
-	assign AVAL = DT_A!==7;
-	assign BVAL = DT_B!==7;
-	wire [6:0] STATE;
-	assign STATE = { LAYER_DISABLE_MASK, (PR_B>PR_A), (PR_B>PRI), (PR_A>PRI), BVAL, AVAL };
-	
-	always @(posedge CLK_6M) begin
-		if (rst) begin
-			PRO <= 0;
-			CLO <= 0;
-			DTO <= 0;
-		end else begin
-			casex ( STATE )
-				7'b0?11?1?, 7'b0?01?10 : begin
-						PRO <= PR_B;
-						CLO <= CL_B;
-						DTO <= DT_B;
-					end
-				7'b?00?1?1, 7'b?01?101 : begin
-						PRO <= PR_A;
-						CLO <= CL_A;
-						DTO <= DT_A;
-					end
-				default : begin
-						PRO <= PRI;
-						CLO <= CLI;
-						DTO <= DTI;
-					end
-			endcase
-		end
-	end
-	
-	always @(LATCH or CA or MDI or rst) begin
-		if (rst) begin
-			PR_A = LAYER_A_PRIORITY;
-			PR_B = LAYER_B_PRIORITY;
-		end else if (LATCH) begin
-			// latch priority assignments from the CPU
-			if (!CA[2:0] == 3'b001) begin
-				PR_A = MDI[3:1];
-			end else if (!CA[2:0] == 3'b101) begin
-				PR_B = MDI[3:1];
-			end
-		end 
-	end
+			.CLK_6M(CLK_6M),
+			.CLK_2H(CLK_2H),
+			.PRI( PRI ),
+			.CLI( CLI ),
+			.DTI( DTI ),
+			.GDI( GDI ),
+			.MDI( MDI ),
+			.CA(CA),
+			.nLATCH(nLATCH),
+			.FLIP(FLIP),
+			.PRO(PR_A),
+			.CLO(CL_A),
+			.DTO(DT_A),
+			.H2(HA2)
+		);
+
+		cus43_layer 
+		#(
+			.LAYER_DISABLE_MASK(LAYER_DISABLE_MASK[1]),
+			.LAYER_PRIORITY(LAYER_B_PRIORITY)
+		)
+		layer_b
+		(
+			.rst(rst),
+			
+			.CLK_6M(CLK_6M),
+			.CLK_2H(~CLK_2H),
+			.PRI( PR_A ),
+			.CLI( CL_A ),
+			.DTI( DT_A ),
+			.GDI( GDI ),
+			.MDI( MDI ),
+			.CA(CA),
+			.nLATCH(nLATCH),
+			.FLIP(FLIP),
+			.PRO(PRO),
+			.CLO(CLO),
+			.DTO(DTO),
+			.H2(HB2)
+		);
 	
 endmodule

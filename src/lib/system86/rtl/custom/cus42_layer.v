@@ -30,7 +30,7 @@ module cus42_layer
 		input wire CLK_6M,
 		input wire FLIP,
 		input wire nLATCH,		// CPU write request
-		input wire [1:0] CA,		// CPU address bus
+		input wire [2:0] CA,		// CPU address bus
 		input wire [7:0] CD,		// CPU data bus
 		input wire [7:0] RD,		// SRAM data bus
 		input wire [8:0] H,		// 9 bits

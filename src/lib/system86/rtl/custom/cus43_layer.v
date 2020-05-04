@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus43
+module cus43_layer
 	#(
 		parameter ASSIGNED_LAYER = 0,
 		parameter LAYER_PRIORITY = 0
@@ -26,25 +26,20 @@ module cus43
 	(
 		  input rst,
 		
+		  input wire CLK_6M,
+        input wire CLK_2H,
         input wire [2:0] PRI,
         input wire [7:0] CLI,
         input wire [2:0] DTI,
         input wire [11:0] GDI,
-        input wire nOE,			// hard to decipher text from schematics (held at logic high)
         input wire [2:0] CA,
-        input wire nWE,
-        input wire [7:0] MDI, // hard to decipher text from schematics
-        input wire [2:0] HA, 	// hard to decipher text from schematics
-        input wire CLK_6M,
-        input wire CLK_2H,
-        input wire LATCH,
+        input wire [7:0] MDI,
+        input wire nLATCH,
         input wire FLIP,
-        input wire HA2,
-        input wire HB2,
+        input wire H2,
         output reg [2:0] PRO,
         output reg [7:0] CLO,
-        output reg [2:0] DTO,
-        output wire CLE			// hard to decipher text from schematics (not used)
+        output reg [2:0] DTO
     );
 
 	reg [7:0] mdi_latched;
@@ -58,7 +53,6 @@ module cus43
 	reg [3:0] plane1_shift;
 	reg [3:0] plane2_shift;
 	
-	// layer 1 (A)
 	reg [2:0] PR = LAYER_PRIORITY;
 	
 	wire [7:0] CL = attr;
@@ -67,8 +61,6 @@ module cus43
 	wire [2:0] DT = FLIP ? 
 		  { plane2_shift[0], plane1_shift[0], plane0_shift[0] } 
 		: { plane2_shift[3], plane1_shift[3], plane0_shift[3] };	
-	
-	wire layer = CLK_2H;
 	
 	always @(negedge CLK_2H) begin
 		if (rst) begin
@@ -97,8 +89,8 @@ module cus43
 			plane1_shift <= 0;
 			plane1_shift <= 0;
 		end else begin
-			if (HA2) begin
-				attr <= mdi_latched[0];
+			if (H2) begin
+				attr <= mdi_latched;
 				plane0_shift <= plane0_latched;
 				plane1_shift <= plane1_latched;
 				plane2_shift <= plane2_latched;
@@ -116,7 +108,7 @@ module cus43
 		end
 	end
 		
-	always @(posedge CLK_6M) begin
+	always @(*) begin
 		if (rst) begin
 			PRO <= 0;
 			CLO <= 0;
@@ -126,6 +118,10 @@ module cus43
 				PRO <= PR;
 				CLO <= CL;
 				DTO <= DT;
+			end else begin
+				PRO <= PRI;
+				CLO <= CLI;
+				DTO <= DTI;
 			end
 		end
 	end
@@ -137,11 +133,6 @@ module cus43
 			// latch priority assignments from the CPU
 			if (CA[2] == ASSIGNED_LAYER)
 				PR = MDI[3:1];
-			/*if (!CA[2:0] == 3'b001) begin
-				PR = MDI[3:1];
-			end else if (!CA[2:0] == 3'b101) begin
-				PR_B = MDI[3:1];
-			end*/
 		end 
 	end
 	

@@ -256,6 +256,8 @@ module tilegen_subsystem
 		)
 		cus43_8n
 		(
+			.rst(rst),
+			
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
 			.PRI( cus43_8n_pr_in ),
@@ -265,7 +267,7 @@ module tilegen_subsystem
 			.MDI( sram_7n_data ),
 			.CA(A[2:0]),
 			.nWE(nWE),
-			.LATCH(nLATCH0),
+			.nLATCH(nLATCH0),
 			.FLIP(FLIP),
 			.PRO(PR),
 			.CLO(CL),
@@ -331,6 +333,8 @@ module tilegen_subsystem
 		)
 		cus43_6n
 		(
+			.rst(rst),
+			
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
 			.PRI(PR),
@@ -340,7 +344,7 @@ module tilegen_subsystem
 			.MDI( sram_4n_data ),
 			.CA(A[2:0]),
 			.nWE(nWE),
-			.LATCH(nLATCH1),
+			.nLATCH(nLATCH1),
 			.FLIP(FLIP),
 			.PRO(cus43_6n_pro),
 			.CLO(cus43_6n_clo),
