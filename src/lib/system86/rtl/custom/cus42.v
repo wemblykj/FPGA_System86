@@ -225,103 +225,13 @@ module cus42
 			.GA(GAB),
 			.S3H(S3HB)
 		);
-	
-	/*always @(negedge CLK_6M or rst) begin
-		if (rst) begin
-			pri = 3'b0;
-			//hScrollOffset[0] = 0;
-			//vScrollOffset[0] = 0;
-			//hScrollOffset[1] = 0;
-			//vScrollOffset[1] = 0;
-			//ra_layer = 0;  
-			//ra_tilemap_row = 0;  
-			//ra_tilemap_column = 0;  
-			//ra_tilemap_byte = 0;  
-			/ *ga_tile_attrs[0] = 1'bX;
-			ga_tile_index[0] = 1'bX;
-			ga_tile_attrs[1] = 1'bX;
-			ga_tile_index[1] = 1'bX;* /
-			//ga_tile_row = 0;
-			//ga_tile_column_nibble = 0;
-			//HA2 = 0;
-			//HB2 = 0;
-		end else begin
-			
-			// neg edge just before transition to start of next nibble
-			//HA2 <= (hCounter[1:0] + hScrollOffset[0][1:0]) === 2'b11;
-			//HB2 <= (hCounter[1:0] + hScrollOffset[1][1:0]) === 2'b11;
-			
-			// Assign SRAM address				// changes every two pixels
-			/ *if (hCounter[0] === 2'b0)
-				ra_layer = layer;					// latch the layer on first pixel
-				
-			ra_tilemap_row = 
-				vScrollCounter[layer][7:3];		 	// row select,	0 - 31 vCounter/8
-				
-			ra_tilemap_column = 
-				hScrollCounter[layer][8:3];				// column select, 0 - 47 hCounter/8
-				
-			ra_tilemap_byte = hCounter[0];				// byte select, first or second alternates every pixel
-			* /
-			// PROM address
-			//ga_tile_column_nibble = hScrollCounter[layer][2];
-			//ga_tile_row = vScrollCounter[layer][2:0]; 	// row select
-				
-			// per layer debugging outputs
-			
-			// tilemap space
-			//tilemap_column[layer] <= hScrollCounter[layer][8:3];
-			//tilemap_row[layer] <= vScrollCounter[layer][7:3];
 		
-			// tile space
-			//tile_row[layer] <= vScrollCounter[layer][2:0];
-			//tile_column[layer] <= hScrollCounter[layer][2:0];
-			//tile_column_nibble[layer] <= hScrollCounter[layer][2];
-		end
-	end
-	*/
-	
-	/*always @(hCounter[1:0] or rst) begin
-		if (rst) begin
-			ga_tile_index[0] = 0;
-			ga_tile_attrs[0] = 0;
-			ga_tile_index[1] = 0;
-			ga_tile_attrs[1] = 0;
-		end else begin
-			case(hCounter[1:0])
-				2'b01: ga_tile_index[0] = RD;
-				2'b10: ga_tile_attrs[0] = RD;
-				2'b11: ga_tile_index[1] = RD;
-				2'b00: ga_tile_attrs[1] = RD;
-			endcase
-		end
-	end*/
-
-	// Handle CPU control requests
-	/*always @(*) begin
-		if (nLATCH == 1'b0) begin
-			if (!CA[1])
-				// set lower 8 bits
-				hScrollOffset[CA[2]][7:0] = CD;
-			else if (!CA[1:0] == 2'b01) begin
-				// set 9th bit
-				hScrollOffset[CA[2]][8] = CD[0];
-				pri[CA[2]] = CD[3:1];
-			end else if (!CA[1:0] == 2'b10)
-				// set all 8th bits
-				vScrollOffset[CA[2]][7:0] = CD;
-		end
-	end	*/
-	
 	// CPU/RAM multiplexing
 	assign nRWE = nRCS ? 1'b1 : nWE;
 	assign nROE = nRCS ? 1'b0 : ~nWE;
 	assign CD = ~nRCS && nWE ? RD : 8'bZ;
 	
 	assign RD = ~nRCS && ~nWE ? CD : 8'bZ;
-	
-	//assign RA = { layer, vScrollCounter[layer][7:3], hScrollCounter[layer][8:3], hCounter[0] };
-	//assign GA = { ga_tile_attrs[layer], ga_tile_index[layer], vScrollCounter[layer][2:0], hScrollCounter[layer][2] };
 	
 	assign RA = { sram_layer, sram_layer ? RAB : RAA };
 	assign GA = { prom_layer ? GAB : GAA };				

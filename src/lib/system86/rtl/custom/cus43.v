@@ -64,11 +64,10 @@ module cus43
 	
 	wire [7:0] CL_A = attr[0];
 
-	// significant bit of the shift register
-	wire sb = FLIP ? 0 : 3;
-
 	// first bit of each plane buffer
-	wire [2:0] DT_A = { plane2_shift[0][sb], plane1_shift[0][sb], plane0_shift[0][sb] };	
+	wire [2:0] DT_A = FLIP ? 
+		  { plane2_shift[0][0], plane1_shift[0][0], plane0_shift[0][0] } 
+		: { plane2_shift[0][3], plane1_shift[0][3], plane0_shift[0][3] };	
 	
 	// layer 2 (B)
 	reg [2:0] PR_B = LAYER_B_PRIORITY;
@@ -76,7 +75,9 @@ module cus43
 	wire [7:0] CL_B = attr[1];
 	
 	// first bit of each plane buffer
-	wire [2:0] DT_B = { plane2_shift[1][sb], plane1_shift[1][sb], plane0_shift[1][sb] };	
+	wire [2:0] DT_B = FLIP ? 
+		  { plane2_shift[1][0], plane1_shift[1][0], plane0_shift[1][0] } 
+		: { plane2_shift[1][3], plane1_shift[1][3], plane0_shift[1][3] };	
 	
 	wire layer = CLK_2H;
 	reg layer_latched = 0;
@@ -170,10 +171,7 @@ module cus43
 			CLO <= 0;
 			DTO <= 0;
 		end else begin
-			PRO <= PR_A;
-			CLO <= CL_A;
-			DTO <= DT_A;
-			/*casex ( STATE )
+			casex ( STATE )
 				7'b0?11?1?, 7'b0?01?10 : begin
 						PRO <= PR_B;
 						CLO <= CL_B;
@@ -189,7 +187,7 @@ module cus43
 						CLO <= CLI;
 						DTO <= DTI;
 					end
-			endcase*/
+			endcase
 		end
 	end
 	

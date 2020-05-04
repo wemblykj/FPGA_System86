@@ -475,6 +475,7 @@
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/mdi_latched" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">mdi_latched[1:0,7:0]</obj_property>
          <obj_property name="ObjectShortName">mdi_latched[1:0,7:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
          <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/mdi_latched[1]" type="array" db_ref_id="1">
             <obj_property name="ElementShortName">[1,7:0]</obj_property>
             <obj_property name="ObjectShortName">mdi_latched[1,7:0]</obj_property>
@@ -483,20 +484,23 @@
          <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/mdi_latched[0]" type="array" db_ref_id="1">
             <obj_property name="ElementShortName">[0,7:0]</obj_property>
             <obj_property name="ObjectShortName">mdi_latched[0,7:0]</obj_property>
-            <obj_property name="Radix">HEXRADIX</obj_property>
+            <obj_property name="Radix">BINARYRADIX</obj_property>
          </wvobject>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/plane0_latched" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">plane0_latched[1:0,3:0]</obj_property>
          <obj_property name="ObjectShortName">plane0_latched[1:0,3:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/plane1_latched" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">plane1_latched[1:0,3:0]</obj_property>
          <obj_property name="ObjectShortName">plane1_latched[1:0,3:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/plane2_latched" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">plane2_latched[1:0,3:0]</obj_property>
          <obj_property name="ObjectShortName">plane2_latched[1:0,3:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus43_8n/attr" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">attr[1:0,7:0]</obj_property>

@@ -56,9 +56,6 @@ module cus42_layer
 	
 	wire [8:0] SH;		// 9 bits	0 -> 384
 	wire [8:0] SV;		// 9 bits	0 -> 264
-	//reg S2H;				// read second byte
-	//reg S1H;				// read first byte
-	reg [9:0] AS;
 	
 	//
 	// debug
@@ -77,29 +74,23 @@ module cus42_layer
 	//
 	// behaviour
 	//
-
-	reg nibble;
 	
 	always @(H[1:0] or rst) begin
 		if (rst) begin
-			AS[9:0] <= 0;
 			RA <= 0;
 			GA <= 0;
-			//nibble = 0;
 		end else begin
 			case ( {ASSIGNED_LAYER, H[1:0]} )
 				3'b010, 3'b100 : begin
-					//RA <= { SV[7:3], SH[8:3], 1'b0 };
-					RA <= { 5'b11001, 6'b010101, 1'b0 };
-					GA <= { AS, SV[2:0], nibble };
-					nibble <= SH[2];
+					RA <= { SV[7:3], SH[8:3], 1'b0 };
+					GA[3:0] <= { SV[2:0], SH[2] };
 				end
 				3'b011, 3'b101 : begin
-					AS[7:0] <= RD;
 					RA[0] <= 1'b1;
+					GA[11:4] <= RD;
 				end
 				3'b000, 3'b110 : begin
-					AS[9:8] <= RD[1:0];
+					GA[13:12] <= RD;
 				end
 			endcase
 		end
@@ -128,9 +119,6 @@ module cus42_layer
 	assign SH = { hScrollCounter[8:3], FLIP ? ~hScrollCounter[2:0] : hScrollCounter[2:0] };
 	assign SV = vScrollCounter;
 	assign S3H = SH[1:0] === 2'b00;
-	//assign RA = { SV[7:3], SH[8:3], H[0] };
-	//assign GA = { AS, SV[2:0], ~SH[2] };
-	//assign GA = { AS, SV[2:0], nibble };
 	
 	// debug
 		
