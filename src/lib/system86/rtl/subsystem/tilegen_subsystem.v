@@ -251,8 +251,8 @@ module tilegen_subsystem
 	cus43 
 		#(
 			.LAYER_DISABLE_MASK(LAYER_DISABLE_MASK[1:0]),
-			.LAYER_A_PRIORITY(FOREGROUND_LAYER_PRIORITY),
-			.LAYER_B_PRIORITY(BACKGROUND_LAYER_PRIORITY)
+			.LAYER_A_PRIORITY(BACKGROUND_LAYER_PRIORITY),
+			.LAYER_B_PRIORITY(FOREGROUND_LAYER_PRIORITY)
 		)
 		cus43_8n
 		(
@@ -261,8 +261,7 @@ module tilegen_subsystem
 			.PRI( cus43_8n_pr_in ),
 			.CLI( cus43_8n_cl_in ),
 			.DTI( cus43_8n_dt_in ),
-			.GDI( { 4'b0000, eprom_7r_data } ),
-			//.GDI( { ls158_7u_y, eprom_7r_data } ),
+			.GDI( { ls158_7u_y, eprom_7r_data } ),
 			.MDI( sram_7n_data ),
 			.CA(A[2:0]),
 			.nWE(nWE),
@@ -327,8 +326,8 @@ module tilegen_subsystem
 	cus43 
 		#(
 			.LAYER_DISABLE_MASK(LAYER_DISABLE_MASK[3:2]),
-			.LAYER_A_PRIORITY(TEXT_LAYER_PRIORITY),
-			.LAYER_B_PRIORITY(UNKNOWN_LAYER_PRIORITY)
+			.LAYER_A_PRIORITY(UNKNOWN_LAYER_PRIORITY),
+			.LAYER_B_PRIORITY(TEXT_LAYER_PRIORITY)
 		)
 		cus43_6n
 		(

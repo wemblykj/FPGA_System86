@@ -47,124 +47,12 @@ module cus42
 		output wire HB2
 	);
 
-	// RA   
-	// RAM addr bus
-	// 13 bits (2 layers @ 64x32 tiles, 2 byte per tile) 
-	// 12 - layer (0000h or 1000h)
-	// 11-1 y-offset * 48 + x-offset (11 bits)
-	// 11-7 y-offset (5 bits)
-	// 7-1 x-offset (6 bits)
-	// 0 - byte select
-	//reg ra_layer = 0;
-	//reg [4:0] ra_tilemap_row = 0;
-	//reg [5:0] ra_tilemap_column = 0;
-	//reg ra_tilemap_byte = 0;
-	//assign RA = { ra_layer, ra_tilemap_row, ra_tilemap_column, ra_tilemap_byte };
-	
-   // wire [13:0] GA;   // PROM addr bus
-	// 14 bits (
-	// 12:11 - attr lsb
-	// 10:6 - row
-	// 7:4 - column
-	// 3:1 - row
-	// 0 - nibble
-	//reg [1:0] ga_tile_attrs[0:1];
-	//reg [7:0] ga_tile_index[0:1];
-	//reg [2:0] ga_tile_row = 0;
-	//reg ga_tile_column_nibble = 0;
-			
-	//assign GA = { ga_tile_attrs, ga_tile_index, ga_tile_row, ga_tile_column_nibble };
-			
-	//reg hsyncLast;
-	//reg vsyncLast;
-	
-	// screen space
-	//reg [8:0] hCounter;	// 9 bits	0 -> 384
-	//reg [8:0] vCounter; // 9 bits	0 -> 264
-	//wire [8:0] fhCounter;	// flipped hCounter
-	
-	// per layer processing
-	
-	// latched scroll offsets	// 2 layers 9 bits
-	//reg [8:0] hScrollOffset[0:1];	// 2 layers 9 bits
-	//reg [8:0] vScrollOffset[0:1];	// 2 layers 9 bits
-	
 	assign sram_layer = ~CLK_2H;
 	assign prom_layer = CLK_2H;
-	
-	//wire [8:0] hScrollCounter[0:1];	// 9 bits	0 -> 384
-	//wire [8:0] vScrollCounter[0:1];	// 9 bits	0 -> 264
-	
-	//assign fhCounter = FLIP ? (384 - hCounter) : hCounter;
-	
-	// horizontal adder - GnG SCROLL H POSITION 85606 - 8 -  2
-	//assign hScrollCounter[0] = hScrollOffset[0] + fhCounter;
-	//assign hScrollCounter[1] = hScrollOffset[1] + fhCounter;
-	// vertical adder - assumed to work similar to horizontal (no vertical fliping?)
-	//assign vScrollCounter[0] = vScrollOffset[0] + vCounter;
-	//assign vScrollCounter[1] = vScrollOffset[1] + vCounter;
-	
-	// priority layer 1 & 2, may not be used here (see CUS43)
-	//reg [2:0] pri;						// 2 layers 3 bits
-    
-		
-	//
-	// debug
-	//
-	
-	// screen space
-	//wire [5:0] screen_column = fhCounter[8:3];
-	//wire [4:0] screen_row = vCounter[7:3];
-	//wire [11:0] screen_tile = (screen_row*8) + screen_column;
-	
-	// tilemap space
-	//reg [5:0] tilemap_column [0:1];
-	//reg [4:0] tilemap_row [0:1];
-	
-	// tile space
-	//reg [2:0] tile_row [0:1];		// the row of the tile
-	//reg [2:0] tile_column [0:1];
-	//reg tile_column_nibble [0:1];	// which nibble of the tile row MSB or LSB
-	
-	//
-	// behaviour
-	//
-	
-	// Synchronous - GnG 65606 - A - 2 - 5/8
-	/*reg CLK_6M_last;
-	always @(CLK_6M or nHSYNC or nVSYNC or rst) begin
-		if (rst) begin
-			hCounter <= 0;
-			vCounter <= 0;
-			hScrollOffset[0] <= 0;
-			vScrollOffset[0] <= 0;
-			hScrollOffset[1] <= 0;
-			vScrollOffset[1] <= 0;
-		end else begin
-			if (!nHSYNC && hsyncLast) begin
-				hCounter <= 0;
-				vCounter <= vCounter + 1;
-			end else if (CLK_6M && !CLK_6M_last)
-				hCounter <= hCounter + 1;
-				
-			if (!nVSYNC && vsyncLast) begin
-				vCounter <= 0;
-				
-				// HACK to scroll each frame
-				hScrollOffset[0] <= hScrollOffset[0] + 1; //LAYER_A_AUTOSCROLL;
-				hScrollOffset[1] <= hScrollOffset[1] + 1; //LAYER_B_AUTOSCROLL;
-			end
-		end
-		
-		CLK_6M_last <= CLK_6M;
-		hsyncLast <= nHSYNC;
-		vsyncLast <= nVSYNC;
-	end*/
 	
 	wire [8:0] H;
 	wire [8:0] V;
 	
-	// WIP implmentation based on GnG schematics
 	cus42_synchronous synchronous
 	(
 		.rst(rst),

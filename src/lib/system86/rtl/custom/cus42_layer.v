@@ -97,22 +97,24 @@ module cus42_layer
 	end
 
 	// Handle CPU control requests
-	always @(nLATCH or rst or V) begin
+	always @(nLATCH or CA or rst or V) begin
 		if (rst) begin
 			hScrollOffset <= 0;
 			vScrollOffset <= 0;
 		end else if (V === 9'b100000111) begin
 			hScrollOffset <= hScrollOffset + 1;
 		end else	if (!nLATCH) begin
-			if (!CA[1])
-				// set lower 8 bits
-				hScrollOffset[7:0] <= CD;
-			else if (!CA[1:0] == 2'b01) begin
-				// set 9th bit
-				hScrollOffset[8] = CD[0];
-			end else if (!CA[1:0] == 2'b10)
-				// set all 8th bits
-				vScrollOffset[7:0] <= CD;
+			if (CA[2] == ASSIGNED_LAYER) begin
+				if (!CA[1])
+					// set lower 8 bits
+					hScrollOffset[7:0] <= CD;
+				else if (!CA[1:0] == 2'b01) begin
+					// set 9th bit
+					hScrollOffset[8] = CD[0];
+				end else if (!CA[1:0] == 2'b10)
+					// set all 8th bits
+					vScrollOffset[7:0] <= CD;
+			end
 		end
 	end	
 	
