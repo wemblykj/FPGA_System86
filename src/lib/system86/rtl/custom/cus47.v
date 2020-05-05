@@ -33,7 +33,7 @@ module cus47
         input wire [15:10] A,
         // RES is implied, by convention, as an 'input' on schematics but must logically be an output for watchdog functionality.
         // ref: Pac-Mania CUS117:MRES, MAME namco86.cpp
-        output wire RES,	
+        output wire nRES,	
         output wire MQ,
         output wire ME,
         output wire SUBE,
@@ -44,7 +44,7 @@ module cus47
         output wire nLTH1,
         output wire nSCR0,
         output wire nSCR1,
-        output wire SND,
+        output wire nSND,
         output wire nOBJ,
         output wire nBUFEN,
         output wire BANK,
@@ -103,7 +103,7 @@ module cus47
 	assign nOBJ = A[15:13] !== 'b010;
 
 	// 4000h - 43FFh R/W	(CUS 30)
-	assign SND = A[15:10] !== 'b010000;
+	assign nSND = A[15:10] !== 'b010000;
 	
 	// 6000h - 7FFFh R	(EEPROM 9D)
 	assign nSPGM = (A[15:13] !== 'b011);
@@ -133,7 +133,7 @@ module cus47
 	assign nIRQ_ACK = nWE || A[15:10] !== 'b100001;
 	assign nIRQ_next = nVBLK || nIRQ_ACK;
 	
-	assign nRESET = ~watchdog_counter[WATCHDOG_WIDTH-1];
+	assign nRES = ~watchdog_counter[WATCHDOG_WIDTH-1];
 	
 	initial begin
 		nIRQ = 0;

@@ -239,17 +239,17 @@ module cpu_subsystem
 			.MA(cpu2_11a_a[15:11]), 
 			.CLK_0(~CLK_S2H), 	// negate for active low
 			.CLK_6M(CLK_6M), 
-			.VBLA(nVBLANK),
-			.MWE(cpu2_11a_we_n), 
-			.MRESET(cus41_8a_mreset_n), 	// master reset output?
-			.SINT(cus41_8a_sndirq_n), 
-			.LTH0(cus41_8a_latch0_n), 
-			.LTH1(cus41_8a_latch1_n), 
-			.MCS0(cus41_8a_subscr0_n), 
-			.MCS1(cus41_8a_subscr1_n), 
-			.MCS2(cus41_8a_subobj_n), 
-			.MCS4(cus41_8a_mcs4), 
-			.MROM(cus41_8a_mrom)
+			.nVBLA(nVBLANK),
+			.nMWE(cpu2_11a_we_n), 
+			.nMRES(cus41_8a_mreset_n), 	// master reset output?
+			.nSINT(cus41_8a_sndirq_n), 
+			.nLTH0(cus41_8a_latch0_n), 
+			.nLTH1(cus41_8a_latch1_n), 
+			.nMCS0(cus41_8a_subscr0_n), 
+			.nMCS1(cus41_8a_subscr1_n), 
+			.nMCS2(cus41_8a_subobj_n), 
+			.nMCS4(cus41_8a_mcs4), 
+			.nMROM(cus41_8a_mrom)
 		);
 		
 	mc68a09e cpu2_11a
