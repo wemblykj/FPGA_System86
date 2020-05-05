@@ -43,6 +43,7 @@ module cus43_layer
     );
 
 	reg [7:0] mdi_latched;
+	reg [7:0] mdi_latched2;
 	reg [3:0] plane0_latched;
 	reg [3:0] plane1_latched;
 	reg [3:0] plane2_latched;
@@ -72,10 +73,12 @@ module cus43_layer
 	
 	always @(posedge CLK_2H) begin
 		if (rst) begin
+			mdi_latched2 <= 0;
 			plane0_latched <= 0;
 			plane1_latched <= 0;
 			plane2_latched <= 0;
 		end else begin
+			mdi_latched2 <= mdi_latched;
 			plane0_latched <= GDI[3:0];
 			plane1_latched <= GDI[7:4];
 			plane2_latched <= GDI[11:8];
@@ -90,7 +93,7 @@ module cus43_layer
 			plane1_shift <= 0;
 		end else begin
 			if (H2) begin
-				attr <= mdi_latched;
+				attr <= mdi_latched2;
 				plane0_shift <= plane0_latched;
 				plane1_shift <= plane1_latched;
 				plane2_shift <= plane2_latched;
