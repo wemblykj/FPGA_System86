@@ -108,12 +108,12 @@ module system86
 	wire CLK_S2H;
 	wire [12:0] A;
 	wire [7:0] D;
-	wire nSCROLL0 = 1'b1;
-	wire nSCROLL1 = 1'b1;
-	wire OBJECT = 1'b0;
-	wire nLATCH0 = 1'b1;
-	wire nLATCH1 = 1'b1;
-	wire nBACKCOLOR = 1'b1;
+	wire nSCROLL0;
+	wire nSCROLL1;
+	wire nOBJECT;
+	wire nLATCH0;
+	wire nLATCH1;
+	wire nBACKCOLOR;
 	wire nWE = 1'b1;
 	wire BANK = 1'b0;
 	wire FLIP = 1'b0;
@@ -133,7 +133,7 @@ module system86
 	wire [3:0] BLUE;
 	
 	// == [not so] global signals ==
-	wire [7:0] MD = 8'b0;				// master CPU data bus to backcolor latch
+	wire [7:0] MD;					// master CPU data bus to backcolor latch
 	wire [2:0] SPR = 3'b0;			// CUS43 tile generator to sprite enable logic
 	wire [7:0] DOT;			// multiplexed tilemap color index and sprite color index
 			
@@ -228,7 +228,32 @@ module system86
 			`PROM_CONNECTION_DEFS(prom_3s, prom_3s)
 		);	
 		
-	
+	cpu_subsystem
+		cpu_subsystem(
+			.rst(rst),
+			// inputs
+			.CLK_6M(CLK_6M),
+			.CLK_2H(CLK_2H),
+			.CLK_S2H(CLK_S2H),
+			.CLK_1H(CLK_1H),
+			.CLK_S1H(CLK_S1H),
+			.nVBLANK(nVBLANK),
+			//.nRESET(nRESET),
+			// inout
+			.A(A),
+			.D(D),
+			.nWE(nWE),
+			// outputs
+			.nRESET(nRESET),
+			.nSCROLL0(nSCROLL0),
+			.nSCROLL1(nSCROLL1),
+			.nOBJECT(nOBJECT),
+			.nLATCH0(nLATCH0),
+			.nLATCH1(nLATCH0),
+			.nBACKCOLOR(nBACKCOLOR),
+			.MD(MD)
+			);
+		
 	/*wire vid_active;
 	wire [9:0] vid_active_col;
 	wire [9:0] vid_active_row;

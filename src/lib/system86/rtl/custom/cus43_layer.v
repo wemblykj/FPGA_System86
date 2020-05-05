@@ -135,7 +135,8 @@ module cus43_layer
 		end else if (!nLATCH) begin
 			// latch priority assignments from the CPU
 			if (CA[2] == ASSIGNED_LAYER)
-				PR = MDI[3:1];
+				if (!CA[0])
+					PR = MDI[3:1];
 		end 
 	end
 	

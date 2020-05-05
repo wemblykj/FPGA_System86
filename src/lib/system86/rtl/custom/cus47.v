@@ -28,8 +28,8 @@ module cus47
     (
         input wire CLK_6M,
         input wire CLK_2H,
-        input wire VBLK,
-        input wire WE,
+        input wire nVBLK,
+        input wire nWE,
         input wire [15:10] A,
         // RES is implied, by convention, as an 'input' on schematics but must logically be an output for watchdog functionality.
         // ref: Pac-Mania CUS117:MRES, MAME namco86.cpp
@@ -38,18 +38,18 @@ module cus47
         output wire ME,
         output wire SUBE,
         output wire SUBQ,
-        output reg IRQ,
-        output wire LTH2,
-        output wire LTH0,
-        output wire LTH1,
-        output wire SCR0,
-        output wire SCR1,
+        output reg nIRQ,
+        output wire nLTH2,
+        output wire nLTH0,
+        output wire nLTH1,
+        output wire nSCR0,
+        output wire nSCR1,
         output wire SND,
-        output wire OBJ,
-        output wire BUFEN,
+        output wire nOBJ,
+        output wire nBUFEN,
         output wire BANK,
-        output wire SPGM,
-        output wire MPGM
+        output wire nSPGM,
+        output wire nMPGM
     );
 
 	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
@@ -94,49 +94,49 @@ module cus47
 	//assign SUBQ = CKB;
 	
 	// 0000h - 1FFFh W 	(videoram 1)
-	assign SCR0 = A[15:13] === 'b000;
+	assign nSCR0 = A[15:13] !== 'b000;
 	
 	// 2000 - 3FFFh W		(videoram 2)
-	assign SCR1 = A[15:13] === 'b001;
+	assign nSCR1 = A[15:13] !== 'b001;
 	
 	// 4000h - 5FFFh W	(sprite ram)
-	assign OBJ = A[15:13] === 'b010;
+	assign nOBJ = A[15:13] !== 'b010;
 
 	// 4000h - 43FFh R/W	(CUS 30)
-	assign SND = A[15:10] === 'b010000;
+	assign SND = A[15:10] !== 'b010000;
 	
 	// 6000h - 7FFFh R	(EEPROM 9D)
-	assign SPGM = ~WE && (A[15:13] === 'b011);
+	assign nSPGM = (A[15:13] !== 'b011);
 	
 	// 8000h - FFFFh R	(EEPROM 9C)
-	assign MPGM = ~WE && A[15] === 'b1;
+	assign nMPGM = A[15] !== 'b1;
 	
 	// 8800h - 8FFFh W	(tile bank select)
-	assign BANK = WE && (A[15:11] === 'b10001) && A[10];
+	assign BANK = (A[15:11] === 'b10001) && A[10];
 	
 	// 9000h - 9002h W	(scroll + priority)
 	// 9003h - 9003h W 	(ROM 9D bank select)
 	// 9004h - 9006h W	(scroll + priority)
-	assign LTH0 = WE && A[15:10] === 'b100100;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
+	assign nLTH0 = A[15:10] !== 'b100100;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
 	
 	// 9400h - 9402h W	(scroll 2 + priority)
 	// 9403h - 9403h W	(ROM 12D bank select)
 	// 9404h - 9406h W	(scroll 3 + priority)
-	assign LTH1 = WE && A[15:10] === 'b100101;	
+	assign nLTH1 = A[15:10] !== 'b100101;	
 	
 	// A000h - A000h W	(BACKCOLOR) - documented as C000h but implemented as A000h in Mame
-	assign LTH2 = WE && A[15:10] === 'b101000;
+	assign nLTH2 = A[15:10] !== 'b101000;
 	
-	assign BUFEN = SCR0 | SCR1 | OBJ | SND | LTH0 | LTH1;
+	assign nBUFEN = nSCR0 && nSCR1 && nOBJ && nSND && nLTH0 && nLTH1;
 	
 	// 0x8400 - 0x8400 W  (INT ACK)
-	assign IRQ_ACK = WE && A[15:10] === 'b100001;
-	assign IRQ_next = VBLK && ~IRQ_ACK;
+	assign nIRQ_ACK = nWE || A[15:10] !== 'b100001;
+	assign nIRQ_next = nVBLK || nIRQ_ACK;
 	
-	assign RES = watchdog_counter[WATCHDOG_WIDTH-1];
+	assign nRESET = ~watchdog_counter[WATCHDOG_WIDTH-1];
 	
 	initial begin
-		IRQ = 0;
+		nIRQ = 0;
 	end
 	
 	/*always @(posedge VBLK, negedge IRQ_ACK) begin

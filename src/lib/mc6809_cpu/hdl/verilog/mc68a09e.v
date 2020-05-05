@@ -21,15 +21,15 @@
 module mc68a09e(
         input wire E,
         input wire Q,
-        input wire IRQ,
-        input wire FIRQ,
-        input wire NMI,
-        input wire HALT,
-        input wire RESET,
+        input wire nIRQ,
+        input wire nFIRQ,
+        input wire nNMI,
+        input wire nHALT,
+        input wire nRESET,
         input wire DMABREQ,
         inout wire [15:0] A,
         inout wire [7:0] D,
-        output wire WE,
+        output wire RnW,
         output wire BS,
         output wire BA,
         output wire AVMA,
@@ -39,23 +39,9 @@ module mc68a09e(
 
 	wire [15:0] AOut;
 	wire [7:0] DOut;
-	wire RnW;
 	
-	wire nIRQ;
-	wire nFIRQ;
-	wire nNMI;
-	wire nHALT;
-	wire nRESET;
-	
-	assign WE = ~RnW;
-	assign D = WE ? DOut : 8'bZ;
+	assign D = RnW ? 8'bZ : DOut;
 	assign A = BA ? 8'bZ : AOut;
-	
-	assign nIRQ = ~IRQ;
-	assign nFIRQ = ~FIRQ;
-	assign nNMI = ~NMI;
-	assign nHALT = ~HALT;
-	assign nRESET = ~RESET;
 	
 	reg [7:0] DLatched;
 	

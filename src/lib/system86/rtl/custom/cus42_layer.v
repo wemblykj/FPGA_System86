@@ -112,7 +112,7 @@ module cus42_layer
 					// set 9th bit
 					hScrollOffset[8] = CD[0];
 				end else if (!CA[1:0] == 2'b10)
-					// set all 8th bits
+					// set all 8 bits
 					vScrollOffset[7:0] <= CD;
 			end
 		end
