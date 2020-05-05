@@ -21,6 +21,7 @@
 module cus43_layer
 	#(
 		parameter ASSIGNED_LAYER = 0,
+		parameter LAYER_DISABLE_MASK = 0,
 		parameter LAYER_PRIORITY = 0
 	)
 	(

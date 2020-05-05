@@ -45,11 +45,7 @@ module videogen_subsystem
 	 `PROM_OUTPUT_DEFS(MB7124, prom_3r),
 	 `PROM_OUTPUT_DEFS(MB7116, prom_3s)
 );
-	
-	assign BLUE = ls173_3v_d;
-	assign GREEN = ls173_3u_d;
-	assign RED = ls173_3t_d;
-	
+		
 	wire [7:0] ls273_4u_d;
 	ls273 ls273_4u(
 		.CLK(CLK_6MD),
@@ -95,6 +91,10 @@ module videogen_subsystem
 		);
 		
 	// == hardware abstraction - memory buses ==
+
+	assign BLUE = ls173_3v_d;
+	assign GREEN = ls173_3u_d;
+	assign RED = ls173_3t_d;
     
 	assign prom_3r_addr = {BANK, ls273_4u_d};
 	assign prom_3r_ce_n = 1'b0;

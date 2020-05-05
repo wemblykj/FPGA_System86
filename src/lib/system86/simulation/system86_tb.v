@@ -66,6 +66,11 @@ module system86_tb;
 	`EPROM_WIRE_DEFS(M27512, eprom_7r);
 	`EPROM_WIRE_DEFS(M27256, eprom_7s);
 	
+	`EPROM_WIRE_DEFS(M27256, eprom_9c);
+	`EPROM_WIRE_DEFS(M27256, eprom_9d);
+	`EPROM_WIRE_DEFS(M27256, eprom_12c);
+	`EPROM_WIRE_DEFS(M27256, eprom_12d);
+	
 	`SRAM_WIRE_DEFS(CY6264, sram_4n);
 	`SRAM_WIRE_DEFS(CY6264, sram_7n);
 	
@@ -122,10 +127,10 @@ module system86_tb;
 			`EPROM_CONNECTION_DEFS(eprom_7r, eprom_7r),
 			`EPROM_CONNECTION_DEFS(eprom_7s, eprom_7s),
 			
-			//`EPROM_CONNECTION_DEFS(eprom_9c, eprom_9c),
-			//`EPROM_CONNECTION_DEFS(eprom_9d, eprom_9d),
-			//`EPROM_CONNECTION_DEFS(eprom_12c, eprom_12c),
-			//`EPROM_CONNECTION_DEFS(eprom_12d, eprom_12d),
+			`EPROM_CONNECTION_DEFS(eprom_9c, eprom_9c),
+			`EPROM_CONNECTION_DEFS(eprom_9d, eprom_9d),
+			`EPROM_CONNECTION_DEFS(eprom_12c, eprom_12c),
+			`EPROM_CONNECTION_DEFS(eprom_12d, eprom_12d),
 			
 			`SRAM_CONNECTION_DEFS(sram_4n, sram_4n),
 			`SRAM_CONNECTION_DEFS(sram_7n, sram_7n)
@@ -231,6 +236,62 @@ module system86_tb;
 			.nG(eprom_7s_oe_n), 
 			.A(eprom_7s_addr), 
 			.Q(eprom_7s_data)
+		);	
+		
+	eprom_m27256 
+		#(
+			.FILE_NAME(`ROM_9C),
+			.tAVQV(200),
+			.tAXQX(10)
+		) 
+		eprom_9c
+		(
+			.nE(eprom_9c_ce_n), 
+			.nG(eprom_9c_oe_n), 
+			.A(eprom_9c_addr), 
+			.Q(eprom_9c_data)
+		);	
+		
+	eprom_m27256 
+		#(
+			.FILE_NAME(`ROM_9D),
+			.tAVQV(200),
+			.tAXQX(10)
+		) 
+		eprom_9d
+		(
+			.nE(eprom_9d_ce_n), 
+			.nG(eprom_9d_oe_n), 
+			.A(eprom_9d_addr), 
+			.Q(eprom_9d_data)
+		);	
+		
+	eprom_m27256 
+		#(
+			.FILE_NAME(`ROM_12C),
+			.tAVQV(200),
+			.tAXQX(10)
+		) 
+		eprom_12c
+		(
+			.nE(eprom_12c_ce_n), 
+			.nG(eprom_12c_oe_n), 
+			.A(eprom_12c_addr), 
+			.Q(eprom_12c_data)
+		);	
+		
+	eprom_m27256 
+		#(
+			.FILE_NAME(`ROM_12D),
+			.tAVQV(200),
+			.tAXQX(10)
+		) 
+		eprom_12d
+		(
+			.nE(eprom_12d_ce_n), 
+			.nG(eprom_12d_oe_n), 
+			.A(eprom_12d_addr), 
+			.Q(eprom_12d_data)
 		);	
 			
 		// tile ram
