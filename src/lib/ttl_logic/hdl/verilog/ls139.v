@@ -20,30 +20,30 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module ls139(
-        input wire Ea,
+        input wire nEa,
         input wire A0a,
         input wire A1a,
-        input wire Eb,
+        input wire nEb,
         input wire A0b,
         input wire A1b,
-        output wire O0a,
-        output wire O1a,
-        output wire O2a,
-        output wire O3a,
-        output wire O0b,
-        output wire O1b,
-        output wire O2b,
-        output wire O3b
+        output wire nO0a,
+        output wire nO1a,
+        output wire nO2a,
+        output wire nO3a,
+        output wire nO0b,
+        output wire nO1b,
+        output wire nO2b,
+        output wire nO3b
     );
 
-	assign O0a = Ea & (~A0a & ~A1a);
-	assign O1a = Ea & (A0a & ~A1a);
-	assign O2a = Ea & (~A0a & A1a);
-	assign O3a = Ea & (A0a & A1a);
+	assign nO0a = nEa | (A0a | A1a);
+	assign nO1a = nEa | (~A0a | A1a);
+	assign nO2a = nEa | (A0a | ~A1a);
+	assign nO3a = nEa | (~A0a | ~A1a);
 	
-	assign O0b = Eb & (~A0b & ~A1b);
-	assign O1b = Eb & (A0b & ~A1b);
-	assign O2b = Eb & (~A0b & A1b);
-	assign O3b = Eb & (A0b & A1b);
+	assign nO0b = nEb | (A0b | A1b);
+	assign nO1b = nEb | (~A0b | A1b);
+	assign nO2b = nEb | (A0b | ~A1b);
+	assign nO3b = nEb | (~A0b | ~A1b);
 
 endmodule

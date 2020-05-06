@@ -110,7 +110,7 @@ module cpu_subsystem
 	
 	// == misc logic ==
 	
-	wire ls139_7d_3b;	
+	wire ls139_7d_3b_n;	// to J4
 	
 	wire ls02_12a_1y;
 	ls02 ls02_12a(
@@ -121,8 +121,8 @@ module cpu_subsystem
 	
 	wire ls08_8e_1y_n;	// low if MCS4 or MROM activity on bus
 	wire ls08_8e_2y_n;	// to nOBJECT
-	wire ls08_8e_3y;	// to nSCROLL1
-	wire ls08_8e_4y;	// to nSCROLL0
+	wire ls08_8e_3y_n;	// to nSCROLL1
+	wire ls08_8e_4y_n;	// to nSCROLL0
 	ls08 ls08_8e(
 			.A1(cus41_8a_mcs4_n),
 			.B1(cus41_8a_mrom_n),
@@ -134,13 +134,13 @@ module cpu_subsystem
 			.B4(cus41_8a_subscr0_n),
 			.Y1(ls08_8e_1y_n), 
 			.Y2(ls08_8e_2y_n), 
-			.Y3(ls08_8e_3y), 
-			.Y4(ls08_8e_4y)
+			.Y3(ls08_8e_3y_n), 
+			.Y4(ls08_8e_4y_n)
 		);
 	
 	wire ls00_8d_1y_n;	
-	wire ls00_8d_2y_n;
-	wire ls00_8d_3y_n;
+	wire ls00_8d_2y_n;	// low if 2H high and CPU 2 RnW high
+	wire ls00_8d_3y_n;	// low if 2H high and MCS4 or MROM not active 
 	ls00 ls00_8d(
 			.A1(cpu2_11a_a[12]),
 			.B1(cpu2_11a_a[15]),
@@ -204,18 +204,18 @@ module cpu_subsystem
 	
 	ls139 ls139_7d
         (
-			.Eb(cpu1_9a_a[15]),
+			.nEb(cpu1_9a_a[15]),
 			.A0b(cpu1_9a_a[13]),
 			.A1b(cpu1_9a_a[14]),
-			.O3b(ls139_7d_3b)
+			.nO3b(ls139_7d_3b_n)
 		);
 	
 	ls153 ls153_8f
         (
 			.S0(cpu1_9a_a[0]),
 			.S1(cpu1_9a_a[1]),
-			.Ea(LATCH0),
-			.Eb(LATCH1),
+			.nEa(nLATCH0),
+			.nEb(nLATCH1),
 			.I0a(1'b0),
 			.I1a(1'b0),
 			.I2a(1'b0),
@@ -372,8 +372,8 @@ module cpu_subsystem
 	assign MD = cpu1_9a_d;
 	assign nBACKCOLOR = cus47_10c_latch2_n;
 	assign nOBJECT = ls08_8e_2y_n;
-	assign nSCROLL0 = ls08_8e_4y;
-	assign nSCROLL1 = ls08_8e_3y;
+	assign nSCROLL0 = ls08_8e_4y_n;
+	assign nSCROLL1 = ls08_8e_3y_n;
 	assign nLATCH0 = ls157_8c_y[3];
 	assign nLATCH1 = ls157_8c_y[2];
 	assign BANK = cus47_10c_bank;

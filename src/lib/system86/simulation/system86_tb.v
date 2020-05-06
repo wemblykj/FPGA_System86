@@ -252,6 +252,7 @@ module system86_tb;
 			.Q(eprom_9c_data)
 		);	
 		
+	/* not used for rthunder
 	eprom_m27256 
 		#(
 			.FILE_NAME(`ROM_9D),
@@ -265,7 +266,8 @@ module system86_tb;
 			.A(eprom_9d_addr), 
 			.Q(eprom_9d_data)
 		);	
-		
+	*/
+	
 	eprom_m27256 
 		#(
 			.FILE_NAME(`ROM_12C),
