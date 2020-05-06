@@ -20,13 +20,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module ls257(
-        input wire G,
-        input wire SELA,
+        input wire nG,
+        input wire nSELA,
         input wire [3:0] A,
         input wire [3:0] B,
         output wire [3:0] Y
     );
 
-	assign Y = G ? (SELA ? A : B) : 4'bZ;
+	assign Y = nG ? 4'bZ : (nSELA ? B : A);
 
 endmodule

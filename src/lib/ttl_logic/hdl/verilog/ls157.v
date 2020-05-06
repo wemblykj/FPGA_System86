@@ -20,13 +20,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module ls157(
-        input wire G,
-        input wire SELA,
+        input wire nG,
+        input wire nSELA,
         input wire [3:0] A,
         input wire [3:0] B,
         output wire [3:0] Y
     );
 
-	assign Y = G ? (SELA ? A : B) : 4'b0;
+	assign Y = nG ? 4'b0 : (nSELA ? B : A);
 
 endmodule

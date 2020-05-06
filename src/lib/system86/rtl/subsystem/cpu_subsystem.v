@@ -105,15 +105,12 @@ module cpu_subsystem
 	wire cus41_8a_subscr0_n;
 	wire cus41_8a_subscr1_n;
 	wire cus41_8a_subobj_n;
-	wire cus41_8a_mcs4;
-	wire cus41_8a_mrom;
+	wire cus41_8a_mcs4_n;
+	wire cus41_8a_mrom_n;
 	
 	// == misc logic ==
 	
 	wire ls139_7d_3b;	
-	
-	wire [7:0] ls245_9e_a;
-	wire [7:0] ls245_12e_a;
 	
 	wire ls02_12a_1y;
 	ls02 ls02_12a(
@@ -122,38 +119,38 @@ module cpu_subsystem
 			.Y1(ls02_12a_1y)
 		);
 	
-	wire ls08_8e_1y;
-	wire ls08_8e_2y;
-	wire ls08_8e_3y;
-	wire ls08_8e_4y;
+	wire ls08_8e_1y_n;	// low if MCS4 or MROM activity on bus
+	wire ls08_8e_2y_n;	// to nOBJECT
+	wire ls08_8e_3y;	// to nSCROLL1
+	wire ls08_8e_4y;	// to nSCROLL0
 	ls08 ls08_8e(
-			.A1(~cus41_8a_mcs4),
-			.B1(cus41_8a_mrom),
-			.A2(~cus47_10c_obj_n),
-			.B2(~cus41_8a_subobj_n),
-			.A3(~cus47_10c_scr1_n),
-			.B3(~cus41_8a_subscr1_n),
-			.A4(~cus47_10c_scr0_n),
-			.B4(~cus41_8a_subscr0_n),
-			.Y1(ls08_8e_1y), 
-			.Y2(ls08_8e_2y), 
+			.A1(cus41_8a_mcs4_n),
+			.B1(cus41_8a_mrom_n),
+			.A2(cus47_10c_obj_n),
+			.B2(cus41_8a_subobj_n),
+			.A3(cus47_10c_scr1_n),
+			.B3(cus41_8a_subscr1_n),
+			.A4(cus47_10c_scr0_n),
+			.B4(cus41_8a_subscr0_n),
+			.Y1(ls08_8e_1y_n), 
+			.Y2(ls08_8e_2y_n), 
 			.Y3(ls08_8e_3y), 
 			.Y4(ls08_8e_4y)
 		);
 	
-	wire ls00_8d_1y;
-	wire ls00_8d_2y;
-	wire ls00_8d_3y;
+	wire ls00_8d_1y_n;	
+	wire ls00_8d_2y_n;
+	wire ls00_8d_3y_n;
 	ls00 ls00_8d(
 			.A1(cpu2_11a_a[12]),
 			.B1(cpu2_11a_a[15]),
-			.A2(~cpu2_11a_we_n),
+			.A2(cpu2_11a_we_n),
 			.B2(CLK_2H),
-			.A3(ls08_8e_1y),
+			.A3(ls08_8e_1y_n),
 			.B3(CLK_2H),
-			.Y1(ls00_8d_1y),
-			.Y2(ls00_8d_2y),
-			.Y3(ls00_8d_3y)
+			.Y1(ls00_8d_1y_n),
+			.Y2(ls00_8d_2y_n),
+			.Y3(ls00_8d_3y_n)
 		);
 	
 	wire ls153_8f_1y;
@@ -248,8 +245,8 @@ module cpu_subsystem
 			.nMCS0(cus41_8a_subscr0_n), 
 			.nMCS1(cus41_8a_subscr1_n), 
 			.nMCS2(cus41_8a_subobj_n), 
-			.nMCS4(cus41_8a_mcs4), 
-			.nMROM(cus41_8a_mrom)
+			.nMCS4(cus41_8a_mcs4_n), 
+			.nMROM(cus41_8a_mrom_n)
 		);
 		
 	mc68a09e cpu2_11a
@@ -281,24 +278,24 @@ module cpu_subsystem
 	
 	ls245 ls245_9e
         (
-			.DIR(~cpu1_9a_we_n),
-			.OE(cus47_10c_bufen_n),
-			.A(ls245_9e_a),
+			.DIR(cpu1_9a_we_n),
+			.nOE(cus47_10c_bufen_n),
+			.A(D),
 			.B(cpu1_9a_d)
 		);
-	
+		
 	ls245 ls245_12e
         (
-			.DIR(~cpu2_11a_we_n),
-			.OE(~ls00_8d_3y),
-			.A(ls245_12e_a),
+			.DIR(cpu2_11a_we_n),
+			.nOE(ls00_8d_3y_n),
+			.A(D),
 			.B(cpu2_11a_d)
 		);
 	
 	ls257 ls257_11e
         (
-			.G(~CLK_1H),
-			.SELA(~CLK_S2H),
+			.nG(CLK_1H),
+			.nSELA(CLK_S2H),
 			.A(cpu1_9a_a[3:0]),
 			.B(cpu2_11a_a[3:0]),
 			.Y(ls257_11e_y)
@@ -306,8 +303,8 @@ module cpu_subsystem
 		
 	ls257 ls257_11d
         (
-			.G(~CLK_1H),
-			.SELA(~CLK_S2H),
+			.nG(CLK_1H),
+			.nSELA(CLK_S2H),
 			.A(cpu1_9a_a[7:4]),
 			.B(cpu2_11a_a[7:4]),
 			.Y(ls257_11d_y)
@@ -315,8 +312,8 @@ module cpu_subsystem
 		
 	ls257 ls257_11f
         (
-			.G(~CLK_1H),
-			.SELA(~CLK_S2H),
+			.nG(CLK_1H),
+			.nSELA(CLK_S2H),
 			.A(cpu1_9a_a[11:8]),
 			.B(cpu2_11a_a[11:8]),
 			.Y(ls257_11f_y)
@@ -324,8 +321,8 @@ module cpu_subsystem
 		
 	ls157 ls157_8c
         (
-			.G(~CLK_1H),
-			.SELA(~CLK_2H),
+			.nG(CLK_1H),
+			.nSELA(CLK_2H),
 			.A( {cus47_10c_latch0_n, cus47_10c_latch1_n, cpu1_9a_we_n, cpu1_9a_a[12]} ),
 			.B( {cus41_8a_latch0_n, cus41_8a_latch1_n, cpu2_11a_we_n, cpu2_11a_a[12]} ),
 			.Y(ls157_8c_y)
@@ -336,52 +333,50 @@ module cpu_subsystem
     // CPU 1 to program ROMs 9C and 9D
     
     assign eprom_9c_addr = cpu1_9a_a[14:0];
-    assign eprom_9c_ce = CLK_2H & cus47_10C_mpmg_n;
+    assign eprom_9c_ce_n = CLK_2H | cus47_10C_mpmg_n;		// combined CE/OE
     
     assign eprom_9d_addr = cpu1_9a_a[14:0];
-    assign eprom_9d_ce = CLK_2H & cus47_10C_spmg_n;
+    assign eprom_9d_ce_n = CLK_2H | cus47_10C_spmg_n;		// combined CE/OE
     
     // Assign ROM data buses to CPU 1 bus if enabled
-    assign cpu1_9a_d = eprom_9c_ce ? eprom_9c_data : eprom_9d_ce ? eprom_9d_data : 8'bZ;
+    assign cpu1_9a_d = 
+		eprom_9c_ce_n ? 
+			eprom_9d_ce_n ? 8'bZ : eprom_9d_data
+		 : eprom_9c_data;
     
     // CPU 2 to program ROMs 12C and 12D
     
     assign eprom_12c_addr = cpu2_11a_a[14:0];
-    assign eprom_12c_ce = ls00_8d_2y & cus41_8a_mrom;
+    assign eprom_12c_ce_n = ls00_8d_2y_n | cus41_8a_mrom_n;	// combined CE/OE
     
     assign eprom_12d_addr = cpu2_11a_a[14:0];
-    assign eprom_12d_ce = ls00_8d_2y & cus41_8a_mcs4;
+    assign eprom_12d_ce_n = ls00_8d_2y_n | cus41_8a_mcs4_n;	// combined CE/OE
     
     // Assign ROM data buses to CPU 2 bus if enabled
-    assign cpu2_11a_d = eprom_12c_ce ? eprom_12c_data : eprom_12d_ce ? eprom_12d_data : 8'bZ;
+    assign cpu2_11a_d = 
+		eprom_12c_ce_n ?
+			eprom_12d_ce_n ? 8'bZ : eprom_12d_data
+		 : eprom_12c_data;
 	
 	// == Global outputs ==
 	
 	assign A = { 
-		ls157_8c_y[0], 
-		ls257_11f_y, 
-		ls257_11d_y,
-		ls257_11e_y
+		ls157_8c_y[0], 	// A12
+		ls257_11f_y,		// A8-11
+		ls257_11d_y,		// A4-7
+		ls257_11e_y			// A0-3
 		};
 	
 	assign nRESET = (rst == 1 || cus47_10c_res_n == 1 || cus41_8a_mreset_n == 1) ? 1'b0 : 1'b1;
 	
-	//assign D = CLK_1H ? ls245_9e_a : ls00_8d_3y ? ls245_12e_a : 8'bZ;
-   assign D = (ls245_9e_a == 1'bz) ? ((ls245_12e_a == 1'bz) ? ls00_8d_3y : ls245_12e_a) : ls245_9e_a;
-	
 	assign MD = cpu1_9a_d;
-	assign BACKCOLOR = cus47_10c_latch2_n;
-	assign OBJECT = ~ls08_8e_2y;
-	assign SCROLL0 = ~ls08_8e_4y;
-	assign SCROLL1 = ~ls08_8e_3y;
-	assign LATCH0 = ls157_8c_y[3];
-	assign LATCH1 = ls157_8c_y[2];
+	assign nBACKCOLOR = cus47_10c_latch2_n;
+	assign nOBJECT = ls08_8e_2y_n;
+	assign nSCROLL0 = ls08_8e_4y;
+	assign nSCROLL1 = ls08_8e_3y;
+	assign nLATCH0 = ls157_8c_y[3];
+	assign nLATCH1 = ls157_8c_y[2];
 	assign BANK = cus47_10c_bank;
-	assign WE = ls157_8c_y[1];
-
-    
-    
-	initial begin
-	end
+	assign nWE = ls157_8c_y[1];
 	
 endmodule
