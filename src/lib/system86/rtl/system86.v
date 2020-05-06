@@ -251,7 +251,13 @@ module system86
 			.nLATCH0(nLATCH0),
 			.nLATCH1(nLATCH0),
 			.nBACKCOLOR(nBACKCOLOR),
-			.MD(MD)
+			.MD(MD),
+			
+			// == hardware abstraction - memory buses ==
+			`EPROM_CONNECTION_DEFS(eprom_9c, eprom_9c),
+			`EPROM_CONNECTION_DEFS(eprom_9d, eprom_9d),
+			`EPROM_CONNECTION_DEFS(eprom_12c, eprom_12c),
+			`EPROM_CONNECTION_DEFS(eprom_12d, eprom_12d)
 			);
 		
 	/*wire vid_active;

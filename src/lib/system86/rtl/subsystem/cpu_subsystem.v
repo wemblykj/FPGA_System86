@@ -271,10 +271,22 @@ module cpu_subsystem
 	// == BUS MULTIPLEXER ==
 	
 	// to simplify HDL these are in reverse order of schematics [3:0] -> [4Y:1Y]
-	wire [3:0] ls257_11e_y;
-	wire [3:0] ls257_11d_y;
-	wire [3:0] ls257_11f_y;
-	wire [3:0] ls157_8c_y;
+	wire ls257_11e_1y;
+	wire ls257_11e_2y;
+	wire ls257_11e_3y;
+	wire ls257_11e_4y;
+	wire ls257_11d_1y;
+	wire ls257_11d_2y;
+	wire ls257_11d_3y;
+	wire ls257_11d_4y;
+	wire ls257_11f_1y;
+	wire ls257_11f_2y;
+	wire ls257_11f_3y;
+	wire ls257_11f_4y;
+	wire ls157_8c_1y;
+	wire ls157_8c_2y;
+	wire ls157_8c_3y;
+	wire ls157_8c_4y;
 	
 	ls245 ls245_9e
         (
@@ -296,36 +308,72 @@ module cpu_subsystem
         (
 			.nG(CLK_1H),
 			.nSELA(CLK_S2H),
-			.A(cpu1_9a_a[3:0]),
-			.B(cpu2_11a_a[3:0]),
-			.Y(ls257_11e_y)
+			.A1(cpu1_9a_a[3]),
+			.A2(cpu1_9a_a[2]),
+			.A3(cpu1_9a_a[1]),
+			.A4(cpu1_9a_a[0]),
+			.B1(cpu2_11a_a[3]),
+			.B2(cpu2_11a_a[2]),
+			.B3(cpu2_11a_a[1]),
+			.B4(cpu2_11a_a[0]),
+			.Y1(ls257_11e_1y),
+			.Y2(ls257_11e_2y),
+			.Y3(ls257_11e_3y),
+			.Y4(ls257_11e_4y)
 		);
 		
 	ls257 ls257_11d
         (
 			.nG(CLK_1H),
 			.nSELA(CLK_S2H),
-			.A(cpu1_9a_a[7:4]),
-			.B(cpu2_11a_a[7:4]),
-			.Y(ls257_11d_y)
+			.A1(cpu1_9a_a[7]),
+			.A2(cpu1_9a_a[6]),
+			.A3(cpu1_9a_a[5]),
+			.A4(cpu1_9a_a[4]),
+			.B1(cpu2_11a_a[7]),
+			.B2(cpu2_11a_a[6]),
+			.B3(cpu2_11a_a[5]),
+			.B4(cpu2_11a_a[4]),
+			.Y1(ls257_11d_1y),
+			.Y2(ls257_11d_2y),
+			.Y3(ls257_11d_3y),
+			.Y4(ls257_11d_4y)
 		);
 		
 	ls257 ls257_11f
         (
 			.nG(CLK_1H),
 			.nSELA(CLK_S2H),
-			.A(cpu1_9a_a[11:8]),
-			.B(cpu2_11a_a[11:8]),
-			.Y(ls257_11f_y)
+			.A1(cpu1_9a_a[11]),
+			.A2(cpu1_9a_a[10]),
+			.A3(cpu1_9a_a[9]),
+			.A4(cpu1_9a_a[8]),
+			.B1(cpu2_11a_a[11]),
+			.B2(cpu2_11a_a[10]),
+			.B3(cpu2_11a_a[9]),
+			.B4(cpu2_11a_a[8]),
+			.Y1(ls257_11f_1y),
+			.Y2(ls257_11f_2y),
+			.Y3(ls257_11f_3y),
+			.Y4(ls257_11f_4y)
 		);
 		
 	ls157 ls157_8c
         (
-			.nG(CLK_1H),
+			.nG(1'b0),
 			.nSELA(CLK_2H),
-			.A( {cus47_10c_latch0_n, cus47_10c_latch1_n, cpu1_9a_we_n, cpu1_9a_a[12]} ),
-			.B( {cus41_8a_latch0_n, cus41_8a_latch1_n, cpu2_11a_we_n, cpu2_11a_a[12]} ),
-			.Y(ls157_8c_y)
+			.A1( cus47_10c_latch0_n ),
+			.A2( cus47_10c_latch1_n ),
+			.A3( cpu1_9a_we_n ),
+			.A4( cpu1_9a_a[12] ),
+			.B1( cus41_8a_latch0_n ),
+			.B2( cus41_8a_latch1_n ),
+			.B3( cpu2_11a_we_n ),
+			.B4( cpu2_11a_a[12] ),
+			.Y1(ls157_8c_1y),
+			.Y2(ls157_8c_2y),
+			.Y3(ls157_8c_3y),
+			.Y4(ls157_8c_4y)
 		);
 	
     // == hardware abstraction - memory buses ==
@@ -333,10 +381,12 @@ module cpu_subsystem
     // CPU 1 to program ROMs 9C and 9D
     
     assign eprom_9c_addr = cpu1_9a_a[14:0];
-    assign eprom_9c_ce_n = CLK_2H | cus47_10C_mpmg_n;		// combined CE/OE
+    assign eprom_9c_ce_n = cus47_10C_mpmg_n;
+	 assign eprom_9c_oe_n = CLK_2H;
     
     assign eprom_9d_addr = cpu1_9a_a[14:0];
-    assign eprom_9d_ce_n = CLK_2H | cus47_10C_spmg_n;		// combined CE/OE
+    assign eprom_9d_ce_n = cus47_10C_spmg_n;
+	 assign eprom_9d_oe_n = CLK_2H;
     
     // Assign ROM data buses to CPU 1 bus if enabled
     assign cpu1_9a_d = 
@@ -347,10 +397,12 @@ module cpu_subsystem
     // CPU 2 to program ROMs 12C and 12D
     
     assign eprom_12c_addr = cpu2_11a_a[14:0];
-    assign eprom_12c_ce_n = ls00_8d_2y_n | cus41_8a_mrom_n;	// combined CE/OE
+    assign eprom_12c_ce_n = cus41_8a_mrom_n;
+	 assign eprom_12c_oe_n = ls00_8d_2y_n;
     
     assign eprom_12d_addr = cpu2_11a_a[14:0];
-    assign eprom_12d_ce_n = ls00_8d_2y_n | cus41_8a_mcs4_n;	// combined CE/OE
+    assign eprom_12d_ce_n = cus41_8a_mcs4_n;
+	 assign eprom_12d_oe_n = ls00_8d_2y_n;
     
     // Assign ROM data buses to CPU 2 bus if enabled
     assign cpu2_11a_d = 
@@ -361,10 +413,23 @@ module cpu_subsystem
 	// == Global outputs ==
 	
 	assign A = { 
-		ls157_8c_y[0], 	// A12
-		ls257_11f_y,		// A8-11
-		ls257_11d_y,		// A4-7
-		ls257_11e_y			// A0-3
+		// A12
+		ls157_8c_4y,
+		// A11-8
+		ls257_11f_1y,
+		ls257_11f_2y,
+		ls257_11f_3y,
+		ls257_11f_4y,
+		// A7-4
+		ls257_11d_1y,
+		ls257_11d_2y,
+		ls257_11d_3y,
+		ls257_11d_4y,
+		// A3-0
+		ls257_11e_1y,
+		ls257_11e_2y,
+		ls257_11e_3y,
+		ls257_11e_4y
 		};
 	
 	assign nRESET = (rst == 1 || cus47_10c_res_n == 1 || cus41_8a_mreset_n == 1) ? 1'b0 : 1'b1;
@@ -374,9 +439,9 @@ module cpu_subsystem
 	assign nOBJECT = ls08_8e_2y_n;
 	assign nSCROLL0 = ls08_8e_4y_n;
 	assign nSCROLL1 = ls08_8e_3y_n;
-	assign nLATCH0 = ls157_8c_y[3];
-	assign nLATCH1 = ls157_8c_y[2];
+	assign nLATCH0 = ls157_8c_1y;
+	assign nLATCH1 = ls157_8c_2y;
 	assign BANK = cus47_10c_bank;
-	assign nWE = ls157_8c_y[1];
+	assign nWE = ls157_8c_3y;
 	
 endmodule

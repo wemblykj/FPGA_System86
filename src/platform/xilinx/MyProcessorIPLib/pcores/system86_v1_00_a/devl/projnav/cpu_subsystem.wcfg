@@ -3,14 +3,14 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
+      <db_ref path="C:/Users/paulw/OneDrive/Documents/Development/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
          <top_modules>
             <top_module name="glbl" />
             <top_module name="system86_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="104" />
+   <WVObjectSize size="103" />
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/rst" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
@@ -283,57 +283,49 @@
       <obj_property name="ElementShortName">cus41_8a_subobj_n</obj_property>
       <obj_property name="ObjectShortName">cus41_8a_subobj_n</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/cus41_8a_mcs4" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">cus41_8a_mcs4</obj_property>
-      <obj_property name="ObjectShortName">cus41_8a_mcs4</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/cus41_8a_mcs4_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">cus41_8a_mcs4_n</obj_property>
+      <obj_property name="ObjectShortName">cus41_8a_mcs4_n</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/cus41_8a_mrom" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">cus41_8a_mrom</obj_property>
-      <obj_property name="ObjectShortName">cus41_8a_mrom</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/cus41_8a_mrom_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">cus41_8a_mrom_n</obj_property>
+      <obj_property name="ObjectShortName">cus41_8a_mrom_n</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls139_7d_3b" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">ls139_7d_3b</obj_property>
-      <obj_property name="ObjectShortName">ls139_7d_3b</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls245_9e_a" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">ls245_9e_a[7:0]</obj_property>
-      <obj_property name="ObjectShortName">ls245_9e_a[7:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls245_12e_a" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">ls245_12e_a[7:0]</obj_property>
-      <obj_property name="ObjectShortName">ls245_12e_a[7:0]</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls139_7d_3b_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls139_7d_3b_n</obj_property>
+      <obj_property name="ObjectShortName">ls139_7d_3b_n</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls02_12a_1y" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">ls02_12a_1y</obj_property>
       <obj_property name="ObjectShortName">ls02_12a_1y</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls08_8e_1y" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">ls08_8e_1y</obj_property>
-      <obj_property name="ObjectShortName">ls08_8e_1y</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls08_8e_1y_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls08_8e_1y_n</obj_property>
+      <obj_property name="ObjectShortName">ls08_8e_1y_n</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls08_8e_2y" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">ls08_8e_2y</obj_property>
-      <obj_property name="ObjectShortName">ls08_8e_2y</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls08_8e_2y_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls08_8e_2y_n</obj_property>
+      <obj_property name="ObjectShortName">ls08_8e_2y_n</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls08_8e_3y" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">ls08_8e_3y</obj_property>
-      <obj_property name="ObjectShortName">ls08_8e_3y</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls08_8e_3y_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls08_8e_3y_n</obj_property>
+      <obj_property name="ObjectShortName">ls08_8e_3y_n</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls08_8e_4y" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">ls08_8e_4y</obj_property>
-      <obj_property name="ObjectShortName">ls08_8e_4y</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls08_8e_4y_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls08_8e_4y_n</obj_property>
+      <obj_property name="ObjectShortName">ls08_8e_4y_n</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls00_8d_1y" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">ls00_8d_1y</obj_property>
-      <obj_property name="ObjectShortName">ls00_8d_1y</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls00_8d_1y_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls00_8d_1y_n</obj_property>
+      <obj_property name="ObjectShortName">ls00_8d_1y_n</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls00_8d_2y" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">ls00_8d_2y</obj_property>
-      <obj_property name="ObjectShortName">ls00_8d_2y</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls00_8d_2y_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls00_8d_2y_n</obj_property>
+      <obj_property name="ObjectShortName">ls00_8d_2y_n</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls00_8d_3y" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">ls00_8d_3y</obj_property>
-      <obj_property name="ObjectShortName">ls00_8d_3y</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls00_8d_3y_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls00_8d_3y_n</obj_property>
+      <obj_property name="ObjectShortName">ls00_8d_3y_n</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls153_8f_1y" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">ls153_8f_1y</obj_property>
@@ -343,21 +335,69 @@
       <obj_property name="ElementShortName">ls153_8f_2y</obj_property>
       <obj_property name="ObjectShortName">ls153_8f_2y</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11e_y" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">ls257_11e_y[3:0]</obj_property>
-      <obj_property name="ObjectShortName">ls257_11e_y[3:0]</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11e_1y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11e_1y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11e_1y</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11d_y" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">ls257_11d_y[3:0]</obj_property>
-      <obj_property name="ObjectShortName">ls257_11d_y[3:0]</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11e_2y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11e_2y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11e_2y</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11f_y" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">ls257_11f_y[3:0]</obj_property>
-      <obj_property name="ObjectShortName">ls257_11f_y[3:0]</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11e_3y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11e_3y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11e_3y</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls157_8c_y" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">ls157_8c_y[3:0]</obj_property>
-      <obj_property name="ObjectShortName">ls157_8c_y[3:0]</obj_property>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11e_4y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11e_4y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11e_4y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11d_1y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11d_1y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11d_1y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11d_2y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11d_2y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11d_2y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11d_3y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11d_3y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11d_3y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11d_4y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11d_4y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11d_4y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11f_1y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11f_1y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11f_1y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11f_2y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11f_2y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11f_2y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11f_3y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11f_3y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11f_3y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls257_11f_4y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls257_11f_4y</obj_property>
+      <obj_property name="ObjectShortName">ls257_11f_4y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls157_8c_1y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls157_8c_1y</obj_property>
+      <obj_property name="ObjectShortName">ls157_8c_1y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls157_8c_2y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls157_8c_2y</obj_property>
+      <obj_property name="ObjectShortName">ls157_8c_2y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls157_8c_3y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls157_8c_3y</obj_property>
+      <obj_property name="ObjectShortName">ls157_8c_3y</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/ls157_8c_4y" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">ls157_8c_4y</obj_property>
+      <obj_property name="ObjectShortName">ls157_8c_4y</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/cus47_10c_latch2_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">cus47_10c_latch2_n</obj_property>
@@ -371,14 +411,6 @@
       <obj_property name="ElementShortName">cus47_10c_latch0_n</obj_property>
       <obj_property name="ObjectShortName">cus47_10c_latch0_n</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/LATCH0" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">LATCH0</obj_property>
-      <obj_property name="ObjectShortName">LATCH0</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/LATCH1" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">LATCH1</obj_property>
-      <obj_property name="ObjectShortName">LATCH1</obj_property>
-   </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/cus41_8a_latch0_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">cus41_8a_latch0_n</obj_property>
       <obj_property name="ObjectShortName">cus41_8a_latch0_n</obj_property>
@@ -387,44 +419,8 @@
       <obj_property name="ElementShortName">cus41_8a_latch1_n</obj_property>
       <obj_property name="ObjectShortName">cus41_8a_latch1_n</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_9c_ce" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">eprom_9c_ce</obj_property>
-      <obj_property name="ObjectShortName">eprom_9c_ce</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_9d_ce" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">eprom_9d_ce</obj_property>
-      <obj_property name="ObjectShortName">eprom_9d_ce</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_12c_ce" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">eprom_12c_ce</obj_property>
-      <obj_property name="ObjectShortName">eprom_12c_ce</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_12d_ce" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">eprom_12d_ce</obj_property>
-      <obj_property name="ObjectShortName">eprom_12d_ce</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/BACKCOLOR" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">BACKCOLOR</obj_property>
-      <obj_property name="ObjectShortName">BACKCOLOR</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/OBJECT" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">OBJECT</obj_property>
-      <obj_property name="ObjectShortName">OBJECT</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/SCROLL0" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">SCROLL0</obj_property>
-      <obj_property name="ObjectShortName">SCROLL0</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/SCROLL1" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">SCROLL1</obj_property>
-      <obj_property name="ObjectShortName">SCROLL1</obj_property>
-   </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/BANK" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">BANK</obj_property>
       <obj_property name="ObjectShortName">BANK</obj_property>
-   </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/WE" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">WE</obj_property>
-      <obj_property name="ObjectShortName">WE</obj_property>
    </wvobject>
 </wave_config>

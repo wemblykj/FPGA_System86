@@ -22,11 +22,20 @@
 module ls257(
         input wire nG,
         input wire nSELA,
-        input wire [3:0] A,
-        input wire [3:0] B,
-        output wire [3:0] Y
+        input wire A1,
+		  input wire A2,
+		  input wire A3,
+		  input wire A4,
+        input wire B1,
+		  input wire B2,
+		  input wire B3,
+		  input wire B4,
+        output wire Y1,
+		  output wire Y2,
+		  output wire Y3,
+		  output wire Y4
     );
 
-	assign Y = nG ? 4'bZ : (nSELA ? B : A);
+	assign { Y1, Y2, Y3, Y4 } = nG ? 4'bZ : (nSELA ? { B1, B2, B3, B4 } : { A1, A2, A3, A4 } );
 
 endmodule
