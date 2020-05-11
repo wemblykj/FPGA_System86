@@ -63,14 +63,14 @@ module cus27
 	
 	reg [2:0] master_counter = 0;
 
-	reg rst_last = 0;
+	//reg rst_last = 0;
 	always @(posedge CLK_48M) begin
-		if (rst && !rst_last)
-			master_counter <= 0;
-		else
-			master_counter <= master_counter + 1;
+		//if (rst && !rst_last)
+		//	master_counter <= 0;
+		//else
+		master_counter <= master_counter + 1;
 			
-		rst_last = rst;
+		//rst_last = rst;
 	end
 
 	assign CLK_24M = master_counter[0];
@@ -78,7 +78,7 @@ module cus27
 	assign CLK_6M = master_counter[2];	
 
 	// inspired by information found @ http://www.ukvac.com/forum/namco-cus27-in-fpga-cus130-wip_topic362440.html
-	always @(negedge CLK_6M_IN) begin
+	/*always @(negedge CLK_6M_IN) begin
 		if (rst) begin
 			horizontal_counter <= 0;
 		end else begin
@@ -86,24 +86,22 @@ module cus27
 			if (horizontal_counter[8:3] === 6'b110000) 	// ~384
 			horizontal_counter = 0;
 		end
-	end
+	end*/
 		
-	always @(horizontal_counter or rst) begin
-		if (rst) begin	
-			nHSYNCON <= 1;
-			nHBLON <= 1;
-		end else begin
-			nHSYNCON <= horizontal_counter[8:0] !== 9'b100110000;	
-			nHBLON <= horizontal_counter[8:3] !== 6'b100010;	
-		end
+	always @(horizontal_counter) begin
+		nHSYNCON <= horizontal_counter[8:0] !== 9'b100110000;	
+		nHBLON <= horizontal_counter[8:3] !== 6'b100010;	
 	end
 	
 	always @(VRESETH or VRESET) begin
 		nVRESET <= ~(VRESETH && VRESET); 
 	end
 	
+	reg rst_last = 0;
 	always @(posedge CLK_6M_IN) begin
-		if (rst) begin
+		if (rst && ~rst_last) begin
+			horizontal_counter <= 0;
+			
 			nHSYNC <= 1'b1;
 			nHBLANK <= 1'b1;
 			nHRESET <= 1'b1;
@@ -115,6 +113,9 @@ module cus27
 			CLK_S2H <= 1'b0;
 			CLK_4H <= 1'b0;
 		end else begin
+			horizontal_counter <= horizontal_counter + 1;
+			if (horizontal_counter[8:3] === 6'b110000) 	// ~384
+				horizontal_counter <= 0;
 			// nHSYNC
 			
 			// ~304
@@ -146,6 +147,8 @@ module cus27
 			CLK_4H <= horizontal_counter[2];	// 0.75 Mhz
 		
 		end
+		
+		rst_last <= rst;
 	end
 		
 	always @(negedge nHSYNC) begin

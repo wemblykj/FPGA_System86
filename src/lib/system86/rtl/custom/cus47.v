@@ -48,8 +48,8 @@ module cus47
         output wire nOBJ,
         output wire nBUFEN,
         output wire BANK,
-        output reg nSPGM,
-        output reg nMPGM
+        output wire nSPGM,
+        output wire nMPGM
     );
 
 	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
@@ -94,10 +94,10 @@ module cus47
 	//assign SUBQ = CKB;
 	
 	// 0000h - 1FFFh W 	(videoram 1)
-	assign nSCR0 = A[15:13] !== 'b000;
+	assign nSCR0 = |A[15:13]; // A[15:13] !== 'b000;
 	
 	// 2000 - 3FFFh W		(videoram 2)
-	assign nSCR1 = A[15:13] !== 'b001;
+	assign nSCR1 = ~A[13] | |A[15:14]; // A[15:13] !== 'b001;
 	
 	// 4000h - 5FFFh W	(sprite ram)
 	assign nOBJ = A[15:13] !== 'b010;
@@ -106,28 +106,28 @@ module cus47
 	assign nSND = A[15:10] !== 'b010000;
 	
 	// 6000h - 7FFFh R	(EEPROM 9D)
-	//assign nSPGM = (A[15:13] !== 'b011);
+	assign nSPGM = A[15] | ~&A[14:13]; 					// A[15:13] !== 'b011;
 	
 	// 8000h - FFFFh R	(EEPROM 9C)
-	//assign nMPGM = A[15] !== 'b1;
+	assign nMPGM = ~A[15];	// // A[15] !== 'b1;
 	
 	// 8800h - 8FFFh W	(tile bank select)
-	assign BANK = (A[15:11] === 'b10001) && A[10];
+	assign BANK = ~(A[15] & &A[11:10]) | |A[14:12]; //(A[15:11] === 'b10001) && A[10];
 	
 	// 9000h - 9002h W	(scroll + priority)
 	// 9003h - 9003h W 	(ROM 9D bank select)
 	// 9004h - 9006h W	(scroll + priority)
-	assign nLTH0 = A[15:10] !== 'b100100;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
+	assign nLTH0 = ~(A[15] & A[12]) | |A[14:13] | |A[11:10];  // A[15:10] !== 'b100100;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
 	
 	// 9400h - 9402h W	(scroll 2 + priority)
 	// 9403h - 9403h W	(ROM 12D bank select)
 	// 9404h - 9406h W	(scroll 3 + priority)
-	assign nLTH1 = A[15:10] !== 'b100101;	
+	assign nLTH1 = ~(A[15] & A[12] & A[11]) | |A[14:13] | A[11]; // A[15:10] !== 'b100101;	
 	
 	// A000h - A000h W	(BACKCOLOR) - documented as C000h but implemented as A000h in Mame
-	assign nLTH2 = A[15:10] !== 'b101000;
+	assign nLTH2 = ~(A[15] & A[13]) | A[14] | |A[12:10]; // A[15:10] !== 'b101000;
 	
-	assign nBUFEN = nSCR0 && nSCR1 && nOBJ && nSND && nLTH0 && nLTH1;
+	assign nBUFEN = nSCR0 & nSCR1 & nOBJ & nSND & nLTH0 & nLTH1;
 	
 	// 0x8400 - 0x8400 W  (INT ACK)
 	assign nIRQ_ACK = nWE || A[15:10] !== 'b100001;
@@ -138,23 +138,6 @@ module cus47
 	initial begin
 		nIRQ = 0;
 	end
-	
-	always @(A) begin
-		// 6000h - 7FFFh R	(EEPROM 9D)
-		nSPGM <= (A[15:13] !== 'b011);
-	
-		// 8000h - FFFFh R	(EEPROM 9C)
-		nMPGM <= A[15] !== 'b1;
-	end
-	
-	/*always @(posedge VBLK, negedge IRQ_ACK) begin
-		IRQ <= IRQ_next;
-		
-		if (WE & (A[15:10] === 'b100000))
-			watchdog_counter <= 0;
-		else if (VBLK)
-			watchdog_counter <= watchdog_counter + 1;
-	end*/
 	
 	always @(*) begin
 		CKB_LATCHED <= CKB;

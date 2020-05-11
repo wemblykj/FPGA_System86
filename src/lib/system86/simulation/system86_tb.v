@@ -450,7 +450,7 @@ module system86_tb;
 		rst = 1;
 
 		// Wait 1000 ns for global reset to finish
-		#300;
+		#2000;
         
 		// Add stimulus here
 		rst = 0;

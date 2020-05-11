@@ -46,7 +46,7 @@ module mc68a09e(
 	reg [7:0] DLatched;
 	
 	mc6809e mc6809e(
-		.D(DLatched), 
+		.D(D), 
 		.DOut(DOut), 
 		.ADDR(AOut), 
 		.RnW(RnW), 

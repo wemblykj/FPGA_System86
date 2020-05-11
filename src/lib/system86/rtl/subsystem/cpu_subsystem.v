@@ -407,7 +407,7 @@ module cpu_subsystem
 	 assign eprom_12d_oe_n = ls00_8d_2y_n;
     
     // Assign ROM data buses to CPU 2 bus if enabled
-	 assign cpu1_11a_d = 
+	 assign cpu2_11a_d = 
 		(&eprom_12c_data !== 1'bx) ? 
 			eprom_12c_data 
 		 : (&eprom_12d_data !== 1'bx) ? 
@@ -436,7 +436,7 @@ module cpu_subsystem
 		ls257_11e_4y
 		};
 	
-	assign nRESET = (rst == 1 || cus47_10c_res_n == 1 || cus41_8a_mreset_n == 1) ? 1'b0 : 1'b1;
+	assign nRESET = ~rst | cus47_10c_res_n | cus41_8a_mreset_n;
 	
 	assign MD = cpu1_9a_d;
 	assign nBACKCOLOR = cus47_10c_latch2_n;

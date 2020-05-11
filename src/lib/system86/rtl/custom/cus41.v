@@ -61,19 +61,19 @@ module cus41
 	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
 	
 	// 0000h - 1FFFh R/W	(sprite ram)
-	assign nMCS2 = MA[15:13] !== 'b000;
+	assign nMCS2 = |MA[15:13]; // MA[15:13] !== 'b000;
 	
 	// 2000h - 3FFFh R/W 	(videoram 1)
-	assign nMCS0 = MA[15:13] !== 'b001;
+	assign nMCS0 = ~MA[13] | |MA[15:14]; // MA[15:13] !== 'b001;
 	
 	// 4000h - 5FFFh R/W		(videoram 2)
-	assign nMCS1 = MA[15:13] !== 'b010;
+	assign nMCS1 = ~MA[14] | MA[15] | MA[13]; // MA[15:13] !== 'b010;
 	
 	// 6000h - 7FFFh R	(EEPROM 12D)
-	assign nMCS4 = /*nMWE ||*/ (MA[15:13] !== 'b011);
+	assign nMCS4 = ~MA[15] | |MA[14:13]; // /*nMWE ||*/ (MA[15:13] !== 'b011);
 	
 	// 8000h - FFFFh R	(EEPROM 12C)
-	assign nMROM = /*nMWE ||*/ MA[15] !== 1;
+	assign nMROM = ~MA[15];  //*nMWE ||*/ MA[15] !== 1;
 	
 	// 0x8800 - 0x8800 W  (INT ACK)
 	assign nIRQ_ACK = nMWE || MA[15:11] !== 'b10001;
@@ -82,12 +82,12 @@ module cus41
 	// D000h - D002h W	(scroll + priority)
 	// D003h - D003h W 	(ROM 9D bank select)
 	// D004h - D006h W	(scroll + priority)
-	assign nLTH0 = /*nMWE ||*/ MA[15:11] !== 'b11010;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
+	assign nLTH0 = ~(&MA[15:14] & MA[12]) | MA[13] | MA[11]; // /*nMWE ||*/ MA[15:11] !== 'b11010;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
 	
 	// D800h - D802h W	(scroll + priority)
 	// D803h - D803h W 	(ROM 12D bank select)
 	// D8004h - D806h W	(scroll + priority)
-	assign nLTH1 = /*nMWE ||*/ MA[15:11] !== 'b11011;	
+	assign nLTH1 = ~(&MA[15:14] & MA[12:11]) | MA[13]; // /*nMWE ||*/ MA[15:11] !== 'b11011;	
 	
 	assign MRESET = watchdog_counter[WATCHDOG_WIDTH-1];
 	
