@@ -390,9 +390,11 @@ module cpu_subsystem
     
     // Assign ROM data buses to CPU 1 bus if enabled
     assign cpu1_9a_d = 
-		eprom_9c_ce_n ? 
-			eprom_9d_ce_n ? 8'bZ : eprom_9d_data
-		 : eprom_9c_data;
+		(&eprom_9c_data !== 1'bx) ? 
+			eprom_9c_data 
+		 : (&eprom_9d_data !== 1'bx) ? 
+			   eprom_9d_data
+		    : 8'bz;
     
     // CPU 2 to program ROMs 12C and 12D
     
@@ -405,11 +407,13 @@ module cpu_subsystem
 	 assign eprom_12d_oe_n = ls00_8d_2y_n;
     
     // Assign ROM data buses to CPU 2 bus if enabled
-    assign cpu2_11a_d = 
-		eprom_12c_ce_n ?
-			eprom_12d_ce_n ? 8'bZ : eprom_12d_data
-		 : eprom_12c_data;
-	
+	 assign cpu1_11a_d = 
+		(&eprom_12c_data !== 1'bx) ? 
+			eprom_12c_data 
+		 : (&eprom_12d_data !== 1'bx) ? 
+			   eprom_12d_data
+		    : 8'bz;
+	 
 	// == Global outputs ==
 	
 	assign A = { 

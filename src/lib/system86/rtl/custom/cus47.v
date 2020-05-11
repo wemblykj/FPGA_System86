@@ -48,8 +48,8 @@ module cus47
         output wire nOBJ,
         output wire nBUFEN,
         output wire BANK,
-        output wire nSPGM,
-        output wire nMPGM
+        output reg nSPGM,
+        output reg nMPGM
     );
 
 	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
@@ -106,10 +106,10 @@ module cus47
 	assign nSND = A[15:10] !== 'b010000;
 	
 	// 6000h - 7FFFh R	(EEPROM 9D)
-	assign nSPGM = (A[15:13] !== 'b011);
+	//assign nSPGM = (A[15:13] !== 'b011);
 	
 	// 8000h - FFFFh R	(EEPROM 9C)
-	assign nMPGM = A[15] !== 'b1;
+	//assign nMPGM = A[15] !== 'b1;
 	
 	// 8800h - 8FFFh W	(tile bank select)
 	assign BANK = (A[15:11] === 'b10001) && A[10];
@@ -137,6 +137,14 @@ module cus47
 	
 	initial begin
 		nIRQ = 0;
+	end
+	
+	always @(A) begin
+		// 6000h - 7FFFh R	(EEPROM 9D)
+		nSPGM <= (A[15:13] !== 'b011);
+	
+		// 8000h - FFFFh R	(EEPROM 9C)
+		nMPGM <= A[15] !== 'b1;
 	end
 	
 	/*always @(posedge VBLK, negedge IRQ_ACK) begin

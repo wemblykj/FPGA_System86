@@ -87,7 +87,7 @@ module GENERIC_PROM
 			#tGHQZ OE <= 0;
 	 end
 	 
-    always @(A) begin
+    always @(A or CE) begin
         if (CE) begin
 			   // nullify D after AXQX
 				#tAXQX DOut = {(DATA_WIDTH){1'bX}};
@@ -95,7 +95,7 @@ module GENERIC_PROM
             #(tAVQV-tAXQX) DOut = mem[A];
 			end
     end
-
+	 
 	 assign Q = CE && OE ? DOut : {(DATA_WIDTH){1'bZ}};
 
     
