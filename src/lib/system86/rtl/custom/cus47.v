@@ -26,6 +26,8 @@ module cus47
         parameter WATCHDOG_WIDTH = 4
     )
     (
+		  input wire rst,
+		  
         input wire CLK_6M,
         input wire CLK_2H,
         input wire nVBLK,
@@ -131,12 +133,19 @@ module cus47
 	
 	// 0x8400 - 0x8400 W  (INT ACK)
 	assign nIRQ_ACK = nWE || A[15:10] !== 'b100001;
-	assign nIRQ_next = nVBLK || nIRQ_ACK;
 	
 	assign nRES = ~watchdog_counter[WATCHDOG_WIDTH-1];
 	
-	initial begin
-		nIRQ = 0;
+	reg nVBLK_last;
+	always @(nVBLK or nIRQ_ACK or rst) begin
+		if (rst)
+			nIRQ <= 1;
+		else if (!nVBLK && nVBLK_last)
+			nIRQ <= 0;
+		else if (!nIRQ_ACK)
+			nIRQ <= 1;
+			
+		nVBLK_last <= nVBLK;
 	end
 	
 	always @(*) begin

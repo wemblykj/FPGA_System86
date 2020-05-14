@@ -43,7 +43,7 @@ module cpu_subsystem
         //input wire nRESET,
         inout wire [12:0] A,
         inout wire [7:0] D,
-        inout wire nWE,
+        output wire nWE,
         output wire nRESET,
         output wire nSCROLL0,
         output wire nSCROLL1,
@@ -179,6 +179,8 @@ module cpu_subsystem
 	// CUS47 - CPU 1 ADDRESS DECODER
 	cus47 cus47_10c
         (
+			.rst(rst),
+		  
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_S2H), 
 			.nVBLK(nVBLANK),
@@ -233,6 +235,8 @@ module cpu_subsystem
 	// CUS41 - CPU 2 ADDRESS DECODER
 	cus41 cus41_8a
         (
+			.rst(rst),
+			
 			.MA(cpu2_11a_a[15:11]), 
 			.CLK_0(~CLK_S2H), 	// negate for active low
 			.CLK_6M(CLK_6M), 
@@ -436,7 +440,7 @@ module cpu_subsystem
 		ls257_11e_4y
 		};
 	
-	assign nRESET = ~rst | cus47_10c_res_n | cus41_8a_mreset_n;
+	assign nRESET = ~rst & cus47_10c_res_n & cus41_8a_mreset_n;
 	
 	assign MD = cpu1_9a_d;
 	assign nBACKCOLOR = cus47_10c_latch2_n;

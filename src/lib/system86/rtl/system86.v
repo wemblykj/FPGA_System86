@@ -114,7 +114,7 @@ module system86
 	wire nLATCH0;
 	wire nLATCH1;
 	wire nBACKCOLOR;
-	wire nWE = 1'b1;
+	wire nWE;
 	wire BANK = 1'b0;
 	wire FLIP = 1'b0;
 	
@@ -242,8 +242,8 @@ module system86
 			// inout
 			.A(A),
 			.D(D),
-			.nWE(nWE),
 			// outputs
+			.nWE(nWE),
 			.nRESET(nRESET),
 			.nSCROLL0(nSCROLL0),
 			.nSCROLL1(nSCROLL1),

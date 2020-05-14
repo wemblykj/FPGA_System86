@@ -298,9 +298,9 @@ module system86_tb;
 			
 		// tile ram
 	sram_cy6264 
-		#(
+		/*#(
 			"../../../../../../../../snapshots/rthunder_gfx2_002.bin"
-		)
+		)*/
 		sram_4n
 		(
 			.nCE1(1'b0),
@@ -312,9 +312,9 @@ module system86_tb;
 		);
 		
 	sram_cy6264 
-		#(
+		/*#(
 			"../../../../../../../../snapshots/rthunder_gfx1_002.bin"
-		)
+		)*/
 		sram_7n
 		(
 			.nCE1(1'b0),

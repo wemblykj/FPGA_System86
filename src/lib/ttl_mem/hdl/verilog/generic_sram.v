@@ -25,16 +25,25 @@ module GENERIC_SRAM
         parameter DATA_WIDTH = 0,
         parameter FILE_NAME = "",
         // CY6264 timing and naming conventions (or thereabouts)
-        parameter tAA = "0",		// address access time
+		  // read
+        parameter tAA = "0",		// address to data valid
         parameter tOHA = "0",   	// output data hold time from address change
         parameter tACE = "0",	    // CE access time
         parameter tLZCE = "0",	    // CE to output low-Z
         parameter tHZCE = "0",	    // CE to output high-Z
         parameter tDOE = "0",	    // OE access time
         parameter tLZOE = "0",	    // OE to output low-Z
-        parameter tHZOE = "0"    // OE to output high-Z
+        parameter tHZOE = "0",    // OE to output high-Z
+		  // write
+		  parameter tSCE = "0",	    // CE LOW to write end
+		  parameter tAW = "0",		// address setup to write end
+		  parameter tPWE = "0",	    // WE pulse width
+		  parameter tHZWE = "0",		// WE LOW to high
+		  parameter tLZWE = "0"		// WE HIGH to low-Z
     )
     (
+		  input wire rst,
+			
         input wire nCE,
         input wire nOE,	 
         input wire nWE,
@@ -45,83 +54,136 @@ module GENERIC_SRAM
 	reg [DATA_WIDTH-1:0] mem [0:(2**ADDR_WIDTH)-1];
 	reg [DATA_WIDTH-1:0] DOut;
 	
-	reg CE;
-	reg WE;
+	// read
+	reg ACE;
 	reg DOE;
-	reg LZOE;
+	reg ZOE;
+	reg AA;
+	// write
+	reg SCE;
+	reg ZWE;
+	reg PWE;
 	
 	integer fd;
-    integer i;
-	integer count;
-    integer read;
+   integer i;
+	integer MemSize = 2**ADDR_WIDTH;
+   integer read;
 
 	reg [7:0] byte_read;
 	
 	initial begin
-		fd = $fopen(FILE_NAME, "rb");
-		if (!fd) begin
-			$display("Failed to open ROM snapshot: %s\n", FILE_NAME);
-			$stop;
-		end
+		if (FILE_NAME != "") begin
+			fd = $fopen(FILE_NAME, "rb");
+			if (!fd) begin
+				$display("Failed to open ROM snapshot: %s\n", FILE_NAME);
+				$stop;
+			end
 
-		$display("successfully read ROM snapshot: %s\n", FILE_NAME);
-		
-		count = 2**ADDR_WIDTH;
-		// works in isim but not modelsim
-		//read = $fread(mem, fd, count);
-		
-		// reading individual bytes seems to work in modelsim
-		for (i=0; i < count; i=i+1) begin
-			read = $fread(byte_read, fd);
-			mem[i]=byte_read;
-		end
-		
-		$fclose(fd);
-	end
-
-	always @(nCE) begin
-		if (!nCE)
-			#tACE CE <= 1;
-		else
-			#tLZCE CE <= 0;
-	end
-	
-	always @(nOE) begin
-		if (!nOE) begin
-			#tLZOE LZOE <= 1;
-			#(tDOE-tLZOE) DOE <= 1;
+			$display("successfully read ROM snapshot: %s\n", FILE_NAME);
+			
+			// works in isim but not modelsim
+			//read = $fread(mem, fd, count);
+			
+			// reading individual bytes seems to work in modelsim
+			for (i=0; i < MemSize; i=i+1) begin
+				read = $fread(byte_read, fd);
+				mem[i]=byte_read;
+			end
+			
+			$fclose(fd);
 		end else begin
-			#tHZOE LZOE <= 0; DOE <= 0;
+			for (i=0; i < MemSize; i=i+1)
+				mem[i]={(DATA_WIDTH){1'b0}};
+		end
+	end
+
+	// read signals
+	always @(nCE or rst) begin
+		if (rst)
+			ACE <= 0;
+		else if (!nCE)
+			#tACE ACE <= 1;
+		else
+			#tLZCE ACE <= 0;
+	end
+	
+	always @(nOE or rst) begin
+		if (rst) begin
+			DOE <= 0;
+		end else if (!nOE) begin
+			#(tDOE) DOE <= 1;
+		end else begin
+			DOE <= 0;
 		end
 	end
 	
-	always @(nWE) begin
-		if (!nWE)
-			WE <= 1;
-		else
-			WE <= 0;
+	always @(nOE or rst) begin
+		if (rst) begin
+			ZOE <= 0;
+		end else if (!nOE) begin
+			#tLZOE ZOE <= 1;
+		end else begin
+			#tHZOE ZOE <= 0;
+		end
 	end
 	
-	always @(A or D or CE or WE) 
+	always @(A or rst) begin
+		if (rst) begin
+			AA <= 0;
+		end else begin
+			AA <= 0;
+			#tAA AA <= 1;
+		end
+	end
+	
+	// write signals
+	always @(nCE or rst) begin
+		if (rst)
+			SCE <= 0;
+		else if (!nCE)
+			#tSCE SCE <= 1;
+		else
+			SCE <= 0;
+	end
+	
+	always @(nWE or nOE or rst) begin
+		if (rst) begin
+			ZWE <= 0;
+		end else if (!nWE && nOE)
+			#tHZWE ZWE <= 1;
+		else
+			#tLZWE ZWE <= 0;
+	end
+	
+	always @(A or rst) begin
+		if (rst) begin
+			PWE <= 0;
+		end else begin
+			PWE <= 0;
+			#(tAW-tPWE) PWE <= 1;
+			#tPWE PWE <= 0;
+		end
+	end
+	
+	//always @(SCE or ZWE or PWE) 
+	always @(negedge PWE) 
 	begin : MEM_WRITE
-		// TODO: timings
-		if (CE && WE) begin
+		if (SCE && ZWE /*&& PWE*/) begin
 			mem[A] = D;
 		end
 	end
 
-	always @(CE or WE or A) 
+	always @(ACE or ZOE or DOE or AA) 
 	begin : MEM_READ
-		if (!WE && CE) begin
-			// nullify D after OHA
-			#tOHA DOut <= {(DATA_WIDTH){1'bX}};
-			// Assign new value after TAA
-			
-			// layer debugging
-			#(tAA-tOHA) DOut <= mem[A];
-		end
+		/*if (!nCE || ZWE || !ZOE)
+		DOut <= {(DATA_WIDTH){1'bz}};
+		else*/
+		if (!ACE || !DOE)
+			DOut <= {(DATA_WIDTH){1'bx}};	// transient
+		else if (AA)
+			DOut <= mem[A];
 	end
 
-	assign D = CE ? ((WE || !LZOE) ? {(DATA_WIDTH){1'bZ}} : DOE ? DOut : {(DATA_WIDTH){1'bX}}) : {(DATA_WIDTH){1'bZ}};
+	assign D = (!nCE || ZWE || !ZOE) ? {(DATA_WIDTH){1'bZ}} : DOut;
 		
 endmodule

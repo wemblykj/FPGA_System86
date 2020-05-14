@@ -115,11 +115,11 @@ module cus42
 		);
 		
 	// CPU/RAM multiplexing
-	assign nRWE = nRCS ? 1'b1 : nWE;
-	assign nROE = nRCS ? 1'b0 : ~nWE;
-	assign CD = ~nRCS && nWE ? RD : 8'bZ;
+	assign nRWE = nRCS | nWE;
+	assign nROE = nRCS | ~nWE;
+	assign CD = (~nRCS && nWE) ? RD : 8'bz;
 	
-	assign RD = ~nRCS && ~nWE ? CD : 8'bZ;
+	assign RD = (~nRCS && ~nWE) ? CD : 8'bz;
 	
 	assign RA = { sram_layer, sram_layer ? RAB : RAA };
 	assign GA = { prom_layer ? GAB : GAA };				

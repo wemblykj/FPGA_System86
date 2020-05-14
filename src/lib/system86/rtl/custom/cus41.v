@@ -24,6 +24,8 @@ module cus41
         parameter WATCHDOG_WIDTH = 8
     )
     (
+		  input wire rst,
+			
         input wire [15:11] MA,
         input wire nMWE,
         input wire nVBLA,
@@ -89,7 +91,7 @@ module cus41
 	// D8004h - D806h W	(scroll + priority)
 	assign nLTH1 = ~(&MA[15:14] & MA[12:11]) | MA[13]; // /*nMWE ||*/ MA[15:11] !== 'b11011;	
 	
-	assign MRESET = watchdog_counter[WATCHDOG_WIDTH-1];
+	assign nMRES = ~watchdog_counter[WATCHDOG_WIDTH-1];
 	
 	initial begin
 		nSINT = 1'b1;

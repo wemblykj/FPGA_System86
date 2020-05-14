@@ -22,7 +22,8 @@
 module sram_cy6264
     #(
         parameter FILE_NAME = "",
-        // CY6264 timing and naming conventions (or thereabouts)
+        // M5M5165P-10 timing and naming conventions (or thereabouts)
+		  // read
         parameter tAA = 100:100:100,	// address access time
         parameter tOHA = 10,			// output data hold time from address change
         parameter tACE = 0:100:100,	    // CE access time
@@ -30,7 +31,14 @@ module sram_cy6264
         parameter tHZCE = 0:40:40,	    // CE to output high-Z
         parameter tDOE = 0:40:40,	    // OE access time
         parameter tLZOE = 5,			// OE to output low-Z
-        parameter tHZOE = 0:35:35	    // OE to output high-Z
+        parameter tHZOE = 0:35:35,	    // OE to output high-Z
+		  // write
+		  // from M5M5165P-10
+		  parameter tSCE = "0",	    // CE LOW to write end
+		  parameter tAW = "80",		// address setup to write end
+		  parameter tPWE = "60",	    // WE pulse width
+		  parameter tHZWE = "35",		// WE LOW to high
+		  parameter tLZWE = "10"		// WE HIGH to low-Z
     )
     (
         input wire nCE1,
