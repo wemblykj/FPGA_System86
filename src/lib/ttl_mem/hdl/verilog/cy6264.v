@@ -34,11 +34,11 @@ module sram_cy6264
         parameter tHZOE = 0:35:35,	    // OE to output high-Z
 		  // write
 		  // from M5M5165P-10
-		  parameter tSCE = "0",	    // CE LOW to write end
-		  parameter tAW = "80",		// address setup to write end
-		  parameter tPWE = "60",	    // WE pulse width
-		  parameter tHZWE = "35",		// WE LOW to high
-		  parameter tLZWE = "10"		// WE HIGH to low-Z
+		  parameter tSCE = 0:0:0,	    // CE LOW to write end
+		  parameter tAW = 80:80:80,		// address setup to write end
+		  parameter tPWE = 60:60:60,	    // WE pulse width
+		  parameter tHZWE = 35:35:35,		// WE LOW to high
+		  parameter tLZWE = 10:10:10		// WE HIGH to low-Z
     )
     (
         input wire nCE1,
@@ -54,7 +54,8 @@ module sram_cy6264
 		FILE_NAME,
 		tAA, tOHA,
 		tACE, tLZCE, tHZCE,
-		tDOE,	tLZOE, tHZOE
+		tDOE,	tLZOE, tHZOE,
+		tSCE, tAW, tPWE, tHZWE, tLZWE
 		) sram(
 			.nCE(nCE1 && ~CE2),
 			.nOE(nOE), 

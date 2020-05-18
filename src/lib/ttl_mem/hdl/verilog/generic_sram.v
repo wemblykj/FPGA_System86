@@ -26,20 +26,20 @@ module GENERIC_SRAM
         parameter FILE_NAME = "",
         // CY6264 timing and naming conventions (or thereabouts)
 		  // read
-        parameter tAA = "0",		// address to data valid
-        parameter tOHA = "0",   	// output data hold time from address change
-        parameter tACE = "0",	    // CE access time
-        parameter tLZCE = "0",	    // CE to output low-Z
-        parameter tHZCE = "0",	    // CE to output high-Z
-        parameter tDOE = "0",	    // OE access time
-        parameter tLZOE = "0",	    // OE to output low-Z
-        parameter tHZOE = "0",    // OE to output high-Z
+        parameter tAA = 0,		// address to data valid
+        parameter tOHA = 0,   	// output data hold time from address change
+        parameter tACE = 0,	    // CE access time
+        parameter tLZCE = 0,	    // CE to output low-Z
+        parameter tHZCE = 0,	    // CE to output high-Z
+        parameter tDOE = 0,	    // OE access time
+        parameter tLZOE = 0,	    // OE to output low-Z
+        parameter tHZOE = 0,    // OE to output high-Z
 		  // write
-		  parameter tSCE = "0",	    // CE LOW to write end
-		  parameter tAW = "0",		// address setup to write end
-		  parameter tPWE = "0",	    // WE pulse width
-		  parameter tHZWE = "0",		// WE LOW to high
-		  parameter tLZWE = "0"		// WE HIGH to low-Z
+		  parameter tSCE = 0,	    // CE LOW to write end
+		  parameter tAW = 0,		// address setup to write end
+		  parameter tPWE = 0,	    // WE pulse width
+		  parameter tHZWE = 0,		// WE LOW to high
+		  parameter tLZWE = 0		// WE HIGH to low-Z
     )
     (
 		  input wire rst,
@@ -146,12 +146,13 @@ module GENERIC_SRAM
 			SCE <= 0;
 	end
 	
-	always @(nWE or nOE or rst) begin
+	always @(nWE or rst) begin
 		if (rst) begin
 			ZWE <= 0;
-		end else if (!nWE && nOE)
+		end else if (!nWE) begin
+			ZWE <= 0;
 			#tHZWE ZWE <= 1;
-		else
+		end else
 			#tLZWE ZWE <= 0;
 	end
 	
@@ -160,8 +161,10 @@ module GENERIC_SRAM
 			PWE <= 0;
 		end else begin
 			PWE <= 0;
-			#(tAW-tPWE) PWE <= 1;
-			#tPWE PWE <= 0;
+			if (nWE) begin
+				#(tAW-tPWE) PWE <= 1;
+				#tAW PWE <= 0;
+			end
 		end
 	end
 	
