@@ -26,18 +26,20 @@ module GENERIC_SRAM
         parameter FILE_NAME = "",
         // CY6264 timing and naming conventions (or thereabouts)
 		  // read
-        parameter tAA = 0,		// address to data valid
+        parameter tAA = 0,			// address to data valid
         parameter tOHA = 0,   	// output data hold time from address change
-        parameter tACE = 0,	    // CE access time
-        parameter tLZCE = 0,	    // CE to output low-Z
-        parameter tHZCE = 0,	    // CE to output high-Z
-        parameter tDOE = 0,	    // OE access time
-        parameter tLZOE = 0,	    // OE to output low-Z
-        parameter tHZOE = 0,    // OE to output high-Z
+        parameter tACE = 0,	   // CE access time
+        parameter tLZCE = 0,	   // CE to output low-Z
+        parameter tHZCE = 0,	   // CE to output high-Z
+        parameter tDOE = 0,	   // OE access time
+        parameter tLZOE = 0,	   // OE to output low-Z
+        parameter tHZOE = 0,    	// OE to output high-Z
 		  // write
-		  parameter tSCE = 0,	    // CE LOW to write end
-		  parameter tAW = 0,		// address setup to write end
-		  parameter tPWE = 0,	    // WE pulse width
+		  parameter tSCE = 0,	   // CE LOW to write end
+		  parameter tSD = 0,			// data setup to write end
+		  parameter tHD = 0,			// data hold from write end
+		  parameter tAW = 0,			// address setup to write end
+		  parameter tPWE = 0,	   // WE pulse width
 		  parameter tHZWE = 0,		// WE LOW to high
 		  parameter tLZWE = 0		// WE HIGH to low-Z
     )
@@ -54,16 +56,43 @@ module GENERIC_SRAM
 	reg [DATA_WIDTH-1:0] mem [0:(2**ADDR_WIDTH)-1];
 	reg [DATA_WIDTH-1:0] DOut;
 	
+	reg nZCE;
 	// read
-	reg ACE;
-	reg DOE;
-	reg ZOE;
-	reg AA;
+	reg nACE;
+	reg nDOE;
+	reg nZOE;
+	reg nAA;
 	// write
-	reg SCE;
-	reg ZWE;
-	reg PWE;
+	reg nSCE;
+	reg nZWE;
+	reg nAW;
 	
+	specify
+		/* must be a port!
+		// read
+		(nCE => nZCE) = (tLZCE, tHZCE);
+		(nCE => nACE) = (tACE, tHZCE);
+		(nOE => nZOE) = (tLZOE, tHZOE);
+		(nOE => nDOE) = (tDOE, tHZOE);
+		// write
+		(nSCE => nSCE) = (tSCE, 0);
+		(nWE => nZWE) = (tLZWE, tHZWE);
+		*/
+		// checks
+		$setup(D, posedge nWE, tSD);
+		$width(negedge nWE, tPWE);
+		$hold(posedge nWE, D, tHD);
+	endspecify
+
+	// read
+	//assign #(tLZCE, tHZCE) nZCE = nCE;
+	//assign #(tACE, tHZCE) nACE = nCE;
+	//assign #(tLZOE, tHZOE) nZOE = nOE;
+	//assign #(tDOE, tHZOE) nDOE = nOE;
+	// write
+	//assign #(tSCE, 0) nSCE = nCE;
+	//assign #(tLZWE, tHZWE) nZWE = nWE;
+		
 	integer fd;
    integer i;
 	integer MemSize = 2**ADDR_WIDTH;
@@ -93,69 +122,64 @@ module GENERIC_SRAM
 			$fclose(fd);
 		end else begin
 			for (i=0; i < MemSize; i=i+1)
-				mem[i]={(DATA_WIDTH){1'b0}};
+				mem[i]={(DATA_WIDTH/8){8'hcd}};
 		end
 	end
 
 	// read signals
-	always @(nCE or rst) begin
-		if (rst)
-			ACE <= 0;
-		else if (!nCE)
-			#tACE ACE <= 1;
+	always @(nCE) begin
+		if (!nCE)
+			#tACE nACE <= 0;
 		else
-			#tLZCE ACE <= 0;
+			#tLZCE nACE <= 1;
 	end
 	
-	always @(nOE or rst) begin
-		if (rst) begin
-			DOE <= 0;
-		end else if (!nOE) begin
-			#(tDOE) DOE <= 1;
-		end else begin
-			DOE <= 0;
-		end
+	always @(nCE) begin
+		if (!nCE)
+			#tHZCE nZCE <= 0;
+		else
+			#tLZCE nZCE <= 1;
 	end
 	
-	always @(nOE or rst) begin
-		if (rst) begin
-			ZOE <= 0;
-		end else if (!nOE) begin
-			#tLZOE ZOE <= 1;
-		end else begin
-			#tHZOE ZOE <= 0;
-		end
+	always @(nOE) begin
+		if (!nOE)
+			#tDOE nDOE <= 0;
+		else
+			#tLZOE nDOE <= 1;
 	end
 	
-	always @(A or rst) begin
-		if (rst) begin
-			AA <= 0;
-		end else begin
-			AA <= 0;
-			#tAA AA <= 1;
-		end
+	always @(nOE) begin
+		if (!nOE)
+			#tHZOE nZOE <= 0;
+		else
+			#tLZOE nZOE <= 1;
+	end
+	
+	always @(A) begin
+			#tOHA nAA <= 1;
+			#(tAA-tOHA) nAA <= 0;
 	end
 	
 	// write signals
-	always @(nCE or rst) begin
-		if (rst)
-			SCE <= 0;
-		else if (!nCE)
-			#tSCE SCE <= 1;
+	always @(nCE) begin
+		nSCE <= 1;
+		if (!nCE)
+			#tSCE nSCE <= 0;
+	end
+	
+	always @(nWE) begin
+		if (!nWE)
+			#tHZWE nZWE <= 0;
 		else
-			SCE <= 0;
+			#tLZWE nZWE <= 1;
 	end
 	
-	always @(nWE or rst) begin
-		if (rst) begin
-			ZWE <= 0;
-		end else if (!nWE) begin
-			ZWE <= 0;
-			#tHZWE ZWE <= 1;
-		end else
-			#tLZWE ZWE <= 0;
+	always @(A) begin
+			nAW <= 1;
+			#tAW nAW <= 0;
 	end
 	
+	/*
 	always @(A or rst) begin
 		if (rst) begin
 			PWE <= 0;
@@ -167,26 +191,21 @@ module GENERIC_SRAM
 			end
 		end
 	end
+	*/
 	
-	//always @(SCE or ZWE or PWE) 
-	always @(negedge PWE) 
+	always @(posedge nWE or posedge nSCE) 
 	begin : MEM_WRITE
-		if (SCE && ZWE /*&& PWE*/) begin
-			mem[A] = D;
-		end
+		mem[A] = D;
 	end
 
-	always @(ACE or ZOE or DOE or AA) 
+	always @(nACE or nDOE or nAA) 
 	begin : MEM_READ
-		/*if (!nCE || ZWE || !ZOE)
-		DOut <= {(DATA_WIDTH){1'bz}};
-		else*/
-		if (!ACE || !DOE)
+		if (nACE || nDOE || nAA)
 			DOut <= {(DATA_WIDTH){1'bx}};	// transient
-		else if (AA)
+		else
 			DOut <= mem[A];
 	end
-
-	assign D = (!nCE || ZWE || !ZOE) ? {(DATA_WIDTH){1'bZ}} : DOut;
+	
+	assign D = (nZCE || !nZWE || nZOE) ? {(DATA_WIDTH){1'bZ}} : DOut;
 		
 endmodule

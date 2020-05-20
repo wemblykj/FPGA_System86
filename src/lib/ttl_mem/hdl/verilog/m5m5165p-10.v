@@ -9,7 +9,7 @@
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:    CY6264 Static RAM
+// Description:    M5M5165P-10 Static RAM
 //
 // Dependencies: 
 //
@@ -19,29 +19,28 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module sram_cy6264
+module sram_m5m5165p-10
     #(
         parameter FILE_NAME = "",
-        // CY6424-70 timing and naming conventions (or thereabouts)
+        // M5M5165P-10 worst case timings
 		  // read
-        parameter tAA = 70:70:70,	// address access time
-        parameter tOHA = 10,				// output data hold time from address change
-        parameter tACE = 0:70:70,	   // CE access time
-        parameter tLZCE = 10,				// CE to output low-Z
-        parameter tHZCE = 0:40:40,	   // CE to output high-Z
-        parameter tDOE = 0:40:40,	   // OE access time
-        parameter tLZOE = 5:5:5,			// OE to output low-Z
-        parameter tHZOE = 30:30:30,	   // OE to output high-Z
+        parameter tAA = 100:100:100,	// address access time
+        parameter tOHA = 10:10:10,			// output data hold time from address change
+        parameter tACE = 100:100:100,	    // CE access time
+        parameter tLZCE = 10:10:10,			// CE to output low-Z
+        parameter tHZCE = 35:35:35,	    // CE to output high-Z
+        parameter tDOE = 50:50:50,	    // OE access time
+        parameter tLZOE = 10:10:10,			// OE to output low-Z
+        parameter tHZOE = 35:35:35,	    // OE to output high-Z
 		  // write
 		  // from M5M5165P-10
-		  parameter tSCE = 60:60:60,	   // CE LOW to write end#
-		  parameter tSD = 35:35:35,	   // data setup to write end
-		  parameter tHD = 0:0:0,		   // data hold from write end
-		  
-		  parameter tAW = 55:55:55,		// address setup to write end
-		  parameter tPWE = 40:40:40,	   // WE pulse width
-		  parameter tHZWE = 30:30:30,		// WE LOW to high
-		  parameter tLZWE = 5:5:5			// WE HIGH to low-Z
+		  parameter tSCE = 80:80:80,	    	// CE LOW to write end#
+		  parameter tSD = 40:40:40,	   // data setup to write end
+		  parameter tHD = 5:5:5,	    	// data hold from write end
+		  parameter tAW = 0:0:0,		// address setup to write end
+		  parameter tPWE = 60:60:60,	   // WE pulse width
+		  parameter tHZWE = 35:35:35,		// WE LOW to high
+		  parameter tLZWE = 10:10:10		// WE HIGH to low-Z
     )
     (
         input wire nCE1,

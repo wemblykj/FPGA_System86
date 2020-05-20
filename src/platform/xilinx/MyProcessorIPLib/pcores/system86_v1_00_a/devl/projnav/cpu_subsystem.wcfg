@@ -3,7 +3,7 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
+      <db_ref path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
          <top_modules>
             <top_module name="glbl" />
             <top_module name="system86_tb" />
@@ -96,10 +96,12 @@
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_9c_addr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_9c_addr[14:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_9c_addr[14:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_9c_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_9c_data[7:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_9c_data[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_9d_ce_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_9d_ce_n</obj_property>
@@ -112,10 +114,12 @@
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_9d_addr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_9d_addr[14:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_9d_addr[14:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_9d_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_9d_data[7:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_9d_data[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_12c_ce_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_12c_ce_n</obj_property>
@@ -128,10 +132,12 @@
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_12c_addr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_12c_addr[14:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_12c_addr[14:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_12c_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_12c_data[7:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_12c_data[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_12d_ce_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_12d_ce_n</obj_property>
@@ -144,10 +150,12 @@
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_12d_addr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_12d_addr[14:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_12d_addr[14:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_12d_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_12d_data[7:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_12d_data[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/cpu1_9a_d" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">cpu1_9a_d[7:0]</obj_property>
@@ -238,6 +246,7 @@
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/cpu2_11a_a" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">cpu2_11a_a[15:0]</obj_property>
       <obj_property name="ObjectShortName">cpu2_11a_a[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/cpu2_11a_we_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">cpu2_11a_we_n</obj_property>
