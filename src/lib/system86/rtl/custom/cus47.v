@@ -86,14 +86,15 @@ module cus47
 		.Q4_L(PHASEA)
 	);
 	
-	assign MQ = CKB;
+	/*assign MQ = CKB;
 	assign ME = CKC;
 	assign SUBE = CKA;
+	assign SUBQ = CKD;*/
+	
+	assign MQ = CKA;  	// CKB;
+	assign ME = CKB;		// CKC;
+	assign SUBE = CKC;	// CKA;
 	assign SUBQ = CKD;
-	//assign MQ = CKD;
-	//assign ME = CKA;
-	//assign SUBE = CKC;
-	//assign SUBQ = CKB;
 	
 	// 0000h - 1FFFh W 	(videoram 1)
 	assign nSCR0 = |A[15:13]; // A[15:13] !== 'b000;

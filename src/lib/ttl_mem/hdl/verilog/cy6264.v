@@ -24,24 +24,23 @@ module sram_cy6264
         parameter FILE_NAME = "",
         // CY6424-70 timing and naming conventions (or thereabouts)
 		  // read
-        parameter tAA = 70:70:70,	// address access time
-        parameter tOHA = 10,				// output data hold time from address change
-        parameter tACE = 0:70:70,	   // CE access time
+        parameter tAA = 70,	// address access time
+        parameter tOHA = 5,				// output data hold time from address change
+        parameter tACE = 70,	   		// CE access time
         parameter tLZCE = 10,				// CE to output low-Z
-        parameter tHZCE = 0:40:40,	   // CE to output high-Z
-        parameter tDOE = 0:40:40,	   // OE access time
-        parameter tLZOE = 5:5:5,			// OE to output low-Z
-        parameter tHZOE = 30:30:30,	   // OE to output high-Z
+        parameter tHZCE = 30,	   		// CE to output high-Z
+        parameter tDOE = 35,	   		// OE access time
+        parameter tLZOE = 5,				// OE to output low-Z
+        parameter tHZOE = 30,			   // OE to output high-Z
 		  // write
-		  // from M5M5165P-10
-		  parameter tSCE = 60:60:60,	   // CE LOW to write end#
-		  parameter tSD = 35:35:35,	   // data setup to write end
-		  parameter tHD = 0:0:0,		   // data hold from write end
+		  parameter tSCE = 60,			   // CE LOW to write end#
+		  parameter tSD = 35,			   // data setup to write end
+		  parameter tHD = 0,				   // data hold from write end
 		  
-		  parameter tAW = 55:55:55,		// address setup to write end
-		  parameter tPWE = 40:40:40,	   // WE pulse width
-		  parameter tHZWE = 30:30:30,		// WE LOW to high
-		  parameter tLZWE = 5:5:5			// WE HIGH to low-Z
+		  parameter tAW = 55,				// address setup to write end
+		  parameter tPWE = 40,			   // WE pulse width
+		  parameter tHZWE = 30,				// WE LOW to high
+		  parameter tLZWE = 5				// WE HIGH to low-Z
     )
     (
         input wire nCE1,
@@ -73,7 +72,6 @@ module sram_cy6264
 			.nWE(nWE),
 			.A(A),
 			.D(D)
-			
 		);
 	
 endmodule

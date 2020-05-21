@@ -65,7 +65,6 @@ module GENERIC_SRAM
 	// write
 	reg nSCE;
 	reg nZWE;
-	reg nAW;
 	
 	specify
 		/* must be a port!
@@ -83,15 +82,6 @@ module GENERIC_SRAM
 		$width(negedge nWE, tPWE);
 		$hold(posedge nWE, D, tHD);
 	endspecify
-
-	// read
-	//assign #(tLZCE, tHZCE) nZCE = nCE;
-	//assign #(tACE, tHZCE) nACE = nCE;
-	//assign #(tLZOE, tHZOE) nZOE = nOE;
-	//assign #(tDOE, tHZOE) nDOE = nOE;
-	// write
-	//assign #(tSCE, 0) nSCE = nCE;
-	//assign #(tLZWE, tHZWE) nZWE = nWE;
 		
 	integer fd;
    integer i;
@@ -174,34 +164,16 @@ module GENERIC_SRAM
 			#tLZWE nZWE <= 1;
 	end
 	
-	always @(A) begin
-			nAW <= 1;
-			#tAW nAW <= 0;
-	end
-	
-	/*
-	always @(A or rst) begin
-		if (rst) begin
-			PWE <= 0;
-		end else begin
-			PWE <= 0;
-			if (nWE) begin
-				#(tAW-tPWE) PWE <= 1;
-				#tAW PWE <= 0;
-			end
-		end
-	end
-	*/
-	
-	always @(posedge nWE or posedge nSCE) 
+	always @(posedge nWE or posedge nCE) 
 	begin : MEM_WRITE
-		mem[A] = D;
+		if (!nCE)
+			mem[A] = D;
 	end
 
 	always @(nACE or nDOE or nAA) 
 	begin : MEM_READ
 		if (nACE || nDOE || nAA)
-			DOut <= {(DATA_WIDTH){1'bx}};	// transient
+			DOut <= {(DATA_WIDTH){1'bx}};	// show transient state
 		else
 			DOut <= mem[A];
 	end
