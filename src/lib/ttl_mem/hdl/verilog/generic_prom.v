@@ -35,16 +35,18 @@ module GENERIC_PROM
         input wire nE,
         input wire nG,
         input wire [ADDR_WIDTH-1:0] A,
-        output wire [DATA_WIDTH-1:0] Q
+        output wire [DATA_WIDTH-1:0] Q,
+		  output wire data_valid
     );
  
     reg [DATA_WIDTH-1:0] mem [0:(2**ADDR_WIDTH)-1];
     reg [DATA_WIDTH-1:0] DOut;
+	 reg DValid;
     wire [ADDR_WIDTH-1:0] AV;
 
     integer fd;
     integer i;
-	integer count;
+	 integer count;
     integer read;
 
 	reg [7:0] byte_read;
@@ -87,16 +89,20 @@ module GENERIC_PROM
 			#tGHQZ OE <= 0;
 	 end
 	 
-    always @(A or CE) begin
+	 always @(A or CE) begin
         if (CE) begin
 			   // nullify D after AXQX
-				#tAXQX DOut = {(DATA_WIDTH){1'bX}};
+				#tAXQX DValid = 0;
 				// Assign new value after AVQV
-            #(tAVQV-tAXQX) DOut = mem[A];
+            #(tAVQV-tAXQX) DValid = 1;
 			end
     end
 	 
+    always @(DValid) begin
+			DOut <= DValid ? mem[A] : {(DATA_WIDTH){1'bX}};
+    end
+	 
 	 assign Q = CE && OE ? DOut : {(DATA_WIDTH){1'bZ}};
-
+	 assign data_valid = CE && OE ? DValid : 0;
     
 endmodule

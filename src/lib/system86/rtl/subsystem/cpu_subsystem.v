@@ -292,13 +292,13 @@ module cpu_subsystem
 	wire ls157_8c_3y;
 	wire ls157_8c_4y;
 	
-	ls245 ls245_9e
+	/*ls245 ls245_9e
         (
 			.DIR(cpu1_9a_we_n),
 			.nOE(cus47_10c_bufen_n),
 			.A(D),
 			.B(cpu1_9a_d)
-		);
+		);*/
 		
 	ls245 ls245_12e
         (
@@ -393,13 +393,24 @@ module cpu_subsystem
 	 assign eprom_9d_oe_n = CLK_2H;
     
     // Assign ROM data buses to CPU 1 bus if enabled
-    assign cpu1_9a_d = 
+    assign cpu1_9a_d = eprom_9c_dv ? eprom_9c_data : 8'bz;
+	 
+		/*(&eprom_9c_data !== 1'bx) ? 
+			eprom_9c_data 
+		 : (&eprom_9d_data !== 1'bx) ? 
+			   eprom_9d_data
+		    : 8'bz; 
+			 */
+	 wire [7:0] cpu1_9a_d_alt;
+	 assign cpu1_9a_d_alt = eprom_9c_dv ? eprom_9c_data : 8'bz;
+	 /*assign cpu1_9a_d_alt = 
 		(&eprom_9c_data !== 1'bx) ? 
 			eprom_9c_data 
 		 : (&eprom_9d_data !== 1'bx) ? 
 			   eprom_9d_data
 		    : 8'bz;
-    
+    */
+	 
     // CPU 2 to program ROMs 12C and 12D
     
     assign eprom_12c_addr = cpu2_11a_a[14:0];
@@ -442,7 +453,7 @@ module cpu_subsystem
 	
 	assign nRESET = ~rst & cus47_10c_res_n & cus41_8a_mreset_n;
 	
-	assign MD = cpu1_9a_d;
+	//assign MD = cpu1_9a_d;
 	assign nBACKCOLOR = cus47_10c_latch2_n;
 	assign nOBJECT = ls08_8e_2y_n;
 	assign nSCROLL0 = ls08_8e_4y_n;

@@ -39,17 +39,17 @@ module mc68a09e(
 
 	wire [15:0] AOut;
 	wire [7:0] DOut;
+	wire RnWOut;
 	
-	assign D = RnW ? 8'bZ : DOut;
-	assign A = BA ? 8'bZ : AOut;
-	
-	reg [7:0] DLatched;
+	assign #30 D = RnWOut ? 8'bZ : DOut;
+	assign #20 A = BA ? 8'bZ : AOut;
+	assign RnW = RnWOut;
 	
 	mc6809e mc6809e(
 		.D(D), 
 		.DOut(DOut), 
 		.ADDR(AOut), 
-		.RnW(RnW), 
+		.RnW(RnWOut), 
 		.E(E), 
 		.Q(Q), 
 		.BS(BS), 
@@ -62,9 +62,5 @@ module mc68a09e(
 		.LIC(LIC), 
 		.nHALT(nHALT), 
 		.nRESET(nRESET));
-		
-	always @(*) begin
-		// Timing hack
-		DLatched = E ? D : DLatched;
-	end
+
 endmodule

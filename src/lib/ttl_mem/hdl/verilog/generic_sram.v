@@ -50,11 +50,13 @@ module GENERIC_SRAM
         input wire nOE,	 
         input wire nWE,
         input wire [ADDR_WIDTH-1:0] A,
-        inout wire [DATA_WIDTH-1:0] D
+        inout wire [DATA_WIDTH-1:0] D,
+		  output wire data_valid
     );
 	
 	reg [DATA_WIDTH-1:0] mem [0:(2**ADDR_WIDTH)-1];
 	reg [DATA_WIDTH-1:0] DOut;
+	reg DValid;
 	
 	reg nZCE;
 	// read
@@ -171,11 +173,16 @@ module GENERIC_SRAM
 	end
 
 	always @(nACE or nDOE or nAA) 
-	begin : MEM_READ
+	begin : MEM_READ_VALID
 		if (nACE || nDOE || nAA)
-			DOut <= {(DATA_WIDTH){1'bx}};	// show transient state
+			DValid = 0;
 		else
-			DOut <= mem[A];
+			DValid = 1;
+	end
+	
+	always @(DValid) 
+	begin : MEM_READ
+		DOut <= DValid ? mem[A] : {(DATA_WIDTH){1'bX}};
 	end
 	
 	assign D = (nZCE || !nZWE || nZOE) ? {(DATA_WIDTH){1'bZ}} : DOut;

@@ -38,60 +38,70 @@
 `define PROM_WIRE_DEFS(type, name) \
 	wire ``name``_ce_n;\
 	wire `ADDR_DEF(``type``, ``name``);\
-	wire `DATA_DEF(``type``, ``name``)
+	wire `DATA_DEF(``type``, ``name``);\
+	wire ``name``_dv
 	
 `define PROM_OUTPUT_DEFS(type, name) \
 	output wire ``name``_ce_n,\
 	output wire `ADDR_DEF(``type``, ``name``),\
-	input wire `DATA_DEF(``type``, ``name``)\
+	input wire `DATA_DEF(``type``, ``name``),\
+	input wire ``name``_dv
 
 `define PROM_INPUT_DEFS(type, name) \
 	input wire ``name``_ce_n,\
 	input wire `ADDR_DEF(``type``, ``name``),\
-	output wire `DATA_DEF(``type``, ``name``)
+	output wire `DATA_DEF(``type``, ``name``),\
+	output wire ``name``_dv
 
 `define EPROM_WIRE_DEFS(type, name) \
 	wire ``name``_ce_n;\
 	wire ``name``_oe_n;\
 	wire `ADDR_DEF(``type``, ``name``);\
-	wire `DATA_DEF(``type``, ``name``)
+	wire `DATA_DEF(``type``, ``name``);\
+	wire ``name``_dv
 
 `define EPROM_OUTPUT_DEFS(type, name) \
 	output wire ``name``_ce_n,\
 	output wire ``name``_oe_n,\
 	output wire `ADDR_DEF(``type``, ``name``),\
-	input wire `DATA_DEF(``type``, ``name``)\
+	input wire `DATA_DEF(``type``, ``name``),\
+	input wire ``name``_dv
 
 `define EPROM_INPUT_DEFS(type, name) \
 	input wire ``name``_ce_n,\
 	input wire ``name``_oe_n,\
 	input wire `ADDR_DEF(``type``, ``name``),\
-	output wire `DATA_DEF(``type``, ``name``)
+	output wire `DATA_DEF(``type``, ``name``),\
+	output wire ``name``_dv
 
 `define SRAM_WIRE_DEFS(type, name) \
 	wire ``name``_ce_n;\
 	wire ``name``_oe_n;\
 	wire ``name``_we_n;\
 	wire `ADDR_DEF(``type``, ``name``);\
-	wire `DATA_DEF(``type``, ``name``)\
+	wire `DATA_DEF(``type``, ``name``);\
+	wire ``name``_dv
 	
 `define SRAM_OUTPUT_DEFS(type, name) \
 	output wire ``name``_ce_n,\
 	output wire ``name``_oe_n,\
 	output wire ``name``_we_n,\
 	output wire `ADDR_DEF(``type``, ``name``),\
-	inout wire `DATA_DEF(``type``, ``name``)\
+	inout wire `DATA_DEF(``type``, ``name``),\
+	input wire ``name``_dv
 
 `define SRAM_INPUT_DEFS(type, name) \
 	input wire ``name``_ce_n,\
 	input wire ``name``_oe_n,\
 	input wire ``name``_we_n,\
 	input wire `ADDR_DEF(``type``, ``name``),\
-	inout wire `DATA_DEF(``type``, ``name``)
+	inout wire `DATA_DEF(``type``, ``name``),\
+	output wire ``name``_dv
 
 `define MEM_CONNECTION_DEFS(port, signal) \
 	.``port``_addr(``signal``_addr),\
-	.``port``_data(``signal``_data)
+	.``port``_data(``signal``_data),\
+	.``port``_dv(``signal``_dv)
 
 `define PROM_CONNECTION_DEFS(port, signal) \
 	`MEM_CONNECTION_DEFS(``port``, ``signal``),\

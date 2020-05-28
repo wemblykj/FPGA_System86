@@ -86,14 +86,9 @@ module cus47
 		.Q4_L(PHASEA)
 	);
 	
-	/*assign MQ = CKB;
+	assign MQ = CKB;
 	assign ME = CKC;
 	assign SUBE = CKA;
-	assign SUBQ = CKD;*/
-	
-	assign MQ = CKA;  	// CKB;
-	assign ME = CKB;		// CKC;
-	assign SUBE = CKC;	// CKA;
 	assign SUBQ = CKD;
 	
 	// 0000h - 1FFFh W 	(videoram 1)
@@ -109,10 +104,10 @@ module cus47
 	assign nSND = A[15:10] !== 'b010000;
 	
 	// 6000h - 7FFFh R	(EEPROM 9D)
-	assign nSPGM = A[15] | ~&A[14:13]; 					// A[15:13] !== 'b011;
+	assign nSPGM =  nWE | A[15] | ~&A[14:13]; 					// A[15:13] !== 'b011;
 	
 	// 8000h - FFFFh R	(EEPROM 9C)
-	assign nMPGM = ~A[15];	// // A[15] !== 'b1;
+	assign nMPGM = nWE | ~A[15];	// // A[15] !== 'b1;
 	
 	// 8800h - 8FFFh W	(tile bank select)
 	assign BANK = ~(A[15] & &A[11:10]) | |A[14:12]; //(A[15:11] === 'b10001) && A[10];

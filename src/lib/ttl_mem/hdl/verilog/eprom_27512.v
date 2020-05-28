@@ -33,14 +33,16 @@ module eprom_m27512
         input wire nG,
         input wire nE,
         input wire [15:0] A,
-        output wire [7:0] Q
+        output wire [7:0] Q,
+		  output wire data_valid
     );
         
     GENERIC_PROM #(16, 8, FILE_NAME, tAVQV, tAXQX, tELQV, tEHQZ, tGLQV, tGHQZ) fprom(
         .nG(nG),
         .nE(nE),
         .A(A),
-        .Q(Q)
+        .Q(Q),
+		  .data_valid(data_valid)
     );
 	
 endmodule
