@@ -292,13 +292,13 @@ module cpu_subsystem
 	wire ls157_8c_3y;
 	wire ls157_8c_4y;
 	
-	/*ls245 ls245_9e
+	ls245 ls245_9e
         (
 			.DIR(cpu1_9a_we_n),
 			.nOE(cus47_10c_bufen_n),
 			.A(D),
 			.B(cpu1_9a_d)
-		);*/
+		);
 		
 	ls245 ls245_12e
         (
