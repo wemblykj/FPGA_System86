@@ -3,7 +3,7 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
+      <db_ref path="/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
          <top_modules>
             <top_module name="glbl" />
             <top_module name="system86_tb" />
@@ -42,6 +42,7 @@
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/A" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">A[12:0]</obj_property>
       <obj_property name="ObjectShortName">A[12:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/D" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">D[7:0]</obj_property>

@@ -121,7 +121,7 @@ module cus42
 	
 	assign RD = (~nRCS && ~nWE) ? CD : 8'bz;
 	
-	assign RA = { sram_layer, sram_layer ? RAB : RAA };
+	assign RA = ~nRCS ? CA : { sram_layer, sram_layer ? RAB : RAA };
 	assign GA = { prom_layer ? GAB : GAA };				
 
 	assign HA2 = S3HA;
