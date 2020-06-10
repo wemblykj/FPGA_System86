@@ -41,9 +41,11 @@ module mc68a09e(
 	wire [7:0] DOut;
 	wire RnWOut;
 	
+	// not sure why but the cycle accurate mc6809e core is not maintaining datasheet timing, at least during simulation
 	assign #30 D = RnWOut ? 8'bZ : DOut;
 	assign #20 A = BA ? 8'bZ : AOut;
-	assign RnW = RnWOut;
+	assign #20 RnW = RnWOut;
+	
 	
 	mc6809e mc6809e(
 		.D(D), 

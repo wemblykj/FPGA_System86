@@ -104,13 +104,16 @@ module cus47
 	assign nSND = A[15:10] !== 'b010000;
 	
 	// 6000h - 7FFFh R	(EEPROM 9D)
-	assign nSPGM =  A[15] | ~&A[14:13]; 					// A[15:13] !== 'b011;
+	assign nSPGM =  ~nWE | A[15] | ~&A[14:13]; 					// A[15:13] !== 'b011;
+	
+	// 8000h W	(watchdog)
+	assign watchdog_reset = ~nWE & A[15] & ~&A[14:10];
 	
 	// 8000h - FFFFh R	(EEPROM 9C)
-	assign nMPGM = ~A[15];	// // A[15] !== 'b1;
+	assign nMPGM = ~nWE | ~A[15];	// // A[15] !== 'b1;
 	
 	// 8800h - 8FFFh W	(tile bank select)
-	assign BANK = ~(A[15] & &A[11:10]) | |A[14:12]; //(A[15:11] === 'b10001) && A[10];
+	assign BANK = ~nWE & A[15] & A[11] & ~|A[14:12]; //(A[15:11] === 'b10001x) && A[10];
 	
 	// 9000h - 9002h W	(scroll + priority)
 	// 9003h - 9003h W 	(ROM 9D bank select)
@@ -130,7 +133,14 @@ module cus47
 	// 0x8400 - 0x8400 W  (INT ACK)
 	assign nIRQ_ACK = nWE || A[15:10] !== 'b100001;
 	
-	assign nRES = ~watchdog_counter[WATCHDOG_WIDTH-1];
+	assign nRES = 1;//~watchdog_counter[WATCHDOG_WIDTH-1];
+	
+	always @(CLK_6M) begin
+		if (watchdog_reset)
+			watchdog_counter <= 0;
+		else 
+			watchdog_counter <= watchdog_counter + 1;
+	end
 	
 	reg nVBLK_last;
 	always @(nVBLK or nIRQ_ACK or rst) begin
