@@ -114,23 +114,23 @@ module cus42
 			.S3H(S3HB)
 		);
 		
-	reg [7:0] CA_Latched;
+	/*reg [7:0] CA_Latched;
 	reg [7:0] CD_Latched;
 	always @(negedge nRCS) begin
 		if (~nWE) begin
 			CA_Latched <= CA;
 			CD_Latched <= CD;
 		end
-	end
+	end*/
 	
 	// CPU/RAM multiplexing
 	assign nRWE = nRCS | nWE;
 	assign nROE = nRCS | ~nWE;
 	assign CD = (~nRCS & nWE) ? RD : 8'bz;
 	
-	assign RD = (~nRCS & ~nWE) ? CD_Latched : 8'bz;
+	assign RD = (~nRCS & ~nWE) ? CD : 8'bz;
 	
-	assign RA = ~nRCS ? CA_Latched : { sram_layer, sram_layer ? RAB : RAA };
+	assign RA = ~nRCS ? CA : { sram_layer, sram_layer ? RAB : RAA };
 	assign GA = { prom_layer ? GAB : GAA };				
 
 	assign HA2 = S3HA;

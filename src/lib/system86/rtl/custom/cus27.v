@@ -141,9 +141,9 @@ module cus27
 			VRESETH <= ~nHSYNCON;
 		
 			CLK_1H <= horizontal_counter[0];	// 3.0 Mhz
-			CLK_S1H <= horizontal_counter[0];	// is this in phase?
+			CLK_S1H <= CLK_1H; //horizontal_counter[0];	// is this in phase?
 			CLK_2H <= horizontal_counter[1];	// 1.5 Mhz
-			CLK_S2H <= horizontal_counter[1];	// is this in phase?
+			CLK_S2H <= CLK_2H; //horizontal_counter[1];	// is this in phase?
 			CLK_4H <= horizontal_counter[2];	// 0.75 Mhz
 		
 		end
