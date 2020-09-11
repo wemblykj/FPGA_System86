@@ -86,15 +86,11 @@ module cus47
 		.Q4_L(PHASEA)
 	);
 	
-	//assign MQ = CKA; //CKB;
-	//assign ME = CKB; //CKC;
-	//assign SUBE = CKC;
-	//assign SUBQ = CKD;
-	
-	assign MQ = CKA; //CKB;
-	assign ME = CKC; //CKC;
-	assign SUBE = CKB;
-	assign SUBQ = CKD;
+	// the following timings result in E going low towards the end of the EPROM cycle
+	assign MQ = CKA;
+	assign ME = CKB;
+	assign SUBQ = CKC;
+	assign SUBE = CKD;
 	
 	// 0000h - 1FFFh W 	(videoram 1)
 	assign nSCR0 = ME | |A[15:13]; // A[15:13] !== 'b000;
