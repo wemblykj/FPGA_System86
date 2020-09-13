@@ -119,6 +119,7 @@ module cus42
 	always @(negedge nRCS) begin
 		CA_Latched <= CA;
 		CD_Latched <= CD;
+	end
 	
 	// CPU/RAM multiplexing
 	assign nRWE = nRCS | nWE;
