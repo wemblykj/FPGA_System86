@@ -114,14 +114,11 @@ module cus42
 			.S3H(S3HB)
 		);
 		
-	/*reg [7:0] CA_Latched;
+	reg [13:0] CA_Latched;
 	reg [7:0] CD_Latched;
 	always @(negedge nRCS) begin
-		if (~nWE) begin
-			CA_Latched <= CA;
-			CD_Latched <= CD;
-		end
-	end*/
+		CA_Latched <= CA;
+		CD_Latched <= CD;
 	
 	// CPU/RAM multiplexing
 	assign nRWE = nRCS | nWE;
