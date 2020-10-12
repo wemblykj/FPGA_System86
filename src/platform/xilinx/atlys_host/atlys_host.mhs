@@ -1,7 +1,7 @@
 
 # ##############################################################################
 # Created by Base System Builder Wizard for Xilinx EDK 14.7 Build EDK_P.20131013
-# Sun Sep 13 13:41:24 2020
+# Mon Sep 14 23:39:37 2020
 # Target Board:  digilent atlys Rev C
 # Family:    spartan6
 # Device:    xc6slx45
@@ -39,18 +39,6 @@
  PORT Push_Buttons_5Bits_TRI_I = Push_Buttons_5Bits_TRI_I, DIR = I, VEC = [0:4]
  PORT LEDs_8Bits_TRI_O = LEDs_8Bits_TRI_O, DIR = O, VEC = [7:0]
  PORT GCLK = GCLK, DIR = I, SIGIS = CLK, CLK_FREQ = 100000000
- PORT Ethernet_Lite_TX_EN = Ethernet_Lite_TX_EN, DIR = O
- PORT Ethernet_Lite_TX_CLK = Ethernet_Lite_TX_CLK, DIR = I
- PORT Ethernet_Lite_TXD = Ethernet_Lite_TXD, DIR = O, VEC = [3:0]
- PORT Ethernet_Lite_RX_ER = Ethernet_Lite_RX_ER, DIR = I
- PORT Ethernet_Lite_RX_DV = Ethernet_Lite_RX_DV, DIR = I
- PORT Ethernet_Lite_RX_CLK = Ethernet_Lite_RX_CLK, DIR = I
- PORT Ethernet_Lite_RXD = Ethernet_Lite_RXD, DIR = I, VEC = [3:0]
- PORT Ethernet_Lite_PHY_RST_N = Ethernet_Lite_PHY_RST_N, DIR = O
- PORT Ethernet_Lite_MDIO = Ethernet_Lite_MDIO, DIR = IO
- PORT Ethernet_Lite_MDC = Ethernet_Lite_MDC, DIR = O
- PORT Ethernet_Lite_CRS = Ethernet_Lite_CRS, DIR = I
- PORT Ethernet_Lite_COL = Ethernet_Lite_COL, DIR = I
  PORT DIP_Switches_8Bits_TRI_I = DIP_Switches_8Bits_TRI_I, DIR = I, VEC = [7:0]
 
 
@@ -65,6 +53,17 @@ BEGIN proc_sys_reset
  PORT Interconnect_aresetn = proc_sys_reset_0_Interconnect_aresetn
  PORT Ext_Reset_In = RESET
  PORT BUS_STRUCT_RESET = proc_sys_reset_0_BUS_STRUCT_RESET
+END
+
+BEGIN axi_intc
+ PARAMETER INSTANCE = microblaze_0_intc
+ PARAMETER HW_VER = 1.04.a
+ PARAMETER C_BASEADDR = 0x41200000
+ PARAMETER C_HIGHADDR = 0x4120ffff
+ BUS_INTERFACE S_AXI = axi4lite_0
+ BUS_INTERFACE INTERRUPT = microblaze_0_interrupt
+ PORT S_AXI_ACLK = clk_100_0000MHzPLL0
+ PORT INTR = RS232_Uart_1_Interrupt & DIP_Switches_8Bits_IP2INTC_Irpt & Push_Buttons_5Bits_IP2INTC_Irpt
 END
 
 BEGIN lmb_v10
@@ -129,6 +128,7 @@ BEGIN microblaze
  BUS_INTERFACE M_AXI_DC = axi4_0
  BUS_INTERFACE M_AXI_IC = axi4_0
  BUS_INTERFACE DEBUG = microblaze_0_debug
+ BUS_INTERFACE INTERRUPT = microblaze_0_interrupt
  PORT MB_RESET = proc_sys_reset_0_MB_Reset
  PORT CLK = clk_100_0000MHzPLL0
 END
@@ -196,6 +196,7 @@ BEGIN axi_uartlite
  PORT S_AXI_ACLK = clk_100_0000MHzPLL0
  PORT TX = RS232_Uart_1_sout
  PORT RX = RS232_Uart_1_sin
+ PORT Interrupt = RS232_Uart_1_Interrupt
 END
 
 BEGIN axi_quad_spi
@@ -223,13 +224,14 @@ BEGIN axi_gpio
  PARAMETER HW_VER = 1.01.b
  PARAMETER C_GPIO_WIDTH = 5
  PARAMETER C_ALL_INPUTS = 1
- PARAMETER C_INTERRUPT_PRESENT = 0
+ PARAMETER C_INTERRUPT_PRESENT = 1
  PARAMETER C_IS_DUAL = 0
  PARAMETER C_BASEADDR = 0x40000000
  PARAMETER C_HIGHADDR = 0x4000ffff
  BUS_INTERFACE S_AXI = axi4lite_0
  PORT S_AXI_ACLK = clk_100_0000MHzPLL0
  PORT GPIO_IO_I = Push_Buttons_5Bits_TRI_I
+ PORT IP2INTC_Irpt = Push_Buttons_5Bits_IP2INTC_Irpt
 END
 
 BEGIN axi_s6_ddrx
@@ -294,38 +296,18 @@ BEGIN axi_gpio
  PORT GPIO_IO_O = LEDs_8Bits_TRI_O
 END
 
-BEGIN axi_ethernetlite
- PARAMETER INSTANCE = Ethernet_Lite
- PARAMETER HW_VER = 1.01.b
- PARAMETER C_BASEADDR = 0x40e00000
- PARAMETER C_HIGHADDR = 0x40e0ffff
- BUS_INTERFACE S_AXI = axi4lite_0
- PORT S_AXI_ACLK = clk_100_0000MHzPLL0
- PORT PHY_tx_en = Ethernet_Lite_TX_EN
- PORT PHY_tx_clk = Ethernet_Lite_TX_CLK
- PORT PHY_tx_data = Ethernet_Lite_TXD
- PORT PHY_rx_er = Ethernet_Lite_RX_ER
- PORT PHY_dv = Ethernet_Lite_RX_DV
- PORT PHY_rx_clk = Ethernet_Lite_RX_CLK
- PORT PHY_rx_data = Ethernet_Lite_RXD
- PORT PHY_rst_n = Ethernet_Lite_PHY_RST_N
- PORT PHY_MDIO = Ethernet_Lite_MDIO
- PORT PHY_MDC = Ethernet_Lite_MDC
- PORT PHY_crs = Ethernet_Lite_CRS
- PORT PHY_col = Ethernet_Lite_COL
-END
-
 BEGIN axi_gpio
  PARAMETER INSTANCE = DIP_Switches_8Bits
  PARAMETER HW_VER = 1.01.b
  PARAMETER C_GPIO_WIDTH = 8
  PARAMETER C_ALL_INPUTS = 1
- PARAMETER C_INTERRUPT_PRESENT = 0
+ PARAMETER C_INTERRUPT_PRESENT = 1
  PARAMETER C_IS_DUAL = 0
  PARAMETER C_BASEADDR = 0x40040000
  PARAMETER C_HIGHADDR = 0x4004ffff
  BUS_INTERFACE S_AXI = axi4lite_0
  PORT S_AXI_ACLK = clk_100_0000MHzPLL0
  PORT GPIO_IO_I = DIP_Switches_8Bits_TRI_I
+ PORT IP2INTC_Irpt = DIP_Switches_8Bits_IP2INTC_Irpt
 END
 

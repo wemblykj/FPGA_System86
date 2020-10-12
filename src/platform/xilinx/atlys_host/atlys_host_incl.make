@@ -63,6 +63,7 @@ SIMGEN_OPTIONS = -p $(DEVICE) -lang $(XPS_HDL_LANG) -intstyle $(INTSTYLE) $(SEAR
 CORE_STATE_DEVELOPMENT_FILES = 
 
 WRAPPER_NGC_FILES = implementation/atlys_host_proc_sys_reset_0_wrapper.ngc \
+implementation/atlys_host_microblaze_0_intc_wrapper.ngc \
 implementation/atlys_host_microblaze_0_ilmb_wrapper.ngc \
 implementation/atlys_host_microblaze_0_i_bram_ctrl_wrapper.ngc \
 implementation/atlys_host_microblaze_0_dlmb_wrapper.ngc \
@@ -78,7 +79,6 @@ implementation/atlys_host_qspi_flash_wrapper.ngc \
 implementation/atlys_host_push_buttons_5bits_wrapper.ngc \
 implementation/atlys_host_mcb_ddr2_wrapper.ngc \
 implementation/atlys_host_leds_8bits_wrapper.ngc \
-implementation/atlys_host_ethernet_lite_wrapper.ngc \
 implementation/atlys_host_dip_switches_8bits_wrapper.ngc
 
 POSTSYN_NETLIST = implementation/$(SYSTEM).ngc
