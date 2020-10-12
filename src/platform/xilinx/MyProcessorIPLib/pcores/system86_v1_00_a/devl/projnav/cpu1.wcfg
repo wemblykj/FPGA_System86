@@ -10,7 +10,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="31" />
+   <WVObjectSize size="36" />
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/nRESET" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">nRESET</obj_property>
       <obj_property name="ObjectShortName">nRESET</obj_property>
@@ -109,6 +109,26 @@
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/nWE" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">nWE</obj_property>
       <obj_property name="ObjectShortName">nWE</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/nRCS" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">nRCS</obj_property>
+      <obj_property name="ObjectShortName">nRCS</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/CD" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">CD[7:0]</obj_property>
+      <obj_property name="ObjectShortName">CD[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/RD" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">RD[7:0]</obj_property>
+      <obj_property name="ObjectShortName">RD[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/CA" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">CA[13:0]</obj_property>
+      <obj_property name="ObjectShortName">CA[13:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k/RA" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">RA[12:0]</obj_property>
+      <obj_property name="ObjectShortName">RA[12:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/sram_7n_ce_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">sram_7n_ce_n</obj_property>

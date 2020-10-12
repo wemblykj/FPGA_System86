@@ -93,16 +93,17 @@ module cus47
 	assign SUBE = CKD;
 	
 	// 0000h - 1FFFh W 	(videoram 1)
-	assign nSCR0 = ME | |A[15:13]; // A[15:13] !== 'b000;
+	// Try synchronising with E as is done for the WRB signal in GnG
+	assign nSCR0 = ~ME | |A[15:13]; // A[15:13] !== 'b000;
 	
 	// 2000 - 3FFFh W		(videoram 2)
-	assign nSCR1 = ME | ~A[13] | |A[15:14]; // A[15:13] !== 'b001;
+	assign nSCR1 = ~ME | ~A[13] | |A[15:14]; // A[15:13] !== 'b001;
 	
 	// 4000h - 5FFFh W	(sprite ram)
-	assign nOBJ = ME | A[15:13] !== 'b010;
+	assign nOBJ = A[15:13] !== 'b010;
 
 	// 4000h - 43FFh R/W	(CUS 30)
-	assign nSND = ME | A[15:10] !== 'b010000;
+	assign nSND = A[15:10] !== 'b010000;
 	
 	// 6000h - 7FFFh R	(EEPROM 9D)
 	assign nSPGM =  ~nWE | A[15] | ~&A[14:13]; 					// A[15:13] !== 'b011;
