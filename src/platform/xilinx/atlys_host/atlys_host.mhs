@@ -40,6 +40,18 @@
  PORT LEDs_8Bits_TRI_O = LEDs_8Bits_TRI_O, DIR = O, VEC = [7:0]
  PORT GCLK = GCLK, DIR = I, SIGIS = CLK, CLK_FREQ = 100000000
  PORT DIP_Switches_8Bits_TRI_I = DIP_Switches_8Bits_TRI_I, DIR = I, VEC = [7:0]
+ PORT Digilent_Usb_Epp_IFCLK_pin = Digilent_Usb_Epp_IFCLK, DIR = I, SIGIS = CLK
+ PORT Digilent_Usb_Epp_STMEN_pin = Digilent_Usb_Epp_STMEN, DIR = I
+ PORT Digilent_Usb_Epp_FLAGA_pin = Digilent_Usb_Epp_FLAGA, DIR = I
+ PORT Digilent_Usb_Epp_FLAGB_pin = Digilent_Usb_Epp_FLAGB, DIR = I
+ PORT Digilent_Usb_Epp_FLAGC_pin = Digilent_Usb_Epp_FLAGC, DIR = I
+ PORT Digilent_Usb_Epp_SLRD_pin = Digilent_Usb_Epp_SLRD, DIR = O
+ PORT Digilent_Usb_Epp_SLWR_pin = Digilent_Usb_Epp_SLWR, DIR = O
+ PORT Digilent_Usb_Epp_SLOE_pin = Digilent_Usb_Epp_SLOE, DIR = O
+ PORT Digilent_Usb_Epp_FIFOADR_pin = Digilent_Usb_Epp_FIFOADR, DIR = O, VEC = [1:0]
+ PORT Digilent_Usb_Epp_PKTEND_pin = Digilent_Usb_Epp_PKTEND, DIR = O
+ PORT Digilent_Usb_Epp_EPPRST_pin = Digilent_Usb_Epp_EPPRST, DIR = I
+ PORT Digilent_Usb_Epp_DB = Digilent_Usb_Epp_DB, DIR = IO, VEC = [7:0]
 
 
 BEGIN proc_sys_reset
@@ -63,7 +75,7 @@ BEGIN axi_intc
  BUS_INTERFACE S_AXI = axi4lite_0
  BUS_INTERFACE INTERRUPT = microblaze_0_interrupt
  PORT S_AXI_ACLK = clk_100_0000MHzPLL0
- PORT INTR = RS232_Uart_1_Interrupt & DIP_Switches_8Bits_IP2INTC_Irpt & Push_Buttons_5Bits_IP2INTC_Irpt
+ PORT INTR = RS232_Uart_1_Interrupt & Push_Buttons_5Bits_IP2INTC_Irpt & DIP_Switches_8Bits_IP2INTC_Irpt & Digilent_Usb_Epp_IRQ_EPP
 END
 
 BEGIN lmb_v10
@@ -309,5 +321,27 @@ BEGIN axi_gpio
  PORT S_AXI_ACLK = clk_100_0000MHzPLL0
  PORT GPIO_IO_I = DIP_Switches_8Bits_TRI_I
  PORT IP2INTC_Irpt = DIP_Switches_8Bits_IP2INTC_Irpt
+END
+
+BEGIN d_usb_epp_dstm_axi
+ PARAMETER INSTANCE = Digilent_Usb_Epp
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_BASEADDR = 0x7bc00000
+ PARAMETER C_HIGHADDR = 0x7bc0ffff
+ BUS_INTERFACE S_AXI = axi4lite_0
+ PORT S_AXI_ACLK = clk_100_0000MHzPLL0
+ PORT IRQ_EPP = Digilent_Usb_Epp_IRQ_EPP
+ PORT IFCLK = Digilent_Usb_Epp_IFCLK
+ PORT STMEN = Digilent_Usb_Epp_STMEN
+ PORT FLAGA = Digilent_Usb_Epp_FLAGA
+ PORT FLAGB = Digilent_Usb_Epp_FLAGB
+ PORT FLAGC = Digilent_Usb_Epp_FLAGC
+ PORT SLRD = Digilent_Usb_Epp_SLRD
+ PORT SLWR = Digilent_Usb_Epp_SLWR
+ PORT SLOE = Digilent_Usb_Epp_SLOE
+ PORT FIFOADR = Digilent_Usb_Epp_FIFOADR
+ PORT PKTEND = Digilent_Usb_Epp_PKTEND
+ PORT EPPRST = Digilent_Usb_Epp_EPPRST
+ PORT DB = Digilent_Usb_Epp_DB
 END
 

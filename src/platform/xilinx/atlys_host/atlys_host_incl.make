@@ -79,7 +79,8 @@ implementation/atlys_host_qspi_flash_wrapper.ngc \
 implementation/atlys_host_push_buttons_5bits_wrapper.ngc \
 implementation/atlys_host_mcb_ddr2_wrapper.ngc \
 implementation/atlys_host_leds_8bits_wrapper.ngc \
-implementation/atlys_host_dip_switches_8bits_wrapper.ngc
+implementation/atlys_host_dip_switches_8bits_wrapper.ngc \
+implementation/atlys_host_digilent_usb_epp_wrapper.ngc
 
 POSTSYN_NETLIST = implementation/$(SYSTEM).ngc
 
