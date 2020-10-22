@@ -1,7 +1,7 @@
 
-<EDKSYSTEM EDKVERSION="14.7" EDWVERSION="1.2" TIMESTAMP="Wed Oct 21 23:00:39 2020">
+<EDKSYSTEM EDKVERSION="14.7" EDWVERSION="1.2" TIMESTAMP="Thu Oct 22 12:57:03 2020">
 
-  <SYSTEMINFO ARCH="spartan6" DEVICE="xc6slx45" PACKAGE="csg324" PART="xc6slx45csg324-3" SOURCE="C:/Development/FPGA/FPGA_System86/src/platform/xilinx/atlys_host/atlys_host.xmp" SPEEDGRADE="-3"/>
+  <SYSTEMINFO ARCH="spartan6" DEVICE="xc6slx45" PACKAGE="csg324" PART="xc6slx45csg324-3" SOURCE="/home/administrator/Development/fpga/system86/src/platform/xilinx/atlys_host/atlys_host.xmp" SPEEDGRADE="-3"/>
 
   <EXTERNALPORTS>
     <PORT DIR="IO" MHS_INDEX="0" NAME="zio" SIGNAME="zio">
@@ -449,13 +449,13 @@
         <PARAMETER ASSIGNMENT="CONSTANT" MPD_INDEX="5" NAME="C_S_AXI_DATA_WIDTH" TYPE="INTEGER" VALUE="32">
           <DESCRIPTION>AXI Data Width</DESCRIPTION>
         </PARAMETER>
-        <PARAMETER ASSIGNMENT="UPDATE" CHANGEDBY="SYSTEM" MPD_INDEX="6" NAME="C_NUM_INTR_INPUTS" TYPE="INTEGER" VALUE="4">
+        <PARAMETER ASSIGNMENT="UPDATE" CHANGEDBY="SYSTEM" MPD_INDEX="6" NAME="C_NUM_INTR_INPUTS" TYPE="INTEGER" VALUE="6">
           <DESCRIPTION>Number of Interrupt Inputs </DESCRIPTION>
         </PARAMETER>
         <PARAMETER ASSIGNMENT="OPTIONAL" MPD_INDEX="7" NAME="C_NUM_SW_INTR" TYPE="INTEGER" VALUE="0">
           <DESCRIPTION>Number of Software Interrupts </DESCRIPTION>
         </PARAMETER>
-        <PARAMETER ASSIGNMENT="UPDATE" CHANGEDBY="SYSTEM" MPD_INDEX="8" NAME="C_KIND_OF_INTR" TYPE="std_logic_vector" VALUE="0b11111111111111111111111111111001">
+        <PARAMETER ASSIGNMENT="UPDATE" CHANGEDBY="SYSTEM" MPD_INDEX="8" NAME="C_KIND_OF_INTR" TYPE="std_logic_vector" VALUE="0b11111111111111111111111111100100">
           <DESCRIPTION>Type of Interrupt for Each Input </DESCRIPTION>
         </PARAMETER>
         <PARAMETER ASSIGNMENT="UPDATE" CHANGEDBY="SYSTEM" MPD_INDEX="9" NAME="C_KIND_OF_EDGE" TYPE="std_logic_vector" VALUE="0b11111111111111111111111111111111">
@@ -509,16 +509,18 @@
             <CONNECTION INSTANCE="clock_generator_0" PORT="CLKOUT2"/>
           </CONNECTIONS>
         </PORT>
-        <PORT DIR="I" ENDIAN="LITTLE" IS_INSTANTIATED="TRUE" LEFT="3" LSB="0" MHS_INDEX="1" MPD_INDEX="19" MSB="3" NAME="INTR" RIGHT="0" SENSITIVITY="EDGE_RISING" SIGIS="INTERRUPT" SIGNAME="RS232_Uart_1_Interrupt &amp; Push_Buttons_5Bits_IP2INTC_Irpt &amp; DIP_Switches_8Bits_IP2INTC_Irpt &amp; Digilent_Usb_Epp_IRQ_EPP" VECFORMULA="[(C_NUM_INTR_INPUTS-1):0]">
+        <PORT DIR="I" ENDIAN="LITTLE" IS_INSTANTIATED="TRUE" LEFT="5" LSB="0" MHS_INDEX="1" MPD_INDEX="19" MSB="5" NAME="INTR" RIGHT="0" SENSITIVITY="EDGE_RISING" SIGIS="INTERRUPT" SIGNAME="RS232_Uart_1_Interrupt &amp; Push_Buttons_5Bits_IP2INTC_Irpt &amp; DIP_Switches_8Bits_IP2INTC_Irpt &amp; Digilent_Usb_Epp_IRQ_EPP &amp; axi_vdma_0_mm2s_introut &amp; axi_vdma_0_s2mm_introut" VECFORMULA="[(C_NUM_INTR_INPUTS-1):0]">
           <SIGNALS>
             <SIGNAL NAME="RS232_Uart_1_Interrupt"/>
             <SIGNAL NAME="Push_Buttons_5Bits_IP2INTC_Irpt"/>
             <SIGNAL NAME="DIP_Switches_8Bits_IP2INTC_Irpt"/>
             <SIGNAL NAME="Digilent_Usb_Epp_IRQ_EPP"/>
+            <SIGNAL NAME="axi_vdma_0_mm2s_introut"/>
+            <SIGNAL NAME="axi_vdma_0_s2mm_introut"/>
           </SIGNALS>
           <DESCRIPTION>Interrupt Inputs</DESCRIPTION>
           <CONNECTIONS>
-            <CONNECTION INSTANCE="rs232_uart_1_interrupt &amp; push_buttons_5bits_ip2intc_irpt &amp; dip_switches_8bits_ip2intc_irpt &amp; digilent_usb_epp_irq_epp"/>
+            <CONNECTION INSTANCE="rs232_uart_1_interrupt &amp; push_buttons_5bits_ip2intc_irpt &amp; dip_switches_8bits_ip2intc_irpt &amp; digilent_usb_epp_irq_epp &amp; axi_vdma_0_mm2s_introut &amp; axi_vdma_0_s2mm_introut"/>
           </CONNECTIONS>
         </PORT>
         <PORT BUS="S_AXI" DEF_SIGNAME="axi4lite_0_M_ARESETN" DIR="I" MPD_INDEX="1" NAME="S_AXI_ARESETN" SIGIS="RST" SIGNAME="axi4lite_0_M_ARESETN">
@@ -684,6 +686,8 @@
         <SOURCE INSTANCE="push_buttons_5bits" PRIORITY="1" SIGNAME="Push_Buttons_5Bits_IP2INTC_Irpt"/>
         <SOURCE INSTANCE="dip_switches_8bits" PRIORITY="2" SIGNAME="DIP_Switches_8Bits_IP2INTC_Irpt"/>
         <SOURCE INSTANCE="digilent_usb_epp" PRIORITY="3" SIGNAME="Digilent_Usb_Epp_IRQ_EPP"/>
+        <SOURCE INSTANCE="axi_vdma_0" PRIORITY="4" SIGNAME="axi_vdma_0_mm2s_introut"/>
+        <SOURCE INSTANCE="axi_vdma_0" PRIORITY="5" SIGNAME="axi_vdma_0_s2mm_introut"/>
         <TARGET INSTANCE="microblaze_0"/>
       </INTERRUPTINFO>
     </MODULE>
@@ -2063,7 +2067,7 @@
       <DESCRIPTION TYPE="SHORT">MicroBlaze</DESCRIPTION>
       <DESCRIPTION TYPE="LONG">The MicroBlaze 32 bit soft processor</DESCRIPTION>
       <DOCUMENTATION>
-        <DOCUMENT SOURCE="C:/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/microblaze_v8_50_c/doc/microblaze.pdf" TYPE="IP"/>
+        <DOCUMENT SOURCE="/opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/microblaze_v8_50_c/doc/microblaze.pdf" TYPE="IP"/>
       </DOCUMENTATION>
       <LICENSEINFO ICON_NAME="ps_core_preferred"/>
       <PARAMETERS>
@@ -10943,7 +10947,7 @@
       <DESCRIPTION TYPE="SHORT">AXI HDMI Receiver/Transmitter</DESCRIPTION>
       <DESCRIPTION TYPE="LONG">AXI4-Stream HDMI Receiver/Transmitter</DESCRIPTION>
       <DOCUMENTATION>
-        <DOCUMENT SOURCE="C:/Development/FPGA/Digilent/Atlys_AXI_BSB_Support/lib/Digilent/pcores/axi_hdmi_v1_00_a/doc/axi_hdmi_v1_00_a.pdf" TYPE="IP"/>
+        <DOCUMENT SOURCE="/opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib/Digilent/pcores/axi_hdmi_v1_00_a/doc/axi_hdmi_v1_00_a.pdf" TYPE="IP"/>
       </DOCUMENTATION>
       <LICENSEINFO ICON_NAME="ps_core_preferred"/>
       <PARAMETERS>
@@ -10959,14 +10963,14 @@
         <PARAMETER ASSIGNMENT="OPTIONAL" MPD_INDEX="3" NAME="C_USE_HDMI_DDC" TYPE="INTEGER" VALUE="1">
           <DESCRIPTION>Use HDMI DDC2B </DESCRIPTION>
         </PARAMETER>
-        <PARAMETER ASSIGNMENT="OPTIONAL" MPD_INDEX="4" NAME="C_AXI_STREAM_DATA_WIDTH" TYPE="INTEGER" VALUE="32">
-          <DESCRIPTION>AXI4-Stream Data Width (S2MM and MM2S) </DESCRIPTION>
-        </PARAMETER>
-        <PARAMETER ADDRESS="BASE" ADDR_TYPE="REGISTER" ASSIGNMENT="OPTIONAL" CHANGEDBY="USER" IS_INSTANTIATED="TRUE" MHS_INDEX="2" MPD_INDEX="5" NAME="C_BASEADDR" TYPE="std_logic_vector" VALUE="0x7e200000">
+        <PARAMETER ADDRESS="BASE" ADDR_TYPE="REGISTER" ASSIGNMENT="OPTIONAL" CHANGEDBY="USER" IS_INSTANTIATED="TRUE" MHS_INDEX="2" MPD_INDEX="4" NAME="C_BASEADDR" TYPE="std_logic_vector" VALUE="0x7e200000">
           <DESCRIPTION>AXI4-Lite Baseaddress</DESCRIPTION>
         </PARAMETER>
-        <PARAMETER ADDRESS="HIGH" ADDR_TYPE="REGISTER" ASSIGNMENT="OPTIONAL" CHANGEDBY="USER" IS_INSTANTIATED="TRUE" MHS_INDEX="3" MPD_INDEX="6" NAME="C_HIGHADDR" TYPE="std_logic_vector" VALUE="0x7e20ffff">
+        <PARAMETER ADDRESS="HIGH" ADDR_TYPE="REGISTER" ASSIGNMENT="OPTIONAL" CHANGEDBY="USER" IS_INSTANTIATED="TRUE" MHS_INDEX="3" MPD_INDEX="5" NAME="C_HIGHADDR" TYPE="std_logic_vector" VALUE="0x7e20ffff">
           <DESCRIPTION>AXI4-Lite Highaddress</DESCRIPTION>
+        </PARAMETER>
+        <PARAMETER ASSIGNMENT="OPTIONAL" MPD_INDEX="6" NAME="C_AXI_STREAM_DATA_WIDTH" TYPE="INTEGER" VALUE="32">
+          <DESCRIPTION>AXI4-Stream Data Width (S2MM and MM2S) </DESCRIPTION>
         </PARAMETER>
         <PARAMETER ASSIGNMENT="CONSTANT" MPD_INDEX="7" NAME="C_S_AXIS_MM2S_PROTOCOL" TYPE="STRING" VALUE="XIL_AXI_STREAM_VID_DATA">
           <DESCRIPTION>AXI4-Stream MM2S Protocol</DESCRIPTION>
@@ -11595,6 +11599,16 @@
             <CONNECTION BUSINTERFACE="[M_AXIS_S2MM]" INSTANCE="axi_hdmi_0" PORT="M_AXIS_S2MM_ACLK"/>
           </CONNECTIONS>
         </PORT>
+        <PORT DIR="O" IS_INSTANTIATED="TRUE" MHS_INDEX="7" MPD_INDEX="93" NAME="mm2s_introut" SENSITIVITY="LEVEL_HIGH" SIGIS="INTERRUPT" SIGNAME="axi_vdma_0_mm2s_introut">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="microblaze_0_intc" PORT="Intr"/>
+          </CONNECTIONS>
+        </PORT>
+        <PORT DIR="O" IS_INSTANTIATED="TRUE" MHS_INDEX="8" MPD_INDEX="94" NAME="s2mm_introut" SENSITIVITY="LEVEL_HIGH" SIGIS="INTERRUPT" SIGNAME="axi_vdma_0_s2mm_introut">
+          <CONNECTIONS>
+            <CONNECTION INSTANCE="microblaze_0_intc" PORT="Intr"/>
+          </CONNECTIONS>
+        </PORT>
         <PORT BUS="M_AXI_SG" DEF_SIGNAME="__BUS__" DIR="I" MPD_INDEX="1" NAME="m_axi_sg_aclk" SIGIS="CLK" SIGNAME="__NOC__"/>
         <PORT BUS="S_AXI_LITE:M_AXI_SG:M_AXI_MM2S:M_AXI_S2MM:M_AXIS_MM2S:S_AXIS_S2MM" DEF_SIGNAME="axi4lite_0_M_ARESETN" DIR="I" MPD_INDEX="6" NAME="axi_resetn" SIGIS="RST" SIGNAME="axi4lite_0_M_ARESETN">
           <CONNECTIONS>
@@ -11909,8 +11923,6 @@
         <PORT DIR="O" MPD_INDEX="90" NAME="s2mm_buffer_full" SIGNAME="__NOC__"/>
         <PORT DIR="O" MPD_INDEX="91" NAME="s2mm_buffer_almost_full" SIGNAME="__NOC__"/>
         <PORT DIR="O" MPD_INDEX="92" NAME="s2mm_prmtr_update" SIGNAME="__NOC__"/>
-        <PORT DIR="O" MPD_INDEX="93" NAME="mm2s_introut" SENSITIVITY="LEVEL_HIGH" SIGIS="INTERRUPT" SIGNAME="__NOC__"/>
-        <PORT DIR="O" MPD_INDEX="94" NAME="s2mm_introut" SENSITIVITY="LEVEL_HIGH" SIGIS="INTERRUPT" SIGNAME="__NOC__"/>
         <PORT DIR="O" ENDIAN="LITTLE" LEFT="63" LSB="0" MPD_INDEX="95" MSB="63" NAME="axi_vdma_tstvec" RIGHT="0" SIGNAME="__NOC__" VECFORMULA="[63:0]"/>
       </PORTS>
       <BUSINTERFACES>
@@ -12026,6 +12038,10 @@
           </SLAVES>
         </MEMRANGE>
       </MEMORYMAP>
+      <INTERRUPTINFO TYPE="SOURCE">
+        <TARGET INSTANCE="microblaze_0_intc" INTC_INDEX="0" PRIORITY="4"/>
+        <TARGET INSTANCE="microblaze_0_intc" INTC_INDEX="0" PRIORITY="5"/>
+      </INTERRUPTINFO>
     </MODULE>
   </MODULES>
 
