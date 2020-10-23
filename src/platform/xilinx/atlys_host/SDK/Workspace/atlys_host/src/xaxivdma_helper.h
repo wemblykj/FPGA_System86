@@ -1,14 +1,44 @@
 #ifndef __PLATFORM_H_
 #define __PLATFORM_H_
 
-int XAxiVdmaHelper_ReadSetup(XAxiVdma *InstancePtr);
-int XAxiVdmaHelper_WriteSetup(XAxiVdma * InstancePtr);
-int XAxiVdmaHelper_StartTransfer(XAxiVdma *InstancePtr);
+#include <stdbool.h>
 
-int XAxiVdmaHelper_SetupIntrSystem(XAxiVdma *AxiVdmaPtr, u16 ReadIntrId,
-				u16 WriteIntrId);
+typedef struct _Frame
+{
+	int Width;
+	int Height;
+	int HorizontalStride;
+	int VerticalStride;
+} Frame;
 
-void XAxiVdmaHelper_EnableIntrSystem(u16 ReadIntrId, u16 WriteIntrId);
-void XAxiVdmaHelper_DisableIntrSystem(u16 ReadIntrId, u16 WriteIntrId);
+typedef struct _InterruptHandler
+{
+	u16 IntrId;
+	XInterruptHandler Handler;
+} InterruptHandler;
+
+typedef struct _VdmaChannel
+{
+	XAxiVdma *InstancePtr;
+
+
+	Frame Frame;
+	u32 AddressBase;
+	int NumberOfFrames;
+
+	bool EnableInterrupts;
+	InterruptHandler InterruptHandler;
+	XAxiVdma_DmaSetup Cfg;
+
+} VdmaChannel;
+
+int XAxiVdmaHelper_ReadSetup(VdmaChannel *channel);
+int XAxiVdmaHelper_WriteSetup(VdmaChannel *channel);
+int XAxiVdmaHelper_StartTransfer(VdmaChannel *channel);
+
+int XAxiVdmaHelper_SetupIntrSystem(XIntc *IntcInstancePtr, VdmaChannel *channel);
+
+void XAxiVdmaHelper_EnableIntrSystem(XIntc *IntcInstancePtr,  VdmaChannel *channel);
+void XAxiVdmaHelper_DisableIntrSystem(XIntc *IntcInstancePtr,  VdmaChannel *channel);
 
 #endif

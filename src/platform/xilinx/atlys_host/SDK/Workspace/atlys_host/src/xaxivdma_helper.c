@@ -131,21 +131,21 @@
  *
  * For 16 frames of 1080p, it needs 0x07E90000 memory for frame buffers
  */
-#define MEM_BASE_ADDR		(DDR_BASE_ADDR + 0x01000000)
-#define MEM_HIGH_ADDR		DDR_HIGH_ADDR
-#define MEM_SPACE		(MEM_HIGH_ADDR - MEM_BASE_ADDR)
+//#define MEM_BASE_ADDR		(DDR_BASE_ADDR + 0x01000000)
+//#define MEM_HIGH_ADDR		DDR_HIGH_ADDR
+//#define MEM_SPACE		(MEM_HIGH_ADDR - MEM_BASE_ADDR)
 
 /* Read channel and write channel start from the same place
  *
  * One video IP write to the memory region, the other video IP read from it
  */
-#define READ_ADDRESS_BASE	MEM_BASE_ADDR
-#define WRITE_ADDRESS_BASE	MEM_BASE_ADDR
+//#define READ_ADDRESS_BASE	MEM_BASE_ADDR
+//#define WRITE_ADDRESS_BASE	MEM_BASE_ADDR
 
 /* Frame size related constants
  */
-#define FRAME_HORIZONTAL_LEN  0x1E00   /* 1920 pixels, each pixel 4 bytes */
-#define FRAME_VERTICAL_LEN    0x438    /* 1080 pixels */
+//#define FRAME_HORIZONTAL_LEN  0x1E00   /* 1920 pixels, each pixel 4 bytes */
+//#define FRAME_VERTICAL_LEN    0x438    /* 1080 pixels */
 
 /* Subframe to be transferred by Video DMA
  *
@@ -170,23 +170,23 @@
  * Note that SUBFRAME_HORIZONTAL_SIZE and SUBFRAME_VERTICAL_SIZE must ensure
  * to be inside the frame.
  */
-#define SUBFRAME_START_OFFSET    (FRAME_HORIZONTAL_LEN * 5 + 32)
-#define SUBFRAME_HORIZONTAL_SIZE 100
-#define SUBFRAME_VERTICAL_SIZE   100
+//#define SUBFRAME_START_OFFSET    (FRAME_HORIZONTAL_LEN * 5 + 32)
+//#define SUBFRAME_HORIZONTAL_SIZE 100
+//#define SUBFRAME_VERTICAL_SIZE   100
 
 /* Number of frames to work on, this is to set the frame count threshold
  *
  * We multiply 15 to the num stores is to increase the intervals between
  * interrupts. If you are using fsync, then it is not necessary.
  */
-#define NUMBER_OF_READ_FRAMES	8
-#define NUMBER_OF_WRITE_FRAMES	8
+//#define NUMBER_OF_READ_FRAMES	8
+//#define NUMBER_OF_WRITE_FRAMES	8
 
 /* Number of frames to transfer
  *
  * This is used to monitor the progress of the test, test purpose only
  */
-#define NUM_TEST_FRAME_SETS	10
+//#define NUM_TEST_FRAME_SETS	10
 
 /* Delay timer counter
  *
@@ -195,49 +195,39 @@
  * care about inactivity of the hardware, set this counter to be 0, which
  * disables delay interrupt.
  */
-#define DELAY_TIMER_COUNTER	10
+//#define DELAY_TIMER_COUNTER	10
 
 /*
  * Device instance definitions
  */
-XAxiVdma AxiVdma;
+//XAxiVdma AxiVdma;
 
-static XIntc Intc;	/* Instance of the Interrupt Controller */
+//static XIntc Intc;	/* Instance of the Interrupt Controller */
 
 /* Data address
  *
  * Read and write sub-frame use the same settings
  */
-static u32 ReadFrameAddr;
-static u32 WriteFrameAddr;
-static u32 BlockStartOffset;
-static u32 BlockHoriz;
-static u32 BlockVert;
+//static u32 ReadFrameAddr;
+//static u32 WriteFrameAddr;
+//static u32 BlockStartOffset;
+//static u32 BlockHoriz;
+//static u32 BlockVert;
 
 /* DMA channel setup
  */
-static XAxiVdma_DmaSetup ReadCfg;
-static XAxiVdma_DmaSetup WriteCfg;
+//static XAxiVdma_DmaSetup ReadCfg;
+//static XAxiVdma_DmaSetup WriteCfg;
 
 /* Transfer statics
  */
-static int ReadDone;
-static int ReadError;
-static int WriteDone;
-static int WriteError;
+//static int ReadDone;
+//static int ReadError;
+//static int WriteDone;
+//static int WriteError;
 
 /******************* Function Prototypes ************************************/
 
-
-
-static int ReadSetup(XAxiVdma *InstancePtr);
-static int WriteSetup(XAxiVdma * InstancePtr);
-static int StartTransfer(XAxiVdma *InstancePtr);
-
-static int SetupIntrSystem(XAxiVdma *AxiVdmaPtr, u16 ReadIntrId,
-				u16 WriteIntrId);
-
-static void DisableIntrSystem(u16 ReadIntrId, u16 WriteIntrId);
 
 
 
@@ -253,16 +243,17 @@ static void DisableIntrSystem(u16 ReadIntrId, u16 WriteIntrId);
 * @note		None.
 *
 ******************************************************************************/
-static int XAxiVdmaHelper_ReadSetup(XAxiVdma *InstancePtr)
+static int XAxiVdmaHelper_ReadSetup(VdmaChannel *channel)
 {
 	int Index;
 	u32 Addr;
 	int Status;
+	XAxiVdma_DmaSetup ReadCfg;
 
-	ReadCfg.VertSizeInput = SUBFRAME_VERTICAL_SIZE;
-	ReadCfg.HoriSizeInput = SUBFRAME_HORIZONTAL_SIZE;
+	ReadCfg.VertSizeInput = channel->Frame.Height;
+	ReadCfg.HoriSizeInput = channel->Frame.Width;
 
-	ReadCfg.Stride = FRAME_HORIZONTAL_LEN;
+	ReadCfg.Stride = channel->Frame.HorizontalStride;
 	ReadCfg.FrameDelay = 0;  /* This example does not test frame delay */
 
 	ReadCfg.EnableCircularBuf = 1;
@@ -273,7 +264,7 @@ static int XAxiVdmaHelper_ReadSetup(XAxiVdma *InstancePtr)
 
 	ReadCfg.FixedFrameStoreAddr = 0; /* We are not doing parking */
 
-	Status = XAxiVdma_DmaConfig(InstancePtr, XAXIVDMA_READ, &ReadCfg);
+	Status = XAxiVdma_DmaConfig(channel->InstancePtr, XAXIVDMA_READ, &ReadCfg);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
 		    "Read channel config failed %d\r\n", Status);
@@ -285,17 +276,17 @@ static int XAxiVdmaHelper_ReadSetup(XAxiVdma *InstancePtr)
 	 *
 	 * These addresses are physical addresses
 	 */
-	Addr = READ_ADDRESS_BASE + BlockStartOffset;
-	for(Index = 0; Index < NUMBER_OF_READ_FRAMES; Index++) {
+	Addr = channel->AddressBase + BlockStartOffset;
+	for(Index = 0; Index < channel->NumberOfFrames; Index++) {
 		ReadCfg.FrameStoreStartAddr[Index] = Addr;
 
-		Addr += FRAME_HORIZONTAL_LEN * FRAME_VERTICAL_LEN;
+		Addr += channel->Frame.VerticalStride * channel->Frame.HorizontalStride;
 	}
 
 	/* Set the buffer addresses for transfer in the DMA engine
 	 * The buffer addresses are physical addresses
 	 */
-	Status = XAxiVdma_DmaSetBufferAddr(InstancePtr, XAXIVDMA_READ,
+	Status = XAxiVdma_DmaSetBufferAddr(channel->InstancePtr, XAXIVDMA_READ,
 			ReadCfg.FrameStoreStartAddr);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
@@ -319,16 +310,17 @@ static int XAxiVdmaHelper_ReadSetup(XAxiVdma *InstancePtr)
 * @note		None.
 *
 ******************************************************************************/
-static int XAxiVdmaHelper_WriteSetup(XAxiVdma * InstancePtr)
+static int XAxiVdmaHelper_WriteSetup(VdmaChannel *channel)
 {
 	int Index;
 	u32 Addr;
 	int Status;
+	XAxiVdma_DmaSetup WriteCfg;
 
-	WriteCfg.VertSizeInput = SUBFRAME_VERTICAL_SIZE;
-	WriteCfg.HoriSizeInput = SUBFRAME_HORIZONTAL_SIZE;
+	WriteCfg.VertSizeInput = channel->Frame.Height;
+	WriteCfg.HoriSizeInput = channel->Frame.Width;
 
-	WriteCfg.Stride = FRAME_HORIZONTAL_LEN;
+	WriteCfg.Stride = channel->Frame.HorizontalStride;
 	WriteCfg.FrameDelay = 0;  /* This example does not test frame delay */
 
 	WriteCfg.EnableCircularBuf = 1;
@@ -339,7 +331,7 @@ static int XAxiVdmaHelper_WriteSetup(XAxiVdma * InstancePtr)
 
 	WriteCfg.FixedFrameStoreAddr = 0; /* We are not doing parking */
 
-	Status = XAxiVdma_DmaConfig(InstancePtr, XAXIVDMA_WRITE, &WriteCfg);
+	Status = XAxiVdma_DmaConfig(channel->InstancePtr, XAXIVDMA_WRITE, &WriteCfg);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
 		    "Write channel config failed %d\r\n", Status);
@@ -351,16 +343,16 @@ static int XAxiVdmaHelper_WriteSetup(XAxiVdma * InstancePtr)
 	 *
 	 * Use physical addresses
 	 */
-	Addr = WRITE_ADDRESS_BASE + BlockStartOffset;
-	for(Index = 0; Index < NUMBER_OF_WRITE_FRAMES; Index++) {
+	Addr = channel->AddressBase + BlockStartOffset;
+	for(Index = 0; Index < channel->NumberOfFrames; Index++) {
 		WriteCfg.FrameStoreStartAddr[Index] = Addr;
 
-		Addr += FRAME_HORIZONTAL_LEN * FRAME_VERTICAL_LEN;
+		Addr += channel->Frame.VerticalStride * channel->Frame.HorizontalStride;
 	}
 
 	/* Set the buffer addresses for transfer in the DMA engine
 	 */
-	Status = XAxiVdma_DmaSetBufferAddr(InstancePtr, XAXIVDMA_WRITE,
+	Status = XAxiVdma_DmaSetBufferAddr(channel->InstancePtr, XAXIVDMA_WRITE,
 	        WriteCfg.FrameStoreStartAddr);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
@@ -372,7 +364,7 @@ static int XAxiVdmaHelper_WriteSetup(XAxiVdma * InstancePtr)
 	/* Clear data buffer
 	 */
 	memset((void *)WriteFrameAddr, 0,
-	    FRAME_HORIZONTAL_LEN * FRAME_VERTICAL_LEN * NUMBER_OF_WRITE_FRAMES);
+			channel->NumberOfFrames * channel->Frame.VerticalStride * channel->Frame.HorizontalStride);
 
 	return XST_SUCCESS;
 }
@@ -391,11 +383,11 @@ static int XAxiVdmaHelper_WriteSetup(XAxiVdma * InstancePtr)
 * @note		None.
 *
 ******************************************************************************/
-static int XAxiVdmaHelper_StartTransfer(XAxiVdma *InstancePtr)
+static int XAxiVdmaHelper_StartTransfer(VdmaChannel *channel)
 {
 	int Status;
 
-	Status = XAxiVdma_DmaStart(InstancePtr, XAXIVDMA_WRITE);
+	Status = XAxiVdma_DmaStart(channel->InstancePtr, XAXIVDMA_WRITE);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
 		    "Start Write transfer failed %d\r\n", Status);
@@ -403,7 +395,7 @@ static int XAxiVdmaHelper_StartTransfer(XAxiVdma *InstancePtr)
 		return XST_FAILURE;
 	}
 
-	Status = XAxiVdma_DmaStart(InstancePtr, XAXIVDMA_READ);
+	Status = XAxiVdma_DmaStart(channel->InstancePtr, XAXIVDMA_READ);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
 		    "Start read transfer failed %d\r\n", Status);
@@ -429,37 +421,16 @@ static int XAxiVdmaHelper_StartTransfer(XAxiVdma *InstancePtr)
 * @note		None.
 *
 ******************************************************************************/
-static int XAxiVdmaHelper_SetupIntrSystem(XAxiVdma *AxiVdmaPtr, u16 ReadIntrId,
-				u16 WriteIntrId)
+static int XAxiVdmaHelper_SetupIntrSystem(XIntc *IntcInstancePtr, VdmaChannel *channel)
 {
 	int Status;
 
-	XIntc *IntcInstancePtr =&Intc;
-
-
-	/* Initialize the interrupt controller and connect the ISRs */
-	Status = XIntc_Initialize(IntcInstancePtr, INTC_DEVICE_ID);
-	if (Status != XST_SUCCESS) {
-
-		xil_printf( "Failed init intc\r\n");
-		return XST_FAILURE;
-	}
-
-	Status = XIntc_Connect(IntcInstancePtr, ReadIntrId,
-	         (XInterruptHandler)XAxiVdma_ReadIntrHandler, AxiVdmaPtr);
+	Status = XIntc_Connect(IntcInstancePtr, channel->InterruptHandler.IntrId,
+			channel->InterruptHandler.Handler, channel->InstancePtr);
 	if (Status != XST_SUCCESS) {
 
 		xil_printf(
 		    "Failed read channel connect intc %d\r\n", Status);
-		return XST_FAILURE;
-	}
-
-	Status = XIntc_Connect(IntcInstancePtr, WriteIntrId,
-	         (XInterruptHandler)XAxiVdma_WriteIntrHandler, AxiVdmaPtr);
-	if (Status != XST_SUCCESS) {
-
-		xil_printf(
-		    "Failed write channel connect intc %d\r\n", Status);
 		return XST_FAILURE;
 	}
 
@@ -472,15 +443,7 @@ static int XAxiVdmaHelper_SetupIntrSystem(XAxiVdma *AxiVdmaPtr, u16 ReadIntrId,
 	}
 
 	/* Enable interrupts from the hardware */
-	XIntc_Enable(IntcInstancePtr, ReadIntrId);
-	XIntc_Enable(IntcInstancePtr, WriteIntrId);
-
-	Xil_ExceptionInit();
-	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT,
-			(Xil_ExceptionHandler)XIntc_InterruptHandler,
-			(void *)IntcInstancePtr);
-
-	Xil_ExceptionEnable();
+	XIntc_Enable(IntcInstancePtr, channel->InterruptHandler.IntrId);
 
 	return XST_SUCCESS;
 }
@@ -498,14 +461,11 @@ static int XAxiVdmaHelper_SetupIntrSystem(XAxiVdma *AxiVdmaPtr, u16 ReadIntrId,
 * @note		None.
 *
 ******************************************************************************/
-static void XAxiVdmaHelper_DisableIntrSystem(u16 ReadIntrId, u16 WriteIntrId)
+static void XAxiVdmaHelper_DisableIntrSystem(XIntc *IntcInstancePtr, VdmaChannel *channel)
 {
 
-	XIntc *IntcInstancePtr =&Intc;
-
-	/* Disconnect the interrupts for the DMA TX and RX channels */
-	XIntc_Disconnect(IntcInstancePtr, ReadIntrId);
-	XIntc_Disconnect(IntcInstancePtr, WriteIntrId);
+	/* Disconnect the interrupts for the DMA channel */
+	XIntc_Disconnect(IntcInstancePtr, channel->InterruptHandler.IntrId);
 }
 
 
