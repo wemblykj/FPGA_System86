@@ -1,7 +1,11 @@
-#ifndef __PLATFORM_H_
-#define __PLATFORM_H_
+#ifndef __XAXIVDMA_HELPER_H_
+#define __XAXIVDMA_HELPER_H_
 
-#include <stdbool.h>
+typedef struct _VdmaDevice
+{
+	u16 DeviceId;
+	XAxiVdma *InstancePtr;
+} VdmaDevice;
 
 typedef struct _Frame
 {
@@ -11,34 +15,37 @@ typedef struct _Frame
 	int VerticalStride;
 } Frame;
 
-typedef struct _InterruptHandler
-{
-	u16 IntrId;
-	XInterruptHandler Handler;
-} InterruptHandler;
-
 typedef struct _VdmaChannel
 {
-	XAxiVdma *InstancePtr;
+	u16 Direction;
+	VdmaDevice *Device;
 
-
-	Frame Frame;
 	u32 AddressBase;
-	int NumberOfFrames;
+	u8 NumberOfFrames;
+	int VerticalStride;
 
-	bool EnableInterrupts;
-	InterruptHandler InterruptHandler;
+	u8 DelayTimerCount;
+
+	u16 IntrId;
 	XAxiVdma_DmaSetup Cfg;
 
 } VdmaChannel;
 
-int XAxiVdmaHelper_ReadSetup(VdmaChannel *channel);
-int XAxiVdmaHelper_WriteSetup(VdmaChannel *channel);
+//int XAxiVdmaHelper_SetFrmStore(VdmaChannel* channel);
+
+int XAxiVdmaHelper_SetupDevice(u16 DeviceId, VdmaDevice* device);
+
+int XAxiVdmaHelper_SetupChannel(VdmaDevice *devicePtr, u16 Direction, u32 BaseAddress, int NumberOfFrames, Frame* frame, u16 IntrId, VdmaChannel* channel);
+int XAxiVdmaHelper_SetupReadChannel(VdmaDevice *devicePtr, u32 BaseAddress, int NumberOfFrames, Frame* frame, u16 IntrId, VdmaChannel* channel);
+int XAxiVdmaHelper_SetupWriteChannel(VdmaDevice *devicePtr, u32 BaseAddress, int NumberOfFrames, Frame* frame, u16 IntrId, VdmaChannel* channel);
+
+
+
+//int XAxiVdmaHelper_Initialize(VdmaChannel *channel);
 int XAxiVdmaHelper_StartTransfer(VdmaChannel *channel);
 
-int XAxiVdmaHelper_SetupIntrSystem(XIntc *IntcInstancePtr, VdmaChannel *channel);
-
-void XAxiVdmaHelper_EnableIntrSystem(XIntc *IntcInstancePtr,  VdmaChannel *channel);
-void XAxiVdmaHelper_DisableIntrSystem(XIntc *IntcInstancePtr,  VdmaChannel *channel);
+int XAxiVdmaHelper_SetupInterrupts(XIntc *intcInstancePtr, VdmaChannel *channel, XAxiVdma_CallBack completionHandler, XAxiVdma_ErrorCallBack errorHandler);
+void XAxiVdmaHelper_EnableInterrupts(XIntc *intcInstancePtr,  VdmaChannel *channel);
+void XAxiVdmaHelper_DisableInterrupts(XIntc *intcInstancePtr,  VdmaChannel *channel);
 
 #endif

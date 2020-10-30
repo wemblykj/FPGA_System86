@@ -228,9 +228,211 @@
 
 /******************* Function Prototypes ************************************/
 
+/*****************************************************************************/
+/**
+*
+* This function sets up the channel
+*
+* @param	InstancePtr is the instance pointer to the DMA engine.
+*
+* @return	XST_SUCCESS if the setup is successful, XST_FAILURE otherwise.
+*
+* @note		None.
+*
+******************************************************************************/
+static int XAxiVdmaHelper_Initialize(VdmaChannel *channel)
+{
+	int Index;
+	u32 Addr;
+	int Status;
+
+	XAxiVdma_DmaSetup& cfg = channel.Cfg;
+
+	Status = XAxiVdma_DmaConfig(channel->device->InstancePtr, channel->Direction, cfg);
+	if (Status != XST_SUCCESS) {
+		xil_printf(
+		    "Channel config failed %d\r\n", Status);
+
+		return XST_FAILURE;
+	}
+
+	/* Initialize buffer addresses
+	 *
+	 * These addresses are physical addresses
+	 */
+	Addr = channel->AddressBase + BlockStartOffset;
+	for(Index = 0; Index < channel->NumberOfFrames; Index++) {
+		ReadCfg.FrameStoreStartAddr[Index] = Addr;
+
+		Addr += channel->VerticalStride * cfg.Stride;
+	}
+
+	/* Set the buffer addresses for transfer in the DMA engine
+	 * The buffer addresses are physical addresses
+	 */
+	Status = XAxiVdma_DmaSetBufferAddr(channel->device->InstancePtr, channel->Direction,
+			ReadCfg.FrameStoreStartAddr);
+	if (Status != XST_SUCCESS) {
+		xil_printf(
+		    "Channel set buffer address failed %d\r\n", Status);
+
+		return XST_FAILURE;
+	}
+
+	if (channel->Direction == XAXIVDMA_WRITE)
+	{
+		/* Clear data buffer
+		 */
+		memset((void *)WriteFrameAddr, 0,
+				channel->NumberOfFrames * channel->VerticalStride * cfg.Stride);
+
+	}
+
+	return XST_SUCCESS;
+}
+
+int XAxiVdmaHelper_SetupDevice(u16 DeviceId, VdmaDevice* device)
+{
+	XAxiVdma_Config *Config;
+
+	/* The information of the XAxiVdma_Config comes from hardware build.
+	 * The user IP should pass this information to the AXI DMA core.
+	 */
+	Config = XAxiVdma_LookupConfig(DMA_DEVICE_ID);
+	if (!Config) {
+		xil_printf(
+			"No video DMA found for ID %d\r\n", DMA_DEVICE_ID);
+
+		return XST_FAILURE;
+	}
+
+	/* Initialize DMA engine */
+	Status = XAxiVdma_CfgInitialize(&device->InstancePtr, Config, Config->BaseAddress);
+	if (Status != XST_SUCCESS) {
+
+		xil_printf(
+			"Configuration Initialization failed %d\r\n", Status);
+
+		return XST_FAILURE;
+	}
+}
+
+static int XAxiVdmaHelper_SetFrmStore(VdmaChannel* channel)
+{
+	Status = XAxiVdma_SetFrmStore(&AxiVdma, channel->NumberOfFrames,
+							channel->Direction);
+	if (Status != XST_SUCCESS) {
+
+		xil_printf(
+		    "Setting Frame Store Number Failed in Read Channel"
+		    					" %d\r\n", Status);
+
+		return XST_FAILURE;
+	}
+
+	return XST_SUCCESS;
+}
+
+static int XAxiVdmaHelper_SetFrameCounter(VdmaChannel* channel)
+{
+	int Status;
+	XAxiVdma_Channel *Channel;
+	XAxiVdma& InstancePtr = channel->Device->InstancePtr;
+
+	/* Validate parameters */
+	Xil_AssertNonvoid(InstancePtr != NULL);
+	Xil_AssertNonvoid(InstancePtr->IsReady == XAXIVDMA_DEVICE_READY);
+
+	if (channel->NumberOfFrames == 0) {
+
+		return XST_INVALID_PARAM;
+	}
+
+	Channel = XAxiVdma_GetChannel(InstancePtr, channel->Direction);
+
+	if (Channel->IsValid) {
+
+		Status = XAxiVdma_ChannelSetFrmCnt(Channel, channel->NumberOfFrames,
+				channel->DelayTimerCount);
+		if (Status != XST_SUCCESS) {
+			xdbg_printf(XDBG_DEBUG_ERROR,
+				"Setting channel frame counter "
+				"failed with %d\r\n", Status);
+
+			return Status;
+		}
+	}
+}
+
+int XAxiVdmaHelper_SetupChannel(VdmaDevice* device, u16 direction, u32 baseAddress, int numberOfFrames, Frame* frame, u16 intrId, VdmaChannel* channel)
+{
+	XAxiVdma_DmaSetup& cfg = channel.Cfg;
+
+	cfg.VertSizeInput = frame.Height;
+	cfg.HoriSizeInput = frame.Width;
+
+	cfg.Stride = frame.HorizontalStride;
+	cfg.FrameDelay = 0;  /* This example does not test frame delay */
+
+	cfg.EnableCircularBuf = 1;
+	cfg.EnableSync = 0;  /* No Gen-Lock */
+
+	cfg.PointNum = 0;    /* No Gen-Lock */
+	cfg.EnableFrameCounter = 0; /* Endless transfers */
+
+	cfg.FixedFrameStoreAddr = 0; /* We are not doing parking */
+
+	channel.DevicePtr = device;
+	channel.VerticalStride = frame->VerticalStride;
+	channel.Direction = direction;
+	channel.AddressBase = baseAddress;
+	channel.IntrId = intrId;
+
+	Status = XAxiVdmaHelper_SetFrmStore(channel);
+	if (Status != XST_SUCCESS) {
+
+		xil_printf(
+			"Configuration Initialization failed %d\r\n", Status);
+
+		return XST_FAILURE;
+	}
+
+	Status = XAxiVdmaHelper_SetFrameCounter(channel);
+	if (Status != XST_SUCCESS) {
+
+		xil_printf(
+			"Configuration Initialization failed %d\r\n", Status);
+
+		return XST_FAILURE;
+	}
+
+	return XAxiVdmaHelper_Initialize(channel);
+}
+
+ int XAxiVdmaHelper_SetupReadChannel(VdmaDevice* device, u16 direction, u32 baseAddress, int numberOfFrames, Frame* frame, u16 intrId, VdmaChannel* channel)
+ {
+	 return XAxiVdmaHelper_CreateChannel(device, XAXIVDMA_READ, baseAddress, numberOfFrames, frame, intrId, channel);
+ }
+
+ /*****************************************************************************/
+ /**
+ *
+ * This function creates a channel structure
+ *
+ * @param	InstancePtr is the instance pointer to the DMA engine.
+ *
+ * @return	XST_SUCCESS if the setup is successful, XST_FAILURE otherwise.
+ *
+ * @note		None.
+ *
+ ******************************************************************************/
+ int XAxiVdmaHelper_SetupWriteChannel(VdmaDevice* device, u16 direction, u32 baseAddress, int numberOfFrames, Frame* frame, u16 intrId, VdmaChannel* channel)
+ {
+	 return XAxiVdmaHelper_CreateChannel(device, XAXIVDMA_WRITE, baseAddress, numberOfFrames, frame, intrId, channel);
+ }
 
 
-
+#ifdef 0
 /*****************************************************************************/
 /**
 *
@@ -264,7 +466,7 @@ static int XAxiVdmaHelper_ReadSetup(VdmaChannel *channel)
 
 	ReadCfg.FixedFrameStoreAddr = 0; /* We are not doing parking */
 
-	Status = XAxiVdma_DmaConfig(channel->InstancePtr, XAXIVDMA_READ, &ReadCfg);
+	Status = XAxiVdma_DmaConfig(channel->device->InstancePtr, XAXIVDMA_READ, &ReadCfg);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
 		    "Read channel config failed %d\r\n", Status);
@@ -286,7 +488,7 @@ static int XAxiVdmaHelper_ReadSetup(VdmaChannel *channel)
 	/* Set the buffer addresses for transfer in the DMA engine
 	 * The buffer addresses are physical addresses
 	 */
-	Status = XAxiVdma_DmaSetBufferAddr(channel->InstancePtr, XAXIVDMA_READ,
+	Status = XAxiVdma_DmaSetBufferAddr(channel->device->InstancePtr, XAXIVDMA_READ,
 			ReadCfg.FrameStoreStartAddr);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
@@ -331,7 +533,7 @@ static int XAxiVdmaHelper_WriteSetup(VdmaChannel *channel)
 
 	WriteCfg.FixedFrameStoreAddr = 0; /* We are not doing parking */
 
-	Status = XAxiVdma_DmaConfig(channel->InstancePtr, XAXIVDMA_WRITE, &WriteCfg);
+	Status = XAxiVdma_DmaConfig(channel->device->InstancePtr, XAXIVDMA_WRITE, &WriteCfg);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
 		    "Write channel config failed %d\r\n", Status);
@@ -352,7 +554,7 @@ static int XAxiVdmaHelper_WriteSetup(VdmaChannel *channel)
 
 	/* Set the buffer addresses for transfer in the DMA engine
 	 */
-	Status = XAxiVdma_DmaSetBufferAddr(channel->InstancePtr, XAXIVDMA_WRITE,
+	Status = XAxiVdma_DmaSetBufferAddr(channel->device->InstancePtr, XAXIVDMA_WRITE,
 	        WriteCfg.FrameStoreStartAddr);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
@@ -368,6 +570,7 @@ static int XAxiVdmaHelper_WriteSetup(VdmaChannel *channel)
 
 	return XST_SUCCESS;
 }
+#endif
 
 /*****************************************************************************/
 /**
@@ -383,22 +586,14 @@ static int XAxiVdmaHelper_WriteSetup(VdmaChannel *channel)
 * @note		None.
 *
 ******************************************************************************/
-static int XAxiVdmaHelper_StartTransfer(VdmaChannel *channel)
+int XAxiVdmaHelper_StartTransfer(VdmaChannel *channel)
 {
 	int Status;
 
-	Status = XAxiVdma_DmaStart(channel->InstancePtr, XAXIVDMA_WRITE);
+	Status = XAxiVdma_DmaStart(channel->device->InstancePtr, channel->Direction);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
-		    "Start Write transfer failed %d\r\n", Status);
-
-		return XST_FAILURE;
-	}
-
-	Status = XAxiVdma_DmaStart(channel->InstancePtr, XAXIVDMA_READ);
-	if (Status != XST_SUCCESS) {
-		xil_printf(
-		    "Start read transfer failed %d\r\n", Status);
+		    "Start transfer failed %d\r\n", Status);
 
 		return XST_FAILURE;
 	}
@@ -421,12 +616,12 @@ static int XAxiVdmaHelper_StartTransfer(VdmaChannel *channel)
 * @note		None.
 *
 ******************************************************************************/
-static int XAxiVdmaHelper_SetupIntrSystem(XIntc *IntcInstancePtr, VdmaChannel *channel)
+int XAxiVdmaHelper_SetupInterrupts(XIntc *IntcInstancePtr, VdmaChannel *channel, XAxiVdma_CallBack completionHandler, XAxiVdma_ErrorCallBack errorHandler)
 {
 	int Status;
 
 	Status = XIntc_Connect(IntcInstancePtr, channel->InterruptHandler.IntrId,
-			channel->InterruptHandler.Handler, channel->InstancePtr);
+			channel->InterruptHandler.Handler, channel->device->InstancePtr);
 	if (Status != XST_SUCCESS) {
 
 		xil_printf(
@@ -434,16 +629,17 @@ static int XAxiVdmaHelper_SetupIntrSystem(XIntc *IntcInstancePtr, VdmaChannel *c
 		return XST_FAILURE;
 	}
 
-	/* Start the interrupt controller */
-	Status = XIntc_Start(IntcInstancePtr, XIN_REAL_MODE);
-	if (Status != XST_SUCCESS) {
-
-		xil_printf( "Failed to start intc\r\n");
-		return XST_FAILURE;
-	}
-
 	/* Enable interrupts from the hardware */
 	XIntc_Enable(IntcInstancePtr, channel->InterruptHandler.IntrId);
+
+	/* Register callback functions
+	*/
+	XAxiVdma_SetCallBack(&AxiVdma, XAXIVDMA_HANDLER_GENERAL, completionHandler,
+			    (void *)&channel, channel->Direction);
+
+	XAxiVdma_SetCallBack(&AxiVdma, XAXIVDMA_HANDLER_ERROR,
+			errorHandler, (void *)&channel, channel->Direction);
+
 
 	return XST_SUCCESS;
 }
@@ -461,8 +657,32 @@ static int XAxiVdmaHelper_SetupIntrSystem(XIntc *IntcInstancePtr, VdmaChannel *c
 * @note		None.
 *
 ******************************************************************************/
-static void XAxiVdmaHelper_DisableIntrSystem(XIntc *IntcInstancePtr, VdmaChannel *channel)
+void XAxiVdmaHelper_EnableInterrupts(XIntc *IntcInstancePtr, VdmaChannel *channel)
 {
+
+	/* Connect the interrupts for the DMA channel */
+	XIntc_Enable(IntcInstancePtr, channel->InterruptHandler.IntrId);
+
+	XAxiVdma_IntrEnable(channel->device->InstancePtr, XAXIVDMA_IXR_ALL_MASK, channel->Direction);
+}
+
+
+/*****************************************************************************/
+/**
+*
+* This function disables the interrupts
+*
+* @param	ReadIntrId is interrupt ID associated w/ DMA read channel
+* @param	WriteIntrId is interrupt ID associated w/ DMA write channel
+*
+* @return	None.
+*
+* @note		None.
+*
+******************************************************************************/
+void XAxiVdmaHelper_DisableInterrupts(XIntc *IntcInstancePtr, VdmaChannel *channel)
+{
+	XAxiVdma_IntrDisable(channel->device->InstancePtr, XAXIVDMA_IXR_ALL_MASK, channel->Direction);
 
 	/* Disconnect the interrupts for the DMA channel */
 	XIntc_Disconnect(IntcInstancePtr, channel->InterruptHandler.IntrId);

@@ -91,6 +91,8 @@
 #include "xreg_cortexa9.h"
 #endif
 
+#include "xaxivdma_helper.h"
+
 /******************** Constant Definitions **********************************/
 
 /*
@@ -198,7 +200,7 @@
 /*
  * Device instance definitions
  */
-XAxiVdma AxiVdma;
+//XAxiVdma AxiVdma;
 
 static XIntc Intc;	/* Instance of the Interrupt Controller */
 
@@ -214,8 +216,8 @@ static u32 BlockVert;
 
 /* DMA channel setup
  */
-static XAxiVdma_DmaSetup ReadCfg;
-static XAxiVdma_DmaSetup WriteCfg;
+//static XAxiVdma_DmaSetup ReadCfg;
+//static XAxiVdma_DmaSetup WriteCfg;
 
 /* Transfer statics
  */
@@ -261,89 +263,30 @@ static void WriteErrorCallBack(void *CallbackRef, u32 Mask);
 int main(void)
 {
 	int Status;
-	XAxiVdma_Config *Config;
+
+	//XAxiVdma_Config *Config;
 	XAxiVdma_FrameCounter FrameCfg;
+
+	VdmaDevice vdmaDevice;
+	VdmaChannel writeChannel;
+	VdmaChannel readChannel;
 
 	init_platform();
 
 	WriteDone = 0;
-	ReadDone = iu 0;
+	ReadDone = 0;
 	WriteError = 0;
 	ReadError = 0;
 
-	ReadFrameAddr = READ_ADDRESS_BASE;
-	WriteFrameAddr = WRITE_ADDRESS_BASE;
+	//ReadFrameAddr = READ_ADDRESS_BASE;
+	//WriteFrameAddr = WRITE_ADDRESS_BASE;
 	BlockStartOffset = SUBFRAME_START_OFFSET;
 	BlockHoriz = SUBFRAME_HORIZONTAL_SIZE;
 	BlockVert = SUBFRAME_VERTICAL_SIZE;
 
 	xil_printf("\r\n--- Entering main() --- \r\n");
 
-	/* The information of the XAxiVdma_Config comes from hardware build.
-	 * The user IP should pass this information to the AXI DMA core.
-	 */
-	Config = XAxiVdma_LookupConfig(DMA_DEVICE_ID);
-	if (!Config) {
-		xil_printf(
-		    "No video DMA found for ID %d\r\n", DMA_DEVICE_ID);
-
-		return XST_FAILURE;
-	}
-
-	/* Initialize DMA engine */
-	Status = XAxiVdma_CfgInitialize(&AxiVdma, Config, Config->BaseAddress);
-	if (Status != XST_SUCCESS) {
-
-		xil_printf(
-		    "Configuration Initialization failed %d\r\n", Status);
-
-		return XST_FAILURE;
-	}
-
-	Status = XAxiVdma_SetFrmStore(&AxiVdma, NUMBER_OF_READ_FRAMES,
-							XAXIVDMA_READ);
-	if (Status != XST_SUCCESS) {
-
-		xil_printf(
-		    "Setting Frame Store Number Failed in Read Channel"
-		    					" %d\r\n", Status);
-
-		return XST_FAILURE;
-	}
-
-	Status = XAxiVdma_SetFrmStore(&AxiVdma, NUMBER_OF_WRITE_FRAMES,
-							XAXIVDMA_WRITE);
-	if (Status != XST_SUCCESS) {
-
-		xil_printf(
-		    "Setting Frame Store Number Failed in Write Channel"
-		    					" %d\r\n", Status);
-
-		return XST_FAILURE;
-	}
-
-	/* Setup frame counter and delay counter for both channels
-	 *
-	 * This is to monitor the progress of the test only
-	 *
-	 * WARNING: In free-run mode, interrupts may overwhelm the system.
-	 * In that case, it is better to disable interrupts.
-	 */
-	FrameCfg.ReadFrameCount = NUMBER_OF_READ_FRAMES;
-	FrameCfg.WriteFrameCount = NUMBER_OF_WRITE_FRAMES;
-	FrameCfg.ReadDelayTimerCount = DELAY_TIMER_COUNTER;
-	FrameCfg.WriteDelayTimerCount = DELAY_TIMER_COUNTER;
-
-	Status = XAxiVdma_SetFrameCounter(&AxiVdma, &FrameCfg);
-	if (Status != XST_SUCCESS) {
-		xil_printf(
-		    	"Set frame counter failed %d\r\n", Status);
-
-		if(Status == XST_VDMA_MISMATCH_ERROR)
-			xil_printf("DMA Mismatch Error\r\n");
-
-		return XST_FAILURE;
-	}
+	XAxiVdmaHelper_SetupDevice(DMA_DEVICE_ID, &vdmaDevice);
 
 	/*
 	 * Setup your video IP that writes to the memory
@@ -352,7 +295,13 @@ int main(void)
 
 	/* Setup the write channel
 	 */
-	Status = WriteSetup(&AxiVdma);
+	Frame frame;
+	frame.Width = FRAME_HORIZONTAL_LEN;
+	frame.Height = FRAME_VERTICAL_LEN;
+	frame.HorizontalStride = FRAME_HORIZONTAL_LEN;
+	frame.VerticalStride = FRAME_VERTICAL_LEN;
+
+	Status = XAxiVdmaHelper_SetupWriteChannel(&vdmaDevice, WRITE_ADDRESS_BASE, NUMBER_OF_WRITE_FRAMES, &frame, WRITE_INTR_ID, &writeChannel);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
 		    	"Write channel setup failed %d\r\n", Status);
@@ -369,7 +318,7 @@ int main(void)
 
 	/* Setup the read channel
 	 */
-	Status = ReadSetup(&AxiVdma);
+	Status = XAxiVdmaHelper_SetupReadChannel(&vdmaDevice, READ_ADDRESS_BASE, NUMBER_OF_READ_FRAMES, &frame, READ_INTR_ID, &readChannel);
 	if (Status != XST_SUCCESS) {
 		xil_printf(
 		    	"Read channel setup failed %d\r\n", Status);
@@ -379,35 +328,47 @@ int main(void)
 		return XST_FAILURE;
 	}
 
-	Status = SetupIntrSystem(&AxiVdma, READ_INTR_ID, WRITE_INTR_ID);
+	Status = SetupIntrSystem();
 	if (Status != XST_SUCCESS) {
 
 		xil_printf(
-		    "Setup interrupt system failed %d\r\n", Status);
+			"Setup interrupt system failed %d\r\n", Status);
 
 		return XST_FAILURE;
 	}
 
-	/* Register callback functions
-	 */
-	XAxiVdma_SetCallBack(&AxiVdma, XAXIVDMA_HANDLER_GENERAL, ReadCallBack,
-	    (void *)&AxiVdma, XAXIVDMA_READ);
+	Status = XAxiVdmaHelper_SetupInterrupts(&Intc, &readChannel, ReadCallBack, ReadErrorCallBack);
+	if (Status != XST_SUCCESS) {
 
-	XAxiVdma_SetCallBack(&AxiVdma, XAXIVDMA_HANDLER_ERROR,
-	    ReadErrorCallBack, (void *)&AxiVdma, XAXIVDMA_READ);
+		xil_printf(
+			"Setup interrupt system failed %d\r\n", Status);
 
-	XAxiVdma_SetCallBack(&AxiVdma, XAXIVDMA_HANDLER_GENERAL,
-	    WriteCallBack, (void *)&AxiVdma, XAXIVDMA_WRITE);
+		return XST_FAILURE;
+	}
 
-	XAxiVdma_SetCallBack(&AxiVdma, XAXIVDMA_HANDLER_ERROR,
-	    WriteErrorCallBack, (void *)&AxiVdma, XAXIVDMA_WRITE);
+
+	Status = XAxiVdmaHelper_SetupInterrupts(&Intc, &writeChannel, WriteCallBack, WriteErrorCallBack);
+	if (Status != XST_SUCCESS) {
+
+		xil_printf(
+			"Setup interrupt system failed %d\r\n", Status);
+
+		return XST_FAILURE;
+	}
 
 	/* Enable your video IP interrupts if needed
 	 */
 
 	/* Start the DMA engine to transfer
 	 */
-	Status = StartTransfer(&AxiVdma);
+	Status = XAxiVdmaHelper_StartTransfer(&readChannel);
+	if (Status != XST_SUCCESS) {
+		if(Status == XST_VDMA_MISMATCH_ERROR)
+			xil_printf("DMA Mismatch Error\r\n");
+		return XST_FAILURE;
+	}
+
+	Status = XAxiVdmaHelper_StartTransfer(&writeChannel);
 	if (Status != XST_SUCCESS) {
 		if(Status == XST_VDMA_MISMATCH_ERROR)
 			xil_printf("DMA Mismatch Error\r\n");
@@ -418,8 +379,8 @@ int main(void)
 	 *
 	 * If interrupts overwhelms the system, please do not enable interrupt
 	 */
-	XAxiVdma_IntrEnable(&AxiVdma, XAXIVDMA_IXR_ALL_MASK, XAXIVDMA_WRITE);
-	XAxiVdma_IntrEnable(&AxiVdma, XAXIVDMA_IXR_ALL_MASK, XAXIVDMA_READ);
+	XAxiVdmaHelper_EnableInterrupts(&Intc, &writeChannel);
+	XAxiVdmaHelper_EnableInterrupts(&Intc, &readChannel);
 
 	/* Every set of frame buffer finish causes a completion interrupt
 	 */
@@ -439,6 +400,9 @@ int main(void)
 	}
 
 	xil_printf("--- Exiting main() --- \r\n");
+
+	XAxiVdmaHelper_DisableInterrupts(&Intc, &readChannel);
+	XAxiVdmaHelper_DisableInterrupts(&Intc, &writeChannel);
 
 	DisableIntrSystem(READ_INTR_ID, WRITE_INTR_ID);
 
@@ -481,38 +445,23 @@ static int SetupIntrSystem()
 		xil_printf( "Failed init intc\r\n");
 		return XST_FAILURE;
 	}
-}
-
-/*****************************************************************************/
-/**
-*
-* This function disables the interrupts
-*
-* @return	None.
-*
-* @note		None.
-*
-******************************************************************************/
-static void StartIntrSystem()
-{
-	XIntc *IntcInstancePtr =&Intc;
 
 	/* Start the interrupt controller */
-	Status = XIntc_Start(IntcInstancePtr, XIN_REAL_MODE);
-	if (Status != XST_SUCCESS) {
+		Status = XIntc_Start(IntcInstancePtr, XIN_REAL_MODE);
+		if (Status != XST_SUCCESS) {
 
-		xil_printf( "Failed to start intc\r\n");
-		return XST_FAILURE;
-	}
+			xil_printf( "Failed to start intc\r\n");
+			return XST_FAILURE;
+		}
 
-	Xil_ExceptionInit();
-	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT,
-			(Xil_ExceptionHandler)XIntc_InterruptHandler,
-			(void *)IntcInstancePtr);
+		Xil_ExceptionInit();
+		Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT,
+				(Xil_ExceptionHandler)XIntc_InterruptHandler,
+				(void *)IntcInstancePtr);
 
-	Xil_ExceptionEnable();
+		Xil_ExceptionEnable();
 
-	return XST_SUCCESS;
+		return XST_SUCCESS;
 }
 
 /*****************************************************************************/
@@ -527,7 +476,6 @@ static void StartIntrSystem()
 ******************************************************************************/
 static void DisableIntrSystem()
 {
-
 	XIntc *IntcInstancePtr =&Intc;
 }
 
