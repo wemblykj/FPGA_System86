@@ -4,7 +4,8 @@ VerMgmt: 14.7
 IntStyle: default
 Flow: ise
 ModuleSearchPath: /opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
-ModuleSearchPath: C:/Development/FPGA/Digilent/Atlys_AXI_BSB_Support/lib;/opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
+ModuleSearchPath: C:/Development/FPGA/Digilent/Atlys_AXI_BSB_Support/lib
+ModuleSearchPath: C:/Xilinx/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
 MHS File: atlys_host.mhs
 Architecture: spartan6
 Device: xc6slx45
