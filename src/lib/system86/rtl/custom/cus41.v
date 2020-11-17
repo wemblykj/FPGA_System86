@@ -9,7 +9,7 @@
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:    Namco CUS47 - Primary CPU address line generator 
+// Description:    Namco CUS41 - Primary CPU address line generator (a derivative/alternative of CUS130)
 //
 // Dependencies: 
 //
@@ -61,7 +61,10 @@ module cus41
         output wire nMROM
     );
 
-	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
+	reg [WATCHDOG_WIDTH-1:0] main_watchdog_counter = 0;
+	wire main_watchdog_clear;
+	wire main_int_ack;
+	wire sound_int_ack;
 	
 	reg [3:0] cpu_clock_counter = 0;
 	
@@ -86,16 +89,16 @@ module cus41
 	assign nMROM = nMWE & ~MA[15];  //*nMWE ||*/ MA[15] !== 1;
 	
 	// 8000h W	(watchdog)
-	assign main_watchdog_clear = ~nWE & A[15] & ~&A[14:10];
+	assign main_watchdog_clear = ~nMWE & MA[15] & ~&MA[14:10];
 	
 	// 9800h W	(watchdog, CUS130)
-	//assign sound_watchdog_clear = ~nWE & A[15] & ~&A[14:10];
+	//assign sound_watchdog_clear = ~nSWE & MA[15] & ~&MA[14:10];
 	
 	// 0x8800 - 0x8800 W  (INT ACK)
 	assign main_int_ack = ~nMWE && MA[15:11] === 'b10001;
 	
 	// 0x8800 - 0x8800 W  (INT ACK)
-	assign sound_int_ack = ~nMWE && MA[15:11] === 'b10011;
+	assign sound_int_ack = ~nSWE && MA[15:11] === 'b10011;
 	
 	// D000h - D002h W	(scroll + priority)
 	// D003h - D003h W 	(ROM 9D bank select)
@@ -107,7 +110,7 @@ module cus41
 	// D8004h - D806h W	(scroll + priority)
 	assign nLTH1 = ~(&MA[15:14] & MA[12:11]) | MA[13]; // /*nMWE ||*/ MA[15:11] !== 'b11011;	
 	
-	assign nMRES = ~watchdog_counter[WATCHDOG_WIDTH-1];	// reset on msb
+	assign nMRES = ~main_watchdog_counter[WATCHDOG_WIDTH-1];	// reset on msb
 	
 	initial begin
 		nMINT = 1'b1;
@@ -117,7 +120,7 @@ module cus41
 	// CPU clock
 	// http://www.ukvac.com/forum/topic362440&OB=DESC.html
 	always @(negedge CLK_6M) begin
-		if (!CLK_2H) begin
+		if (!CLK_0) begin
 			cpu_clock_counter <= 0;
 		end else begin
 			cpu_clock_counter <= cpu_clock_counter + 1;
@@ -126,11 +129,11 @@ module cus41
 	
 	// watchdog reset and int ack
 	// http://www.ukvac.com/forum/topic362440&OB=DESC.html
-	always @(negedge nVBLK) begin
-		if (watchdog_clear || watchdog_counter === 'b1010) begin
-			watchdog_counter <= 'b0000;
+	always @(negedge nVBLA) begin
+		if (main_watchdog_clear || main_watchdog_counter === 'b1010) begin
+			main_watchdog_counter <= 0;
 		end else begin
-			watchdog_counter <= watchdog_counter + 1;
+			main_watchdog_counter <= main_watchdog_counter + 1;
 		end
 		
 		nMINT <= ~main_int_ack;

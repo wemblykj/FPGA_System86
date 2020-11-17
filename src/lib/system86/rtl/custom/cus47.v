@@ -55,6 +55,8 @@ module cus47
     );
 
 	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
+	wire watchdog_clear;
+	wire int_ack;
 	
 	reg [3:0] cpu_clock_counter = 0;
 	
@@ -74,7 +76,7 @@ module cus47
 	ls175 eq_generator(
 		.CLK(CLK_6M),
 		.CLR(RES),
-		.D1(CLK_2H),
+		.D1(CLK_S2H),
 		.D2(CKB_LATCHED),
 		.D3(CLK_2H),
 		.D4(CKB_LATCHED),
@@ -90,12 +92,13 @@ module cus47
 	
 	// the following timings result in E going low towards the end of the EPROM cycle
 	assign MQ = cpu_clock_counter[1] ^ cpu_clock_counter[0];
-	//assign ME = CKB;
+	assign ME = ~CLK_2H;
+	assign SUBE = CLK_2H;
 	
 	// TBD
-	assign ME = CKB;
-	assign SUBQ = CKC;
-	assign SUBE = CKD;
+	//assign ME = CKB;
+	//assign SUBQ = CKC;
+	//assign SUBE = CKD;
 	
 	// 0000h - 1FFFh W 	(videoram 1)
 	// Try synchronising with E as is done for the WRB signal in GnG
