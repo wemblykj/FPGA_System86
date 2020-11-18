@@ -39,7 +39,7 @@ module cus47
         output wire MQ,
         output wire ME,
         output wire SUBE,
-        output wire SUBQ,
+        output wire SUBQ,	// 90 degrees out of phase with S2H? (http://www.ukvac.com/forum/topic362440&OB=DESC.html)
         output reg nIRQ,
         output wire nLTH2,
         output wire nLTH0,
@@ -55,6 +55,10 @@ module cus47
     );
 
 	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
+	wire watchdog_clear;
+	wire int_ack;
+	
+	reg [3:0] cpu_clock_counter = 0;
 	
 	wire CKA;
 	wire CKB;
@@ -72,7 +76,7 @@ module cus47
 	ls175 eq_generator(
 		.CLK(CLK_6M),
 		.CLR(RES),
-		.D1(CLK_2H),
+		.D1(CLK_S2H),
 		.D2(CKB_LATCHED),
 		.D3(CLK_2H),
 		.D4(CKB_LATCHED),
@@ -87,10 +91,14 @@ module cus47
 	);
 	
 	// the following timings result in E going low towards the end of the EPROM cycle
-	assign MQ = CKA;
-	assign ME = CKB;
-	assign SUBQ = CKC;
-	assign SUBE = CKD;
+	assign MQ = cpu_clock_counter[1] ^ cpu_clock_counter[0];
+	assign ME = ~CLK_2H;
+	assign SUBE = CLK_2H;
+	
+	// TBD
+	//assign ME = CKB;
+	//assign SUBQ = CKC;
+	//assign SUBE = CKD;
 	
 	// 0000h - 1FFFh W 	(videoram 1)
 	// Try synchronising with E as is done for the WRB signal in GnG
@@ -109,7 +117,7 @@ module cus47
 	assign nSPGM =  ~nWE | A[15] | ~&A[14:13]; 					// A[15:13] !== 'b011;
 	
 	// 8000h W	(watchdog)
-	assign watchdog_reset = ~nWE & A[15] & ~&A[14:10];
+	assign watchdog_clear = ~nWE & A[15] & ~&A[14:10];
 	
 	// 8000h - FFFFh R	(EEPROM 9C)
 	assign nMPGM = ~nWE | ~A[15];	// // A[15] !== 'b1;
@@ -133,27 +141,30 @@ module cus47
 	assign nBUFEN = nSCR0 & nSCR1 & nOBJ & nSND & nLTH0 & nLTH1;
 	
 	// 0x8400 - 0x8400 W  (INT ACK)
-	assign nIRQ_ACK = nWE || A[15:10] !== 'b100001;
+	assign int_ack = ~nWE && A[15:10] !== 'b100001;
 	
-	assign nRES = 1;//~watchdog_counter[WATCHDOG_WIDTH-1];
+	assign nRES = ~watchdog_counter[WATCHDOG_WIDTH-1]; // reset on msb
 	
-	always @(CLK_6M) begin
-		if (watchdog_reset)
-			watchdog_counter <= 0;
-		else 
-			watchdog_counter <= watchdog_counter + 1;
+	// CPU clock
+	// http://www.ukvac.com/forum/topic362440&OB=DESC.html
+	always @(negedge CLK_6M) begin
+		if (!CLK_2H) begin
+			cpu_clock_counter <= 0;
+		end else begin
+			cpu_clock_counter <= cpu_clock_counter + 1;
+		end
 	end
 	
-	reg nVBLK_last;
-	always @(nVBLK or nIRQ_ACK or rst) begin
-		if (rst)
-			nIRQ <= 1;
-		else if (!nVBLK && nVBLK_last)
-			nIRQ <= 0;
-		else if (!nIRQ_ACK)
-			nIRQ <= 1;
-			
-		nVBLK_last <= nVBLK;
+	// watchdog reset and int ack
+	// http://www.ukvac.com/forum/topic362440&OB=DESC.html
+	always @(posedge nVBLK) begin
+		if (watchdog_clear | watchdog_counter === 'b1010) begin
+			watchdog_counter <= 'b0000;
+		end else begin
+			watchdog_counter <= watchdog_counter + 1;
+		end
+		
+		nIRQ <= ~int_ack;
 	end
 	
 	always @(*) begin
