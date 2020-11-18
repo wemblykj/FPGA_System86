@@ -40,7 +40,7 @@ module cus41
         input wire SA11,
         // MRESET is implied, by convention, as an 'input' on schematics but must logically be an output for watchdog functionality.
         // ref: Pac-Mania CUS117:SUBRES, MAME namco86.cpp  
-        output wire nMRES,
+        output wire nMRESET,
         output reg nSINT,
 		  output reg nMINT,
         output wire SROM,
@@ -64,7 +64,7 @@ module cus41
 	reg [WATCHDOG_WIDTH-1:0] main_watchdog_counter = 0;
 	wire main_watchdog_clear;
 	wire main_int_ack;
-	wire sound_int_ack;
+	//wire sound_int_ack;
 	
 	reg [3:0] cpu_clock_counter = 0;
 	
@@ -89,16 +89,16 @@ module cus41
 	assign nMROM = nMWE & ~MA[15];  //*nMWE ||*/ MA[15] !== 1;
 	
 	// 8000h W	(watchdog)
-	assign main_watchdog_clear = ~nMWE & MA[15] & ~&MA[14:10];
+	assign main_watchdog_clear = ~nMWE && MA[15:11] === 'b10000;
 	
 	// 9800h W	(watchdog, CUS130)
-	//assign sound_watchdog_clear = ~nSWE & MA[15] & ~&MA[14:10];
+	//assign sound_watchdog_clear = ~nSWE & MA[15:11] === 'b10011;
 	
 	// 0x8800 - 0x8800 W  (INT ACK)
 	assign main_int_ack = ~nMWE && MA[15:11] === 'b10001;
 	
 	// 0x8800 - 0x8800 W  (INT ACK)
-	assign sound_int_ack = ~nSWE && MA[15:11] === 'b10011;
+	//assign sound_int_ack = ~nSWE && MA[15:11] === 'b10011;
 	
 	// D000h - D002h W	(scroll + priority)
 	// D003h - D003h W 	(ROM 9D bank select)
@@ -110,7 +110,7 @@ module cus41
 	// D8004h - D806h W	(scroll + priority)
 	assign nLTH1 = ~(&MA[15:14] & MA[12:11]) | MA[13]; // /*nMWE ||*/ MA[15:11] !== 'b11011;	
 	
-	assign nMRES = ~main_watchdog_counter[WATCHDOG_WIDTH-1];	// reset on msb
+	assign nMRESET = ~main_watchdog_counter[WATCHDOG_WIDTH-1];	// reset on msb
 	
 	initial begin
 		nMINT = 1'b1;
@@ -137,7 +137,7 @@ module cus41
 		end
 		
 		nMINT <= ~main_int_ack;
-		nSINT <= ~sound_int_ack;
+		//nSINT <= ~sound_int_ack;
 	end
 	
 endmodule

@@ -47,7 +47,7 @@ module cus41_tb;
 	reg SA11;
 
 	// Outputs
-	wire nMRES;
+	wire nMRESET;
 	wire nSINT;
 	wire nMINT;
 	wire SROM;
@@ -82,7 +82,7 @@ module cus41_tb;
 		.SA13(SA13), 
 		.SA12(SA12), 
 		.SA11(SA11), 
-		.nMRES(nMRES), 
+		.nMRESET(nMRESET), 
 		.nSINT(nSINT), 
 		.nMINT(nMINT), 
 		.SROM(SROM), 
@@ -155,7 +155,7 @@ module cus41_tb;
 	end
 
 	// generate our 49.125Mhz input clock
-	always #10.1725 clk_48m = ~clk_48m;    
+	always #10.1725 clk_48m = ~clk_48m;
       
 endmodule
 

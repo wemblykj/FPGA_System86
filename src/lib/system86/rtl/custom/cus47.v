@@ -38,8 +38,8 @@ module cus47
         output wire nRES,	
         output wire MQ,
         output wire ME,
-        output wire SUBE,
-        output wire SUBQ,	// 90 degrees out of phase with S2H? (http://www.ukvac.com/forum/topic362440&OB=DESC.html)
+        output wire SE,
+        //output wire SUBQ,	// 90 degrees out of phase with S2H? (http://www.ukvac.com/forum/topic362440&OB=DESC.html)
         output reg nIRQ,
         output wire nLTH2,
         output wire nLTH0,
@@ -60,7 +60,7 @@ module cus47
 	
 	reg [3:0] cpu_clock_counter = 0;
 	
-	wire CKA;
+	/*wire CKA;
 	wire CKB;
 	wire CKC;
 	wire CKD;
@@ -88,12 +88,12 @@ module cus47
 		.Q3_L(PHASED),
 		.Q4(PHASEC),
 		.Q4_L(PHASEA)
-	);
+	);*/
 	
 	// the following timings result in E going low towards the end of the EPROM cycle
 	assign MQ = cpu_clock_counter[1] ^ cpu_clock_counter[0];
 	assign ME = ~CLK_2H;
-	assign SUBE = CLK_2H;
+	assign SE = CLK_2H;
 	
 	// TBD
 	//assign ME = CKB;
@@ -167,8 +167,8 @@ module cus47
 		nIRQ <= ~int_ack;
 	end
 	
-	always @(*) begin
+	/*always @(*) begin
 		CKB_LATCHED <= CKB;
-	end
+	end*/
 	
 endmodule

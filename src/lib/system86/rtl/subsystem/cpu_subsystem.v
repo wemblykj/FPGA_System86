@@ -101,6 +101,7 @@ module cpu_subsystem
 	// CUS41 signals
 	wire cus41_8a_q;
 	wire cus41_8a_mreset_n;
+	wire cus41_8a_mint_n;
 	wire cus41_8a_sndirq_n;
 	wire cus41_8a_subscr0_n;
 	wire cus41_8a_subscr1_n;
@@ -190,8 +191,8 @@ module cpu_subsystem
 			.MQ(cus47_10c_mq), 
 			.ME(cus47_10c_me), 
 			.nIRQ(cus47_10c_irq_n), 
-			.SUBE(cus47_10c_sube), 
-			.SUBQ(cus41_8a_q),			// temp alt for CUS41
+			.SE(cus47_10c_sube), 
+			//.SUBQ(cus41_8a_q),			// temp alt for CUS41
 			.nLTH2(cus47_10c_latch2_n), 
 			.nLTH1(cus47_10c_latch1_n), 
 			.nLTH0(cus47_10c_latch0_n), 
@@ -240,9 +241,11 @@ module cpu_subsystem
 			.MA(cpu2_11a_a[15:11]), 
 			.CLK_0(~CLK_S2H), 	// negate for active low
 			.CLK_6M(CLK_6M), 
+			.Q(cus41_8a_q),
 			.nVBLA(nVBLANK),
 			.nMWE(cpu2_11a_we_n), 
-			.nMRES(cus41_8a_mreset_n), 	// master reset output?
+			.nMRESET(cus41_8a_mreset_n), 	// master reset output?
+			.nMINT(cus41_8a_mint_n), 
 			.nSINT(cus41_8a_sndirq_n), 
 			.nLTH0(cus41_8a_latch0_n), 
 			.nLTH1(cus41_8a_latch1_n), 
@@ -262,7 +265,7 @@ module cpu_subsystem
 			.Q(cus41_8a_q), 
 			.BS(cpu2_11a_bs), 
 			.BA(cpu2_11a_ba), 
-			.nIRQ(cus41_8a_sndirq_n), 
+			.nIRQ(cus41_8a_mint_n), 
 			.nFIRQ(1'b1), 
 			.nNMI(1'b1), 
 			.AVMA(cpu2_11a_avma), 
