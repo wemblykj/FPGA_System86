@@ -30,8 +30,8 @@ module cus47_tb;
 	reg clk_48m;
 
 	// CUS27 outputs
-	wire CLK_S2H;
 	wire CLK_6M;
+	wire CLK_S2H;
 	wire nVBLANK;
 	
 	// Inputs
@@ -87,7 +87,7 @@ module cus47_tb;
 		.nMPGM(nMPGM)
 	);
 
-// CUS27 - CLOCK DIVIDER
+	// CUS27 - CLOCK DIVIDER
 	cus27 
 		cus27_9p_clock_divider(
 			.rst(rst),
