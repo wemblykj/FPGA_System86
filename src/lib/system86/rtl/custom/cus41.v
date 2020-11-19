@@ -71,7 +71,7 @@ module cus41
 	assign Q = cpu_clock_counter[1] ^ cpu_clock_counter[0];
 	
 	// 0000h - 1FFFh R/W	(sprite ram)
-	assign nMCS2 = |MA[15:13]; // MA[15:13] !== 'b000;
+	assign nMCS2 = MA[15:13] !== 'b000;
 	
 	// 2000h - 3FFFh R/W 	(videoram 1)
 	assign nMCS0 = ~MA[13] | |MA[15:14]; // MA[15:13] !== 'b001;
