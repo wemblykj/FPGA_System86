@@ -145,7 +145,8 @@ module cus47
 	
 	assign nRES = ~watchdog_counter[WATCHDOG_WIDTH-1]; // reset on msb
 	
-	// CPU clock
+	// CPU clock - 90 degrees out of phase from 2H is inferred from knowledge of CUS41 and the fact that the input clock is 180 degrees
+	// out of phase to the clock of CUS41
 	// http://www.ukvac.com/forum/topic362440&OB=DESC.html
 	always @(negedge CLK_6M) begin
 		if (!CLK_2H) begin

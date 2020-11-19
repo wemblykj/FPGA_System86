@@ -100,7 +100,11 @@ module cus27
 	end
 	
 	reg rst_last = 0;
-	always @(posedge CLK_6M_IN) begin
+	// in order for CPU timing to match information gleaned from http://www.ukvac.com/forum/namco-cus27-in-fpga-cus130-wip_topic362440_page2.html
+	// it would appear that the counter is clocked on the falling edge of 6M
+	// this would make sense as CUS27 is wired up with 6M output as a feedback into the chip's 6M input
+	// which would only be stable in reality if the input was dealt with out of phase from the orinal output
+	always @(negedge CLK_6M_IN) begin
 		if (rst && ~rst_last) begin
 			horizontal_counter <= 0;
 			
