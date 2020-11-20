@@ -5,14 +5,14 @@
 // Engineer:
 //
 // Create Date:   20:56:26 11/19/2020
-// Design Name:   bus_subsystem
-// Module Name:   C:/Users/paulw/Development/Arcade/FPGA_System86/src/lib/system86/simulation/subsystem/bus_subsystem_tb.v
+// Design Name:   address_bus
+// Module Name:   C:/Users/paulw/Development/Arcade/FPGA_System86/src/lib/system86/simulation/subsystem/address_bus_tb.v
 // Project Name:  system86
 // Target Device:  
 // Tool versions:  
 // Description: 
 //
-// Verilog Test Fixture created by ISE for module: bus_subsystem
+// Verilog Test Fixture created by ISE for module: address_bus
 //
 // Dependencies:
 // 
@@ -22,11 +22,11 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module bus_subsystem_tb;
+module address_bus_tb;
 
 	reg rst;
 	reg clk_48m;
-
+	
 	// CUS27 outputs
 	wire CLK_6M;
 	wire CLK_2H;
@@ -51,31 +51,23 @@ module bus_subsystem_tb;
 	wire nLATCH0;
 	wire nLATCH1;
 
-	// Bidirs
-	wire [7:0] MD;
-	wire [7:0] SD;
-	wire [7:0] D;
-
 	// Instantiate the Unit Under Test (UUT)
-	bus_subsystem uut (
+	address_bus uut (
 		.rst(rst), 
 		.CLK_2H(CLK_2H), 
 		.CLK_S2H(CLK_S2H), 
 		.CLK_1H(CLK_1H), 
 		.MA(MA), 
-		.MD(MD), 
 		.MRnW(MRnW), 
 		.nMBUFEN(nMBUFEN), 
 		.nMLTH0(nMLTH0), 
 		.nMLTH1(nMLTH1), 
 		.SA(SA), 
-		.SD(SD), 
 		.SRnW(SRnW), 
 		.nSBUFEN(nSBUFEN), 
 		.nSLTH0(nSLTH0), 
 		.nSLTH1(nSLTH1), 
 		.A(A), 
-		.D(D), 
 		.nWE(nWE), 
 		.nLATCH0(nLATCH0), 
 		.nLATCH1(nLATCH1)
@@ -105,30 +97,98 @@ module bus_subsystem_tb;
 			.CLK_S2H(CLK_S2H)
 			//.CLK_S1H(CLK_S1H)
 		);
-		
+	
 	initial begin
 		clk_48m = 0;
 		rst = 0;
 		
 		// Initialize Inputs
 		MA = 0;
-		MRnW = 0;
-		nMBUFEN = 0;
-		nMLTH0 = 0;
-		nMLTH1 = 0;
+		MRnW = 1;
+		nMBUFEN = 1;
+		nMLTH0 = 1;
+		nMLTH1 = 1;
 		SA = 0;
-		SRnW = 0;
-		nSBUFEN = 0;
-		nSLTH0 = 0;
-		nSLTH1 = 0;
-
+		SRnW = 1;
+		nSBUFEN = 1;
+		nSLTH0 = 1;
+		nSLTH1 = 1;
+		
 		// Wait 100 ns for global reset to finish
 		#100;
       rst = 1;
 		
+		#1000;
+		
 		// Add stimulus here
-
+		MA = 'h0140;
+		#1000;
+		SA = 'h0280;
+		#1000;
+		
+		nMLTH0 = 0;
+		#100;
+		MRnW = 0;
+		#3800;
+		nMLTH0 = 1;
+		MRnW = 1;
+		#100;
+		
+		nMBUFEN = 0;
+		#100;
+		nMLTH0 = 0;
+		#100;
+		MRnW = 0;
+		#3600;
+		nMLTH0 = 1;
+		MRnW = 1;
+		#100;
+		nMBUFEN = 1;
+		#100;
+		
+		nSLTH0 = 0;
+		#100;
+		SRnW = 0;
+		#3800;
+		nSLTH0 = 1;
+		SRnW = 1;
+		#100;
+		
+		nSBUFEN = 0;
+		#100;
+		nSLTH0 = 0;
+		#100;
+		SRnW = 0;
+		#3600;
+		nSLTH0 = 1;
+		SRnW = 1;
+		#100;
+		nSBUFEN = 1;
+		#100;
+		
+		nMBUFEN = 0;
+		nSBUFEN = 0;
+		#100;
+		nMLTH0 = 0;
+		nSLTH1 = 0;
+		#100;
+		MRnW = 0;
+		SRnW = 1;
+		#3600;
+		nMLTH0 = 1;
+		MRnW = 1;
+		nSLTH1 = 1;
+		SRnW = 1;
+		#100;
+		nMBUFEN = 1;
+		nSBUFEN = 1;
+		#100;
+		
+		$finish();
 	end
       
+	// generate our 49.125Mhz input clock
+	always #10.1725 clk_48m = ~clk_48m;
+
 endmodule
 
