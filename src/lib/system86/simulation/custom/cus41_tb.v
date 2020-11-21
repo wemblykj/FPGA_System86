@@ -130,8 +130,10 @@ module cus41_tb;
 			//.CLK_S1H(CLK_S1H)
 		);
 	
-	integer i;
-	
+	integer address_msb;
+	integer address_low;
+	integer address_high;
+		
 	initial begin
 		clk_48m = 0;
 		rst = 0;
@@ -159,31 +161,31 @@ module cus41_tb;
 		
 		// 0000h - 1FFFh R/W	(sprite ram)
 		$display ("0000h - 1FFFh R/W	(sprite ram)");
-		`test_address_decode_range(1'b0, nMCS2, MA, 11, 'b00000, 'b00100)
-		`test_address_decode_range(1'b1, nMCS2, MA, 11, 'b00100, 'b11111)
+		`test_address_decode_range(1'b0, nMCS2, MA, 'h0000, 'h2000, 15, 11)
+		`test_address_decode_range(1'b1, nMCS2, MA, 'h2000, 'he000, 15, 11)
 	
 		// 2000h - 3FFFh R/W 	(videoram 1)
 		$display ("2000h - 3FFFh R/W 	(videoram 1)");
-		`test_address_decode_range(1'b1, nMCS0, MA, 11, 'b00000, 'b00100)
-		`test_address_decode_range(1'b0, nMCS0, MA, 11, 'b00100, 'b01000)
-		`test_address_decode_range(1'b1, nMCS0, MA, 11, 'b01000, 'b11111)
+		`test_address_decode_range(1'b1, nMCS0, MA, 'h0000, 'h2000, 15, 11)
+		`test_address_decode_range(1'b0, nMCS0, MA, 'h2000, 'h2000, 15, 11)
+		`test_address_decode_range(1'b1, nMCS0, MA, 'h4000, 'hc000, 15, 11)
 		
 		// 4000h - 5FFFh R/W		(videoram 2)
 		$display ("4000h - 5FFFh R/W		(videoram 2)");
-		`test_address_decode_range(1'b1, nMCS1, MA, 11, 'b00100, 'b01000)
-		`test_address_decode_range(1'b0, nMCS1, MA, 11, 'b01000, 'b01100)
-		`test_address_decode_range(1'b1, nMCS1, MA, 11, 'b01100, 'b11111)
+		`test_address_decode_range(1'b1, nMCS1, MA, 'h0000, 'h4000, 15, 11)
+		`test_address_decode_range(1'b0, nMCS1, MA, 'h4000, 'h2000, 15, 11)
+		`test_address_decode_range(1'b1, nMCS1, MA, 'h6000, 'ha000, 15, 11)
 	
 		// 6000h - 7FFFh R	(EEPROM 12D)
 		$display ("6000h - 7FFFh R	(EEPROM 12D)");
-		`test_address_decode_range(1'b1, nMCS4, MA, 11, 'b01000, 'b01100)
-		`test_address_decode_range(1'b0, nMCS4, MA, 11, 'b01100, 'b10000)
-		`test_address_decode_range(1'b1, nMCS4, MA, 11, 'b10000, 'b11111)
+		`test_address_decode_range(1'b1, nMCS4, MA, 'h0000, 'h6000, 15, 11)
+		`test_address_decode_range(1'b0, nMCS4, MA, 'h6000, 'h2000, 15, 11)
+		`test_address_decode_range(1'b1, nMCS4, MA, 'h8000, 'h8000, 15, 11)
 	
 		// 8000h - FFFFh R	(EEPROM 12C)
 		$display ("8000h - FFFFh R	(EEPROM 12C)");
-		`test_address_decode_range(1'b0, nMROM, MA, 11, 'b01100, 'b10000)
-		`test_address_decode_range(1'b0, nMROM, MA, 11, 'b10000, 'b11111)
+		`test_address_decode_range(1'b1, nMROM, MA, 'h0000, 'h8000, 15, 11)
+		`test_address_decode_range(1'b0, nMROM, MA, 'h8000, 'h8000, 15, 11)
 		
 		// 0x8800 - 0x8800 W  (INT ACK)
 		//assign main_int_ack = ~nMWE && MA[15:11] === 'b10001;
@@ -200,6 +202,8 @@ module cus41_tb;
 		// D803h - D803h W 	(ROM 12D bank select)
 		// D8004h - D806h W	(scroll + priority)
 		//assign nLTH1 = ~(&MA[15:14] & MA[12:11]) | MA[13]; // /*nMWE ||*/ MA[15:11] !== 'b11011;	
+		
+		#100
 		
 		$finish();
 	end

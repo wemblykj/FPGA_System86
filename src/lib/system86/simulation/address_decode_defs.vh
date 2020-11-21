@@ -3,20 +3,22 @@
 
 `include "../common.vh"
 
-`define test_address_decode_range(expected, signal, address_bus, lsb, from, to) \
-	$write("Testing %s is %d over range 0x%H to 0x%H: ", `STRINGIFY(signal), expected, from << lsb, to << lsb); \
-	for (i = from; i < to; i = i + 1) \
+`define test_address_decode_range(expected, signal, address_bus, from, size, msb, lsb) \
+	$display("Testing %s is %d over range 0x%H to 0x%H", `STRINGIFY(signal), expected, from, size); \
+	for (address_msb = {{from}[msb:lsb]}; address_msb < {{(from+size)}[msb:lsb]}; address_msb = address_msb + 1) \
 		begin \
-			address_bus = i; \
+			address_bus = address_msb; \
+			address_low = (address_msb << lsb); \
+			address_high = address_low | {{from+size-1}[lsb-1:0]}; \
+			$write("\ttesting %s is %d over range 0x%H to 0x%H, %s <= %b: ", `STRINGIFY(signal), expected, address_low, address_high, `STRINGIFY(address_bus), address_bus); \
 			#100 \
 			if(signal != expected) \
 				begin \
 					$display("FAILED"); \
-					$display("%s had value %d, expected %d for address 0x%H", `STRINGIFY(signal), signal, expected, i << lsb); \
+					$display("%s had value %d, expected %d for address 0x%H", `STRINGIFY(signal), signal, expected, address_low); \
 					$finish(); \
 				end \
-		end \
-	$display("PASSED");
-		
+			$display("PASSED"); \
+		end
 	
 `endif //_address_decode_defs_vh_

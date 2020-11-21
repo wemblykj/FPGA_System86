@@ -112,7 +112,9 @@ module cus47_tb;
 			//.CLK_S1H(CLK_S1H)
 		);
 		
-	integer i;
+	integer address_msb;
+	integer address_high;
+	integer address_low;
 	
 	initial begin
 		clk_48m = 0;
@@ -131,22 +133,22 @@ module cus47_tb;
 		
 		// 000xxxxxxxxxxxxx R/W xxxxxxxx SCROLL0   tilemap 0/1 RAM (shared with sub CPU)
 		$display ("tilemap 0/1 RAM (shared with sub CPU)");
-		`test_address_decode_range(1'b0, nSCR0, A, 10, 'b000000, 'b001000)
-		`test_address_decode_range(1'b1, nSCR0, A, 10, 'b001000, 'b111111)
+		`test_address_decode_range(1'b0, nSCR0, A, 'h0000, 'h2000, 15, 10)
+		`test_address_decode_range(1'b1, nSCR0, A, 'h2000, 'he000, 15, 10)
 
 		// 001xxxxxxxxxxxxx R/W xxxxxxxx SCROLL1   tilemap 2/3 RAM (shared with sub CPU)
-		`test_address_decode_range(1'b1, nSCR1, A, 10, 'b000000, 'b001000)
-		`test_address_decode_range(1'b0, nSCR1, A, 10, 'b001000, 'b010000)
-		`test_address_decode_range(1'b1, nSCR1, A, 10, 'b010000, 'b111111)
+		`test_address_decode_range(1'b1, nSCR1, A, 'h0000, 'h2000, 15, 10)
+		`test_address_decode_range(1'b0, nSCR1, A, 'h2000, 'h2000, 15, 10)
+		`test_address_decode_range(1'b1, nSCR1, A, 'h4000, 'hc000, 15, 10)
 		
 		// 010000xxxxxxxxxx R/W xxxxxxxx SOUND     sound RAM (through CUS30, shared with MCU)
 		// 01000000xxxxxxxx R/W xxxxxxxx           portion holding the sound wave data
 		// 0100000100xxxxxx R/W xxxxxxxx           portion holding the sound registers
 		
 		// 010xxxxxxxxxxxxx R/W xxxxxxxx OBJECT    work RAM (shared with sub CPU) [1]
-		`test_address_decode_range(1'b1, nOBJ, A, 10, 'b000000, 'b010000)
-		`test_address_decode_range(1'b0, nOBJ, A, 10, 'b010000, 'b100000)
-		`test_address_decode_range(1'b1, nOBJ, A, 10, 'b100000, 'b111111)
+		`test_address_decode_range(1'b1, nOBJ, A, 'h0000, 'h4000, 15, 10)
+		`test_address_decode_range(1'b0, nOBJ, A, 'h4000, 'h2000, 15, 10)
+		`test_address_decode_range(1'b1, nOBJ, A, 'h6000, 'ha000, 15, 10)
 		
 		// 01011xxxxxxxxxxx R/W xxxxxxxx           portion holding sprite registers
 		// 011xxxxxxxxxxxxx R   xxxxxxxx ROM 9D    program ROM (banked) [2]
@@ -157,17 +159,17 @@ module cus47_tb;
 		
 		// 100100-------x0x   W xxxxxxxx LATCH0    tilemap 0/1 X scroll + priority
 		// 100100-------x10   W xxxxxxxx LATCH0    tilemap 0/1 Y scroll
-		`test_address_decode_range(1'b1, nLTH0, A, 10, 'b000000, 'b101000)
-		`test_address_decode_range(1'b0, nLTH0, A, 10, 'b101000, 'b101001)
-		`test_address_decode_range(1'b1, nLTH0, A, 10, 'b101001, 'b111111)
+		`test_address_decode_range(1'b1, nLTH0, A, 'h0000, 'h9000, 15, 10)
+		`test_address_decode_range(1'b0, nLTH0, A, 'h9000, 'h0400, 15, 10)
+		`test_address_decode_range(1'b1, nLTH0, A, 'h9400, 'h6c00, 15, 10)
 		
 		// 100100--------11   W ------xx BAMNKM    ROM 9D bank select
 		
 		// 100101-------x0x   W xxxxxxxx LATCH1    tilemap 2/3 X scroll + priority
 		// 100101-------x10   W xxxxxxxx LATCH1    tilemap 2/3 Y scroll
-		`test_address_decode_range(1'b1, nLTH1, A, 10, 'b000000, 'b101001)
-		`test_address_decode_range(1'b0, nLTH1, A, 10, 'b101001, 'b110110)
-		`test_address_decode_range(1'b1, nLTH1, A, 10, 'b101010, 'b111111)
+		`test_address_decode_range(1'b1, nLTH1, A, 'h0000, 'h9400, 15, 10)
+		`test_address_decode_range(1'b0, nLTH1, A, 'h9400, 'h0400, 15, 10)
+		`test_address_decode_range(1'b1, nLTH1, A, 'h9800, 'h6800, 15, 10)
 		
 		// 100101--------11   W ------xx BAMNKS    ROM 12D bank select
 		// 110000----------   W xxxxxxxx BACKCOLOR background color
