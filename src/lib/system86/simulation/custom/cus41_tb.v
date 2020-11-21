@@ -161,32 +161,59 @@ module cus41_tb;
 		
 		// 0000h - 1FFFh R/W	(sprite ram)
 		$display ("0000h - 1FFFh R/W	(sprite ram)");
+		nMWE = 1;
 		`test_address_decode_range(1'b0, nMCS2, MA, 'h0000, 'h2000, 15, 11)
 		`test_address_decode_range(1'b1, nMCS2, MA, 'h2000, 'he000, 15, 11)
+		nMWE = 0;
+		`test_address_decode_range(1'b0, nMCS2, MA, 'h0000, 'h2000, 15, 11)
+		`test_address_decode_range(1'b1, nMCS2, MA, 'h2000, 'he000, 15, 11)
+		nMWE = 1;
 	
 		// 2000h - 3FFFh R/W 	(videoram 1)
 		$display ("2000h - 3FFFh R/W 	(videoram 1)");
+		nMWE = 1;
 		`test_address_decode_range(1'b1, nMCS0, MA, 'h0000, 'h2000, 15, 11)
 		`test_address_decode_range(1'b0, nMCS0, MA, 'h2000, 'h2000, 15, 11)
 		`test_address_decode_range(1'b1, nMCS0, MA, 'h4000, 'hc000, 15, 11)
+		nMWE = 0;
+		`test_address_decode_range(1'b1, nMCS0, MA, 'h0000, 'h2000, 15, 11)
+		`test_address_decode_range(1'b0, nMCS0, MA, 'h2000, 'h2000, 15, 11)
+		`test_address_decode_range(1'b1, nMCS0, MA, 'h4000, 'hc000, 15, 11)
+		nMWE = 1;
 		
 		// 4000h - 5FFFh R/W		(videoram 2)
 		$display ("4000h - 5FFFh R/W		(videoram 2)");
+		nMWE = 1;
 		`test_address_decode_range(1'b1, nMCS1, MA, 'h0000, 'h4000, 15, 11)
 		`test_address_decode_range(1'b0, nMCS1, MA, 'h4000, 'h2000, 15, 11)
 		`test_address_decode_range(1'b1, nMCS1, MA, 'h6000, 'ha000, 15, 11)
-	
+		nMWE = 0;
+		`test_address_decode_range(1'b1, nMCS1, MA, 'h0000, 'h4000, 15, 11)
+		`test_address_decode_range(1'b0, nMCS1, MA, 'h4000, 'h2000, 15, 11)
+		`test_address_decode_range(1'b1, nMCS1, MA, 'h6000, 'ha000, 15, 11)
+		nMWE = 1;
+		
 		// 6000h - 7FFFh R	(EEPROM 12D)
 		$display ("6000h - 7FFFh R	(EEPROM 12D)");
+		nMWE = 1;
 		`test_address_decode_range(1'b1, nMCS4, MA, 'h0000, 'h6000, 15, 11)
 		`test_address_decode_range(1'b0, nMCS4, MA, 'h6000, 'h2000, 15, 11)
 		`test_address_decode_range(1'b1, nMCS4, MA, 'h8000, 'h8000, 15, 11)
-	
+		nMWE = 0;
+		`test_address_decode_range(1'b1, nMCS4, MA, 'h0000, 'h6000, 15, 11)
+		`test_address_decode_range(1'b0, nMCS4, MA, 'h6000, 'h2000, 15, 11)
+		`test_address_decode_range(1'b1, nMCS4, MA, 'h8000, 'h8000, 15, 11)
+		nMWE = 1;
+		
 		// 8000h - FFFFh R	(EEPROM 12C)
 		$display ("8000h - FFFFh R	(EEPROM 12C)");
+		nMWE = 1;
 		`test_address_decode_range(1'b1, nMROM, MA, 'h0000, 'h8000, 15, 11)
 		`test_address_decode_range(1'b0, nMROM, MA, 'h8000, 'h8000, 15, 11)
-		
+		nMWE = 0;
+		`test_address_decode_range(1'b1, nMROM, MA, 'h0000, 'h8000, 15, 11)
+		`test_address_decode_range(1'b1, nMROM, MA, 'h8000, 'h8000, 15, 11)
+		nMWE = 1;
 		// 0x8800 - 0x8800 W  (INT ACK)
 		//assign main_int_ack = ~nMWE && MA[15:11] === 'b10001;
 	

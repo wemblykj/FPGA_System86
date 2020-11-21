@@ -86,7 +86,7 @@ module cus41
 	assign nMCS4 = MA[15] | ~&MA[14:13]; // /*nMWE ||*/ (MA[15:13] !== 'b011);
 	
 	// 8000h - FFFFh R	(EEPROM 12C)
-	assign nMROM = nMWE | ~MA[15];  //*nMWE ||*/ MA[15] !== 1;
+	assign nMROM = ~nMWE | ~MA[15];  //*nMWE ||*/ MA[15] !== 1;
 	
 	// 8000h W	(watchdog)
 	assign main_watchdog_clear = ~nMWE && MA[15:11] === 'b10000;
