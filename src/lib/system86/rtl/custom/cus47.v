@@ -133,7 +133,7 @@ module cus47
 	// 9400h - 9402h W	(scroll 2 + priority)
 	// 9403h - 9403h W	(ROM 12D bank select)
 	// 9404h - 9406h W	(scroll 3 + priority)
-	assign nLTH1 = ~(A[15] & A[12] & A[11]) | |A[14:13] | A[11]; // A[15:10] !== 'b100101;	
+	assign nLTH1 = ~(A[15] & A[12] & A[10]) | |A[14:13] | A[11]; // A[15:10] !== 'b100101;	
 	
 	// A000h - A000h W	(BACKCOLOR) - documented as C000h but implemented as A000h in Mame
 	assign nLTH2 = ~(A[15] & A[13]) | A[14] | |A[12:10]; // A[15:10] !== 'b101000;

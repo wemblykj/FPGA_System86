@@ -108,7 +108,7 @@ module cus41
 	// D800h - D802h W	(scroll + priority)
 	// D803h - D803h W 	(ROM 12D bank select)
 	// D8004h - D806h W	(scroll + priority)
-	assign nLTH1 = ~(&MA[15:14] & MA[12:11]) | MA[13]; // /*nMWE ||*/ MA[15:11] !== 'b11011;	
+	assign nLTH1 = ~(&MA[15:14] & &MA[12:11]) | MA[13]; // /*nMWE ||*/ MA[15:11] !== 'b11011;	
 	
 	assign nMRESET = ~main_watchdog_counter[WATCHDOG_WIDTH-1];	// reset on msb
 	
