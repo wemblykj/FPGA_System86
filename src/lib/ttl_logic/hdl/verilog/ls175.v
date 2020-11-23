@@ -21,7 +21,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module ls175(
         input wire CLK,
-        input wire CLR,
+        input wire nCLR,
         input wire D1,
         input wire D2,
         input wire D3,
@@ -36,18 +36,23 @@ module ls175(
         output wire Q4_L
     );
 
-	always @(posedge CLK) begin
-		if (CLR) begin
+	reg clk_request;
+	reg clk_last;
+	
+	always @(CLK or nCLR) begin
+		if (~nCLR) begin
 			Q1 <= 0;
 			Q2 <= 0;
 			Q3 <= 0;
 			Q4 <= 0;
-		end else begin
+		end else if (CLK && !clk_last) begin
 			Q1 <= D1;
 			Q2 <= D2;
 			Q3 <= D3;
 			Q4 <= D4;
 		end
+		
+		clk_last = CLK;
 	end
 	
 	assign Q1_L = ~Q1;	
