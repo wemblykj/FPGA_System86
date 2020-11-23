@@ -223,12 +223,16 @@ module cus41_tb;
 		// D000h - D002h W	(scroll + priority)
 		// D003h - D003h W 	(ROM 9D bank select)
 		// D004h - D006h W	(scroll + priority)
-		//assign nLTH0 = ~(&MA[15:14] & MA[12]) | MA[13] | MA[11]; // /*nMWE ||*/ MA[15:11] !== 'b11010;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
+		`test_address_decode_range(1'b1, nLTH0, MA, 'h0000, 'hd000, 15, 11)
+		`test_address_decode_range(1'b0, nLTH0, MA, 'hd000, 'h0800, 15, 11)
+		`test_address_decode_range(1'b1, nLTH0, MA, 'hd800, 'h2800, 15, 11)
 	
 		// D800h - D802h W	(scroll + priority)
 		// D803h - D803h W 	(ROM 12D bank select)
 		// D8004h - D806h W	(scroll + priority)
-		//assign nLTH1 = ~(&MA[15:14] & MA[12:11]) | MA[13]; // /*nMWE ||*/ MA[15:11] !== 'b11011;	
+		`test_address_decode_range(1'b1, nLTH1, MA, 'h0000, 'hd800, 15, 11)
+		`test_address_decode_range(1'b0, nLTH1, MA, 'hd800, 'h0800, 15, 11)
+		`test_address_decode_range(1'b1, nLTH1, MA, 'he000, 'h2000, 15, 11)
 		
 		#100
 		
