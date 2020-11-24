@@ -1,5 +1,5 @@
-`ifndef _rthunder_vh_
-`define _rthunder_vh_
+`ifndef roms_rthunder_vh_
+`define roms_rthunder_vh_
 `include "roms.vh"
 
 `define RTHUNDER "rthunder"
@@ -27,4 +27,4 @@
 
 
 
-`endif //_rthunder_vh_
+`endif //roms_rthunder_vh_

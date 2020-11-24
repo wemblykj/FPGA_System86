@@ -83,3 +83,4 @@ webtalk_pn.xml
 **/__xps/
 **/synthesis/
 *.wdb
+src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/raw.txt

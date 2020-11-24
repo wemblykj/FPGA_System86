@@ -113,8 +113,17 @@ module cus42
 			.GA(GAB),
 			.S3H(S3HB)
 		);
+	
+	reg [13:0] CA_Latched;	
+	
+	always @(posedge CLK_6M) begin	
+		if (!nRWE && nRWE_last) begin
+			CA_Latched = CA;
+		end
 		
-	reg [13:0] CA_Latched;
+	end	
+	
+	
 	reg [7:0] CD_Latched;
 	always @(negedge nRCS) begin
 		CA_Latched <= CA;

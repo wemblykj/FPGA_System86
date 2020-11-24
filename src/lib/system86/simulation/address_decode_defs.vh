@@ -1,7 +1,7 @@
 `ifndef _address_decode_defs_vh_
 `define _address_decode_defs_vh_
 
-`include "../common.vh"
+`include "system86/system86.vh"
 
 `define test_address_decode_range(expected, signal, address_bus, from, size, msb, lsb) \
 	$display("Testing %s is %d over range 0x%H to 0x%H", `STRINGIFY(signal), expected, from, from+size-1); \

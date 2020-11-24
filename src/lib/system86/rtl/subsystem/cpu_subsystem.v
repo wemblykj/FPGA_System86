@@ -24,9 +24,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-`include "../../../ttl_mem/m27256.vh"
+`include "ttl_mem/m27256.vh"
 
-`include "../../../ttl_mem/ttl_mem.vh"
+`include "ttl_mem/ttl_mem.vh"
 
 module cpu_subsystem
     #(
@@ -40,9 +40,8 @@ module cpu_subsystem
         input wire CLK_1H,
         input wire CLK_S1H,
         input wire nVBLANK,
-        //input wire nRESET,
-        inout wire [12:0] A,
         inout wire [7:0] D,
+		  output wire [12:0] A,
         output wire nWE,
         output wire nRESET,
         output wire nSCROLL0,
@@ -298,19 +297,19 @@ module cpu_subsystem
 	// Main CPU data bus
 	ls245 ls245_12e
         (
-			.DIR(cpu2_11a_we_n),
+			.DIR(mcpu_11a_we_n),
 			.nOE(ls00_8d_3y_n),
 			.A(D),
-			.B(cpu2_11a_d)
+			.B(mcpu_11a_d)
 		);
 	
 	// Sub CPU data bus
 	ls245 ls245_9e
         (
-			.DIR(cpu1_9a_we_n),
+			.DIR(scpu_9a_we_n),
 			.nOE(cus47_10c_bufen_n),
 			.A(D),
-			.B(cpu1_9a_d)
+			.B(scpu_9a_d)
 		);
 		
 		

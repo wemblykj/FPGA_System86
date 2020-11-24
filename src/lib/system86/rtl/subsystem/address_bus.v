@@ -99,7 +99,7 @@ module address_bus(
 			.nSELA(CLK_2H),
 			.A1( nSLTH0 ),
 			.A2( nSLTH1 ),
-			.A3( MRnW ),
+			.A3( SRnW ),
 			.A4( SA[12] ),
 			.B1( nMLTH0 ),
 			.B2( nMLTH1 ),

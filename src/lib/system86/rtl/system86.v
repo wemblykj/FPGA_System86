@@ -20,22 +20,22 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-//`include "common/defines.vh"
+`include "system86/system86.vh"
 
-`include "../../ttl_mem/mb7112.vh"
-`include "../../ttl_mem/mb7116.vh"
-`include "../../ttl_mem/mb7124.vh"
-`include "../../ttl_mem/mb7138.vh"
+`include "ttl_mem/mb7112.vh"
+`include "ttl_mem/mb7116.vh"
+`include "ttl_mem/mb7124.vh"
+`include "ttl_mem/mb7138.vh"
 
-`include "../../ttl_mem/m27128.vh"
-`include "../../ttl_mem/m27256.vh"
-`include "../../ttl_mem/m27512.vh"
+`include "ttl_mem/m27128.vh"
+`include "ttl_mem/m27256.vh"
+`include "ttl_mem/m27512.vh"
 
-`include "../../ttl_mem/cy6264.vh"
+`include "ttl_mem/cy6264.vh"
 
-`include "../../ttl_mem/ttl_mem.vh"
+`include "ttl_mem/ttl_mem.vh"
 
-`include "../../../../roms/rthunder.vh"
+`include "roms/rthunder.vh"
 
 module system86
 	#(

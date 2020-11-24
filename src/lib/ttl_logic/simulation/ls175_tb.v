@@ -22,6 +22,8 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
+`include "test_bench/assert.vh"
+
 module ls175_tb;
 
 	// Inputs
@@ -76,36 +78,36 @@ module ls175_tb;
 		
 		// Add stimulus here
 		
-		if (Q1 != 0) $stop();
-		if (Q2 != 0) $stop();
-		if (Q3 != 0) $stop();
-		if (Q4 != 0) $stop();
+		`ASSERT_EQUAL(0, Q1)
+		`ASSERT_EQUAL(0, Q2)
+		`ASSERT_EQUAL(0, Q3)
+		`ASSERT_EQUAL(0, Q4)
 		
 		D1 <= 1;
 		D2 <= 0;
 		D3 <= 1;
 		D4 <= 0;
 		
-		if (Q1 != 0) $stop();
-		if (Q2 != 0) $stop();
-		if (Q3 != 0) $stop();
-		if (Q4 != 0) $stop();
+		`ASSERT_EQUAL(0, Q1)
+		`ASSERT_EQUAL(0, Q2)
+		`ASSERT_EQUAL(0, Q3)
+		`ASSERT_EQUAL(0, Q4)
 		
 		CLK <= 0;
 		#10
 		
-		if (Q1 != 0) $stop();
-		if (Q2 != 0) $stop();
-		if (Q3 != 0) $stop();
-		if (Q4 != 0) $stop();
+		`ASSERT_EQUAL(0, Q1)
+		`ASSERT_EQUAL(0, Q2)
+		`ASSERT_EQUAL(0, Q3)
+		`ASSERT_EQUAL(0, Q4)
 		
 		CLK <= 1;
 		#10
 		
-		if (Q1 != 1) $stop();
-		if (Q2 != 0) $stop();
-		if (Q3 != 1) $stop();
-		if (Q4 != 0) $stop();
+		`ASSERT_EQUAL(1, Q1)
+		`ASSERT_EQUAL(0, Q2)
+		`ASSERT_EQUAL(1, Q3)
+		`ASSERT_EQUAL(0, Q4)
 		
 		D1 <= 0;
 		D2 <= 1;
@@ -115,18 +117,18 @@ module ls175_tb;
 		CLK <= 0;
 		#10
 		
-		if (Q1 != 1) $stop();
-		if (Q2 != 0) $stop();
-		if (Q3 != 1) $stop();
-		if (Q4 != 0) $stop();
+		`ASSERT_EQUAL(1, Q1)
+		`ASSERT_EQUAL(0, Q2)
+		`ASSERT_EQUAL(1, Q3)
+		`ASSERT_EQUAL(0, Q4)
 		
 		CLK <= 1;
 		#10
 		
-		if (Q1 != 0) $stop();
-		if (Q2 != 1) $stop();
-		if (Q3 != 0) $stop();
-		if (Q4 != 1) $stop();
+		`ASSERT_EQUAL(0, Q1)
+		`ASSERT_EQUAL(1, Q2)
+		`ASSERT_EQUAL(0, Q3)
+		`ASSERT_EQUAL(1, Q4)
 		
 		nCLR <= 0;
 		#10
@@ -136,26 +138,26 @@ module ls175_tb;
 		D3 <= 1;
 		D4 <= 1;
 		
-		if (Q1 != 0) $stop();
-		if (Q2 != 0) $stop();
-		if (Q3 != 0) $stop();
-		if (Q4 != 0) $stop();
+		`ASSERT_EQUAL(0, Q1)
+		`ASSERT_EQUAL(0, Q2)
+		`ASSERT_EQUAL(0, Q3)
+		`ASSERT_EQUAL(0, Q4)
 		
 		CLK <= 0;
 		#10
 		
-		if (Q1 != 0) $stop();
-		if (Q2 != 0) $stop();
-		if (Q3 != 0) $stop();
-		if (Q4 != 0) $stop();
+		`ASSERT_EQUAL(0, Q1)
+		`ASSERT_EQUAL(0, Q2)
+		`ASSERT_EQUAL(0, Q3)
+		`ASSERT_EQUAL(0, Q4)
 		
 		CLK <= 1;
 		#10
 		
-		if (Q1 != 0) $stop();
-		if (Q2 != 0) $stop();
-		if (Q3 != 0) $stop();
-		if (Q4 != 0) $stop();
+		`ASSERT_EQUAL(0, Q1)
+		`ASSERT_EQUAL(0, Q2)
+		`ASSERT_EQUAL(0, Q3)
+		`ASSERT_EQUAL(0, Q4)
 		
 		nCLR <= 1;
 		#10
@@ -163,18 +165,18 @@ module ls175_tb;
 		CLK <= 0;
 		#10
 		
-		if (Q1 != 0) $stop();
-		if (Q2 != 0) $stop();
-		if (Q3 != 0) $stop();
-		if (Q4 != 0) $stop();
+		`ASSERT_EQUAL(0, Q1)
+		`ASSERT_EQUAL(0, Q2)
+		`ASSERT_EQUAL(0, Q3)
+		`ASSERT_EQUAL(0, Q4)
 		
 		CLK <= 1;
 		#10
 		
-		if (Q1 != 1) $stop();
-		if (Q2 != 1) $stop();
-		if (Q3 != 1) $stop();
-		if (Q4 != 1) $stop();
+		`ASSERT_EQUAL(1, Q1)
+		`ASSERT_EQUAL(1, Q2)
+		`ASSERT_EQUAL(1, Q3)
+		`ASSERT_EQUAL(1, Q4)
 		
 		$finish();
 	end
