@@ -209,6 +209,32 @@ module system86
 	reg ls174_9v_q5 = 1'b0;	// videogen_bank
 	reg ls174_6v_q6 = 1'b1;	// videogen_clear
 	
+	sprite_subsystem
+		sprite_subsystem
+		(
+			.rst(rst),
+			
+			// input
+			.CLK_6M(CLK_6M),
+			.CLK_1H(CLK_1H),
+			.nOOBJECT(nOBJECT),
+			.nHSYNC(nHSYNC),
+			.nVRESET(nVRESET),
+			.A(A[12:0]),
+			.RnW(nWE),
+			.D(D),
+						
+			// == hardware abstraction - memory buses ==			
+			//`EPROM_CONNECTION_DEFS(eprom_4r, eprom_4r),
+			//`EPROM_CONNECTION_DEFS(eprom_4s, eprom_4s),
+			//`PROM_CONNECTION_DEFS(prom_4v, prom_4v),
+			//`PROM_CONNECTION_DEFS(prom_6u, prom_6u),
+			//`EPROM_CONNECTION_DEFS(eprom_7r, eprom_7r),
+			//`EPROM_CONNECTION_DEFS(eprom_7s, eprom_7s),
+			`SRAM_CONNECTION_DEFS(sram_10m, sram_10m),
+			`SRAM_CONNECTION_DEFS(sram_11k, sram_11k)
+		);
+		
 	videogen_subsystem
 		videogen_subsystem(
 			.rst(rst),

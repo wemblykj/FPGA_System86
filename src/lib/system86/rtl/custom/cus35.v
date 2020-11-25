@@ -21,10 +21,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 module cus35(
         input wire CLK_6M,
-        input wire VRES,
-        input wire HSYNC,
-        input wire OCS,
-        input wire WE,
+        input wire nVRES,
+        input wire nHSYNC,
+        input wire nOCS,
+        input wire RnW,
         input wire [12:0] A,
         inout wire [7:0] D,
         output wire O16VA,
@@ -41,29 +41,15 @@ module cus35(
         output wire O8EN,
         output wire HSET,
         output wire VSET,
-        output wire CS0,
-        output wire CS1,
-        output wire ROE,
-        output wire RWE,
-        inout wire [7:0] BI,
-        inout wire [7:0] BO
+        output wire nCS0,
+        output wire nCS1,
+        output wire nROE,
+        output wire nRWE,
+		  inout wire [7:0] B0,
+        inout wire [7:0] B1
     );
 
-	reg [7:0] DOut;
-	reg [7:0] BIOut;
 	always @(posedge CLK_6M) begin
-		if (OCS)
-			if (WE)
-				BIOut = D;
-			else 
-				DOut = BI;
 	end
-		
-	assign CS1 = OCS;
-	assign ROE = OCS && !WE;
-	assign RWE = OCS && WE;
-	
-	assign D = (ROE) ? DOut : 8'bZ;
-	assign BI = (RWE) ? BIOut : 8'bZ;
 	
 endmodule

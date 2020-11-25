@@ -114,6 +114,7 @@ module cus42
 			.S3H(S3HB)
 		);
 	
+	/*
 	reg [13:0] CA_Latched;	
 	
 	always @(posedge CLK_6M) begin	
@@ -128,11 +129,11 @@ module cus42
 	always @(negedge nRCS) begin
 		CA_Latched <= CA;
 		CD_Latched <= CD;
-	end
+	end*/
 	
 	// CPU/RAM multiplexing
-	assign nRWE = nRCS | nWE;
-	assign nROE = nRCS | ~nWE;
+	assign nRWE = nRCS | CLK_6M | nWE;
+	assign nROE = nRCS | CLK_6M | ~nWE;
 	assign CD = (~nRCS & nWE) ? RD : 8'bz;
 	
 	assign RD = (~nRCS & ~nWE) ? CD : 8'bz;

@@ -31,6 +31,7 @@
 `include "ttl_mem/m27256.vh"
 
 `include "ttl_mem/cy6264.vh"
+`include "ttl_mem/m58725.vh"
 
 `include "ttl_mem/ttl_mem.vh"
 
@@ -73,6 +74,9 @@ module system86_tb;
 	
 	`SRAM_WIRE_DEFS(CY6264, sram_4n);
 	`SRAM_WIRE_DEFS(CY6264, sram_7n);
+	
+	`SRAM_WIRE_DEFS(CY6264, sram_10m);
+	`SRAM_WIRE_DEFS(M58725, sram_11k);
 	
 	wire [3:0] out_vid_red;
 	wire [3:0] out_vid_green;
@@ -339,6 +343,37 @@ module system86_tb;
 			.data_valid(sram_7n_dv)
 		);
 
+	// sprite ram
+	sram_cy6264 
+		/*#(
+			"../../../../../../../../snapshots/rthunder_gfx2_002.bin"
+		)*/
+		sram_10m
+		(
+			.nCE1(1'b0),
+			.CE2(1'b1),
+			.nWE(sram_10m_we_n),
+			.nOE(sram_10m_oe_n),
+			.A(sram_10m_addr),
+			.D(sram_10m_data),
+			.data_valid(sram_10m_dv)
+		);
+		
+	sram_m58725 
+		/*#(
+			"../../../../../../../../snapshots/rthunder_gfx1_002.bin"
+		)*/
+		sram_11k
+		(
+			.nCE1(1'b0),
+			.CE2(1'b1),
+			.nWE(sram_11k_we_n),
+			.nOE(sram_11k_oe_n),
+			.A(sram_11k_addr),
+			.D(sram_11k_data),
+			.data_valid(sram_11k_dv)
+		);
+		
 		Video_Logger
 		#(
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),

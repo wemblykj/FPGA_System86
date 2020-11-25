@@ -22,13 +22,13 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-`include "../../../ttl_mem/mb7116.vh"
-`include "../../../ttl_mem/mb7124.vh"
+`include "ttl_mem/mb7116.vh"
+`include "ttl_mem/mb7124.vh"
 
-`include "../../../ttl_mem/ttl_mem.vh"
+`include "ttl_mem/ttl_mem.vh"
 
 `define ROM_PATH "../../../../../../../../roms"
-`include "../../../../../roms/rthunder.vh"
+`include "roms/rthunder.vh"
 
 module videogen_subsystem_tb;
 
