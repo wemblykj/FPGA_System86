@@ -31,7 +31,7 @@ module cus47
         input wire CLK_6M,
         input wire CLK_2H,
         input wire nVBLK,
-        input wire nWE,
+        input wire RnW,
         input wire [15:10] A,
         // RES is implied, by convention, as an 'input' on schematics but must logically be an output for watchdog functionality.
         // ref: Pac-Mania CUS117:MRES, MAME namco86.cpp
@@ -114,16 +114,16 @@ module cus47
 	assign nSND = A[15:10] !== 'b010000;
 	
 	// 6000h - 7FFFh R	(EEPROM 9D)
-	assign nSPGM =  ~nWE | A[15] | ~&A[14:13]; 					// A[15:13] !== 'b011;
+	assign nSPGM =  ~RnW | A[15] | ~&A[14:13]; 					// A[15:13] !== 'b011;
 	
 	// 8000h W	(watchdog)
-	assign watchdog_clear = ~nWE & A[15] & ~&A[14:10];
+	assign watchdog_clear = ~RnW & A[15] & ~&A[14:10];
 	
 	// 8000h - FFFFh R	(EEPROM 9C)
-	assign nMPGM = ~nWE | ~A[15];	// // A[15] !== 'b1;
+	assign nMPGM = ~RnW | ~A[15];	// // A[15] !== 'b1;
 	
 	// 8800h - 8FFFh W	(tile bank select)
-	assign BANK = ~nWE & A[15] & A[11] & ~|A[14:12]; //(A[15:11] === 'b10001x) && A[10];
+	assign BANK = ~RnW & A[15] & A[11] & ~|A[14:12]; //(A[15:11] === 'b10001x) && A[10];
 	
 	// 9000h - 9002h W	(scroll + priority)
 	// 9003h - 9003h W 	(ROM 9D bank select)
@@ -141,7 +141,7 @@ module cus47
 	assign nBUFEN = nSCR0 & nSCR1 & nOBJ & nSND & nLTH0 & nLTH1;
 	
 	// 0x8400 - 0x8400 W  (INT ACK)
-	assign int_ack = ~nWE && A[15:10] !== 'b100001;
+	assign int_ack = ~RnW && A[15:10] !== 'b100001;
 	
 	assign nRES = ~watchdog_counter[WATCHDOG_WIDTH-1]; // reset on msb
 	

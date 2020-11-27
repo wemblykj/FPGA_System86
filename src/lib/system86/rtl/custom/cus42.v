@@ -36,7 +36,7 @@ module cus42
 		input wire nLATCH,
 		input wire FLIP,
 		input wire [13:0] CA,
-		input wire nWE,
+		input wire RnW,
 		inout wire [7:0] CD,
 		inout wire [7:0] RD,
 		output wire [13:0] GA,
@@ -113,30 +113,18 @@ module cus42
 			.GA(GAB),
 			.S3H(S3HB)
 		);
-	
-	/*
-	reg [13:0] CA_Latched;	
-	
-	always @(posedge CLK_6M) begin	
-		if (!nRWE && nRWE_last) begin
-			CA_Latched = CA;
-		end
-		
-	end	
-	
-	
-	reg [7:0] CD_Latched;
-	always @(negedge nRCS) begin
-		CA_Latched <= CA;
-		CD_Latched <= CD;
-	end*/
-	
+
+	reg write_done_request;
+	always @(posedge CLK_6M) begin
+		write_done_request <= ~RnW;
+	end
+
 	// CPU/RAM multiplexing
-	assign nRWE = nRCS | CLK_6M | nWE;
-	assign nROE = nRCS | CLK_6M | ~nWE;
-	assign CD = (~nRCS & nWE) ? RD : 8'bz;
+	assign nRWE = nRCS | RnW | write_done_request;
+	assign nROE = nRCS | ~nRWE;
+	assign CD = (~nRCS & RnW) ? RD : 8'bz;
 	
-	assign RD = (~nRCS & ~nWE) ? CD : 8'bz;
+	assign RD = (~nRCS & ~RnW) ? CD : 8'bz;
 	
 	assign RA = ~nRCS ? CA : { sram_layer, sram_layer ? RAB : RAA };
 	assign GA = { prom_layer ? GAB : GAA };				

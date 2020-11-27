@@ -42,7 +42,7 @@ module cpu_subsystem
         input wire nVBLANK,
         inout wire [7:0] D,
 		  output wire [12:0] A,
-        output wire nWE,
+        output wire RnW,
         output wire nRESET,
         output wire nSCROLL0,
         output wire nSCROLL1,
@@ -228,7 +228,7 @@ module cpu_subsystem
 			.CLK_2H(CLK_S2H), 
 			.nVBLK(nVBLANK),
 			.nRES(cus47_10c_res_n), 
-			.nWE(scpu_9a_we_n), 
+			.RnW(scpu_9a_we_n), 
 			.A(scpu_9a_a[15:10]), 
 			.MQ(cus47_10c_mq), 
 			.ME(cus47_10c_me), 
@@ -289,7 +289,7 @@ module cpu_subsystem
 			.nSLTH0(cus47_10c_latch0_n), 
 			.nSLTH1(cus47_10c_latch1_n), 
 			.A(A), 
-			.nWE(nWE), 
+			.RnW(RnW), 
 			.nLATCH0(nLATCH0), 
 			.nLATCH1(nLATCH1)
 		);

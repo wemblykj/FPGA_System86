@@ -11,6 +11,12 @@
 // Tool versions: 
 // Description: 
 //
+// The use of 1H clock enabled LS257 chips was initally an enigma to me however
+// after starting to look at the role of the CUS35 sprite/object chip it would
+// appear that the address bus is shared between the CPUs and CUS35 (for work ram 
+// to sprite ram transfers). The sharing must be accomplish by interleaving the bus
+// requests using alternate states of the 1H clock
+//
 // Dependencies: 
 //
 // Revision: 
@@ -34,7 +40,7 @@ module address_bus(
 		input wire nSLTH0,
 		input wire nSLTH1,
 		output wire [12:0] A,
-      output wire nWE,
+      output wire RnW,
 		output wire nLATCH0,
 		output wire nLATCH1
     );
@@ -107,7 +113,7 @@ module address_bus(
 			.B4( MA[12] ),
 			.Y1(nLATCH0),
 			.Y2(nLATCH1),
-			.Y3(nWE),
+			.Y3(RnW),
 			.Y4(A[12])
 		);
 	

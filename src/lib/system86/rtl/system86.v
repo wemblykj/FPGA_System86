@@ -116,7 +116,7 @@ module system86
 	wire nLATCH0;
 	wire nLATCH1;
 	wire nBACKCOLOR;
-	wire nWE;
+	wire RnW;
 	wire BANK = 1'b0;
 	wire FLIP = 1'b0;
 	
@@ -188,7 +188,7 @@ module system86
 			.SRCWIN(SRCWIN),
 			.nBACKCOLOR(nBACKCOLOR),
 			.A(A[12:0]),
-			.nWE(nWE),
+			.RnW(RnW),
 			.MD(MD),
 			// inout
 			.D(D),
@@ -223,7 +223,7 @@ module system86
 			.nHSYNC(nHSYNC),
 			.nVRESET(nVRESET),
 			.A(A[12:0]),
-			.RnW(nWE),
+			.RnW(RnW),
 			.D(D),
 						
 			// == hardware abstraction - memory buses ==			
@@ -271,7 +271,7 @@ module system86
 			.A(A),
 			.D(D),
 			// outputs
-			.nWE(nWE),
+			.RnW(RnW),
 			.nRESET(nRESET),
 			.nSCROLL0(nSCROLL0),
 			.nSCROLL1(nSCROLL1),

@@ -33,7 +33,7 @@ module cus43
         input wire [11:0] GDI,
         input wire nOE,			// hard to decipher text from schematics (held at logic high)
         input wire [2:0] CA,
-        input wire nWE,
+        input wire RnW,
         input wire [7:0] MDI, // hard to decipher text from schematics
         input wire [2:0] HA, 	// hard to decipher text from schematics
         input wire CLK_6M,

@@ -51,13 +51,15 @@ module cus35(
         inout wire [7:0] B1		// line buffer - for internal xfer?
     );
 
+	reg write_done_request;
 	always @(posedge CLK_6M) begin
+		write_done_request <= ~RnW;
 	end
 	
 	assign nCS0 = 1'b1;
 	assign nCS1 = nOCS;
-	assign nROE = nOCS | ~RnW;
-	assign nRWE = nOCS | RnW;
+	assign nRWE = nOCS | RnW | write_done_request;
+	assign nROE = nOCS | ~nRWE;
 	assign B0 = ~nCS0 ? (~RnW ? D : 8'bz) : 8'bx;
 	assign B1 = ~nCS1 ? (~RnW ? D : 8'bz) : 8'bx;
 	assign D = ~RnW ? 8'bz : (~nCS1 ? B1 : (~nCS0 ? B0 : 8'bx));

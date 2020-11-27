@@ -3,7 +3,7 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
+      <db_ref path="/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
          <top_modules>
             <top_module name="glbl" />
             <top_module name="system86_tb" />
@@ -47,6 +47,7 @@
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/D" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">D[7:0]</obj_property>
       <obj_property name="ObjectShortName">D[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/nWE" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">nWE</obj_property>
@@ -267,6 +268,7 @@
       <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a_d" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">scpu_9a_d[7:0]</obj_property>
          <obj_property name="ObjectShortName">scpu_9a_d[7:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a_we_n" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">scpu_9a_we_n</obj_property>
