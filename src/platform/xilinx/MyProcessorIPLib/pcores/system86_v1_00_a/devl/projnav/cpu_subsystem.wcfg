@@ -3,14 +3,14 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="/home/administrator/Development/fpga/system86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
+      <db_ref path="C:/Users/paulw/Development/Arcade/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/system86_tb_isim_beh.wdb" id="1" type="auto">
          <top_modules>
             <top_module name="glbl" />
             <top_module name="system86_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="36" />
+   <WVObjectSize size="37" />
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/rst" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
@@ -164,6 +164,34 @@
          <obj_property name="ElementShortName">eprom_12d_data[7:0]</obj_property>
          <obj_property name="ObjectShortName">eprom_12d_data[7:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group199" type="group">
+      <obj_property name="label">sram_10m</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/system86_tb/sram_10m_ce_n" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_10m_ce_n</obj_property>
+         <obj_property name="ObjectShortName">sram_10m_ce_n</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/sram_10m_oe_n" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_10m_oe_n</obj_property>
+         <obj_property name="ObjectShortName">sram_10m_oe_n</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/sram_10m_we_n" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_10m_we_n</obj_property>
+         <obj_property name="ObjectShortName">sram_10m_we_n</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/sram_10m_addr" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_10m_addr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">sram_10m_addr[12:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/sram_10m_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_10m_data[7:0]</obj_property>
+         <obj_property name="ObjectShortName">sram_10m_data[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/sram_10m_dv" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_10m_dv</obj_property>
+         <obj_property name="ObjectShortName">sram_10m_dv</obj_property>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group235" type="group">

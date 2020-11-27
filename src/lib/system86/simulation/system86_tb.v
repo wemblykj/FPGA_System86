@@ -137,7 +137,10 @@ module system86_tb;
 			`EPROM_CONNECTION_DEFS(eprom_12d, eprom_12d),
 			
 			`SRAM_CONNECTION_DEFS(sram_4n, sram_4n),
-			`SRAM_CONNECTION_DEFS(sram_7n, sram_7n)
+			`SRAM_CONNECTION_DEFS(sram_7n, sram_7n),
+			
+			`SRAM_CONNECTION_DEFS(sram_10m, sram_10m),
+			`SRAM_CONNECTION_DEFS(sram_11k, sram_11k)
 		);
 
 		// clut

@@ -22,14 +22,18 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
+`include "test_bench/assert.vh"
+
 module cus35_tb;
 
 	// Inputs
+	reg rst;
 	reg CLK_6M;
-	reg VRES;
-	reg HSYNC;
-	reg OCS;
-	reg WE;
+	
+	reg nVRES;
+	reg nHSYNC;
+	reg nOCS;
+	reg RnW;
 	reg [12:0] A;
 
 	// Outputs
@@ -47,23 +51,24 @@ module cus35_tb;
 	wire O8EN;
 	wire HSET;
 	wire VSET;
-	wire CS0;
-	wire CS1;
-	wire ROE;
-	wire RWE;
+	wire nCS0;
+	wire nCS1;
+	wire nROE;
+	wire nRWE;
 
 	// Bidirs
 	wire [7:0] D;
-	wire [7:0] BI;
-	wire [7:0] BO;
-
+	wire [7:0] B0;
+	wire [7:0] B1;
+	
 	// Instantiate the Unit Under Test (UUT)
 	cus35 uut (
+		.rst(rst),
 		.CLK_6M(CLK_6M), 
-		.VRES(VRES), 
-		.HSYNC(HSYNC), 
-		.OCS(OCS), 
-		.WE(WE), 
+		.nVRES(nVRES), 
+		.nHSYNC(nHSYNC), 
+		.nOCS(nOCS), 
+		.RnW(RnW), 
 		.A(A), 
 		.D(D), 
 		.O16VA(O16VA), 
@@ -80,29 +85,85 @@ module cus35_tb;
 		.O8EN(O8EN), 
 		.HSET(HSET), 
 		.VSET(VSET), 
-		.CS0(CS0), 
-		.CS1(CS1), 
-		.ROE(ROE), 
-		.RWE(RWE), 
-		.BI(BI), 
-		.BO(BO)
+		.nCS0(nCS0), 
+		.nCS1(nCS1), 
+		.nROE(nROE), 
+		.nRWE(nRWE), 
+		.B0(B0),
+		.B1(B1)
 	);
 
+	// CUS27 - CLOCK DIVIDER
+	cus27 
+		cus27_9p_clock_divider(
+			.rst(rst),
+			//.CLK_48M(clk_48m), 
+			.CLK_6M_IN(CLK_6M),
+			//.CLK_24M(CLK_24M),
+			//.CLK_12M(CLK_12M),
+			//.CLK_6M(CLK_6M),
+			//.nVSYNC(nVSYNC),
+			//.nHSYNC(nHSYNC),
+			//.nHBLANK(nHBLANK),
+			//.nVBLANK(nVBLANK),
+			//.nHRESET(nHRESET),
+			//.nVRESET(nVRESET),
+			//.CLK_8V(CLK_8V),
+			//.CLK_4V(CLK_4V),
+			//.CLK_1V(CLK_1V),
+			//.CLK_4H(CLK_4H),
+			//.CLK_2H(CLK_2H),
+			//.CLK_1H(CLK_1H),
+			.CLK_S2H(CLK_S2H)
+			//.CLK_S1H(CLK_S1H)
+		);
+		
 	initial begin
+		rst = 0;
+		
 		// Initialize Inputs
 		CLK_6M = 0;
-		VRES = 0;
-		HSYNC = 0;
-		OCS = 0;
-		WE = 0;
-		A = 0;
+		nOCS = 1;
+		nHSYNC = 1;
+		nVRES = 1;
+		A = 'hffff;
+		RnW = 1;
 
 		// Wait 100 ns for global reset to finish
 		#100;
-        
+      rst = 1;
+		
 		// Add stimulus here
-
+		#1000
+		
+		// CUS35 enable read
+		nOCS = 0;
+		#10
+		`ASSERT_EQUAL(8'b01011010, B0)
+		#990
+		nOCS = 1;
+		#1000
+		
+		// CUS35 enable write
+		nOCS = 0;
+		#200
+		RnW = 0;
+		#10
+		`ASSERT_EQUAL(8'b10100101, D)
+		#390 
+		RnW = 1;
+		#200
+		nOCS = 1;
+		#1000
+		
+		$finish;
 	end
       
+	assign D = ~RnW ? 8'b10100101 : 8'bz;
+	assign B0 = RnW ? 8'b01011010 : 8'bz;
+
+	// generate our 6.14025Mhz input clock
+	always #81.4299 CLK_6M = ~CLK_6M;
+	
 endmodule
 

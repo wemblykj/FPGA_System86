@@ -32,6 +32,7 @@
 `include "ttl_mem/m27512.vh"
 
 `include "ttl_mem/cy6264.vh"
+`include "ttl_mem/m58725.vh"
 
 `include "ttl_mem/ttl_mem.vh"
 
@@ -95,7 +96,8 @@ module system86
 		// SRAM
 		`SRAM_OUTPUT_DEFS(CY6264, sram_4n),
 		`SRAM_OUTPUT_DEFS(CY6264, sram_7n),
-		`SRAM_OUTPUT_DEFS(CY6264, sram_10m)
+		`SRAM_OUTPUT_DEFS(CY6264, sram_10m),
+		`SRAM_OUTPUT_DEFS(M58725, sram_11k)
 	);
 	
 	// == global signals ==
@@ -217,7 +219,7 @@ module system86
 			// input
 			.CLK_6M(CLK_6M),
 			.CLK_1H(CLK_1H),
-			.nOOBJECT(nOBJECT),
+			.nOBJECT(nOBJECT),
 			.nHSYNC(nHSYNC),
 			.nVRESET(nVRESET),
 			.A(A[12:0]),

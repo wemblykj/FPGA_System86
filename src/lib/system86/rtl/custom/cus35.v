@@ -20,6 +20,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module cus35(
+		  input wire rst,
+
         input wire CLK_6M,
         input wire nVRES,
         input wire nHSYNC,
@@ -45,11 +47,18 @@ module cus35(
         output wire nCS1,
         output wire nROE,
         output wire nRWE,
-		  inout wire [7:0] B0,
-        inout wire [7:0] B1
+		  inout wire [7:0] B0,		// CPU data bus
+        inout wire [7:0] B1		// line buffer - for internal xfer?
     );
 
 	always @(posedge CLK_6M) begin
 	end
 	
+	assign nCS0 = 1'b1;
+	assign nCS1 = nOCS;
+	assign nROE = nOCS | ~RnW;
+	assign nRWE = nOCS | RnW;
+	assign B0 = ~nCS0 ? (~RnW ? D : 8'bz) : 8'bx;
+	assign B1 = ~nCS1 ? (~RnW ? D : 8'bz) : 8'bx;
+	assign D = ~RnW ? 8'bz : (~nCS1 ? B1 : (~nCS0 ? B0 : 8'bx));
 endmodule

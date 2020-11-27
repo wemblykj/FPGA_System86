@@ -1,4 +1,4 @@
-`timescale 1ns/1fs
+`timescale 1ns / 1ps
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
@@ -27,11 +27,11 @@
 module cus41_tb;
 
 	reg rst;
-	reg clk_48m;
+	reg CLK_6M;
 
 	// CUS27 outputs
 	wire CLK_S2H;
-	wire CLK_6M;
+	//wire CLK_6M;
 	wire nVBLANK;
 	
 	// Inputs
@@ -109,11 +109,10 @@ module cus41_tb;
 	cus27 
 		cus27_9p_clock_divider(
 			.rst(rst),
-			.CLK_48M(clk_48m), 
 			.CLK_6M_IN(CLK_6M),
 			//.CLK_24M(CLK_24M),
 			//.CLK_12M(CLK_12M),
-			.CLK_6M(CLK_6M),
+			//.CLK_6M(CLK_6M),
 			//.nVSYNC(nVSYNC),
 			//.nHSYNC(nHSYNC),
 			//.nHBLANK(nHBLANK),
@@ -135,8 +134,8 @@ module cus41_tb;
 	integer address_high;
 		
 	initial begin
-		clk_48m = 0;
 		rst = 0;
+		CLK_6M = 0;
 		
 		// Initialize Inputs
 		
@@ -239,8 +238,8 @@ module cus41_tb;
 		$finish();
 	end
 
-	// generate our 49.125Mhz input clock
-	always #10.1725 clk_48m = ~clk_48m;
+	// generate our 6.14025Mhz input clock
+	always #81.4299 CLK_6M = ~CLK_6M;
       
 endmodule
 

@@ -1,4 +1,4 @@
-`timescale 1ns/1fs
+`timescale 1ns / 1ps
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer:       Paul Wightmore
@@ -222,19 +222,19 @@ module videogen_subsystem_tb;
 				
 	initial begin
 		// Initialize Inputs
-		clk = 0;
-		rst = 1;
+		rst = 0;
+		CLK_6M= 0;
 
 		// Wait 1000 ns for global reset to finish
 		#100;
-        
+      rst = 1;
+		
 		// Add stimulus here
-		rst = 0;
+		
 	end
 
 	// generate our 6.14025Mhz input clock
-	//always #81.38 clk_6m = ~clk;
-	always #81.4299 clk = ~clk;
+	always #81.4299 CLK_6M = ~CLK_6M;
 
 endmodule
 

@@ -33,7 +33,7 @@ module sprite_subsystem(
 		input wire nHSYNC,
 		input wire nVRESET,
 		input wire [12:0] A,
-		input wire [7:0] D,
+		inout wire [7:0] D,
 		input wire RnW,
 		
 		`SRAM_OUTPUT_DEFS(CY6264, sram_10m),
@@ -56,11 +56,13 @@ module sprite_subsystem(
 			.CLK_6M(CLK_6M), 
 			.nHSYNC(nHSYNC),
 			.nVRES(nVRESET),
-			.nOCS(nOBJSET),
+			.nOCS(nOBJECT),
 			.RnW(RnW),
-			.A( { 1'b0, A[12:0] } ),
+			.A(A),
 			.D(D),
 			// outputs
+			.nCS0(cus35_9m_cs0_n),
+			.nCS1(cus35_9m_cs1_n),
 			.nRWE(cus35_9m_rwe_n),
 			.nROE(cus35_9m_roe_n),
 			.B0(cus35_9m_b0),
@@ -80,18 +82,22 @@ module sprite_subsystem(
 			.Y3(ls32_6e_y3),	// pin 8 - 10M A11
 			.Y4(ls32_6e_y4)	// pin 11 - to 10M A12
 		);
-		
+
 	// object ram
 	assign sram_10m_ce_n = cus35_9m_cs1_n;
 	assign sram_10m_we_n = cus35_9m_rwe_n;
 	assign sram_10m_oe_n = cus35_9m_roe_n;
 	assign sram_10m_addr = { ls32_6e_y4, ls32_6e_y3, A[10:0] };
-	assign sram_10m_data = cus35_9m_b1[7:0];
+	assign sram_10m_data = ~RnW ? cus35_9m_b1 : 8'bz;
+
+	assign cus35_9m_b1 = RnW ? sram_10m_data : 8'bz;		
 
 	assign sram_11k_ce_n = cus35_9m_cs0_n;
 	assign sram_11k_we_n = cus35_9m_rwe_n;
 	assign sram_11k_oe_n = cus35_9m_roe_n;
 	assign sram_11k_addr = { 1'b0, A[11:1] };
-	assign sram_11k_data = cus35_9m_b0[7:0];
+	assign sram_11k_data = cus35_9m_b0;
+	
+	assign cus35_9m_b0 = RnW ? sram_11k_data : 8'bz;
 	
 endmodule
