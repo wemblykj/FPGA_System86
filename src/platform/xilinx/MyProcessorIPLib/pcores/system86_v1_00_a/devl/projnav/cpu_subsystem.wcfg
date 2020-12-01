@@ -49,10 +49,6 @@
       <obj_property name="ObjectShortName">D[7:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
-   <wvobject fp_name="/system86_tb/uut/cpu_subsystem/nWE" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">nWE</obj_property>
-      <obj_property name="ObjectShortName">nWE</obj_property>
-   </wvobject>
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/nRESET" type="logic" db_ref_id="1">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">nRESET</obj_property>
@@ -86,6 +82,7 @@
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/MD" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">MD[7:0]</obj_property>
       <obj_property name="ObjectShortName">MD[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="group238" type="group">
       <obj_property name="label">eprom_9d</obj_property>
@@ -185,14 +182,46 @@
       <wvobject fp_name="/system86_tb/sram_10m_addr" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">sram_10m_addr[12:0]</obj_property>
          <obj_property name="ObjectShortName">sram_10m_addr[12:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/sram_10m_data" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">sram_10m_data[7:0]</obj_property>
          <obj_property name="ObjectShortName">sram_10m_data[7:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/sram_10m_dv" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">sram_10m_dv</obj_property>
          <obj_property name="ObjectShortName">sram_10m_dv</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group214" type="group">
+      <obj_property name="label">sram_7n</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/system86_tb/uut/sram_7n_ce_n" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_7n_ce_n</obj_property>
+         <obj_property name="ObjectShortName">sram_7n_ce_n</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/sram_7n_oe_n" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_7n_oe_n</obj_property>
+         <obj_property name="ObjectShortName">sram_7n_oe_n</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/sram_7n_we_n" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_7n_we_n</obj_property>
+         <obj_property name="ObjectShortName">sram_7n_we_n</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/sram_7n_addr" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_7n_addr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">sram_7n_addr[12:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/sram_7n_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_7n_data[7:0]</obj_property>
+         <obj_property name="ObjectShortName">sram_7n_data[7:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/system86_tb/uut/sram_7n_dv" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sram_7n_dv</obj_property>
+         <obj_property name="ObjectShortName">sram_7n_dv</obj_property>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group235" type="group">
@@ -260,6 +289,74 @@
    <wvobject fp_name="group236" type="group">
       <obj_property name="label">sub_cpu</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="group218" type="group">
+         <obj_property name="label">mc6809e</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="group221" type="group">
+            <obj_property name="label">cpucore</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/cpucore/dp_nxt" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">dp_nxt[7:0]</obj_property>
+               <obj_property name="ObjectShortName">dp_nxt[7:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/cpucore/a_nxt" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">a_nxt[7:0]</obj_property>
+               <obj_property name="ObjectShortName">a_nxt[7:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/cpucore/b_nxt" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">b_nxt[7:0]</obj_property>
+               <obj_property name="ObjectShortName">b_nxt[7:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/cpucore/a" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">a[7:0]</obj_property>
+               <obj_property name="ObjectShortName">a[7:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/cpucore/b" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">b[7:0]</obj_property>
+               <obj_property name="ObjectShortName">b[7:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/cpucore/DOutput" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">DOutput[7:0]</obj_property>
+               <obj_property name="ObjectShortName">DOutput[7:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/cpucore/D" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">D[7:0]</obj_property>
+               <obj_property name="ObjectShortName">D[7:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/cpucore/DOut" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">DOut[7:0]</obj_property>
+               <obj_property name="ObjectShortName">DOut[7:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/cpucore/dp" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">dp[7:0]</obj_property>
+            <obj_property name="ObjectShortName">dp[7:0]</obj_property>
+            <obj_property name="Radix">HEXRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/D" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">D[7:0]</obj_property>
+            <obj_property name="ObjectShortName">D[7:0]</obj_property>
+            <obj_property name="Radix">HEXRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/DOut" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">DOut[7:0]</obj_property>
+            <obj_property name="ObjectShortName">DOut[7:0]</obj_property>
+            <obj_property name="Radix">HEXRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a/mc6809e/ADDR" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">ADDR[15:0]</obj_property>
+            <obj_property name="ObjectShortName">ADDR[15:0]</obj_property>
+            <obj_property name="Radix">HEXRADIX</obj_property>
+         </wvobject>
+      </wvobject>
       <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a_a" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">scpu_9a_a[15:0]</obj_property>
          <obj_property name="ObjectShortName">scpu_9a_a[15:0]</obj_property>
@@ -274,6 +371,10 @@
          <obj_property name="ElementShortName">scpu_9a_we_n</obj_property>
          <obj_property name="ObjectShortName">scpu_9a_we_n</obj_property>
       </wvobject>
+   </wvobject>
+   <wvobject fp_name="group239" type="group">
+      <obj_property name="label">cus_47</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
       <wvobject fp_name="/system86_tb/uut/cpu_subsystem/cus47_10c_res_n" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">cus47_10c_res_n</obj_property>
          <obj_property name="ObjectShortName">cus47_10c_res_n</obj_property>
@@ -322,10 +423,6 @@
          <obj_property name="ElementShortName">cus47_10C_spmg_n</obj_property>
          <obj_property name="ObjectShortName">cus47_10C_spmg_n</obj_property>
       </wvobject>
-   </wvobject>
-   <wvobject fp_name="group239" type="group">
-      <obj_property name="label">cus_47</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
       <wvobject fp_name="/system86_tb/uut/cpu_subsystem/cus47_10c_latch0_n" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">cus47_10c_latch0_n</obj_property>
          <obj_property name="ObjectShortName">cus47_10c_latch0_n</obj_property>
