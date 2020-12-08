@@ -180,7 +180,12 @@ module cpu_subsystem
 		);
 		
 	// Main CPU
-	mc68a09e mcpu_11a
+	mc68a09e 
+		#(
+			.tDHW(0),
+			.tAH(0)
+		)
+		mcpu_11a
         (
 			.D(mcpu_11a_d), 
 			.A(mcpu_11a_a), 
@@ -200,7 +205,12 @@ module cpu_subsystem
 		);	
 		
 	// Sub CPU
-	mc68a09e scpu_9a
+	mc68a09e 
+		#(
+			.tDHW(0),
+			.tAH(0)
+		)
+		scpu_9a
         (
 			.D(scpu_9a_d), 
 			.A(scpu_9a_a), 

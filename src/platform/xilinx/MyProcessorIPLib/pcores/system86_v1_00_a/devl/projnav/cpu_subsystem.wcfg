@@ -10,7 +10,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="37" />
+   <WVObjectSize size="38" />
    <wvobject fp_name="/system86_tb/uut/cpu_subsystem/rst" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
@@ -85,7 +85,7 @@
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="group238" type="group">
-      <obj_property name="label">eprom_9d</obj_property>
+      <obj_property name="label">eprom_9c</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_9c_ce_n" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">eprom_9c_ce_n</obj_property>
@@ -105,6 +105,10 @@
          <obj_property name="ObjectShortName">eprom_9c_data[7:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
+   </wvobject>
+   <wvobject fp_name="group315" type="group">
+      <obj_property name="label">eprom_9d</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
       <wvobject fp_name="/system86_tb/uut/cpu_subsystem/eprom_9d_ce_n" type="logic" db_ref_id="1">
          <obj_property name="ElementShortName">eprom_9d_ce_n</obj_property>
          <obj_property name="ObjectShortName">eprom_9d_ce_n</obj_property>
@@ -360,7 +364,7 @@
       <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a_a" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">scpu_9a_a[15:0]</obj_property>
          <obj_property name="ObjectShortName">scpu_9a_a[15:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/system86_tb/uut/cpu_subsystem/scpu_9a_d" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">scpu_9a_d[7:0]</obj_property>
