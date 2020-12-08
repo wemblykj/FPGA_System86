@@ -277,7 +277,7 @@ module system86
 			.nSCROLL1(nSCROLL1),
 			.nOBJECT(nOBJECT),
 			.nLATCH0(nLATCH0),
-			.nLATCH1(nLATCH0),
+			.nLATCH1(nLATCH1),
 			.nBACKCOLOR(nBACKCOLOR),
 			.MD(MD),
 			

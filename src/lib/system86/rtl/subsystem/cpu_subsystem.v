@@ -355,7 +355,7 @@ module cpu_subsystem
 	
 	assign nRESET = ~rst & cus47_10c_res_n & cus41_8a_mreset_n;
 	
-	//assign MD = scpu_9a_d;
+	assign MD = scpu_9a_d;
 	assign nBACKCOLOR = cus47_10c_latch2_n;
 	assign nOBJECT = ls08_8e_2y_n;
 	assign nSCROLL0 = ls08_8e_4y_n;
