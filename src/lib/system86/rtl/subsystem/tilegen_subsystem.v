@@ -356,6 +356,5 @@ module tilegen_subsystem
 	// to auxillary color drivers over J5
 	assign J5[6] = nBACKCOLOR;
 
-	//assign sram_7n_ce_n = 1'b0;
 	assign DOT = prom_4v_data;
 endmodule

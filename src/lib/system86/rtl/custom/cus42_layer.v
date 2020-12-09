@@ -33,8 +33,8 @@ module cus42_layer
 		input wire [2:0] CA,		// CPU address bus
 		input wire [7:0] CD,		// CPU data bus
 		input wire [7:0] RD,		// SRAM data bus
-		input wire [8:0] H,		// 9 bits
-		input wire [8:0] V,		// 8 bits
+		input wire nHSYNC,
+		input wire nVSYNC,
 		output reg [11:0] RA,	// SRAM address bus
 		output reg [13:0] GA,	// PROM address bus
 		output wire S3H			// latch request
@@ -43,16 +43,17 @@ module cus42_layer
 	reg [8:0] hScrollOffset;	// 2 layers 9 bits
 	reg [8:0] vScrollOffset;	// 2 layers 9 bits
 	
-	wire [8:0] fhCounter;
-	wire [8:0] hScrollCounter;
-	wire [8:0] vScrollCounter;
+	//wire [8:0] fhCounter;
+	reg [8:0] hScrollCounter;
+	reg [8:0] vScrollCounter;
 	
-	assign fhCounter = FLIP ? (384 - H) : H;	// * for flip just subtract from width
+	// worry about flipping later
+	//assign fhCounter = FLIP ? (384 - H) : H;	// * for flip just subtract from width
 	
 	// horizontal adder - GnG SCROLL H POSITION 85606 - 8 -  2
-	assign hScrollCounter = hScrollOffset + fhCounter;
+	//assign hScrollCounter = hScrollOffset + fhCounter;
 	// vertical adder - assumed this would work similar to horizontal (no vertical fliping?)
-	assign vScrollCounter = vScrollOffset + V;
+	//assign vScrollCounter = vScrollOffset + V;
 	
 	wire [8:0] SH;		// 9 bits	0 -> 384
 	wire [8:0] SV;		// 9 bits	0 -> 264
@@ -75,7 +76,27 @@ module cus42_layer
 	// behaviour
 	//
 	
-	always @(H[1:0] or rst) begin
+	always @(posedge CLK_6M or rst) begin
+		if (!nHSYNC) begin
+			hScrollCounter <= hScrollOffset;
+			
+			if (!nVSYNC) begin
+				vScrollCounter <= vScrollOffset;
+			end else begin
+				vScrollCounter <= vScrollCounter + 1;
+			end
+		end else begin
+			hScrollCounter <= hScrollCounter + 1;
+		end
+	end
+	
+	always @(SH or SV or rst) begin
+		RA <= { SV[7:3], SH[8:3], 1'b0 };
+		GA[3:0] <= { SV[2:0], SH[2] };
+		//GA[11:4] <= RD;
+	end
+	
+	/*always @(H[1:0] or rst) begin
 		if (rst) begin
 			RA <= 0;
 			GA <= 0;
@@ -94,15 +115,13 @@ module cus42_layer
 				end
 			endcase
 		end
-	end
+	end*/
 
 	// Handle CPU control requests
-	always @(nLATCH or CA or rst or V) begin
+	always @(nLATCH or CA or rst) begin
 		if (rst) begin
 			hScrollOffset <= 0;
 			vScrollOffset <= 0;
-		end else if (V === 9'b100000111) begin
-			hScrollOffset <= hScrollOffset + 1;
 		end else	if (!nLATCH) begin
 			if (CA[2] == ASSIGNED_LAYER) begin
 				if (!CA[1])
