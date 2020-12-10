@@ -20,7 +20,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module cus35(
-		  input wire rst,
+		  input wire rst_n,
 
         input wire CLK_6M,
         input wire nVRES,

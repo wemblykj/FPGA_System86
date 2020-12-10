@@ -29,7 +29,7 @@ module videogen_subsystem
 #(
 )
 (
-	 input wire rst,
+	 input wire rst_n,
 	
     input CLK_6MD,
     input nCLR,

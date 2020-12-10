@@ -25,7 +25,7 @@ module cus43
 			parameter LAYER_B_PRIORITY = 0
 	)
 	(
-		  input rst,
+		  input rst_n,
 		
         input wire [2:0] PRI,
         input wire [7:0] CLI,
@@ -59,7 +59,7 @@ module cus43
 		)
 		layer_a
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
@@ -84,7 +84,7 @@ module cus43
 		)
 		layer_b
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M),
 			.CLK_2H(~CLK_2H),

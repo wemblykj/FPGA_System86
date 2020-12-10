@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+`timescale 1ns / 1fs
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
@@ -25,7 +25,7 @@
 module cus42_layer_tb;
 
 	// Inputs
-	reg rst;
+	reg rst_n;
 	reg CLK_6M;
 	reg FLIP;
 	reg nLATCH;
@@ -42,7 +42,7 @@ module cus42_layer_tb;
 
 	// Instantiate the Unit Under Test (UUT)
 	cus42_layer uut (
-		.rst(rst), 
+		.rst_n(rst_n), 
 		.CLK_6M(CLK_6M), 
 		.FLIP(FLIP), 
 		.nLATCH(nLATCH), 
@@ -59,12 +59,12 @@ module cus42_layer_tb;
 // CUS27 - CLOCK DIVIDER
 	cus27 
 		cus27_9p_clock_divider(
-			.rst(rst),
+			.rst_n(rst_n),
 			//.CLK_48M(clk_48m), 
-			//.CLK_6M_IN(CLK_6M),
+			.CLK_6M_IN(CLK_6M),
 			//.CLK_24M(CLK_24M),
 			//.CLK_12M(CLK_12M),
-			.CLK_6M(CLK_6M),
+			//.CLK_6M(CLK_6M),
 			.nVSYNC(nVSYNC),
 			.nHSYNC(nHSYNC)
 			//.nHBLANK(nHBLANK),
@@ -83,7 +83,7 @@ module cus42_layer_tb;
 		
 	initial begin
 		// Initialize Inputs
-		rst = 0;
+		rst_n = 0;
 		CLK_6M = 0;
 		FLIP = 0;
 		nLATCH = 0;
@@ -93,13 +93,14 @@ module cus42_layer_tb;
 		
 		// Wait 100 ns for global reset to finish
 		#100;
-        
+      rst_n = 1;
+		
 		// Add stimulus here
 
 	end
       
 	// generate our 6.14025Mhz input clock
-	always #81.4299 CLK_6M = ~CLK_6M;
+	always #81.3802084 CLK_6M = ~CLK_6M;
 	
 endmodule
 

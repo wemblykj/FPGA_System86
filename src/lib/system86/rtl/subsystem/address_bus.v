@@ -25,7 +25,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module address_bus(
-		input wire rst,
+		input wire rst_n,
 		input wire CLK_2H,
 		input wire CLK_S2H,
       input wire CLK_1H,

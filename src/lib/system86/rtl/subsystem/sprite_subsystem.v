@@ -25,7 +25,7 @@
 `include "ttl_mem/ttl_mem.vh"
 
 module sprite_subsystem(
-		input wire rst,
+		input wire rst_n,
 	
 		input wire CLK_6M,
 		input wire CLK_1H,
@@ -50,7 +50,7 @@ module sprite_subsystem(
 	cus35
 		cus35_9m
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			// inputs
 			.CLK_6M(CLK_6M), 

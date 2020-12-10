@@ -41,7 +41,7 @@ module tilegen_subsystem
 		parameter UNKNOWN_LAYER_PRIORITY = 0
 	)
 	(
-		input wire rst,
+		input wire rst_n,
 	
 		input wire CLK_6M,
 		input wire CLK_2H,
@@ -190,7 +190,7 @@ module tilegen_subsystem
 		)
 		cus42_7k
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			// inputs
 			.CLK_6M(CLK_6M), 
@@ -256,7 +256,7 @@ module tilegen_subsystem
 		)
 		cus43_8n
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
@@ -280,7 +280,7 @@ module tilegen_subsystem
 	
 	// tile address generator
 	cus42 CUS42_5K(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_2H), 
@@ -333,7 +333,7 @@ module tilegen_subsystem
 		)
 		cus43_6n
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),

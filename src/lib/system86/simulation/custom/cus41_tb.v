@@ -26,7 +26,7 @@
 	
 module cus41_tb;
 
-	reg rst;
+	reg rst_n;
 	reg CLK_6M;
 
 	// CUS27 outputs
@@ -71,7 +71,7 @@ module cus41_tb;
 
 	// Instantiate the Unit Under Test (UUT)
 	cus41 uut (
-		.rst(rst), 
+		.rst_n(rst_n), 
 		.MA(MA), 
 		.nMWE(nMWE), 
 		.nVBLA(nVBLANK), 
@@ -108,7 +108,7 @@ module cus41_tb;
 	// CUS27 - CLOCK DIVIDER
 	cus27 
 		cus27_9p_clock_divider(
-			.rst(rst),
+			.rst_n(rst_n),
 			.CLK_6M_IN(CLK_6M),
 			//.CLK_24M(CLK_24M),
 			//.CLK_12M(CLK_12M),
@@ -134,7 +134,7 @@ module cus41_tb;
 	integer address_high;
 		
 	initial begin
-		rst = 0;
+		rst_n = 0;
 		CLK_6M = 0;
 		
 		// Initialize Inputs
@@ -154,7 +154,7 @@ module cus41_tb;
 
 		// Wait 100 ns for global reset to finish
 		#100;
-      		rst = 1;
+      rst_n = 1;
 		
 		// Add stimulus here
 		

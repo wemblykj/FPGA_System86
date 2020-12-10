@@ -32,7 +32,7 @@ module cpu_subsystem
     #(
     )
 	(
-		  input wire rst,
+		  input wire rst_n,
 		  
         input wire CLK_6M,
         input wire CLK_2H,
@@ -159,7 +159,7 @@ module cpu_subsystem
 	// CUS41 - main CPU address decoder
 	cus41 cus41_8a
         (
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.MA(mcpu_11a_a[15:11]), 
 			.CLK_0(~CLK_S2H), 	// negate for active low
@@ -232,7 +232,7 @@ module cpu_subsystem
 	// CUS47 - Sub CPU address decoder
 	cus47 cus47_10c
         (
-			.rst(rst),
+			.rst_n(rst_n),
 		  
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_S2H), 
@@ -284,7 +284,7 @@ module cpu_subsystem
 		
 	address_bus address_bus
 		(
-			.rst(rst), 
+			.rst_n(rst_n), 
 			.CLK_2H(CLK_2H), 
 			.CLK_S2H(CLK_S2H), 
 			.CLK_1H(CLK_1H), 
@@ -353,7 +353,7 @@ module cpu_subsystem
     
 	// == Global outputs ==
 	
-	assign nRESET = ~rst & cus47_10c_res_n & cus41_8a_mreset_n;
+	assign nRESET = cus47_10c_res_n & cus41_8a_mreset_n;
 	
 	assign MD = scpu_9a_d;
 	assign nBACKCOLOR = cus47_10c_latch2_n;

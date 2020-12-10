@@ -25,7 +25,7 @@ module cus43_layer
 		parameter LAYER_PRIORITY = 0
 	)
 	(
-		  input rst,
+		  input rst_n,
 		
 		  input wire CLK_6M,
         input wire CLK_2H,
@@ -59,13 +59,13 @@ module cus43_layer
 	
 	wire [7:0] CL = attr;
 
-	// first bit of each plane buffer
+	// first_n bit of each plane buffer
 	wire [2:0] DT = FLIP ? 
 		  { plane2_shift[0], plane1_shift[0], plane0_shift[0] } 
 		: { plane2_shift[3], plane1_shift[3], plane0_shift[3] };	
 	
 	always @(negedge CLK_2H) begin
-		if (rst) begin
+		if (!rst_n) begin
 			mdi_latched <= 0;
 		end else begin
 			mdi_latched <= MDI;
@@ -73,7 +73,7 @@ module cus43_layer
 	end
 	
 	always @(posedge CLK_2H) begin
-		if (rst) begin
+		if (!rst_n) begin
 			mdi_latched2 <= 0;
 			plane0_latched <= 0;
 			plane1_latched <= 0;
@@ -87,7 +87,7 @@ module cus43_layer
 	end
 	
 	always @(posedge CLK_6M) begin
-		if (rst) begin
+		if (!rst_n) begin
 			attr <= 0;
 			plane0_shift <= 0;
 			plane1_shift <= 0;
@@ -113,7 +113,7 @@ module cus43_layer
 	end
 		
 	always @(*) begin
-		if (rst) begin
+		if (!rst_n) begin
 			PRO <= 0;
 			CLO <= 0;
 			DTO <= 0;
@@ -130,8 +130,8 @@ module cus43_layer
 		end
 	end
 	
-	always @(nLATCH or CA or MDI or rst) begin
-		if (rst) begin
+	always @(nLATCH or CA or MDI or rst_n) begin
+		if (!rst_n) begin
 			PR = LAYER_PRIORITY;
 		end else if (!nLATCH) begin
 			// latch priority assignments from the CPU

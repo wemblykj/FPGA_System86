@@ -34,7 +34,7 @@ module videogen_subsystem_tb;
 
 	// Inputs
 	reg clk;
-	reg rst;
+	reg rst_n;
 	
 	`PROM_WIRE_DEFS(MB7124, prom_3r);
 	`PROM_WIRE_DEFS(MB7116, prom_3s);
@@ -95,7 +95,7 @@ module videogen_subsystem_tb;
 		
 	videogen_subsystem
 		uut(
-			.rst(rst),
+			.Rst(~rst_n),
 			
 			// input
 			.CLK_6MD(clk), 
@@ -124,7 +124,7 @@ module videogen_subsystem_tb;
 		VGA_Sync_Pulses
 		(
 			.i_Clk(clk),
-			.i_Rst(rst),
+			.i_Rst(~rst_n),
 			.o_nHSync(nHSYNC),
 			.o_nVSync(nVSYNC)
 		);
@@ -145,7 +145,7 @@ module videogen_subsystem_tb;
 		Sync_To_Blanking
 		(
 			.i_Clk(clk),
-			.i_Rst(rst),
+			.i_Rst(~rst_n),
 			.i_nHSync(nHSYNC),
 			.i_nVSync(nVSYNC),
 			.o_nHSync(nHSYNC_2),
@@ -167,7 +167,7 @@ module videogen_subsystem_tb;
 		Blanking_To_Count
 		(
 			.i_Clk(clk),
-			.i_Rst(rst),
+			.i_Rst(~rst_n),
 			.i_nHSync(nHSYNC_2),
 			.i_nVSync(nVSYNC_2),
 			.i_HBlank(HBLANK_2),
@@ -210,7 +210,7 @@ module videogen_subsystem_tb;
 		.C_FILE_NAME("raw.txt")
 	)
 	raw_logger (
-		.i_Rst(rst),
+		.i_Rst(~rst_n),
 		.i_Clk(clk),
 		.i_OutputEnable(vid_locked),
 		.i_Red(RED),
@@ -222,12 +222,12 @@ module videogen_subsystem_tb;
 				
 	initial begin
 		// Initialize Inputs
-		rst = 0;
+		rst_n = 0;
 		CLK_6M= 0;
 
 		// Wait 1000 ns for global reset to finish
 		#100;
-      rst = 1;
+      rst_n = 1;
 		
 		// Add stimulus here
 		

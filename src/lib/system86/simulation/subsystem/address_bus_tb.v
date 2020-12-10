@@ -24,7 +24,7 @@
 
 module address_bus_tb;
 
-	reg rst;
+	reg rst_n;
 	reg clk_48m;
 	
 	// CUS27 outputs
@@ -53,7 +53,7 @@ module address_bus_tb;
 
 	// Instantiate the Unit Under Test (UUT)
 	address_bus uut (
-		.rst(rst), 
+		.rst_n(rst_n), 
 		.CLK_2H(CLK_2H), 
 		.CLK_S2H(CLK_S2H), 
 		.CLK_1H(CLK_1H), 
@@ -76,7 +76,7 @@ module address_bus_tb;
 	// CUS27 - CLOCK DIVIDER
 	cus27 
 		cus27_9p_clock_divider(
-			.rst(rst),
+			.rst_n(rst_n),
 			.CLK_48M(clk_48m), 
 			.CLK_6M_IN(CLK_6M),
 			//.CLK_24M(CLK_24M),
@@ -100,7 +100,7 @@ module address_bus_tb;
 	
 	initial begin
 		clk_48m = 0;
-		rst = 0;
+		rst_n = 0;
 		
 		// Initialize Inputs
 		MA = 0;
@@ -116,7 +116,7 @@ module address_bus_tb;
 		
 		// Wait 100 ns for global reset to finish
 		#100;
-      rst = 1;
+      rst_n = 1;
 		
 		#1000;
 		

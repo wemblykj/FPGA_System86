@@ -22,7 +22,7 @@
 module cus27
 (
 	// simulation control
-	input wire rst,
+	input wire rst_n,
 	
 	// input clocks
 	input wire CLK_48M,
@@ -63,16 +63,14 @@ module cus27
 	
 	reg [2:0] master_counter = 0;
 
-	//reg rst_last = 0;
-	always @(posedge CLK_48M) begin
-		//if (rst && !rst_last)
-		//	master_counter <= 0;
-		//else
-		master_counter <= master_counter + 1;
+	always @(posedge CLK_48M or rst_n) begin
+		if (!rst_n)
+			master_counter <= 0;
+		else
+			master_counter <= master_counter + 1;
 			
 		//CLK_S1H <= CLK_1H;	// is this in phase?
 		//CLK_S2H <= CLK_2H;	// is this in phase?
-		//rst_last = rst;
 	end
 
 	assign CLK_24M = master_counter[0];
@@ -81,7 +79,7 @@ module cus27
 
 	// inspired by information found @ http://www.ukvac.com/forum/namco-cus27-in-fpga-cus130-wip_topic362440.html
 	/*always @(negedge CLK_6M_IN) begin
-		if (rst) begin
+		if (!rst_n) begin
 			horizontal_counter <= 0;
 		end else begin
 			horizontal_counter = horizontal_counter + 1;
@@ -99,14 +97,25 @@ module cus27
 		nVRESET <= ~(VRESETH && VRESET); 
 	end
 	
-	reg rst_last = 0;
 	// in order for CPU timing to match information gleaned from http://www.ukvac.com/forum/namco-cus27-in-fpga-cus130-wip_topic362440_page2.html
 	// it would appear that the counter is clocked on the falling edge of 6M
 	// this would make sense as CUS27 is wired up with 6M output as a feedback into the chip's 6M input
 	// which would only be stable in reality if the input was dealt with out of phase from the orinal output
-	always @(negedge CLK_6M_IN) begin
-		if (rst && ~rst_last) begin
-			horizontal_counter <= 0;
+	always @(negedge CLK_6M_IN or rst_n) begin
+		if (!rst_n) begin
+			horizontal_counter <= 1;	// need to start at one otherwise we end up counting 385 pixels!
+		end else begin
+			if (horizontal_counter[8:3] === 6'b110000) 	// ~384
+				horizontal_counter <= 1;	// need to start at one otherwise we end up counting 385 pixels!
+			else
+				horizontal_counter <= horizontal_counter + 1;
+		end
+	end
+	
+	//always @(negedge CLK_6M_IN or rst_n) begin
+	always @(horizontal_counter or rst_n) begin
+		if (!rst_n) begin
+			//horizontal_counter <= 0;
 			
 			nHSYNC <= 1'b1;
 			nHBLANK <= 1'b1;
@@ -119,9 +128,12 @@ module cus27
 			CLK_S2H <= 1'b0;
 			CLK_4H <= 1'b0;
 		end else begin
-			horizontal_counter <= horizontal_counter + 1;
-			if (horizontal_counter[8:3] === 6'b110000) 	// ~384
+			/*if (horizontal_counter[8:3] === 6'b110000) 	// ~384
 				horizontal_counter <= 0;
+			else
+				horizontal_counter <= horizontal_counter + 1;
+				*/
+				
 			// nHSYNC
 			
 			// ~304
@@ -153,12 +165,24 @@ module cus27
 			CLK_4H <= horizontal_counter[2];	// 0.75 Mhz
 		
 		end
-		
-		rst_last <= rst;
 	end
 		
-	always @(negedge nHSYNC) begin
-		if (rst) begin
+	always @(negedge nHSYNC or rst_n) begin	
+		if (!rst_n) begin
+			vertical_counter <= 1;	// need to start at one otherwise we end up counting 265 lines!
+		end else begin
+			if (vertical_counter[8:3] === 6'b100001)	// ~264
+				vertical_counter = 1;	// need to start at one otherwise we end up counting 265 lines!
+			else
+				vertical_counter = vertical_counter + 1;
+			
+			
+		end
+	end
+	
+	//always @(negedge nHSYNC or rst_n) begin
+	always @(vertical_counter or rst_n) begin
+		if (!rst_n) begin
 			nVSYNC <= 1'b1;
 			nVBLANK <= 1'b1;
 			VRESET <= 1'b0;
@@ -167,11 +191,11 @@ module cus27
 			CLK_4V <= 1'b0;
 			CLK_8V <= 1'b0;
 			
-			vertical_counter <= 0;
+			//vertical_counter <= 0;
 		end else begin
-			vertical_counter = vertical_counter + 1;
-			if (vertical_counter[8:3] === 6'b100001)	// ~264
-				vertical_counter = 0;
+			//vertical_counter = vertical_counter + 1;
+			//if (vertical_counter[8:3] === 6'b100001)	// ~264
+			//	vertical_counter = 0;
 				
 			// nVSYNC
 			if (vertical_counter[8:3] === 6'b011111) //	~248

@@ -44,7 +44,7 @@ module system86_tb;
 
 	// Inputs
 	reg clk_48m;
-	reg rst;
+	reg rst_n;
 
 	reg clk_25m;
 		
@@ -109,7 +109,7 @@ module system86_tb;
 		)
 		uut (
 			.clk(clk_48m), 
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.vid_clk(s86_vid_clk),
 			.vid_red(s86_vid_red),
@@ -383,9 +383,9 @@ module system86_tb;
 			.C_FILE_NAME("raw.txt")
 		)
 		raw_logger (
-			.i_Rst(rst),
+			.i_Rst(~rst_n),
 			.i_Clk(s86_vid_clk),
-			.i_OutputEnable(~rst),
+			.i_OutputEnable(rst_n),
 			.i_Red(s86_vid_red),
 			.i_Green(s86_vid_green),
 			.i_Blue(s86_vid_blue),
@@ -499,13 +499,13 @@ module system86_tb;
 		// Initialize Inputs
 		clk_48m = 0;
 		clk_25m = 0;
-		rst = 1;
+		rst_n = 0;
 
 		// Wait 1000 ns for global reset to finish
 		#2000;
         
 		// Add stimulus here
-		rst = 0;
+		rst_n = 1;
 	end
 
 	// generate our 49.125Mhz input clock

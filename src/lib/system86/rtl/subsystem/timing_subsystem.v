@@ -24,7 +24,7 @@ module timing_subsystem
 	parameter C_USE_HARDWARE_CLOCKS = 0
 )
 (
-	input wire rst,
+	input wire rst_n,
 	input wire enable,
 	
 	input wire CLK_48M,
@@ -63,7 +63,7 @@ module timing_subsystem
 	// CUS27 - CLOCK DIVIDER
 	cus27 
 		cus27_9p_clock_divider(
-			.rst(rst),
+			.rst_n(rst_n),
 			.CLK_48M(CLK_48M), 
 			.CLK_6M_IN(CLK_6M),
 			.CLK_24M(CLK_24M),

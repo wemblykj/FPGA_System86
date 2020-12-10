@@ -26,7 +26,7 @@
 
 module cus47_tb;
 
-	reg rst;
+	reg rst_n;
 	reg CLK_6M;
 	
 	// CUS27 outputs
@@ -34,7 +34,7 @@ module cus47_tb;
 	wire nVBLANK;
 	
 	// Inputs
-	//reg rst;
+	//reg rst_n;
 	//reg CLK_6M;
 	//reg CLK_2H;
 	//reg nVBLK;
@@ -62,7 +62,7 @@ module cus47_tb;
 
 	// Instantiate the Unit Under Test (UUT)
 	cus47 uut (
-		.rst(rst), 
+		.rst_n(rst_n), 
 		.CLK_6M(CLK_6M), 
 		.CLK_2H(CLK_S2H), 
 		.nVBLK(nVBLK), 
@@ -89,7 +89,7 @@ module cus47_tb;
 	// CUS27 - CLOCK DIVIDER
 	cus27 
 		cus27_9p_clock_divider(
-			.rst(rst),
+			.rst_n(rst_n),
 			//.CLK_48M(clk_48m), 
 			.CLK_6M_IN(CLK_6M),
 			//.CLK_24M(CLK_24M),
@@ -117,7 +117,7 @@ module cus47_tb;
 	
 	initial begin
 		clk_48m = 0;
-		rst = 0;
+		rst_n = 0;
 		
 		// Initialize Inputs
 		//nVBLK = 0;
@@ -126,7 +126,7 @@ module cus47_tb;
 
 		// Wait 100 ns for global reset to finish
 		#100;
-      rst = 1;
+      rst_n = 1;
 		
 		// Add stimulus here
 		
