@@ -50,7 +50,7 @@ module cus42_layer
 	wire [8:0] SV;		// 9 bits	0 -> 264
 	
 	reg [7:0] tile_index = 0;
-	reg [7:0] attr = 0;
+	reg [1:0] attr = 0;
 	
 	//
 	// debug
@@ -92,11 +92,11 @@ module cus42_layer
 		nVSYNC_last <= nVSYNC;
 	end
 	
-	always @(SH[2:0]) begin
-		if (SH[2:0] === 3'b001)
+	always @(SH[1:0]) begin
+		if (SH[1:0] === 2'b01)
 			tile_index <= RD;
-		else if (SH[1:0] === 3'b101)
-			attr <= RD;
+		else if (SH[1:0] === 2'b11)
+			attr <= RD[1:0];
 	end
 
 	// Handle CPU control requests
@@ -125,7 +125,7 @@ module cus42_layer
 	assign SV = vScrollCounter;
 	assign S3H = SH[1:0] === 2'b00;
 	
-	assign RA = { SV[7:3], SH[8:3], SH[2] };
+	assign RA = { SV[7:3], SH[8:3], SH[1] };
 	assign GA = { attr, tile_index, SV[2:0], SH[2] };
 	
 	// debug

@@ -1,18 +1,18 @@
-`timescale 1ns / 1fs
+`timescale 1ns / 1ps
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer:
 //
-// Create Date:   16:42:37 12/09/2020
-// Design Name:   cus42_layer
-// Module Name:   /home/administrator/Development/fpga/system86/src/lib/system86/simulation/custom/cus42_layer_tb.v
+// Create Date:   13:33:56 12/10/2020
+// Design Name:   cus42
+// Module Name:   /home/administrator/Development/fpga/system86/src/lib/system86/simulation/custom/cus42_tb.v
 // Project Name:  system86
 // Target Device:  
 // Tool versions:  
 // Description: 
 //
-// Verilog Test Fixture created by ISE for module: cus42_layer
+// Verilog Test Fixture created by ISE for module: cus42
 //
 // Dependencies:
 // 
@@ -26,40 +26,56 @@
 
 `include "ttl_mem/ttl_mem.vh"
 
-module cus42_layer_tb;
+module cus42_tb;
 
 	// Inputs
 	reg rst_n;
 	reg CLK_6M;
-	reg FLIP;
-	reg nLATCH;
-	reg [2:0] CA;
-	reg [7:0] CD;
-	wire [7:0] RD;
+	wire CLK_2H;
 	wire nHSYNC;
 	wire nVSYNC;
+	reg nGCS;
+	reg nRCS;
+	reg nLATCH;
+	reg FLIP;
+	reg [13:0] CA;
+	reg RnW;
 
 	// Outputs
-	wire [11:0] RA;
 	wire [13:0] GA;
-	wire S3H;
+	wire [12:0] RA;
+	wire nRWE;
+	wire nROE;
+	wire HA2;
+	wire HB2;
+
+	// Bidirs
+	wire [7:0] CD;
+	wire [7:0] RD;
 
 	`SRAM_WIRE_DEFS(CY6264, sram_7n);
-	
+
 	// Instantiate the Unit Under Test (UUT)
-	cus42_layer uut (
+	cus42 uut (
 		.rst_n(rst_n), 
 		.CLK_6M(CLK_6M), 
-		.FLIP(FLIP), 
-		.nLATCH(nLATCH), 
-		.CA(CA), 
-		.CD(CD), 
-		.RD(RD), 
+		.CLK_2H(CLK_2H), 
 		.nHSYNC(nHSYNC), 
 		.nVSYNC(nVSYNC), 
-		.RA(RA), 
+		.nGCS(nGCS), 
+		.nRCS(nRCS), 
+		.nLATCH(nLATCH), 
+		.FLIP(FLIP), 
+		.CA(CA), 
+		.RnW(RnW), 
+		.CD(CD), 
+		.RD(RD), 
 		.GA(GA), 
-		.S3H(S3H)
+		.RA(RA), 
+		.nRWE(nRWE), 
+		.nROE(nROE), 
+		.HA2(HA2), 
+		.HB2(HB2)
 	);
 
 	// CUS27 - CLOCK DIVIDER
@@ -72,7 +88,7 @@ module cus42_layer_tb;
 			//.CLK_12M(CLK_12M),
 			//.CLK_6M(CLK_6M),
 			.nVSYNC(nVSYNC),
-			.nHSYNC(nHSYNC)
+			.nHSYNC(nHSYNC),
 			//.nHBLANK(nHBLANK),
 			//.nVBLANK(nVBLANK),
 			//.nHRESET(nHRESET),
@@ -81,12 +97,12 @@ module cus42_layer_tb;
 			//.CLK_4V(CLK_4V),
 			//.CLK_1V(CLK_1V),
 			//.CLK_4H(CLK_4H),
-			//.CLK_2H(CLK_2H),
+			.CLK_2H(CLK_2H)
 			//.CLK_1H(CLK_1H),
 			//.CLK_S2H(CLK_S2H)
 			//.CLK_S1H(CLK_S1H)
 		);
-	
+		
 	sram_cy6264 
 		#(
 			"../../../../../../../../snapshots/rthunder_gfx1_002.bin"
@@ -101,10 +117,10 @@ module cus42_layer_tb;
 			.D(sram_7n_data),
 			.data_valid(sram_7n_dv)
 		);
-	
+
 	assign sram_7n_ce_n = 0;
-	assign sram_7n_oe_n = 0;
-	assign sram_7n_we_n = 1;
+	assign sram_7n_oe_n = nROE;
+	assign sram_7n_we_n = nRWE;
 	assign sram_7n_addr = RA;
 	assign RD = sram_7n_data;
 	
@@ -112,15 +128,17 @@ module cus42_layer_tb;
 		// Initialize Inputs
 		rst_n = 0;
 		CLK_6M = 0;
+		nGCS = 1;
+		nRCS = 1;
+		nLATCH = 1;
 		FLIP = 0;
-		nLATCH = 0;
 		CA = 0;
-		CD = 0;
-		
+		RnW = 1;
+
 		// Wait 100 ns for global reset to finish
 		#100;
-      rst_n = 1;
-		
+		rst_n = 1;
+        
 		// Add stimulus here
 
 	end

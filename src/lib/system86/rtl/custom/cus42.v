@@ -99,7 +99,7 @@ module cus42
 
 	// CPU/RAM multiplexing
 	assign nRWE = nRCS | RnW | write_done_request;
-	assign nROE = nRCS | ~RnW;
+	assign nROE = ~nRCS ? RnW : 0;
 	
 	assign CD = (~nRCS & RnW) ? RD : 8'bz;
 	assign RD = (~nRCS & ~RnW) ? CD : 8'bz;

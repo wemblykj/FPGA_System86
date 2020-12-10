@@ -96,11 +96,11 @@ module GENERIC_SRAM
 		if (FILE_NAME != "") begin
 			fd = $fopen(FILE_NAME, "rb");
 			if (!fd) begin
-				$display("Failed to open ROM snapshot: %s\n", FILE_NAME);
+				$display("Failed to open RAM snapshot: %s\n", FILE_NAME);
 				$stop;
 			end
 
-			$display("successfully read ROM snapshot: %s\n", FILE_NAME);
+			$display("successfully read RAM snapshot: %s\n", FILE_NAME);
 			
 			// works in isim but not modelsim
 			//read = $fread(mem, fd, count);
