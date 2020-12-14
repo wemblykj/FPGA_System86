@@ -94,10 +94,10 @@ module cus43_layer
 			plane1_shift <= 0;
 		end else begin
 			if (H2) begin
-				attr <= mdi_latched2;
-				plane0_shift <= plane0_latched;
-				plane1_shift <= plane1_latched;
-				plane2_shift <= plane2_latched;
+				attr <= MDI; //mdi_latched2;
+				plane0_shift <= GDI[3:0]; // plane0_latched;
+				plane1_shift <= GDI[7:4]; // plane1_latched;
+				plane2_shift <= GDI[11:8]; // plane2_latched;
 			end else begin
 				if (FLIP) begin
 					plane0_shift <= plane0_shift >> 1;

@@ -123,7 +123,7 @@ module cus42_layer
 	//assign SH = { hScrollCounter[8:3], FLIP ? ~hScrollCounter[2:0] : hScrollCounter[2:0] };	// negate flipped counter
 	assign SH = { hScrollCounter[8:3], hScrollCounter[2:0] };
 	assign SV = vScrollCounter;
-	assign S3H = SH[1:0] === 2'b00;
+	assign S3H = SH[1:0] === 2'b11;
 	
 	assign RA = { SV[7:3], SH[8:3], SH[1] };
 	assign GA = { attr, tile_index, SV[2:0], SH[2] };

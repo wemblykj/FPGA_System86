@@ -44,7 +44,7 @@ module GENERIC_SRAM
 		  parameter tLZWE = 0		// WE HIGH to low-Z
     )
     (
-		  input wire rst,
+		  input wire rst_n,
 			
         input wire nCE,
         input wire nOE,	 
