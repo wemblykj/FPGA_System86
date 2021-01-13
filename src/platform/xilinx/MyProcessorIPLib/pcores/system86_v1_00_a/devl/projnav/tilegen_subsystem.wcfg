@@ -67,10 +67,12 @@
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/MD" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">MD[7:0]</obj_property>
       <obj_property name="ObjectShortName">MD[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/D" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">D[7:0]</obj_property>
       <obj_property name="ObjectShortName">D[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/J5" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">J5[20:1]</obj_property>
@@ -83,6 +85,7 @@
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/DOT" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">DOT[7:0]</obj_property>
       <obj_property name="ObjectShortName">DOT[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/eprom_4r_ce_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_4r_ce_n</obj_property>
@@ -95,10 +98,12 @@
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/eprom_4r_addr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_4r_addr[15:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_4r_addr[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/eprom_4r_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_4r_data[7:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_4r_data[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/eprom_4s_ce_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_4s_ce_n</obj_property>
@@ -111,10 +116,12 @@
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/eprom_4s_addr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_4s_addr[14:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_4s_addr[14:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/eprom_4s_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_4s_data[7:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_4s_data[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/eprom_7r_ce_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_7r_ce_n</obj_property>
@@ -127,6 +134,7 @@
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/eprom_7r_addr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_7r_addr[15:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_7r_addr[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/eprom_7r_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_7r_data[7:0]</obj_property>
@@ -148,6 +156,7 @@
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/eprom_7s_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">eprom_7s_data[7:0]</obj_property>
       <obj_property name="ObjectShortName">eprom_7s_data[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/prom_4v_ce_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">prom_4v_ce_n</obj_property>
@@ -156,10 +165,12 @@
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/prom_4v_addr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">prom_4v_addr[10:0]</obj_property>
       <obj_property name="ObjectShortName">prom_4v_addr[10:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/prom_4v_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">prom_4v_data[7:0]</obj_property>
       <obj_property name="ObjectShortName">prom_4v_data[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/prom_6u_ce_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">prom_6u_ce_n</obj_property>
@@ -168,10 +179,12 @@
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/prom_6u_addr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">prom_6u_addr[4:0]</obj_property>
       <obj_property name="ObjectShortName">prom_6u_addr[4:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/prom_6u_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">prom_6u_data[7:0]</obj_property>
       <obj_property name="ObjectShortName">prom_6u_data[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/sram_4n_ce_n" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">sram_4n_ce_n</obj_property>
@@ -248,6 +261,7 @@
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k_ga" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">cus42_7k_ga[13:0]</obj_property>
       <obj_property name="ObjectShortName">cus42_7k_ga[13:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_7k_ha2" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">cus42_7k_ha2</obj_property>
@@ -260,6 +274,7 @@
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_5k_ga" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">cus42_5k_ga[13:0]</obj_property>
       <obj_property name="ObjectShortName">cus42_5k_ga[13:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/system86_tb/uut/tilegen_subsystem/cus42_5k_ha2" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">cus42_5k_ha2</obj_property>

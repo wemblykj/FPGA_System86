@@ -178,7 +178,8 @@ module tilegen_subsystem
     assign prom_6u_ce_n = 1'b0;
 	
     // tile map palette prom
-    assign prom_4v_addr = { cus43_6n_clo, cus43_6n_dto };
+    //assign prom_4v_addr = { cus43_6n_clo, cus43_6n_dto };
+	 assign prom_4v_addr = { CL, DT };	// direct to layer 0/1
 	 assign prom_4v_ce_n = 1'b0;  // SCRWIN
     
 	// == Layer 1 & 2 =
