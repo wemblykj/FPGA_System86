@@ -48,6 +48,8 @@ module system86_tb;
 
 	reg clk_25m;
 		
+	reg log = 0;
+	
 	wire s86_vid_clk;
 	wire [3:0] s86_vid_red;
 	wire [3:0] s86_vid_green;
@@ -385,7 +387,7 @@ module system86_tb;
 		raw_logger (
 			.i_Rst(~rst_n),
 			.i_Clk(s86_vid_clk),
-			.i_OutputEnable(rst_n),
+			.i_OutputEnable(log),
 			.i_Red(s86_vid_red),
 			.i_Green(s86_vid_green),
 			.i_Blue(s86_vid_blue),
@@ -500,12 +502,36 @@ module system86_tb;
 		clk_48m = 0;
 		clk_25m = 0;
 		rst_n = 0;
+		log = 0;
 
 		// Wait 1000 ns for global reset to finish
 		#2000;
-        
+		  
 		// Add stimulus here
 		rst_n = 1;
+		log = 1;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		log = 1;
+		#120000000;
+		$stop();
+		
 	end
 
 	// generate our 49.125Mhz input clock
