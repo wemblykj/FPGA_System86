@@ -136,7 +136,35 @@ module system86
 	wire [7:0] MD;					// master CPU data bus to backcolor latch
 	wire [2:0] SPR = 3'b0;			// CUS43 tile generator to sprite enable logic
 	wire [7:0] DOT;			// multiplexed tilemap color index and sprite color index
-			
+		
+	// CPU 1 - master CPU
+	wire cpu1_9a_e;
+	wire cpu1_9a_q;
+	wire [15:0] cpu1_9a_a;
+	wire cpu1_9a_we_n;
+	wire cpu1_9a_bs;
+	wire cpu1_9a_ba;
+	wire cpu1_9a_avma;
+	wire cpu1_9a_busy;
+	wire cpu1_9a_lic;
+	wire [7:0] cpu1_9a_d;
+	wire cpu1_9a_irq_n;
+	wire cpu1_9a_reset_n;
+		
+	// CPU 2 - sub CPU
+	wire cpu2_11a_e;
+	wire cpu2_11a_q;
+	wire [15:0] cpu2_11a_a;
+	wire cpu2_11a_we_n;
+	wire cpu2_11a_bs;
+	wire cpu2_11a_ba;
+	wire cpu2_11a_avma;
+	wire cpu2_11a_busy;
+   wire cpu2_11a_lic;
+	wire [7:0] cpu2_11a_d;
+	wire cpu2_11a_irq_n;
+	wire cpu2_11a_reset_n;
+		  
 	// == Timing subsystem ==
 	timing_subsystem
 		timing_subsystem(
@@ -253,12 +281,80 @@ module system86
 			.nBACKCOLOR(nBACKCOLOR),
 			.MD(MD),
 			
+			// == hardware abstraction - cpu ==
+			.cpu1_9a_a(cpu1_9a_a),
+	      .cpu1_9a_we_n(cpu1_9a_we_n),
+	      .cpu1_9a_bs(cpu1_9a_bs),
+	      .cpu1_9a_ba(cpu1_9a_ba),
+	      .cpu1_9a_avma(cpu1_9a_avma),
+	      .cpu1_9a_busy(cpu1_9a_busy),
+	      .cpu1_9a_lic(cpu1_9a_lic),
+	      .cpu1_9a_d(cpu1_9a_d),
+			.cpu1_9a_e(cpu1_9a_e),
+			.cpu1_9a_q(cpu1_9a_q),
+	      .cpu1_9a_irq_n(cpu1_9a_irq_n),
+	      .cpu1_9a_reset_n(cpu1_9a_reset_n),
+		
+	      // CPU 2 - sub CPU
+			.cpu2_11a_a(cpu2_11a_a),
+	      .cpu2_11a_we_n(cpu2_11a_we_n),
+	      .cpu2_11a_bs(cpu2_11a_bs),
+	      .cpu2_11a_ba(cpu2_11a_ba),
+	      .cpu2_11a_avma(cpu2_11a_avma),
+	      .cpu2_11a_busy(cpu2_11a_busy),
+         .cpu2_11a_lic(cpu2_11a_lic),
+	      .cpu2_11a_d(cpu2_11a_d),
+			.cpu2_11a_e(cpu2_11a_e),
+			.cpu2_11a_q(cpu2_11a_q),
+	      .cpu2_11a_irq_n(cpu2_11a_irq_n),
+	      .cpu2_11a_reset_n(cpu2_11a_reset_n),
+			
 			// == hardware abstraction - memory buses ==
 			`EPROM_CONNECTION_DEFS(eprom_9c, eprom_9c),
 			`EPROM_CONNECTION_DEFS(eprom_9d, eprom_9d),
 			`EPROM_CONNECTION_DEFS(eprom_12c, eprom_12c),
 			`EPROM_CONNECTION_DEFS(eprom_12d, eprom_12d)
 			);
+	
+	// CPU 1 -master CPU
+	mc68a09e cpu1_9a
+        (
+			.D(cpu1_9a_d), 
+			.A(cpu1_9a_a), 
+			.RnW(cpu1_9a_we_n), 
+			.E(cpu1_9a_e), 
+			.Q(cpu1_9a_q), 
+			.BS(cpu1_9a_bs), 
+			.BA(cpu1_9a_ba), 
+			.nIRQ(cpu1_9a_irq_n),
+			.nFIRQ(1'b1), 
+			.nNMI(1'b1), 
+			.AVMA(cpu1_9a_avma), 
+			.BUSY(cpu1_9a_busy), 
+			.LIC(cpu1_9a_lic), 
+			.nHALT(1'b1), 
+			.nRESET(cpu1_9a_reset_n)
+		);			
+		
+	mc68a09e cpu2_11a
+        (
+			.D(cpu2_11a_d), 
+			.A(cpu2_11a_a), 
+			.RnW(cpu2_11a_we_n), 
+			.E(cpu2_11a_e), 
+			.Q(cpu2_11a_q), 
+			.BS(cpu2_11a_bs), 
+			.BA(cpu2_11a_ba), 
+			.nIRQ(cpu2_11a_irq_n),
+			.nFIRQ(1'b1), 
+			.nNMI(1'b1), 
+			.AVMA(cpu2_11a_avma), 
+			.BUSY(cpu2_11a_busy), 
+			.LIC(cpu2_11a_lic), 
+			.nHALT(1'b1), 
+			.nRESET(cpu2_11a_reset_n)
+		);	
+	
 		
 	/*wire vid_active;
 	wire [9:0] vid_active_col;

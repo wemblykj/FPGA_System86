@@ -52,7 +52,37 @@ module cpu_subsystem
         output wire nLATCH1,
         output wire nBACKCOLOR,
         output wire [7:0] MD,	// master CPU data bus to backcolor latch
-        
+      
+        // == hardware abstraction - cpu ==
+			
+        // CPU 1 signals       
+        input wire cpu1_9a_we_n,
+        input wire cpu1_9a_bs,
+        input wire cpu1_9a_ba,
+        input wire cpu1_9a_avma,
+        input wire cpu1_9a_busy,
+        input wire cpu1_9a_lic,	
+		  inout wire [15:0] cpu1_9a_a,
+		  inout wire [7:0] cpu1_9a_d,
+		  output wire cpu1_9a_e,
+		  output wire cpu1_9a_q,
+		  output wire cpu1_9a_irq_n,
+		  output wire cpu1_9a_reset_n,
+			
+        // CPU 2
+        input wire cpu2_11a_we_n,
+        input wire cpu2_11a_bs,
+        input wire cpu2_11a_ba,
+        input wire cpu2_11a_avma,
+        input wire cpu2_11a_busy,
+        input wire cpu2_11a_lic,
+		  inout wire [15:0] cpu2_11a_a,
+		  inout wire [7:0] cpu2_11a_d,
+		  output wire cpu2_11a_e,
+		  output wire cpu2_11a_q,
+		  output wire cpu2_11a_irq_n,
+		  output wire cpu2_11a_reset_n,
+	
         // == hardware abstraction - memory buses ==
         
 		  `EPROM_OUTPUT_DEFS(M27256, eprom_9c),
@@ -63,16 +93,6 @@ module cpu_subsystem
 
     
 	// == Master CPU system ==
-	
-	// CPU 1 signals
-	wire [7:0] cpu1_9a_d;
-	wire [15:0] cpu1_9a_a;
-	wire cpu1_9a_we_n;
-	wire cpu1_9a_bs;
-	wire cpu1_9a_ba;
-	wire cpu1_9a_avma;
-	wire cpu1_9a_busy;
-	wire cpu1_9a_lic;
 	
 	// CUS47 signals
 	wire cus47_10c_res_n;
@@ -87,16 +107,6 @@ module cpu_subsystem
 	wire cus47_10c_bufen_n;
 	wire cus47_10C_mpmg_n;
 	wire cus47_10C_spmg_n;
-
-	// CPU 2
-	wire [7:0] cpu2_11a_d;
-	wire [15:0] cpu2_11a_a;
-	wire cpu2_11a_we_n;
-	wire cpu2_11a_bs;
-	wire cpu2_11a_ba;
-	wire cpu2_11a_avma;
-	wire cpu2_11a_busy;
-	wire cpu2_11a_lic;
 	
 	// CUS41 signals
 	wire cus41_8a_q;
@@ -155,27 +165,12 @@ module cpu_subsystem
 	
 	wire ls153_8f_1y;
 	wire ls153_8f_2y;
-
-	// CPU 1
-	mc68a09e cpu1_9a
-        (
-			.D(cpu1_9a_d), 
-			.A(cpu1_9a_a), 
-			.RnW(cpu1_9a_we_n), 
-			.E(cus47_10c_me), 
-			.Q(cus47_10c_mq), 
-			.BS(cpu1_9a_bs), 
-			.BA(cpu1_9a_ba), 
-			.nIRQ(cus47_10c_irq_n), 
-			.nFIRQ(1'b1), 
-			.nNMI(1'b1), 
-			.AVMA(cpu1_9a_avma), 
-			.BUSY(cpu1_9a_busy), 
-			.LIC(cpu1_9a_lic), 
-			.nHALT(1'b1), 
-			.nRESET(nRESET)
-		);	
 		
+	assign cpu1_9a_e = cus47_10c_me;
+	assign cpu1_9a_q = cus47_10c_mq;	
+	assign cpu1_9a_irq_n = cus47_10c_irq_n;
+	assign cpu1_9a_reset_n = nRESET;
+			
 	// CUS47 - CPU 1 ADDRESS DECODER
 	cus47 cus47_10c
         (
@@ -252,25 +247,11 @@ module cpu_subsystem
 			.nMCS4(cus41_8a_mcs4_n), 
 			.nMROM(cus41_8a_mrom_n)
 		);
-		
-	mc68a09e cpu2_11a
-        (
-			.D(cpu2_11a_d), 
-			.A(cpu2_11a_a), 
-			.RnW(cpu2_11a_we_n), 
-			.E(cus47_10c_sube), 
-			.Q(cus41_8a_q), 
-			.BS(cpu2_11a_bs), 
-			.BA(cpu2_11a_ba), 
-			.nIRQ(cus41_8a_sndirq_n), 
-			.nFIRQ(1'b1), 
-			.nNMI(1'b1), 
-			.AVMA(cpu2_11a_avma), 
-			.BUSY(cpu2_11a_busy), 
-			.LIC(cpu2_11a_lic), 
-			.nHALT(1'b1), 
-			.nRESET(nRESET)
-		);	
+
+	assign cpu2_11a_e = cus47_10c_sube; 
+	assign cpu2_11a_q = cus41_8a_q;
+	assign cpu2_11a_irq_n = cus41_8a_sndirq_n;
+	assign cpu2_11a_reset_n = nRESET;
 	
 	// == BUS MULTIPLEXER ==
 	
@@ -395,22 +376,6 @@ module cpu_subsystem
     // Assign ROM data buses to CPU 1 bus if enabled
     assign cpu1_9a_d = eprom_9c_dv ? eprom_9c_data : 8'bz;
 	 
-		/*(&eprom_9c_data !== 1'bx) ? 
-			eprom_9c_data 
-		 : (&eprom_9d_data !== 1'bx) ? 
-			   eprom_9d_data
-		    : 8'bz; 
-			 */
-	 wire [7:0] cpu1_9a_d_alt;
-	 assign cpu1_9a_d_alt = eprom_9c_dv ? eprom_9c_data : 8'bz;
-	 /*assign cpu1_9a_d_alt = 
-		(&eprom_9c_data !== 1'bx) ? 
-			eprom_9c_data 
-		 : (&eprom_9d_data !== 1'bx) ? 
-			   eprom_9d_data
-		    : 8'bz;
-    */
-	 
     // CPU 2 to program ROMs 12C and 12D
     
     assign eprom_12c_addr = cpu2_11a_a[14:0];
@@ -453,7 +418,7 @@ module cpu_subsystem
 	
 	assign nRESET = ~rst & cus47_10c_res_n & cus41_8a_mreset_n;
 	
-	//assign MD = cpu1_9a_d;
+	assign MD = cpu1_9a_d;
 	assign nBACKCOLOR = cus47_10c_latch2_n;
 	assign nOBJECT = ls08_8e_2y_n;
 	assign nSCROLL0 = ls08_8e_4y_n;
