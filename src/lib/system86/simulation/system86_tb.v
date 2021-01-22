@@ -509,7 +509,7 @@ module system86_tb;
 		  
 		// Add stimulus here
 		rst_n = 1;
-		log = 1;
+		//log = 1;
 		#100000000;
 		#100000000;
 		#100000000;
