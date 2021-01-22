@@ -2,9 +2,9 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="312" key="DIALOG_WIDTH"/>
-		<item value="152" key="DIALOG_Y_ORIGIN"/>
+		<item value="121" key="DIALOG_Y_ORIGIN"/>
 		<item value="436" key="DIALOG_HEIGHT"/>
-		<item value="960" key="DIALOG_X_ORIGIN"/>
+		<item value="1106" key="DIALOG_X_ORIGIN"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
@@ -13,19 +13,15 @@
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="callback" key="selection"/>
+		<item value="BUTTONS" key="selection"/>
 		<list key="findhistory">
-			<item value="callback"/>
-			<item value="FRAME_HORIZONTAL_LEN"/>
-			<item value="CfgPtr"/>
-			<item value="XAxiVdmaHelper_SetupDevice"/>
-			<item value="channel-&gt;InstancePtr"/>
-			<item value="SetupIntrSystem"/>
-			<item value="Config"/>
-			<item value="StartIntrSystem"/>
+			<item value="BUTTONS"/>
+			<item value="BUTTON"/>
+			<item value="INTC_GPIO_INTERRUPT_ID"/>
+			<item value="SetupInterruptSystem"/>
+			<item value="XPAR_INTC_0_DEVICE_ID"/>
 		</list>
 		<list key="replacehistory">
-			<item value="channel-&gt;device-&gt;InstancePtr"/>
 		</list>
 	</section>
 </section>

@@ -1,0 +1,77 @@
+/*
+ * Empty C++ Application
+ */
+
+//#include "platform.h"
+
+//#include "xaxivdma.h"
+#include "xparameters.h"
+#include "xgpio.h"
+#include "xil_exception.h"
+
+#include "xintc.h"
+
+/*
+ * The following constants map to the names of the hardware instances that
+ * were created in the EDK XPS system.  They are only defined here such that
+ * a user can easily change all the needed device IDs in one place.
+ */
+#define GPIO_DEVICE_ID		XPAR_PUSH_BUTTONS_4BITS_DEVICE_ID
+#define INTC_GPIO_INTERRUPT_ID	XPAR_INTC_0_GPIO_2_VEC_ID
+
+#define INTC_DEVICE_ID	XPAR_INTC_0_DEVICE_ID
+#define INTC		XIntc
+#define INTC_HANDLER	XIntc_InterruptHandler
+
+
+#define DDR_BASE_ADDR		XPAR_S6DDR_0_S0_AXI_BASEADDR
+#define DDR_HIGH_ADDR		XPAR_S6DDR_0_S0_AXI_HIGHADDR
+
+
+static XGpio Gpio; /* The Instance of the GPIO Driver */
+
+static INTC Intc; /* The Instance of the Interrupt Controller Driver */
+
+int main()
+{
+	int Status;
+
+	/* Initialize the GPIO driver. If an error occurs then exit */
+
+	Status = XGpio_Initialize(&Gpio, GPIO_DEVICE_ID);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	/*
+	 * Perform a self-test on the GPIO.  This is a minimal test and only
+	 * verifies that there is not any bus error when reading the data
+	 * register
+	 */
+	XGpio_SelfTest(&Gpio);
+
+	/*
+	 * Setup direction register so the switch is an input and the LED is
+	 * an output of the GPIO
+	 */
+	XGpio_SetDataDirection(&Gpio, BUTTON_CHANNEL, GPIO_ALL_BUTTONS);
+	XGpio_SetDataDirection(&Gpio, LED_CHANNEL, ~GPIO_ALL_LEDS);
+
+	/*
+	 * Setup the interrupts such that interrupt processing can occur. If
+	 * an error occurs then exit
+	 */
+	Status = SetupInterruptSystem();
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	/*
+	 * Loop forever while the button changes are handled by the interrupt
+	 * level processing
+	 */
+	while (1) {
+	}
+
+	return XST_SUCCESS;
+}
