@@ -51,7 +51,37 @@ module cpu_subsystem
         output wire nLATCH1,
         output wire nBACKCOLOR,
         output wire [7:0] MD,	// master CPU data bus to backcolor latch
-        
+      
+        // == hardware abstraction - cpu ==
+			
+		// Main CPU signals
+		input wire mcpu_11a_we_n,
+		input wire mcpu_11a_bs,
+		input wire mcpu_11a_ba,
+		input wire mcpu_11a_avma,
+		input wire mcpu_11a_busy,
+		input wire mcpu_11a_lic,
+		inout wire [15:0] mcpu_11a_a,
+		inout wire [7:0] mcpu_11a_d,
+		output wire mcpu_11a_e,
+		output wire mcpu_11a_q,
+		output wire mcpu_11a_irq_n,
+		output wire mcpu_11a_reset_n,
+	
+		// Sub CPU signals 
+		input wire scpu_9a_we_n,
+		input wire scpu_9a_bs,
+		input wire scpu_9a_ba,
+		input wire scpu_9a_avma,
+		input wire scpu_9a_busy,
+		input wire scpu_9a_lic,	
+		inout wire [15:0] scpu_9a_a,
+		inout wire [7:0] scpu_9a_d,
+		output wire scpu_9a_e,
+		output wire scpu_9a_q,
+		output wire scpu_9a_irq_n,
+		output wire scpu_9a_reset_n,
+
         // == hardware abstraction - memory buses ==
         
 		  `EPROM_OUTPUT_DEFS(M27256, eprom_9c),
@@ -63,16 +93,6 @@ module cpu_subsystem
     
 	// == Master CPU system ==
 	
-	// Main CPU
-	wire [7:0] mcpu_11a_d;
-	wire [15:0] mcpu_11a_a;
-	wire mcpu_11a_we_n;
-	wire mcpu_11a_bs;
-	wire mcpu_11a_ba;
-	wire mcpu_11a_avma;
-	wire mcpu_11a_busy;
-	wire mcpu_11a_lic;
-	
 	// CUS41 signals
 	wire cus41_8a_q;
 	wire cus41_8a_mreset_n;
@@ -83,16 +103,6 @@ module cpu_subsystem
 	wire cus41_8a_subobj_n;
 	wire cus41_8a_mcs4_n;
 	wire cus41_8a_mrom_n;
-	
-	// Sub CPU signals
-	wire [7:0] scpu_9a_d;
-	wire [15:0] scpu_9a_a;
-	wire scpu_9a_we_n;
-	wire scpu_9a_bs;
-	wire scpu_9a_ba;
-	wire scpu_9a_avma;
-	wire scpu_9a_busy;
-	wire scpu_9a_lic;
 	
 	// CUS47 signals
 	wire cus47_10c_res_n;
@@ -155,7 +165,7 @@ module cpu_subsystem
 	
 	wire ls153_8f_1y;
 	wire ls153_8f_2y;
-
+		
 	// CUS41 - main CPU address decoder
 	cus41 cus41_8a
         (
@@ -179,56 +189,11 @@ module cpu_subsystem
 			.nMROM(cus41_8a_mrom_n)
 		);
 		
-	// Main CPU
-	mc68a09e 
-		#(
-			.tDHW(0),
-			.tAH(0)
-		)
-		mcpu_11a
-        (
-			.D(mcpu_11a_d), 
-			.A(mcpu_11a_a), 
-			.RnW(mcpu_11a_we_n), 
-			.E(cus47_10c_sube), 
-			.Q(cus41_8a_q), 
-			.BS(mcpu_11a_bs), 
-			.BA(mcpu_11a_ba), 
-			.nIRQ(cus41_8a_mint_n), 
-			.nFIRQ(1'b1), 
-			.nNMI(1'b1), 
-			.AVMA(mcpu_11a_avma), 
-			.BUSY(mcpu_11a_busy), 
-			.LIC(mcpu_11a_lic), 
-			.nHALT(1'b1), 
-			.nRESET(nRESET)
-		);	
-		
-	// Sub CPU
-	mc68a09e 
-		#(
-			.tDHW(0),
-			.tAH(0)
-		)
-		scpu_9a
-        (
-			.D(scpu_9a_d), 
-			.A(scpu_9a_a), 
-			.RnW(scpu_9a_we_n), 
-			.E(cus47_10c_me), 
-			.Q(cus47_10c_mq), 
-			.BS(scpu_9a_bs), 
-			.BA(scpu_9a_ba), 
-			.nIRQ(cus47_10c_irq_n), 
-			.nFIRQ(1'b1), 
-			.nNMI(1'b1), 
-			.AVMA(scpu_9a_avma), 
-			.BUSY(scpu_9a_busy), 
-			.LIC(scpu_9a_lic), 
-			.nHALT(1'b1), 
-			.nRESET(nRESET)
-		);	
-		
+	assign mcpu_11a_e = cus47_10c_sube; 
+	assign mcpu_11a_q = cus41_8a_q;
+	assign mcpu_11a_irq_n = cus41_8a_sndirq_n;
+	assign mcpu_11a_reset_n = nRESET;	
+	
 	// CUS47 - Sub CPU address decoder
 	cus47 cus47_10c
         (
@@ -255,6 +220,11 @@ module cpu_subsystem
 			.nSPGM(cus47_10C_spmg_n), 
 			.nMPGM(cus47_10C_mpmg_n)
 		);
+	
+	assign scpu_9a_e = cus47_10c_me;
+	assign scpu_9a_q = cus47_10c_mq;	
+	assign scpu_9a_irq_n = cus47_10c_irq_n;
+	assign scpu_9a_reset_n = nRESET;
 	
 	ls139 ls139_7d
         (
@@ -325,31 +295,31 @@ module cpu_subsystem
 		
     // == hardware abstraction - memory buses ==
     
-	 // Main CPU to program ROMs 12C and 12D
+	// Main CPU to program ROMs 12C and 12D
     
     assign eprom_12c_addr = mcpu_11a_a[14:0];
     assign eprom_12c_ce_n = cus41_8a_mrom_n;
-	 assign eprom_12c_oe_n = ls00_8d_2y_n;
+	assign eprom_12c_oe_n = ls00_8d_2y_n;
     
     assign eprom_12d_addr = mcpu_11a_a[14:0];
     assign eprom_12d_ce_n = cus41_8a_mcs4_n;
-	 assign eprom_12d_oe_n = ls00_8d_2y_n;
+	assign eprom_12d_oe_n = ls00_8d_2y_n;
     
     // Assign ROM data buses to main CPU bus if enabled
-	 assign mcpu_11a_d = ls00_8d_3y_n ? eprom_12d_data : 8'bz;
+	assign mcpu_11a_d = ls00_8d_3y_n ? eprom_12d_data : 8'bz;
     			 
     // Sub CPU to program ROMs 9C and 9D
     
     assign eprom_9c_addr = scpu_9a_a[14:0];
     assign eprom_9c_ce_n = cus47_10C_mpmg_n;
-	 assign eprom_9c_oe_n = CLK_2H;
+	assign eprom_9c_oe_n = CLK_2H;
     
     assign eprom_9d_addr = scpu_9a_a[14:0];
     assign eprom_9d_ce_n = cus47_10C_spmg_n;
-	 assign eprom_9d_oe_n = CLK_2H;
+	assign eprom_9d_oe_n = CLK_2H;
     
     // Assign ROM data buses to sub CPU bus if enabled
-	 assign scpu_9a_d = cus47_10c_bufen_n ? eprom_9c_data : 8'bz;
+	assign scpu_9a_d = cus47_10c_bufen_n ? eprom_9c_data : 8'bz;
     
 	// == Global outputs ==
 	
