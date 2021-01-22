@@ -22,20 +22,21 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-`include "../../ttl_mem/mb7112.vh"
-`include "../../ttl_mem/mb7116.vh"
-`include "../../ttl_mem/mb7124.vh"
-`include "../../ttl_mem/mb7138.vh"
+`include "ttl_mem/mb7112.vh"
+`include "ttl_mem/mb7116.vh"
+`include "ttl_mem/mb7124.vh"
+`include "ttl_mem/mb7138.vh"
 
-`include "../../ttl_mem/m27512.vh"
-`include "../../ttl_mem/m27256.vh"
+`include "ttl_mem/m27512.vh"
+`include "ttl_mem/m27256.vh"
 
-`include "../../ttl_mem/cy6264.vh"
+`include "ttl_mem/cy6264.vh"
+`include "ttl_mem/m58725.vh"
 
-`include "../../ttl_mem/ttl_mem.vh"
+`include "ttl_mem/ttl_mem.vh"
 
 `define ROM_PATH "../../../../../../../../roms"
-`include "../../../../roms/rthunder.vh"
+`include "roms/rthunder.vh"
 
 module system86_tb;
 
@@ -43,10 +44,12 @@ module system86_tb;
 
 	// Inputs
 	reg clk_48m;
-	reg rst;
+	reg rst_n;
 
 	reg clk_25m;
 		
+	reg log = 0;
+	
 	wire s86_vid_clk;
 	wire [3:0] s86_vid_red;
 	wire [3:0] s86_vid_green;
@@ -73,6 +76,9 @@ module system86_tb;
 	
 	`SRAM_WIRE_DEFS(CY6264, sram_4n);
 	`SRAM_WIRE_DEFS(CY6264, sram_7n);
+	
+	`SRAM_WIRE_DEFS(CY6264, sram_10m);
+	`SRAM_WIRE_DEFS(M58725, sram_11k);
 	
 	wire [3:0] out_vid_red;
 	wire [3:0] out_vid_green;
@@ -105,7 +111,7 @@ module system86_tb;
 		)
 		uut (
 			.clk(clk_48m), 
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.vid_clk(s86_vid_clk),
 			.vid_red(s86_vid_red),
@@ -133,7 +139,10 @@ module system86_tb;
 			`EPROM_CONNECTION_DEFS(eprom_12d, eprom_12d),
 			
 			`SRAM_CONNECTION_DEFS(sram_4n, sram_4n),
-			`SRAM_CONNECTION_DEFS(sram_7n, sram_7n)
+			`SRAM_CONNECTION_DEFS(sram_7n, sram_7n),
+			
+			`SRAM_CONNECTION_DEFS(sram_10m, sram_10m),
+			`SRAM_CONNECTION_DEFS(sram_11k, sram_11k)
 		);
 
 		// clut
@@ -339,15 +348,46 @@ module system86_tb;
 			.data_valid(sram_7n_dv)
 		);
 
+	// sprite ram
+	sram_cy6264 
+		/*#(
+			"../../../../../../../../snapshots/rthunder_gfx2_002.bin"
+		)*/
+		sram_10m
+		(
+			.nCE1(1'b0),
+			.CE2(1'b1),
+			.nWE(sram_10m_we_n),
+			.nOE(sram_10m_oe_n),
+			.A(sram_10m_addr),
+			.D(sram_10m_data),
+			.data_valid(sram_10m_dv)
+		);
+		
+	sram_m58725 
+		/*#(
+			"../../../../../../../../snapshots/rthunder_gfx1_002.bin"
+		)*/
+		sram_11k
+		(
+			.nCE1(1'b0),
+			.CE2(1'b1),
+			.nWE(sram_11k_we_n),
+			.nOE(sram_11k_oe_n),
+			.A(sram_11k_addr),
+			.D(sram_11k_data),
+			.data_valid(sram_11k_dv)
+		);
+		
 		Video_Logger
 		#(
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH),
 			.C_FILE_NAME("raw.txt")
 		)
 		raw_logger (
-			.i_Rst(rst),
+			.i_Rst(~rst_n),
 			.i_Clk(s86_vid_clk),
-			.i_OutputEnable(~rst),
+			.i_OutputEnable(log),
 			.i_Red(s86_vid_red),
 			.i_Green(s86_vid_green),
 			.i_Blue(s86_vid_blue),
@@ -461,13 +501,37 @@ module system86_tb;
 		// Initialize Inputs
 		clk_48m = 0;
 		clk_25m = 0;
-		rst = 1;
+		rst_n = 0;
+		log = 0;
 
 		// Wait 1000 ns for global reset to finish
 		#2000;
-        
+		  
 		// Add stimulus here
-		rst = 0;
+		rst_n = 1;
+		log = 1;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		#100000000;
+		log = 1;
+		#120000000;
+		$stop();
+		
 	end
 
 	// generate our 49.125Mhz input clock

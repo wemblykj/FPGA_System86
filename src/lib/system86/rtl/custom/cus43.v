@@ -25,7 +25,7 @@ module cus43
 			parameter LAYER_B_PRIORITY = 0
 	)
 	(
-		  input rst,
+		  input rst_n,
 		
         input wire [2:0] PRI,
         input wire [7:0] CLI,
@@ -33,7 +33,7 @@ module cus43
         input wire [11:0] GDI,
         input wire nOE,			// hard to decipher text from schematics (held at logic high)
         input wire [2:0] CA,
-        input wire nWE,
+        input wire RnW,
         input wire [7:0] MDI, // hard to decipher text from schematics
         input wire [2:0] HA, 	// hard to decipher text from schematics
         input wire CLK_6M,
@@ -59,7 +59,7 @@ module cus43
 		)
 		layer_a
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
@@ -84,7 +84,7 @@ module cus43
 		)
 		layer_b
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M),
 			.CLK_2H(~CLK_2H),

@@ -25,7 +25,7 @@ module cus42
 		parameter LAYER_B_AUTOSCROLL = 0
 	)
 	(
-		input wire rst,
+		input wire rst_n,
 			
 		input wire CLK_6M,
 		input wire CLK_2H,
@@ -36,7 +36,7 @@ module cus42
 		input wire nLATCH,
 		input wire FLIP,
 		input wire [13:0] CA,
-		input wire nWE,
+		input wire RnW,
 		inout wire [7:0] CD,
 		inout wire [7:0] RD,
 		output wire [13:0] GA,
@@ -50,40 +50,22 @@ module cus42
 	assign sram_layer = ~CLK_2H;
 	assign prom_layer = CLK_2H;
 	
-	wire [8:0] H;
-	wire [8:0] V;
-	
-	cus42_synchronous synchronous
-	(
-		.rst(rst),
-		
-		.CLK_6M(CLK_6M),
-		.nHSYNC(nHSYNC),
-		.nVSYNC(nVSYNC),
-		.H(H),
-		.V(V)
-	);
-	
 	wire [11:0] RAA;
 	wire [13:0] GAA;
 	wire S3HA;
 	cus42_layer 
-		#
-		(
-			.ASSIGNED_LAYER(0)
-		)
 		layer_a
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M),
 			.FLIP(FLIP),
-			.nLATCH(nLATCH || CA[2]),
-			.CA(CA[2:0]),
+			.nLATCH(nLATCH | CA[2]),
+			.CA(CA[1:0]),
 			.CD(CD),
 			.RD(RD),
-			.H(H),
-			.V(V),
+			.nHSYNC(nHSYNC),
+			.nVSYNC(nVSYNC),
 			.RA(RAA),
 			.GA(GAA),
 			.S3H(S3HA)
@@ -93,40 +75,34 @@ module cus42
 	wire [13:0] GAB;
 	wire S3HB;
 	cus42_layer
-		#
-		(
-			.ASSIGNED_LAYER(1)
-		)
 		layer_b
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M),
 			.FLIP(FLIP),
-			.nLATCH(nLATCH || !CA[2]),
-			.CA(CA[2:0]),
+			.nLATCH(nLATCH | ~CA[2]),
+			.CA(CA[1:0]),
 			.CD(CD),
 			.RD(RD),
-			.H(H),
-			.V(V),
+			.nHSYNC(nHSYNC),
+			.nVSYNC(nVSYNC),
 			.RA(RAB),
 			.GA(GAB),
 			.S3H(S3HB)
 		);
-		
-	reg [13:0] CA_Latched;
-	reg [7:0] CD_Latched;
-	always @(negedge nRCS) begin
-		CA_Latched <= CA;
-		CD_Latched <= CD;
+
+	reg write_done_request;
+	always @(posedge CLK_6M) begin
+		write_done_request <= ~RnW;
 	end
-	
+
 	// CPU/RAM multiplexing
-	assign nRWE = nRCS | nWE;
-	assign nROE = nRCS | ~nWE;
-	assign CD = (~nRCS & nWE) ? RD : 8'bz;
+	assign nRWE = nRCS | RnW | write_done_request;
+	assign nROE = ~nRCS ? ~RnW : 0;
 	
-	assign RD = (~nRCS & ~nWE) ? CD : 8'bz;
+	assign CD = (~nRCS & RnW) ? RD : 8'bz;
+	assign RD = (~nRCS & ~RnW) ? CD : 8'bz;
 	
 	assign RA = ~nRCS ? CA : { sram_layer, sram_layer ? RAB : RAA };
 	assign GA = { prom_layer ? GAB : GAA };				

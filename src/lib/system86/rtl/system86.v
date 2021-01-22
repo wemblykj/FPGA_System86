@@ -20,22 +20,23 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-//`include "common/defines.vh"
+`include "system86/system86.vh"
 
-`include "../../ttl_mem/mb7112.vh"
-`include "../../ttl_mem/mb7116.vh"
-`include "../../ttl_mem/mb7124.vh"
-`include "../../ttl_mem/mb7138.vh"
+`include "ttl_mem/mb7112.vh"
+`include "ttl_mem/mb7116.vh"
+`include "ttl_mem/mb7124.vh"
+`include "ttl_mem/mb7138.vh"
 
-`include "../../ttl_mem/m27128.vh"
-`include "../../ttl_mem/m27256.vh"
-`include "../../ttl_mem/m27512.vh"
+`include "ttl_mem/m27128.vh"
+`include "ttl_mem/m27256.vh"
+`include "ttl_mem/m27512.vh"
 
-`include "../../ttl_mem/cy6264.vh"
+`include "ttl_mem/cy6264.vh"
+`include "ttl_mem/m58725.vh"
 
-`include "../../ttl_mem/ttl_mem.vh"
+`include "ttl_mem/ttl_mem.vh"
 
-`include "../../../../roms/rthunder.vh"
+`include "roms/rthunder.vh"
 
 module system86
 	#(
@@ -49,7 +50,7 @@ module system86
 	)
 	(
 		// == Simulation inputs
-		input wire rst,				// master reset
+		input wire rst_n,				// master reset
 		input wire clk,				// System 86 master clock @ 49.125 MHz
 		
 		// == Simulation outputs
@@ -95,7 +96,8 @@ module system86
 		// SRAM
 		`SRAM_OUTPUT_DEFS(CY6264, sram_4n),
 		`SRAM_OUTPUT_DEFS(CY6264, sram_7n),
-		`SRAM_OUTPUT_DEFS(CY6264, sram_10m)
+		`SRAM_OUTPUT_DEFS(CY6264, sram_10m),
+		`SRAM_OUTPUT_DEFS(M58725, sram_11k)
 	);
 	
 	// == global signals ==
@@ -114,7 +116,7 @@ module system86
 	wire nLATCH0;
 	wire nLATCH1;
 	wire nBACKCOLOR;
-	wire nWE;
+	wire RnW;
 	wire BANK = 1'b0;
 	wire FLIP = 1'b0;
 	
@@ -168,7 +170,7 @@ module system86
 	// == Timing subsystem ==
 	timing_subsystem
 		timing_subsystem(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_48M(CLK_48M),
 			.CLK_6M(CLK_6M),
@@ -198,7 +200,7 @@ module system86
 		)
 		tilegen_subsystem
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			// input
 			.CLK_6M(CLK_6M),
@@ -214,7 +216,7 @@ module system86
 			.SRCWIN(SRCWIN),
 			.nBACKCOLOR(nBACKCOLOR),
 			.A(A[12:0]),
-			.nWE(nWE),
+			.RnW(RnW),
 			.MD(MD),
 			// inout
 			.D(D),
@@ -237,9 +239,35 @@ module system86
 	reg ls174_9v_q5 = 1'b0;	// videogen_bank
 	reg ls174_6v_q6 = 1'b1;	// videogen_clear
 	
+	sprite_subsystem
+		sprite_subsystem
+		(
+			.rst_n(rst_n),
+			
+			// input
+			.CLK_6M(CLK_6M),
+			.CLK_1H(CLK_1H),
+			.nOBJECT(nOBJECT),
+			.nHSYNC(nHSYNC),
+			.nVRESET(nVRESET),
+			.A(A[12:0]),
+			.RnW(RnW),
+			.D(D),
+						
+			// == hardware abstraction - memory buses ==			
+			//`EPROM_CONNECTION_DEFS(eprom_4r, eprom_4r),
+			//`EPROM_CONNECTION_DEFS(eprom_4s, eprom_4s),
+			//`PROM_CONNECTION_DEFS(prom_4v, prom_4v),
+			//`PROM_CONNECTION_DEFS(prom_6u, prom_6u),
+			//`EPROM_CONNECTION_DEFS(eprom_7r, eprom_7r),
+			//`EPROM_CONNECTION_DEFS(eprom_7s, eprom_7s),
+			`SRAM_CONNECTION_DEFS(sram_10m, sram_10m),
+			`SRAM_CONNECTION_DEFS(sram_11k, sram_11k)
+		);
+		
 	videogen_subsystem
 		videogen_subsystem(
-			.rst(rst),
+			.rst_n(rst_n),
 			// input
 			.CLK_6MD(CLK_6MD), 
 			.nCLR(ls174_6v_q6),
@@ -258,7 +286,7 @@ module system86
 		
 	cpu_subsystem
 		cpu_subsystem(
-			.rst(rst),
+			.rst_n(rst_n),
 			// inputs
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
@@ -271,13 +299,13 @@ module system86
 			.A(A),
 			.D(D),
 			// outputs
-			.nWE(nWE),
+			.RnW(RnW),
 			.nRESET(nRESET),
 			.nSCROLL0(nSCROLL0),
 			.nSCROLL1(nSCROLL1),
 			.nOBJECT(nOBJECT),
 			.nLATCH0(nLATCH0),
-			.nLATCH1(nLATCH0),
+			.nLATCH1(nLATCH1),
 			.nBACKCOLOR(nBACKCOLOR),
 			.MD(MD),
 			
@@ -385,7 +413,7 @@ module system86
 		Blanking_To_Count
 		(
 			.i_Clk(CLK_6M),
-			.i_Rst(rst),
+			.i_rst_n(rst_n),
 			.i_nHSync(nHSYNC),
 			.i_nVSync(nVSYNC),
 			.i_HBlank(~nHBLANK),

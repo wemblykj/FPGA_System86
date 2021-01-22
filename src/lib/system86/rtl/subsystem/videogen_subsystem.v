@@ -20,16 +20,16 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-`include "../../../ttl_mem/mb7116.vh"
-`include "../../../ttl_mem/mb7124.vh"
+`include "ttl_mem/mb7116.vh"
+`include "ttl_mem/mb7124.vh"
 
-`include "../../../ttl_mem/ttl_mem.vh"
+`include "ttl_mem/ttl_mem.vh"
 
 module videogen_subsystem 
 #(
 )
 (
-	 input wire rst,
+	 input wire rst_n,
 	
     input CLK_6MD,
     input nCLR,

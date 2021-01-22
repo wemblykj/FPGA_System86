@@ -20,16 +20,16 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-`include "../../../ttl_mem/mb7112.vh"
-`include "../../../ttl_mem/mb7116.vh"
-`include "../../../ttl_mem/mb7138.vh"
+`include "ttl_mem/mb7112.vh"
+`include "ttl_mem/mb7116.vh"
+`include "ttl_mem/mb7138.vh"
 
-`include "../../../ttl_mem/m27512.vh"
-`include "../../../ttl_mem/m27256.vh"
+`include "ttl_mem/m27512.vh"
+`include "ttl_mem/m27256.vh"
 
-`include "../../../ttl_mem/cy6264.vh"
+`include "ttl_mem/cy6264.vh"
 
-`include "../../../ttl_mem/ttl_mem.vh"
+`include "ttl_mem/ttl_mem.vh"
 
 module tilegen_subsystem
 	#(
@@ -41,7 +41,7 @@ module tilegen_subsystem
 		parameter UNKNOWN_LAYER_PRIORITY = 0
 	)
 	(
-		input wire rst,
+		input wire rst_n,
 	
 		input wire CLK_6M,
 		input wire CLK_2H,
@@ -56,7 +56,7 @@ module tilegen_subsystem
 		input wire BANK,
 		input wire nBACKCOLOR,
 		input wire [12:0] A,
-		input wire nWE,
+		input wire RnW,
 		input wire [7:0] MD,
 		inout wire [7:0] D,
 		inout wire [20:1] J5,
@@ -178,7 +178,8 @@ module tilegen_subsystem
     assign prom_6u_ce_n = 1'b0;
 	
     // tile map palette prom
-    assign prom_4v_addr = { cus43_6n_clo, cus43_6n_dto };
+    //assign prom_4v_addr = { cus43_6n_clo, cus43_6n_dto };
+	 assign prom_4v_addr = { CL, DT };	// direct to layer 0/1
 	 assign prom_4v_ce_n = 1'b0;  // SCRWIN
     
 	// == Layer 1 & 2 =
@@ -190,7 +191,7 @@ module tilegen_subsystem
 		)
 		cus42_7k
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			// inputs
 			.CLK_6M(CLK_6M), 
@@ -202,7 +203,7 @@ module tilegen_subsystem
 			.nGCS(1'b1),	// held high (inactive) on schematics
 			.nLATCH(nLATCH0),
 			.CA( { 1'b0, A[12:0] } ),
-			.nWE(nWE),
+			.RnW(RnW),
 			.CD(D),
 			// outputs
 			.GA(cus42_7k_ga),
@@ -256,7 +257,7 @@ module tilegen_subsystem
 		)
 		cus43_8n
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
@@ -266,7 +267,7 @@ module tilegen_subsystem
 			.GDI( { ls158_7u_y, eprom_7r_data } ),
 			.MDI( sram_7n_data ),
 			.CA(A[2:0]),
-			.nWE(nWE),
+			.RnW(RnW),
 			.nLATCH(nLATCH0),
 			.FLIP(FLIP),
 			.PRO(PR),
@@ -280,7 +281,7 @@ module tilegen_subsystem
 	
 	// tile address generator
 	cus42 CUS42_5K(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_2H), 
@@ -291,7 +292,7 @@ module tilegen_subsystem
 			.nRCS(nSCROLL1),
 			.nLATCH(nLATCH1),
 			.CA( { 1'b0, A[12:0] } ),
-			.nWE(nWE),
+			.RnW(RnW),
 			.CD(D),
 			.GA(cus42_5k_ga),
 			.nRWE(sram_4n_we_n),
@@ -333,7 +334,7 @@ module tilegen_subsystem
 		)
 		cus43_6n
 		(
-			.rst(rst),
+			.rst_n(rst_n),
 			
 			.CLK_6M(CLK_6M),
 			.CLK_2H(CLK_2H),
@@ -343,7 +344,7 @@ module tilegen_subsystem
 			.GDI( { ls158_5u_y, eprom_4r_data } ),
 			.MDI( sram_4n_data ),
 			.CA(A[2:0]),
-			.nWE(nWE),
+			.RnW(RnW),
 			.nLATCH(nLATCH1),
 			.FLIP(FLIP),
 			.PRO(cus43_6n_pro),
@@ -356,6 +357,5 @@ module tilegen_subsystem
 	// to auxillary color drivers over J5
 	assign J5[6] = nBACKCOLOR;
 
-	//assign sram_7n_ce_n = 1'b0;
 	assign DOT = prom_4v_data;
 endmodule

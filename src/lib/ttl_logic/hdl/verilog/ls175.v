@@ -21,7 +21,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 module ls175(
         input wire CLK,
-        input wire CLR,
+        input wire nCLR,
         input wire D1,
         input wire D2,
         input wire D3,
@@ -36,8 +36,8 @@ module ls175(
         output wire Q4_L
     );
 
-	always @(posedge CLK) begin
-		if (CLR) begin
+	always @(posedge CLK or negedge nCLR) begin
+		if (~nCLR) begin
 			Q1 <= 0;
 			Q2 <= 0;
 			Q3 <= 0;

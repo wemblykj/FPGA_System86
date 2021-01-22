@@ -26,20 +26,20 @@ module cus47
         parameter WATCHDOG_WIDTH = 4
     )
     (
-		  input wire rst,
+		  input wire rst_n,
 		  
         input wire CLK_6M,
         input wire CLK_2H,
         input wire nVBLK,
-        input wire nWE,
+        input wire RnW,
         input wire [15:10] A,
         // RES is implied, by convention, as an 'input' on schematics but must logically be an output for watchdog functionality.
         // ref: Pac-Mania CUS117:MRES, MAME namco86.cpp
         output wire nRES,	
         output wire MQ,
         output wire ME,
-        output wire SUBE,
-        output wire SUBQ,
+        output wire SE,
+        //output wire SUBQ,	// 90 degrees out of phase with S2H? (http://www.ukvac.com/forum/topic362440&OB=DESC.html)
         output reg nIRQ,
         output wire nLTH2,
         output wire nLTH0,
@@ -55,8 +55,12 @@ module cus47
     );
 
 	reg [WATCHDOG_WIDTH-1:0] watchdog_counter = 0;
+	wire watchdog_clear;
+	wire int_ack;
 	
-	wire CKA;
+	reg [3:0] cpu_clock_counter = 0;
+	
+	/*wire CKA;
 	wire CKB;
 	wire CKC;
 	wire CKD;
@@ -72,7 +76,7 @@ module cus47
 	ls175 eq_generator(
 		.CLK(CLK_6M),
 		.CLR(RES),
-		.D1(CLK_2H),
+		.D1(CLK_S2H),
 		.D2(CKB_LATCHED),
 		.D3(CLK_2H),
 		.D4(CKB_LATCHED),
@@ -84,20 +88,24 @@ module cus47
 		.Q3_L(PHASED),
 		.Q4(PHASEC),
 		.Q4_L(PHASEA)
-	);
+	);*/
 	
 	// the following timings result in E going low towards the end of the EPROM cycle
-	assign MQ = CKA;
-	assign ME = CKB;
-	assign SUBQ = CKC;
-	assign SUBE = CKD;
+	assign MQ = cpu_clock_counter[1] ^ cpu_clock_counter[0];
+	assign ME = ~CLK_2H;
+	assign SE = CLK_2H;
+	
+	// TBD
+	//assign ME = CKB;
+	//assign SUBQ = CKC;
+	//assign SUBE = CKD;
 	
 	// 0000h - 1FFFh W 	(videoram 1)
 	// Try synchronising with E as is done for the WRB signal in GnG
-	assign nSCR0 = ~ME | |A[15:13]; // A[15:13] !== 'b000;
+	assign nSCR0 = |A[15:13]; // A[15:13] !== 'b000;
 	
 	// 2000 - 3FFFh W		(videoram 2)
-	assign nSCR1 = ~ME | ~A[13] | |A[15:14]; // A[15:13] !== 'b001;
+	assign nSCR1 = ~A[13] | |A[15:14]; // A[15:13] !== 'b001;
 	
 	// 4000h - 5FFFh W	(sprite ram)
 	assign nOBJ = A[15:13] !== 'b010;
@@ -106,58 +114,62 @@ module cus47
 	assign nSND = A[15:10] !== 'b010000;
 	
 	// 6000h - 7FFFh R	(EEPROM 9D)
-	assign nSPGM =  ~nWE | A[15] | ~&A[14:13]; 					// A[15:13] !== 'b011;
+	assign nSPGM =  ~RnW | A[15] | ~&A[14:13]; 					// A[15:13] !== 'b011;
 	
 	// 8000h W	(watchdog)
-	assign watchdog_reset = ~nWE & A[15] & ~&A[14:10];
+	assign watchdog_clear = ~RnW & A[15] & ~&A[14:10];
 	
 	// 8000h - FFFFh R	(EEPROM 9C)
-	assign nMPGM = ~nWE | ~A[15];	// // A[15] !== 'b1;
+	assign nMPGM = ~RnW | ~A[15];	// // A[15] !== 'b1;
 	
 	// 8800h - 8FFFh W	(tile bank select)
-	assign BANK = ~nWE & A[15] & A[11] & ~|A[14:12]; //(A[15:11] === 'b10001x) && A[10];
+	assign BANK = ~RnW & A[15] & A[11] & ~|A[14:12]; //(A[15:11] === 'b10001x) && A[10];
 	
 	// 9000h - 9002h W	(scroll + priority)
 	// 9003h - 9003h W 	(ROM 9D bank select)
 	// 9004h - 9006h W	(scroll + priority)
-	assign nLTH0 = ~(A[15] & A[12]) | |A[14:13] | |A[11:10];  // A[15:10] !== 'b100100;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
+	assign nLTH0 = RnW | ~(A[15] & A[12]) | |A[14:13] | |A[11:10];  // A[15:10] !== 'b100100;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
 	
 	// 9400h - 9402h W	(scroll 2 + priority)
 	// 9403h - 9403h W	(ROM 12D bank select)
 	// 9404h - 9406h W	(scroll 3 + priority)
-	assign nLTH1 = ~(A[15] & A[12] & A[11]) | |A[14:13] | A[11]; // A[15:10] !== 'b100101;	
+	assign nLTH1 = RnW | ~(A[15] & A[12] & A[10]) | |A[14:13] | A[11]; // A[15:10] !== 'b100101;	
 	
 	// A000h - A000h W	(BACKCOLOR) - documented as C000h but implemented as A000h in Mame
-	assign nLTH2 = ~(A[15] & A[13]) | A[14] | |A[12:10]; // A[15:10] !== 'b101000;
+	assign nLTH2 = RnW | ~(A[15] & A[13]) | A[14] | |A[12:10]; // A[15:10] !== 'b101000;
 	
 	assign nBUFEN = nSCR0 & nSCR1 & nOBJ & nSND & nLTH0 & nLTH1;
 	
 	// 0x8400 - 0x8400 W  (INT ACK)
-	assign nIRQ_ACK = nWE || A[15:10] !== 'b100001;
+	assign int_ack = ~RnW && A[15:10] !== 'b100001;
 	
-	assign nRES = 1;//~watchdog_counter[WATCHDOG_WIDTH-1];
+	assign nRES = ~watchdog_counter[WATCHDOG_WIDTH-1]; // reset on msb
 	
-	always @(CLK_6M) begin
-		if (watchdog_reset)
-			watchdog_counter <= 0;
-		else 
+	// CPU clock - 90 degrees out of phase from 2H is inferred from knowledge of CUS41 and the fact that the input clock is 180 degrees
+	// out of phase to the clock of CUS41
+	// http://www.ukvac.com/forum/topic362440&OB=DESC.html
+	always @(negedge CLK_6M or rst_n) begin
+		if (!rst_n || !CLK_2H) begin
+			cpu_clock_counter <= 0;
+		end else begin
+			cpu_clock_counter <= cpu_clock_counter + 1;
+		end
+	end
+	
+	// watchdog reset and int ack
+	// http://www.ukvac.com/forum/topic362440&OB=DESC.html
+	always @(posedge nVBLK or rst_n) begin
+		if (!rst_n || watchdog_clear || watchdog_counter === 'b1010) begin
+			watchdog_counter <= 'b0000;
+		end else begin
 			watchdog_counter <= watchdog_counter + 1;
+		end
+		
+		nIRQ <= ~int_ack;
 	end
 	
-	reg nVBLK_last;
-	always @(nVBLK or nIRQ_ACK or rst) begin
-		if (rst)
-			nIRQ <= 1;
-		else if (!nVBLK && nVBLK_last)
-			nIRQ <= 0;
-		else if (!nIRQ_ACK)
-			nIRQ <= 1;
-			
-		nVBLK_last <= nVBLK;
-	end
-	
-	always @(*) begin
+	/*always @(*) begin
 		CKB_LATCHED <= CKB;
-	end
+	end*/
 	
 endmodule

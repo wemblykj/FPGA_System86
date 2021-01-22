@@ -1,0 +1,916 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/paulw/Development/Arcade/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav
+T_opt
+!s110 1605811765
+VNoIEIkIk>n7FgMaBFYRTz3
+04 11 4 work system86_tb fast 0
+Z1 04 4 4 work glbl fast 0
+=1-40b076de0332-5fb6be32-2d0-5eb4
+Z2 o-quiet -auto_acc_if_foreign -work work -L xilinxcorelib_ver -L unisims_ver -L unimacro_ver -L secureip +acc
+Z3 tCvgOpt 0
+n@_opt
+Z4 OL;O;10.5;63
+T_opt1
+!s110 1605738060
+V`dLcQhb[mKE>ddNL98`2H2
+04 5 4 work cus41 fast 0
+R1
+=3-40b076de0332-5fb59e4b-47-6e3c
+R2
+R3
+n@_opt1
+R4
+R0
+vcpu_subsystem
+Z5 !s110 1605811759
+!i10b 1
+!s100 B[PTmX7:K7m<Pl6bAMYI40
+I:JA_^jARU00670lEmi4`a2
+Z6 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1605723323
+8../../../../../../../lib/system86/rtl/subsystem/cpu_subsystem.v
+F../../../../../../../lib/system86/rtl/subsystem/cpu_subsystem.v
+L0 31
+Z7 OL;L;10.5;63
+r1
+!s85 0
+31
+Z8 !s108 1605811759.000000
+!s107 ..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\ttl_mem.vh|..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\m27256.vh|../../../../../../../lib/system86/rtl/subsystem/cpu_subsystem.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/subsystem/cpu_subsystem.v|
+!i113 0
+Z9 o-L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R3
+vcus27
+R5
+!i10b 1
+!s100 AMX;DlM:ZKRLUlnO8K<8J2
+IMHkMZ1DK>4c1^0L7MR2h40
+R6
+R0
+w1605738873
+8../../../../../../../lib/system86/rtl/custom/cus27.v
+F../../../../../../../lib/system86/rtl/custom/cus27.v
+Z10 L0 22
+R7
+r1
+!s85 0
+31
+Z11 !s108 1605811758.000000
+!s107 ../../../../../../../lib/system86/rtl/custom/cus27.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/custom/cus27.v|
+!i113 0
+R9
+R3
+vcus41
+Z12 !s110 1605811758
+!i10b 1
+!s100 3Gn6@Fl]HV]0D:38:=``L1
+Io9]1OzjX=M1Pei=SARE?K1
+R6
+R0
+w1605811498
+8../../../../../../../lib/system86/rtl/custom/cus41.v
+F../../../../../../../lib/system86/rtl/custom/cus41.v
+R10
+R7
+r1
+!s85 0
+31
+R11
+!s107 ../../../../../../../lib/system86/rtl/custom/cus41.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/custom/cus41.v|
+!i113 0
+R9
+R3
+vcus41_tb
+!s110 1605743822
+!i10b 1
+!s100 ^JSYmkE@ehWWM4ee`TB4:1
+I=HZb^AG?RhkES=[hljbKL2
+R6
+R0
+w1605743818
+8C:/Users/paulw/Development/Arcade/FPGA_System86/src/lib/system86/simulation/custom/cus41_tb.v
+FC:/Users/paulw/Development/Arcade/FPGA_System86/src/lib/system86/simulation/custom/cus41_tb.v
+L0 25
+R7
+r1
+!s85 0
+31
+!s108 1605743822.000000
+!s107 C:/Users/paulw/Development/Arcade/FPGA_System86/src/lib/system86/simulation/custom/cus41_tb.v|
+!s90 -reportprogress|300|-L|mtiAvm|-L|mtiRnm|-L|mtiOvm|-L|mtiUvm|-L|mtiUPF|-L|infact|C:/Users/paulw/Development/Arcade/FPGA_System86/src/lib/system86/simulation/custom/cus41_tb.v|
+!i113 0
+R9
+R3
+vcus42
+R12
+!i10b 1
+!s100 _POf>UCVTJ]]5@>UZ1::h0
+ISi8azinno0eR9?daR:]=B1
+R6
+R0
+w1602530111
+8../../../../../../../lib/system86/rtl/custom/cus42.v
+F../../../../../../../lib/system86/rtl/custom/cus42.v
+R10
+R7
+r1
+!s85 0
+31
+R11
+!s107 ../../../../../../../lib/system86/rtl/custom/cus42.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/custom/cus42.v|
+!i113 0
+R9
+R3
+vcus42_layer
+Z13 !s110 1605811756
+!i10b 1
+!s100 jK<3lc=8LT@YbkZln]]JF0
+I=hO4Q]:6;LfZDe4oJ[f4[0
+R6
+R0
+Z14 w1588705077
+8../../../../../../../lib/system86/rtl/custom/cus42_layer.v
+F../../../../../../../lib/system86/rtl/custom/cus42_layer.v
+R10
+R7
+r1
+!s85 0
+31
+Z15 !s108 1605811756.000000
+!s107 ../../../../../../../lib/system86/rtl/custom/cus42_layer.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/custom/cus42_layer.v|
+!i113 0
+R9
+R3
+vcus42_synchronous
+R13
+!i10b 1
+!s100 Rocj@e?bih^>`m9Fn_abk0
+IPi]Tc4E4N_VEY;JbE34IG3
+R6
+R0
+R14
+8../../../../../../../lib/system86/rtl/custom/cus42_syncronous.v
+F../../../../../../../lib/system86/rtl/custom/cus42_syncronous.v
+R10
+R7
+r1
+!s85 0
+31
+R15
+!s107 ../../../../../../../lib/system86/rtl/custom/cus42_syncronous.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/custom/cus42_syncronous.v|
+!i113 0
+R9
+R3
+vcus43
+R12
+!i10b 1
+!s100 Yook`IfV?XRXaLNSa_FLd3
+IzZToISP[SeCbT2:0]9^gl1
+R6
+R0
+R14
+8../../../../../../../lib/system86/rtl/custom/cus43.v
+F../../../../../../../lib/system86/rtl/custom/cus43.v
+Z16 L0 21
+R7
+r1
+!s85 0
+31
+R11
+!s107 ../../../../../../../lib/system86/rtl/custom/cus43.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/custom/cus43.v|
+!i113 0
+R9
+R3
+vcus43_layer
+R13
+!i10b 1
+!s100 2ZLh8<hY[FS:HcZB_fzei3
+IaoZ=POEHO[8`amOEC0:P92
+R6
+R0
+w1588717513
+8../../../../../../../lib/system86/rtl/custom/cus43_layer.v
+F../../../../../../../lib/system86/rtl/custom/cus43_layer.v
+R16
+R7
+r1
+!s85 0
+31
+R15
+!s107 ../../../../../../../lib/system86/rtl/custom/cus43_layer.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/custom/cus43_layer.v|
+!i113 0
+R9
+R3
+vcus47
+R12
+!i10b 1
+!s100 20:CJ@bN<3JGb_PZS`97@2
+IBN@mj2S?K17>U_Ek^8TJ11
+R6
+R0
+w1605739040
+8../../../../../../../lib/system86/rtl/custom/cus47.v
+F../../../../../../../lib/system86/rtl/custom/cus47.v
+R10
+R7
+r1
+!s85 0
+31
+R11
+!s107 ../../../../../../../lib/system86/rtl/custom/cus47.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/custom/cus47.v|
+!i113 0
+R9
+R3
+veprom_m27256
+Z17 !s110 1605811760
+!i10b 1
+!s100 m?6FcP5eaFK`lF?n^89Gl3
+ISGQWCI6PFG@lb9oI67n7@2
+R6
+R0
+Z18 w1590742439
+8../../../../../../../lib/ttl_mem/hdl/verilog/eprom_27256.v
+F../../../../../../../lib/ttl_mem/hdl/verilog/eprom_27256.v
+R16
+R7
+r1
+!s85 0
+31
+Z19 !s108 1605811760.000000
+!s107 ../../../../../../../lib/ttl_mem/hdl/verilog/eprom_27256.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_mem/hdl/verilog/eprom_27256.v|
+!i113 0
+R9
+R3
+veprom_m27512
+R17
+!i10b 1
+!s100 gcG^9D47;^MIDM9MLd7JC0
+IOAEOAlo3KgNk=_fUeFh^F2
+R6
+R0
+R18
+8../../../../../../../lib/ttl_mem/hdl/verilog/eprom_27512.v
+F../../../../../../../lib/ttl_mem/hdl/verilog/eprom_27512.v
+R16
+R7
+r1
+!s85 0
+31
+R19
+!s107 ../../../../../../../lib/ttl_mem/hdl/verilog/eprom_27512.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_mem/hdl/verilog/eprom_27512.v|
+!i113 0
+R9
+R3
+vGENERIC_PROM
+R5
+!i10b 1
+!s100 ;560mOh?gY0`<iboQ4[OU2
+Icg>>;GC2A4nT[`4EQgZ8Q3
+R6
+R0
+R18
+8../../../../../../../lib/ttl_mem/hdl/verilog/generic_prom.v
+F../../../../../../../lib/ttl_mem/hdl/verilog/generic_prom.v
+R16
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../../../../../../../lib/ttl_mem/hdl/verilog/generic_prom.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_mem/hdl/verilog/generic_prom.v|
+!i113 0
+R9
+R3
+n@g@e@n@e@r@i@c_@p@r@o@m
+vGENERIC_SRAM
+R5
+!i10b 1
+!s100 kXN9_GF6UXITX;ZB1MEz?2
+IKDiTgA_NFnFekKoOj<SUm2
+R6
+R0
+R18
+8../../../../../../../lib/ttl_mem/hdl/verilog/generic_sram.v
+F../../../../../../../lib/ttl_mem/hdl/verilog/generic_sram.v
+R10
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../../../../../../../lib/ttl_mem/hdl/verilog/generic_sram.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_mem/hdl/verilog/generic_sram.v|
+!i113 0
+R9
+R3
+n@g@e@n@e@r@i@c_@s@r@a@m
+vglbl
+Z20 !s110 1605811761
+!i10b 1
+!s100 UlJ]9LUWO:ZWoRO62F9fW3
+INz3046GECC=X7FgQ2]FR>3
+R6
+R0
+w1381681120
+8C:/Xilinx/14.7/ISE_DS/ISE/verilog/src/glbl.v
+FC:/Xilinx/14.7/ISE_DS/ISE/verilog/src/glbl.v
+L0 5
+R7
+r1
+!s85 0
+31
+Z21 !s108 1605811761.000000
+!s107 C:/Xilinx/14.7/ISE_DS/ISE/verilog/src/glbl.v|
+!s90 -reportprogress|300|C:/Xilinx/14.7/ISE_DS/ISE/verilog/src/glbl.v|
+!i113 0
+R9
+R3
+vls00
+R12
+!i10b 1
+!s100 iLJI3b<o2oza^DgD9<`T63
+I<0BLazH]eN4;=m<b39^7z2
+R6
+R0
+Z22 w1587592412
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls00.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls00.v
+R10
+R7
+r1
+!s85 0
+31
+R11
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls00.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls00.v|
+!i113 0
+R9
+R3
+vls02
+R12
+!i10b 1
+!s100 hC@9Nm`ckoOWK2DKjmNU<1
+I8Y9;Om^bI^VF<C;Dnl50K2
+R6
+R0
+R22
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls02.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls02.v
+R10
+R7
+r1
+!s85 0
+31
+R11
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls02.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls02.v|
+!i113 0
+R9
+R3
+vls08
+R12
+!i10b 1
+!s100 bXE7kW^e3:FQ_HlU<5Dz31
+IkazZZ00VN9dS;o7`mZ6o93
+R6
+R0
+R22
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls08.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls08.v
+R10
+R7
+r1
+!s85 0
+31
+R11
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls08.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls08.v|
+!i113 0
+R9
+R3
+vls139
+R12
+!i10b 1
+!s100 ^n9KOVilRb_M=3:>hMiD[2
+IO46C1`_WlZEjYNafQLLQW3
+R6
+R0
+Z23 w1588877986
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls139.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls139.v
+R10
+R7
+r1
+!s85 0
+31
+R11
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls139.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls139.v|
+!i113 0
+R9
+R3
+vls153
+Z24 !s110 1605811757
+!i10b 1
+!s100 OzLNN>Oi@_aOW9z[1BWU00
+Ig[9]edf1@:[]C[1CoLVIF3
+R6
+R0
+R23
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls153.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls153.v
+R10
+R7
+r1
+!s85 0
+31
+Z25 !s108 1605811757.000000
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls153.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls153.v|
+!i113 0
+R9
+R3
+vls157
+R24
+!i10b 1
+!s100 [VLV;LX0<=FLK[`SlIJFO2
+IRRfBm<0DBCV]0ocGO<_]03
+R6
+R0
+R23
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls157.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls157.v
+R10
+R7
+r1
+!s85 0
+31
+R25
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls157.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls157.v|
+!i113 0
+R9
+R3
+vls158
+R24
+!i10b 1
+!s100 ?i``oVQWF:n>j3Q8TlkDZ0
+IfdOU>oDnb8DmlEVDGegn43
+R6
+R0
+R22
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls158.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls158.v
+R10
+R7
+r1
+!s85 0
+31
+R25
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls158.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls158.v|
+!i113 0
+R9
+R3
+vls173
+R24
+!i10b 1
+!s100 Bk>E1mzUPe95Hi[iTKQW92
+IUgXmh1H58;[db`T_zF?e70
+R6
+R0
+R22
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls173.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls173.v
+R10
+R7
+r1
+!s85 0
+31
+R25
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls173.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls173.v|
+!i113 0
+R9
+R3
+vls245
+R24
+!i10b 1
+!s100 ]j4cV?mNOI06B]oK>S_X:1
+ITj8_W=]4KDN>G]6iL9nJ[0
+R6
+R0
+R23
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls245.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls245.v
+R10
+R7
+r1
+!s85 0
+31
+R25
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls245.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls245.v|
+!i113 0
+R9
+R3
+vls257
+R24
+!i10b 1
+!s100 dSzgVOn6Y<S_QjgmKkn733
+IJW9RU5c7NM;SCEFz>o[`D3
+R6
+R0
+R23
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls257.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls257.v
+R10
+R7
+r1
+!s85 0
+31
+R25
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls257.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls257.v|
+!i113 0
+R9
+R3
+vls273
+R24
+!i10b 1
+!s100 LIo5Deek`a@6ZVd`oc;kd1
+I?AVd@E=XG1FU<PLdlKU_a1
+R6
+R0
+R22
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls273.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls273.v
+R10
+R7
+r1
+!s85 0
+31
+R25
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls273.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls273.v|
+!i113 0
+R9
+R3
+vls374
+R24
+!i10b 1
+!s100 I4>T4^K06;l7DzJ;C4f^z0
+I@_Wb=6nR>zB<m5]iMdNSf1
+R6
+R0
+R22
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls374.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls374.v
+R10
+R7
+r1
+!s85 0
+31
+R25
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls374.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls374.v|
+!i113 0
+R9
+R3
+vls74
+R13
+!i10b 1
+!s100 lZGfz:M]kf_1UTIN_D]bi1
+I3^1TcnR0WX0`=b;Sg<gDZ2
+R6
+R0
+R22
+8../../../../../../../lib/ttl_logic/hdl/verilog/ls74.v
+F../../../../../../../lib/ttl_logic/hdl/verilog/ls74.v
+R10
+R7
+r1
+!s85 0
+31
+R15
+!s107 ../../../../../../../lib/ttl_logic/hdl/verilog/ls74.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_logic/hdl/verilog/ls74.v|
+!i113 0
+R9
+R3
+vmc6809e
+R13
+!i10b 1
+!s100 7>O5^mX[0=1VE8ME0`Xj61
+IVdJN96C3?LlKAG8fWQLZb0
+R6
+R0
+w1588712003
+8../../../../../../../../../mc6809-master/mc6809e.v
+F../../../../../../../../../mc6809-master/mc6809e.v
+R16
+R7
+r1
+!s85 0
+31
+R15
+!s107 ../../../../../../../../../mc6809-master/mc6809e.v|
+!s90 -reportprogress|300|../../../../../../../../../mc6809-master/mc6809e.v|
+!i113 0
+R9
+R3
+vmc6809i
+R13
+!i10b 1
+!s100 G>F957;NmiH7<Q1MzmcY;0
+ImXK0OE7[T3E5RlX8J78Zb3
+R6
+R0
+w1588705206
+8../../../../../../../../../mc6809-master/mc6809i.v
+F../../../../../../../../../mc6809-master/mc6809i.v
+L0 41
+R7
+r1
+!s85 0
+31
+R15
+!s107 ../../../../../../../../../mc6809-master/mc6809i.v|
+!s90 -reportprogress|300|../../../../../../../../../mc6809-master/mc6809i.v|
+!i113 0
+R9
+R3
+vmc68a09e
+R5
+!i10b 1
+!s100 NN2DGgH;?J<[jS6R>bS@K2
+I:T9em=?W4TAhU:IVm2Eb61
+R6
+R0
+w1602528742
+8../../../../../../../lib/mc6809_cpu/hdl/verilog/mc68a09e.v
+F../../../../../../../lib/mc6809_cpu/hdl/verilog/mc68a09e.v
+R16
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../../../../../../../lib/mc6809_cpu/hdl/verilog/mc68a09e.v|
+!s90 -reportprogress|300|../../../../../../../lib/mc6809_cpu/hdl/verilog/mc68a09e.v|
+!i113 0
+R9
+R3
+vprom_mb7112
+R17
+!i10b 1
+!s100 B<8`;A]8hdiPZiB1CC4o;2
+IcO=[V6k>dMHnobZ:k635L3
+R6
+R0
+R18
+8../../../../../../../lib/ttl_mem/hdl/verilog/prom_7112.v
+F../../../../../../../lib/ttl_mem/hdl/verilog/prom_7112.v
+R16
+R7
+r1
+!s85 0
+31
+R19
+!s107 ../../../../../../../lib/ttl_mem/hdl/verilog/prom_7112.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_mem/hdl/verilog/prom_7112.v|
+!i113 0
+R9
+R3
+vprom_mb7116
+R17
+!i10b 1
+!s100 DTSBnmFe9FX8Sh>REo5I>0
+IA<YE[R[AGg?PU?CfL8Hna1
+R6
+R0
+R18
+8../../../../../../../lib/ttl_mem/hdl/verilog/prom_7116.v
+F../../../../../../../lib/ttl_mem/hdl/verilog/prom_7116.v
+R16
+R7
+r1
+!s85 0
+31
+R19
+!s107 ../../../../../../../lib/ttl_mem/hdl/verilog/prom_7116.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_mem/hdl/verilog/prom_7116.v|
+!i113 0
+R9
+R3
+vprom_mb7124
+R17
+!i10b 1
+!s100 _YKiXPOb9iV2Bd1bAf>CJ3
+Ijecf3]il1l<2?lH`;^kj_1
+R6
+R0
+R18
+8../../../../../../../lib/ttl_mem/hdl/verilog/prom_7124.v
+F../../../../../../../lib/ttl_mem/hdl/verilog/prom_7124.v
+R16
+R7
+r1
+!s85 0
+31
+R19
+!s107 ../../../../../../../lib/ttl_mem/hdl/verilog/prom_7124.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_mem/hdl/verilog/prom_7124.v|
+!i113 0
+R9
+R3
+vprom_mb7138
+R17
+!i10b 1
+!s100 F1Jgn43zf;7SHa^_N<23?3
+Ib7VfHKTUBk@bR>^Zf`HAm2
+R6
+R0
+R18
+8../../../../../../../lib/ttl_mem/hdl/verilog/prom_7138.v
+F../../../../../../../lib/ttl_mem/hdl/verilog/prom_7138.v
+L0 20
+R7
+r1
+!s85 0
+31
+R19
+!s107 ../../../../../../../lib/ttl_mem/hdl/verilog/prom_7138.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_mem/hdl/verilog/prom_7138.v|
+!i113 0
+R9
+R3
+vsram_cy6264
+R17
+!i10b 1
+!s100 c:V=8UK:^f0240o:?cV860
+IkhAf2VPFhb>7hBmd7<6551
+R6
+R0
+R18
+8../../../../../../../lib/ttl_mem/hdl/verilog/cy6264.v
+F../../../../../../../lib/ttl_mem/hdl/verilog/cy6264.v
+R10
+R7
+r1
+!s85 0
+31
+R19
+!s107 ../../../../../../../lib/ttl_mem/hdl/verilog/cy6264.v|
+!s90 -reportprogress|300|../../../../../../../lib/ttl_mem/hdl/verilog/cy6264.v|
+!i113 0
+R9
+R3
+vsystem86
+R17
+!i10b 1
+!s100 OLc=jhn:3KF03B>i`jBhL3
+Ib^6XK31AhK5a9L8m3X2Ua2
+R6
+R0
+w1590001385
+8../../../../../../../lib/system86/rtl/system86.v
+F../../../../../../../lib/system86/rtl/system86.v
+Z26 L0 40
+R7
+r1
+!s85 0
+31
+R19
+!s107 ..\..\..\..\..\..\..\lib\system86\rtl\..\..\..\..\roms\roms.vh|..\..\..\..\..\..\..\lib\system86\rtl\..\..\..\..\roms\rthunder.vh|..\..\..\..\..\..\..\lib\system86\rtl\..\..\ttl_mem\ttl_mem.vh|..\..\..\..\..\..\..\lib\system86\rtl\..\..\ttl_mem\cy6264.vh|..\..\..\..\..\..\..\lib\system86\rtl\..\..\ttl_mem\m27512.vh|..\..\..\..\..\..\..\lib\system86\rtl\..\..\ttl_mem\m27256.vh|..\..\..\..\..\..\..\lib\system86\rtl\..\..\ttl_mem\m27128.vh|..\..\..\..\..\..\..\lib\system86\rtl\..\..\ttl_mem\mb7138.vh|..\..\..\..\..\..\..\lib\system86\rtl\..\..\ttl_mem\mb7124.vh|..\..\..\..\..\..\..\lib\system86\rtl\..\..\ttl_mem\mb7116.vh|..\..\..\..\..\..\..\lib\system86\rtl\..\..\ttl_mem\mb7112.vh|../../../../../../../lib/system86/rtl/system86.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/system86.v|
+!i113 0
+R9
+R3
+vsystem86_tb
+R20
+!i10b 1
+!s100 QWJC@2ZXkEFF>HHN7`;`K3
+I>gaeaFzK^geDXbC7=:;nM3
+R6
+R0
+R18
+8../../../../../../../lib/system86/simulation/system86_tb.v
+F../../../../../../../lib/system86/simulation/system86_tb.v
+R26
+R7
+r1
+!s85 0
+31
+R21
+!s107 ..\..\..\..\..\..\..\lib\system86\simulation\..\..\..\..\roms\roms.vh|..\..\..\..\..\..\..\lib\system86\simulation\..\..\..\..\roms\rthunder.vh|..\..\..\..\..\..\..\lib\system86\simulation\..\..\ttl_mem\ttl_mem.vh|..\..\..\..\..\..\..\lib\system86\simulation\..\..\ttl_mem\cy6264.vh|..\..\..\..\..\..\..\lib\system86\simulation\..\..\ttl_mem\m27256.vh|..\..\..\..\..\..\..\lib\system86\simulation\..\..\ttl_mem\m27512.vh|..\..\..\..\..\..\..\lib\system86\simulation\..\..\ttl_mem\mb7138.vh|..\..\..\..\..\..\..\lib\system86\simulation\..\..\ttl_mem\mb7124.vh|..\..\..\..\..\..\..\lib\system86\simulation\..\..\ttl_mem\mb7116.vh|..\..\..\..\..\..\..\lib\system86\simulation\..\..\ttl_mem\mb7112.vh|../../../../../../../lib/system86/simulation/system86_tb.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/simulation/system86_tb.v|
+!i113 0
+R9
+R3
+vtilegen_subsystem
+R5
+!i10b 1
+!s100 Ib8h8bi^TLS6UL1laB<R12
+I4i3ClcnSm2^5UHAzdlfQe2
+R6
+R0
+w1588717288
+8../../../../../../../lib/system86/rtl/subsystem/tilegen_subsystem.v
+F../../../../../../../lib/system86/rtl/subsystem/tilegen_subsystem.v
+L0 34
+R7
+r1
+!s85 0
+31
+R8
+!s107 ..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\ttl_mem.vh|..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\cy6264.vh|..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\m27256.vh|..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\m27512.vh|..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\mb7138.vh|..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\mb7116.vh|..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\mb7112.vh|../../../../../../../lib/system86/rtl/subsystem/tilegen_subsystem.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/subsystem/tilegen_subsystem.v|
+!i113 0
+R9
+R3
+vtiming_subsystem
+R5
+!i10b 1
+!s100 =Li5GGc@Y4lahQ_LgNzMN3
+IAkb5fnM;iK6J:V1:`eUIh3
+R6
+R0
+R22
+8../../../../../../../lib/system86/rtl/subsystem/timing_subsystem.v
+F../../../../../../../lib/system86/rtl/subsystem/timing_subsystem.v
+R10
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../../../../../../../lib/system86/rtl/subsystem/timing_subsystem.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/subsystem/timing_subsystem.v|
+!i113 0
+R9
+R3
+vVideo_Logger
+R5
+!i10b 1
+!s100 @a_a3lYfkfaM1?5MTSQGN3
+INAe;7kME4hEV6PI:DmNfG0
+R6
+R0
+R22
+8../../../../../../../lib/video_lib/simulation/Video_Logger.v
+F../../../../../../../lib/video_lib/simulation/Video_Logger.v
+L0 3
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../../../../../../../lib/video_lib/simulation/Video_Logger.v|
+!s90 -reportprogress|300|../../../../../../../lib/video_lib/simulation/Video_Logger.v|
+!i113 0
+R9
+R3
+n@video_@logger
+vvideogen_subsystem
+R5
+!i10b 1
+!s100 M_cFZehBD4cXC55mf9>^o2
+IVRBHfLl=;JiQQ<aF5MmjK2
+R6
+R0
+w1588716946
+8../../../../../../../lib/system86/rtl/subsystem/videogen_subsystem.v
+F../../../../../../../lib/system86/rtl/subsystem/videogen_subsystem.v
+L0 28
+R7
+r1
+!s85 0
+31
+R8
+!s107 ..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\ttl_mem.vh|..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\mb7124.vh|..\..\..\..\..\..\..\lib\system86\rtl\subsystem\..\..\..\ttl_mem\mb7116.vh|../../../../../../../lib/system86/rtl/subsystem/videogen_subsystem.v|
+!s90 -reportprogress|300|../../../../../../../lib/system86/rtl/subsystem/videogen_subsystem.v|
+!i113 0
+R9
+R3

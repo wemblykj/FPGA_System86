@@ -20,11 +20,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module cus35(
+		  input wire rst_n,
+
         input wire CLK_6M,
-        input wire VRES,
-        input wire HSYNC,
-        input wire OCS,
-        input wire WE,
+        input wire nVRES,
+        input wire nHSYNC,
+        input wire nOCS,
+        input wire RnW,
         input wire [12:0] A,
         inout wire [7:0] D,
         output wire O16VA,
@@ -41,29 +43,24 @@ module cus35(
         output wire O8EN,
         output wire HSET,
         output wire VSET,
-        output wire CS0,
-        output wire CS1,
-        output wire ROE,
-        output wire RWE,
-        inout wire [7:0] BI,
-        inout wire [7:0] BO
+        output wire nCS0,
+        output wire nCS1,
+        output wire nROE,
+        output wire nRWE,
+		  inout wire [7:0] B0,		// CPU data bus
+        inout wire [7:0] B1		// line buffer - for internal xfer?
     );
 
-	reg [7:0] DOut;
-	reg [7:0] BIOut;
+	reg write_done_request;
 	always @(posedge CLK_6M) begin
-		if (OCS)
-			if (WE)
-				BIOut = D;
-			else 
-				DOut = BI;
+		write_done_request <= ~RnW;
 	end
-		
-	assign CS1 = OCS;
-	assign ROE = OCS && !WE;
-	assign RWE = OCS && WE;
 	
-	assign D = (ROE) ? DOut : 8'bZ;
-	assign BI = (RWE) ? BIOut : 8'bZ;
-	
+	assign nCS0 = 1'b1;
+	assign nCS1 = nOCS;
+	assign nRWE = nOCS | RnW | write_done_request;
+	assign nROE = nOCS | ~nRWE;
+	assign B0 = ~nCS0 ? (~RnW ? D : 8'bz) : 8'bx;
+	assign B1 = ~nCS1 ? (~RnW ? D : 8'bz) : 8'bx;
+	assign D = ~RnW ? 8'bz : (~nCS1 ? B1 : (~nCS0 ? B0 : 8'bx));
 endmodule
