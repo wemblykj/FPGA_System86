@@ -24,15 +24,15 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-`include "../../../ttl_mem/m27256.vh"
+`include "ttl_mem/m27256.vh"
 
-`include "../../../ttl_mem/ttl_mem.vh"
+`include "ttl_mem/ttl_mem.vh"
 
 module cpu_subsystem
     #(
     )
 	(
-		  input wire rst,
+		  input wire rst_n,
 		  
         input wire CLK_6M,
         input wire CLK_2H,
@@ -40,10 +40,9 @@ module cpu_subsystem
         input wire CLK_1H,
         input wire CLK_S1H,
         input wire nVBLANK,
-        //input wire nRESET,
-        inout wire [12:0] A,
         inout wire [7:0] D,
-        output wire nWE,
+		  output wire [12:0] A,
+        output wire RnW,
         output wire nRESET,
         output wire nSCROLL0,
         output wire nSCROLL1,
@@ -55,34 +54,34 @@ module cpu_subsystem
       
         // == hardware abstraction - cpu ==
 			
-        // CPU 1 signals       
-        input wire cpu1_9a_we_n,
-        input wire cpu1_9a_bs,
-        input wire cpu1_9a_ba,
-        input wire cpu1_9a_avma,
-        input wire cpu1_9a_busy,
-        input wire cpu1_9a_lic,	
-		  inout wire [15:0] cpu1_9a_a,
-		  inout wire [7:0] cpu1_9a_d,
-		  output wire cpu1_9a_e,
-		  output wire cpu1_9a_q,
-		  output wire cpu1_9a_irq_n,
-		  output wire cpu1_9a_reset_n,
-			
-        // CPU 2
-        input wire cpu2_11a_we_n,
-        input wire cpu2_11a_bs,
-        input wire cpu2_11a_ba,
-        input wire cpu2_11a_avma,
-        input wire cpu2_11a_busy,
-        input wire cpu2_11a_lic,
-		  inout wire [15:0] cpu2_11a_a,
-		  inout wire [7:0] cpu2_11a_d,
-		  output wire cpu2_11a_e,
-		  output wire cpu2_11a_q,
-		  output wire cpu2_11a_irq_n,
-		  output wire cpu2_11a_reset_n,
+		// Main CPU signals
+		input wire mcpu_11a_we_n,
+		input wire mcpu_11a_bs,
+		input wire mcpu_11a_ba,
+		input wire mcpu_11a_avma,
+		input wire mcpu_11a_busy,
+		input wire mcpu_11a_lic,
+		inout wire [15:0] mcpu_11a_a,
+		inout wire [7:0] mcpu_11a_d,
+		output wire mcpu_11a_e,
+		output wire mcpu_11a_q,
+		output wire mcpu_11a_irq_n,
+		output wire mcpu_11a_reset_n,
 	
+		// Sub CPU signals 
+		input wire scpu_9a_we_n,
+		input wire scpu_9a_bs,
+		input wire scpu_9a_ba,
+		input wire scpu_9a_avma,
+		input wire scpu_9a_busy,
+		input wire scpu_9a_lic,	
+		inout wire [15:0] scpu_9a_a,
+		inout wire [7:0] scpu_9a_d,
+		output wire scpu_9a_e,
+		output wire scpu_9a_q,
+		output wire scpu_9a_irq_n,
+		output wire scpu_9a_reset_n,
+
         // == hardware abstraction - memory buses ==
         
 		  `EPROM_OUTPUT_DEFS(M27256, eprom_9c),
@@ -93,6 +92,17 @@ module cpu_subsystem
 
     
 	// == Master CPU system ==
+	
+	// CUS41 signals
+	wire cus41_8a_q;
+	wire cus41_8a_mreset_n;
+	wire cus41_8a_mint_n;
+	wire cus41_8a_sndirq_n;
+	wire cus41_8a_subscr0_n;
+	wire cus41_8a_subscr1_n;
+	wire cus41_8a_subobj_n;
+	wire cus41_8a_mcs4_n;
+	wire cus41_8a_mrom_n;
 	
 	// CUS47 signals
 	wire cus47_10c_res_n;
@@ -107,17 +117,7 @@ module cpu_subsystem
 	wire cus47_10c_bufen_n;
 	wire cus47_10C_mpmg_n;
 	wire cus47_10C_spmg_n;
-	
-	// CUS41 signals
-	wire cus41_8a_q;
-	wire cus41_8a_mreset_n;
-	wire cus41_8a_sndirq_n;
-	wire cus41_8a_subscr0_n;
-	wire cus41_8a_subscr1_n;
-	wire cus41_8a_subobj_n;
-	wire cus41_8a_mcs4_n;
-	wire cus41_8a_mrom_n;
-	
+
 	// == misc logic ==
 	
 	wire ls139_7d_3b_n;	// to J4
@@ -149,12 +149,12 @@ module cpu_subsystem
 		);
 	
 	wire ls00_8d_1y_n;	
-	wire ls00_8d_2y_n;	// low if 2H high and CPU 2 RnW high
+	wire ls00_8d_2y_n;	// low if 2H high and main CPU RnW high
 	wire ls00_8d_3y_n;	// low if 2H high and MCS4 or MROM not active 
 	ls00 ls00_8d(
-			.A1(cpu2_11a_a[12]),
-			.B1(cpu2_11a_a[15]),
-			.A2(cpu2_11a_we_n),
+			.A1(mcpu_11a_a[12]),
+			.B1(mcpu_11a_a[15]),
+			.A2(mcpu_11a_we_n),
 			.B2(CLK_2H),
 			.A3(ls08_8e_1y_n),
 			.B3(CLK_2H),
@@ -166,27 +166,49 @@ module cpu_subsystem
 	wire ls153_8f_1y;
 	wire ls153_8f_2y;
 		
-	assign cpu1_9a_e = cus47_10c_me;
-	assign cpu1_9a_q = cus47_10c_mq;	
-	assign cpu1_9a_irq_n = cus47_10c_irq_n;
-	assign cpu1_9a_reset_n = nRESET;
+	// CUS41 - main CPU address decoder
+	cus41 cus41_8a
+        (
+			.rst_n(rst_n),
 			
-	// CUS47 - CPU 1 ADDRESS DECODER
+			.MA(mcpu_11a_a[15:11]), 
+			.CLK_0(~CLK_S2H), 	// negate for active low
+			.CLK_6M(CLK_6M), 
+			.Q(cus41_8a_q),
+			.nVBLA(nVBLANK),
+			.nMWE(mcpu_11a_we_n), 
+			.nMRESET(cus41_8a_mreset_n), 	// master reset output?
+			.nMINT(cus41_8a_mint_n), 
+			.nSINT(cus41_8a_sndirq_n), 
+			.nLTH0(cus41_8a_latch0_n), 
+			.nLTH1(cus41_8a_latch1_n), 
+			.nMCS0(cus41_8a_subscr0_n), 
+			.nMCS1(cus41_8a_subscr1_n), 
+			.nMCS2(cus41_8a_subobj_n), 
+			.nMCS4(cus41_8a_mcs4_n), 
+			.nMROM(cus41_8a_mrom_n)
+		);
+		
+	assign mcpu_11a_e = cus47_10c_sube; 
+	assign mcpu_11a_q = cus41_8a_q;
+	assign mcpu_11a_irq_n = cus41_8a_sndirq_n;
+	assign mcpu_11a_reset_n = nRESET;	
+	
+	// CUS47 - Sub CPU address decoder
 	cus47 cus47_10c
         (
-			.rst(rst),
+			.rst_n(rst_n),
 		  
 			.CLK_6M(CLK_6M), 
 			.CLK_2H(CLK_S2H), 
 			.nVBLK(nVBLANK),
 			.nRES(cus47_10c_res_n), 
-			.nWE(cpu1_9a_we_n), 
-			.A(cpu1_9a_a[15:10]), 
+			.RnW(scpu_9a_we_n), 
+			.A(scpu_9a_a[15:10]), 
 			.MQ(cus47_10c_mq), 
 			.ME(cus47_10c_me), 
 			.nIRQ(cus47_10c_irq_n), 
-			.SUBE(cus47_10c_sube), 
-			.SUBQ(cus41_8a_q),			// temp alt for CUS41
+			.SE(cus47_10c_sube), 
 			.nLTH2(cus47_10c_latch2_n), 
 			.nLTH1(cus47_10c_latch1_n), 
 			.nLTH0(cus47_10c_latch0_n), 
@@ -199,18 +221,23 @@ module cpu_subsystem
 			.nMPGM(cus47_10C_mpmg_n)
 		);
 	
+	assign scpu_9a_e = cus47_10c_me;
+	assign scpu_9a_q = cus47_10c_mq;	
+	assign scpu_9a_irq_n = cus47_10c_irq_n;
+	assign scpu_9a_reset_n = nRESET;
+	
 	ls139 ls139_7d
         (
-			.nEb(cpu1_9a_a[15]),
-			.A0b(cpu1_9a_a[13]),
-			.A1b(cpu1_9a_a[14]),
+			.nEb(scpu_9a_a[15]),
+			.A0b(scpu_9a_a[13]),
+			.A1b(scpu_9a_a[14]),
 			.nO3b(ls139_7d_3b_n)
 		);
 	
 	ls153 ls153_8f
         (
-			.S0(cpu1_9a_a[0]),
-			.S1(cpu1_9a_a[1]),
+			.S0(scpu_9a_a[0]),
+			.S1(scpu_9a_a[1]),
 			.nEa(nLATCH0),
 			.nEb(nLATCH1),
 			.I0a(1'b0),
@@ -225,207 +252,84 @@ module cpu_subsystem
 			.Zb(ls153_8f_2y)
 		);
 		
-	// Sub CPU system
-	
-	// CUS41 - CPU 2 ADDRESS DECODER
-	cus41 cus41_8a
-        (
-			.rst(rst),
-			
-			.MA(cpu2_11a_a[15:11]), 
-			.CLK_0(~CLK_S2H), 	// negate for active low
-			.CLK_6M(CLK_6M), 
-			.nVBLA(nVBLANK),
-			.nMWE(cpu2_11a_we_n), 
-			.nMRES(cus41_8a_mreset_n), 	// master reset output?
-			.nSINT(cus41_8a_sndirq_n), 
-			.nLTH0(cus41_8a_latch0_n), 
-			.nLTH1(cus41_8a_latch1_n), 
-			.nMCS0(cus41_8a_subscr0_n), 
-			.nMCS1(cus41_8a_subscr1_n), 
-			.nMCS2(cus41_8a_subobj_n), 
-			.nMCS4(cus41_8a_mcs4_n), 
-			.nMROM(cus41_8a_mrom_n)
+	address_bus address_bus
+		(
+			.rst_n(rst_n), 
+			.CLK_2H(CLK_2H), 
+			.CLK_S2H(CLK_S2H), 
+			.CLK_1H(CLK_1H), 
+			.MA(mcpu_11a_a), 
+			.MRnW(mcpu_11a_we_n), 
+			.nMBUFEN(ls00_8d_3y_n), 
+			.nMLTH0(cus41_8a_latch0_n), 
+			.nMLTH1(cus41_8a_latch1_n), 
+			.SA(scpu_9a_a), 
+			.SRnW(scpu_9a_we_n), 
+			.nSBUFEN(cus47_10c_bufen_n), 
+			.nSLTH0(cus47_10c_latch0_n), 
+			.nSLTH1(cus47_10c_latch1_n), 
+			.A(A), 
+			.RnW(RnW), 
+			.nLATCH0(nLATCH0), 
+			.nLATCH1(nLATCH1)
 		);
-
-	assign cpu2_11a_e = cus47_10c_sube; 
-	assign cpu2_11a_q = cus41_8a_q;
-	assign cpu2_11a_irq_n = cus41_8a_sndirq_n;
-	assign cpu2_11a_reset_n = nRESET;
 	
-	// == BUS MULTIPLEXER ==
-	
-	// to simplify HDL these are in reverse order of schematics [3:0] -> [4Y:1Y]
-	wire ls257_11e_1y;
-	wire ls257_11e_2y;
-	wire ls257_11e_3y;
-	wire ls257_11e_4y;
-	wire ls257_11d_1y;
-	wire ls257_11d_2y;
-	wire ls257_11d_3y;
-	wire ls257_11d_4y;
-	wire ls257_11f_1y;
-	wire ls257_11f_2y;
-	wire ls257_11f_3y;
-	wire ls257_11f_4y;
-	wire ls157_8c_1y;
-	wire ls157_8c_2y;
-	wire ls157_8c_3y;
-	wire ls157_8c_4y;
-	
-	ls245 ls245_9e
-        (
-			.DIR(cpu1_9a_we_n),
-			.nOE(cus47_10c_bufen_n),
-			.A(D),
-			.B(cpu1_9a_d)
-		);
-		
+	// Main CPU data bus
 	ls245 ls245_12e
         (
-			.DIR(cpu2_11a_we_n),
+			.DIR(mcpu_11a_we_n),
 			.nOE(ls00_8d_3y_n),
 			.A(D),
-			.B(cpu2_11a_d)
+			.B(mcpu_11a_d)
 		);
 	
-	ls257 ls257_11e
+	// Sub CPU data bus
+	ls245 ls245_9e
         (
-			.nG(CLK_1H),
-			.nSELA(CLK_S2H),
-			.A1(cpu1_9a_a[3]),
-			.A2(cpu1_9a_a[2]),
-			.A3(cpu1_9a_a[1]),
-			.A4(cpu1_9a_a[0]),
-			.B1(cpu2_11a_a[3]),
-			.B2(cpu2_11a_a[2]),
-			.B3(cpu2_11a_a[1]),
-			.B4(cpu2_11a_a[0]),
-			.Y1(ls257_11e_1y),
-			.Y2(ls257_11e_2y),
-			.Y3(ls257_11e_3y),
-			.Y4(ls257_11e_4y)
+			.DIR(scpu_9a_we_n),
+			.nOE(cus47_10c_bufen_n),
+			.A(D),
+			.B(scpu_9a_d)
 		);
 		
-	ls257 ls257_11d
-        (
-			.nG(CLK_1H),
-			.nSELA(CLK_S2H),
-			.A1(cpu1_9a_a[7]),
-			.A2(cpu1_9a_a[6]),
-			.A3(cpu1_9a_a[5]),
-			.A4(cpu1_9a_a[4]),
-			.B1(cpu2_11a_a[7]),
-			.B2(cpu2_11a_a[6]),
-			.B3(cpu2_11a_a[5]),
-			.B4(cpu2_11a_a[4]),
-			.Y1(ls257_11d_1y),
-			.Y2(ls257_11d_2y),
-			.Y3(ls257_11d_3y),
-			.Y4(ls257_11d_4y)
-		);
 		
-	ls257 ls257_11f
-        (
-			.nG(CLK_1H),
-			.nSELA(CLK_S2H),
-			.A1(cpu1_9a_a[11]),
-			.A2(cpu1_9a_a[10]),
-			.A3(cpu1_9a_a[9]),
-			.A4(cpu1_9a_a[8]),
-			.B1(cpu2_11a_a[11]),
-			.B2(cpu2_11a_a[10]),
-			.B3(cpu2_11a_a[9]),
-			.B4(cpu2_11a_a[8]),
-			.Y1(ls257_11f_1y),
-			.Y2(ls257_11f_2y),
-			.Y3(ls257_11f_3y),
-			.Y4(ls257_11f_4y)
-		);
-		
-	ls157 ls157_8c
-        (
-			.nG(1'b0),
-			.nSELA(CLK_2H),
-			.A1( cus47_10c_latch0_n ),
-			.A2( cus47_10c_latch1_n ),
-			.A3( cpu1_9a_we_n ),
-			.A4( cpu1_9a_a[12] ),
-			.B1( cus41_8a_latch0_n ),
-			.B2( cus41_8a_latch1_n ),
-			.B3( cpu2_11a_we_n ),
-			.B4( cpu2_11a_a[12] ),
-			.Y1(ls157_8c_1y),
-			.Y2(ls157_8c_2y),
-			.Y3(ls157_8c_3y),
-			.Y4(ls157_8c_4y)
-		);
-	
     // == hardware abstraction - memory buses ==
     
-    // CPU 1 to program ROMs 9C and 9D
+	// Main CPU to program ROMs 12C and 12D
     
-    assign eprom_9c_addr = cpu1_9a_a[14:0];
-    assign eprom_9c_ce_n = cus47_10C_mpmg_n;
-	 assign eprom_9c_oe_n = CLK_2H;
-    
-    assign eprom_9d_addr = cpu1_9a_a[14:0];
-    assign eprom_9d_ce_n = cus47_10C_spmg_n;
-	 assign eprom_9d_oe_n = CLK_2H;
-    
-    // Assign ROM data buses to CPU 1 bus if enabled
-    assign cpu1_9a_d = eprom_9c_dv ? eprom_9c_data : 8'bz;
-	 
-    // CPU 2 to program ROMs 12C and 12D
-    
-    assign eprom_12c_addr = cpu2_11a_a[14:0];
+    assign eprom_12c_addr = mcpu_11a_a[14:0];
     assign eprom_12c_ce_n = cus41_8a_mrom_n;
-	 assign eprom_12c_oe_n = ls00_8d_2y_n;
+	assign eprom_12c_oe_n = ls00_8d_2y_n;
     
-    assign eprom_12d_addr = cpu2_11a_a[14:0];
+    assign eprom_12d_addr = mcpu_11a_a[14:0];
     assign eprom_12d_ce_n = cus41_8a_mcs4_n;
-	 assign eprom_12d_oe_n = ls00_8d_2y_n;
+	assign eprom_12d_oe_n = ls00_8d_2y_n;
     
-    // Assign ROM data buses to CPU 2 bus if enabled
-	 assign cpu2_11a_d = 
-		(&eprom_12c_data !== 1'bx) ? 
-			eprom_12c_data 
-		 : (&eprom_12d_data !== 1'bx) ? 
-			   eprom_12d_data
-		    : 8'bz;
-	 
+    // Assign ROM data buses to main CPU bus if enabled
+	assign mcpu_11a_d = ls00_8d_3y_n ? eprom_12d_data : 8'bz;
+    			 
+    // Sub CPU to program ROMs 9C and 9D
+    
+    assign eprom_9c_addr = scpu_9a_a[14:0];
+    assign eprom_9c_ce_n = cus47_10C_mpmg_n;
+	assign eprom_9c_oe_n = CLK_2H;
+    
+    assign eprom_9d_addr = scpu_9a_a[14:0];
+    assign eprom_9d_ce_n = cus47_10C_spmg_n;
+	assign eprom_9d_oe_n = CLK_2H;
+    
+    // Assign ROM data buses to sub CPU bus if enabled
+	assign scpu_9a_d = cus47_10c_bufen_n ? eprom_9c_data : 8'bz;
+    
 	// == Global outputs ==
 	
-	assign A = { 
-		// A12
-		ls157_8c_4y,
-		// A11-8
-		ls257_11f_1y,
-		ls257_11f_2y,
-		ls257_11f_3y,
-		ls257_11f_4y,
-		// A7-4
-		ls257_11d_1y,
-		ls257_11d_2y,
-		ls257_11d_3y,
-		ls257_11d_4y,
-		// A3-0
-		ls257_11e_1y,
-		ls257_11e_2y,
-		ls257_11e_3y,
-		ls257_11e_4y
-		};
+	assign nRESET = cus47_10c_res_n & cus41_8a_mreset_n;
 	
-	assign nRESET = ~rst & cus47_10c_res_n & cus41_8a_mreset_n;
-	
-	assign MD = cpu1_9a_d;
+	assign MD = scpu_9a_d;
 	assign nBACKCOLOR = cus47_10c_latch2_n;
 	assign nOBJECT = ls08_8e_2y_n;
 	assign nSCROLL0 = ls08_8e_4y_n;
 	assign nSCROLL1 = ls08_8e_3y_n;
-	assign nLATCH0 = ls157_8c_1y;
-	assign nLATCH1 = ls157_8c_2y;
 	assign BANK = cus47_10c_bank;
-	assign nWE = ls157_8c_3y;
 	
 endmodule
