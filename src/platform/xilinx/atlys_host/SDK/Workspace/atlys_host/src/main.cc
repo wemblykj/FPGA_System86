@@ -41,7 +41,7 @@ int SetupInterruptSystem();
 static XGpio ButtonsGpio; 	/* The Instance of the Buttons GPIO Driver */
 static XGpio LedsGpio; 		/* The Instance of the LEDs GPIO Driver */
 
-static INTC Intc; /* The Instance of the Interrupt Controller Driver */
+static XIntc Intc; /* The Instance of the Interrupt Controller Driver */
 
 /****************************************************************************/
 /**
@@ -59,10 +59,12 @@ static INTC Intc; /* The Instance of the Interrupt Controller Driver */
 *
 *
 *****************************************************************************/
+
 int main()
 {
 	int Status;
 
+<<<<<<< HEAD
 	Status = XGpio_Initialize(&LedsGpio, LEDS_DEVICE_ID);
 		if (Status != XST_SUCCESS) {
 			return XST_FAILURE;
@@ -73,6 +75,13 @@ int main()
 	 * an output of the GPIO
 	 */
 	XGpio_SetDataDirection(&LedsGpio, 1, 0xFFFF);
+=======
+	/* Initialize the GPIO driver. If an error occurs then exit */
+	Status = XGpio_Initialize(&ButtonsGpio, BUTTONS_DEVICE_ID);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+>>>>>>> 1681649361f54cbcd370e9f834e123e7ddc5ed11
 
 	/*
 	 * Perform a self-test on the GPIO.  This is a minimal test and only
