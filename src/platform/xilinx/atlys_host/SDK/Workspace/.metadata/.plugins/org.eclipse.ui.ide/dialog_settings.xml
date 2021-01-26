@@ -11,4 +11,11 @@
 			<item value="com.xilinx.sdk.ui.category.newWizards"/>
 		</list>
 	</section>
+	<section name="CleanDialogSettings">
+		<item value="563" key="DIALOG_WIDTH"/>
+		<item value="168" key="DIALOG_Y_ORIGIN"/>
+		<item value="559" key="DIALOG_X_ORIGIN"/>
+		<item value="373" key="DIALOG_HEIGHT"/>
+		<item value="false" key="TOGGLE_SELECTED"/>
+	</section>
 </section>

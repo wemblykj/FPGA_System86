@@ -63,6 +63,31 @@ int main()
 {
 	int Status;
 
+	Status = XGpio_Initialize(&LedsGpio, LEDS_DEVICE_ID);
+		if (Status != XST_SUCCESS) {
+			return XST_FAILURE;
+		}
+
+	/*
+	 * Setup direction register so the switch is an input and the LED is
+	 * an output of the GPIO
+	 */
+	XGpio_SetDataDirection(&LedsGpio, 1, 0xFFFF);
+
+	/*
+	 * Perform a self-test on the GPIO.  This is a minimal test and only
+	 * verifies that there is not any bus error when reading the data
+	 * register
+	 */
+	XGpio_SelfTest(&LedsGpio);
+
+	XGpio_DiscreteWrite(&LedsGpio, 1, 0xFFFF);
+
+	for (int i = 0; i < 10000; ++i)
+	{
+		;
+	}
+
 	/* Initialize the GPIO driver. If an error occurs then exit */
 
 	Status = XGpio_Initialize(&ButtonsGpio, BUTTONS_DEVICE_ID);
@@ -83,25 +108,7 @@ int main()
 	 */
 	XGpio_SetDataDirection(&ButtonsGpio, 1, 0x0000);
 
-	Status = XGpio_Initialize(&LedsGpio, LEDS_DEVICE_ID);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
-
-	/*
-	 * Perform a self-test on the GPIO.  This is a minimal test and only
-	 * verifies that there is not any bus error when reading the data
-	 * register
-	 */
-	XGpio_SelfTest(&LedsGpio);
-
-	/*
-	 * Setup direction register so the switch is an input and the LED is
-	 * an output of the GPIO
-	 */
-	XGpio_SetDataDirection(&LedsGpio, 1, 0xFFFF);
-
-	/*
+		/*
 	 * Setup the interrupts such that interrupt processing can occur. If
 	 * an error occurs then exit
 	 */
@@ -109,6 +116,8 @@ int main()
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
+
+	XGpio_DiscreteWrite(&LedsGpio, 1, 0x0000);
 
 	/*
 	 * Loop forever while the button changes are handled by the interrupt
