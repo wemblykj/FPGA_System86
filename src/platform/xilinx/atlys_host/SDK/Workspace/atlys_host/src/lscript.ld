@@ -53,11 +53,11 @@ SECTIONS
 
 .init : {
    KEEP (*(.init))
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .fini : {
    KEEP (*(.fini))
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .ctors : {
    __CTOR_LIST__ = .;
@@ -68,7 +68,7 @@ SECTIONS
    KEEP (*(.ctors))
    __CTOR_END__ = .;
    ___CTORS_END___ = .;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .dtors : {
    __DTOR_LIST__ = .;
@@ -79,7 +79,7 @@ SECTIONS
    KEEP (*(.dtors))
    PROVIDE(__DTOR_END__ = .);
    PROVIDE(___DTORS_END___ = .);
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .rodata : {
    __rodata_start = .;
@@ -87,7 +87,7 @@ SECTIONS
    *(.rodata.*)
    *(.gnu.linkonce.r.*)
    __rodata_end = .;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .sdata2 : {
    . = ALIGN(8);
@@ -97,7 +97,7 @@ SECTIONS
    *(.gnu.linkonce.s2.*)
    . = ALIGN(8);
    __sdata2_end = .;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .sbss2 : {
    __sbss2_start = .;
@@ -105,7 +105,7 @@ SECTIONS
    *(.sbss2.*)
    *(.gnu.linkonce.sb2.*)
    __sbss2_end = .;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .data : {
    . = ALIGN(4);
@@ -114,31 +114,31 @@ SECTIONS
    *(.data.*)
    *(.gnu.linkonce.d.*)
    __data_end = .;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .got : {
    *(.got)
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .got1 : {
    *(.got1)
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .got2 : {
    *(.got2)
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .eh_frame : {
    *(.eh_frame)
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .jcr : {
    *(.jcr)
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .gcc_except_table : {
    *(.gcc_except_table)
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .sdata : {
    . = ALIGN(8);
@@ -147,7 +147,7 @@ SECTIONS
    *(.sdata.*)
    *(.gnu.linkonce.s.*)
    __sdata_end = .;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .sbss (NOLOAD) : {
    . = ALIGN(4);
@@ -157,7 +157,7 @@ SECTIONS
    *(.gnu.linkonce.sb.*)
    . = ALIGN(8);
    __sbss_end = .;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .tdata : {
    __tdata_start = .;
@@ -165,7 +165,7 @@ SECTIONS
    *(.tdata.*)
    *(.gnu.linkonce.td.*)
    __tdata_end = .;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .tbss : {
    __tbss_start = .;
@@ -173,7 +173,7 @@ SECTIONS
    *(.tbss.*)
    *(.gnu.linkonce.tb.*)
    __tbss_end = .;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 .bss (NOLOAD) : {
    . = ALIGN(4);
@@ -184,7 +184,7 @@ SECTIONS
    *(COMMON)
    . = ALIGN(4);
    __bss_end = .;
-} > mcb_ddr2_S0_AXI_BASEADDR
+} > microblaze_0_i_bram_ctrl_microblaze_0_d_bram_ctrl
 
 _SDA_BASE_ = __sdata_start + ((__sbss_end - __sdata_start) / 2 );
 

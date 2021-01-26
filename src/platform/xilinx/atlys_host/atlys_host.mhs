@@ -93,7 +93,7 @@ BEGIN axi_intc
  BUS_INTERFACE S_AXI = axi4lite_0
  BUS_INTERFACE INTERRUPT = microblaze_0_interrupt
  PORT S_AXI_ACLK = clk_100_0000MHzPLL0
- PORT INTR = RS232_Uart_1_Interrupt & Push_Buttons_5Bits_IP2INTC_Irpt & DIP_Switches_8Bits_IP2INTC_Irpt & Digilent_Usb_Epp_IRQ_EPP & axi_vdma_0_mm2s_introut & axi_vdma_0_s2mm_introut
+ PORT INTR = Push_Buttons_5Bits_IP2INTC_Irpt & DIP_Switches_8Bits_IP2INTC_Irpt & axi_vdma_0_mm2s_introut & axi_vdma_0_s2mm_introut
 END
 
 BEGIN lmb_v10

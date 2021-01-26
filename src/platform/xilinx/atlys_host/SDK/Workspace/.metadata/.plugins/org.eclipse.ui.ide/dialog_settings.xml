@@ -3,15 +3,8 @@
 	<section name="BasicNewProjectResourceWizard">
 	</section>
 	<section name="ExternalProjectImportWizard">
-	</section>
-	<section name="CleanDialogSettings">
-		<item value="500" key="DIALOG_WIDTH"/>
-		<item value="true" key="BUILD_NOW"/>
-		<item value="true" key="BUILD_ALL"/>
-		<item value="155" key="DIALOG_Y_ORIGIN"/>
-		<item value="441" key="DIALOG_HEIGHT"/>
-		<item value="508" key="DIALOG_X_ORIGIN"/>
-		<item value="true" key="TOGGLE_SELECTED"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
 	</section>
 	<section name="NewWizardAction">
 		<item value="com.xilinx.sdk.appwiz.AppWizard" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
@@ -23,9 +16,11 @@
 	</section>
 	<section name="CleanDialogSettings">
 		<item value="563" key="DIALOG_WIDTH"/>
+		<item value="true" key="BUILD_NOW"/>
+		<item value="true" key="BUILD_ALL"/>
 		<item value="168" key="DIALOG_Y_ORIGIN"/>
+		<item value="460" key="DIALOG_HEIGHT"/>
 		<item value="559" key="DIALOG_X_ORIGIN"/>
-		<item value="373" key="DIALOG_HEIGHT"/>
 		<item value="false" key="TOGGLE_SELECTED"/>
 	</section>
 </section>
