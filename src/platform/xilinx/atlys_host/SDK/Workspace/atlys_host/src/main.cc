@@ -30,6 +30,9 @@
 #define DDR_BASE_ADDR		XPAR_S6DDR_0_S0_AXI_BASEADDR
 #define DDR_HIGH_ADDR		XPAR_S6DDR_0_S0_AXI_HIGHADDR
 
+#define BUTTONS_CHANNEL		1
+#define LEDS_CHANNEL		1
+
 /************************** Function Prototypes ******************************/
 
 void ButtonsIsr(void *InstancePtr);
@@ -73,7 +76,7 @@ int main()
 	 * Setup direction register so the switch is an input and the LED is
 	 * an output of the GPIO
 	 */
-	XGpio_SetDataDirection(&LedsGpio, 1, 0x0000);
+	XGpio_SetDataDirection(&LedsGpio, LEDS_CHANNEL, 0x0000);
 
 	/*
 	 * Perform a self-test on the GPIO.  This is a minimal test and only
@@ -84,17 +87,16 @@ int main()
 
 	// Turn on all lights so that we know something is happening
 
-	XGpio_DiscreteWrite(&LedsGpio, 1, 0xFFFFFFFF);
+	XGpio_DiscreteWrite(&LedsGpio, LEDS_CHANNEL, 0xFFFFFFFF);
 	for (u32 i = 0; i < 0xFFFFF; ++i) {
 		if (i&0x10000)
 		{
-			XGpio_DiscreteWrite(&LedsGpio, 1, 0xA5A5A5A5);
+			XGpio_DiscreteWrite(&LedsGpio, LEDS_CHANNEL, 0xA5A5A5A5);
 		}
 		else
 		{
-			XGpio_DiscreteWrite(&LedsGpio, 1, 0x5A5A5A5A);
+			XGpio_DiscreteWrite(&LedsGpio, LEDS_CHANNEL, 0x5A5A5A5A);
 		}
-
 	}
 
 	/* Initialize the GPIO driver. If an error occurs then exit */
@@ -115,7 +117,7 @@ int main()
 	 * Setup direction register so the switch is an input and the LED is
 	 * an output of the GPIO
 	 */
-	XGpio_SetDataDirection(&ButtonsGpio, 1, 0xFFFF);
+	XGpio_SetDataDirection(&ButtonsGpio, BUTTONS_CHANNEL, 0xFFFF);
 
 		/*
 	 * Setup the interrupts such that interrupt processing can occur. If
@@ -126,7 +128,7 @@ int main()
 		return XST_FAILURE;
 	}
 
-	XGpio_DiscreteWrite(&LedsGpio, 1, 0x0000);
+	XGpio_DiscreteWrite(&LedsGpio, LEDS_CHANNEL, 0x0000);
 
 	/*
 	 * Loop forever while the button changes are handled by the interrupt
@@ -187,7 +189,7 @@ int SetupInterruptSystem()
 	 * Enable the GPIO channel interrupts so that push button can be
 	 * detected and enable interrupts for the GPIO device
 	 */
-	XGpio_InterruptEnable(&ButtonsGpio, 0x3/*BUTTONS_INTERRUPT_MASK*/);
+	XGpio_InterruptEnable(&ButtonsGpio, BUTTONS_CHANNEL);
 	XGpio_InterruptGlobalEnable(&ButtonsGpio);
 
 	/*
@@ -225,9 +227,6 @@ int SetupInterruptSystem()
 *****************************************************************************/
 void ButtonsIsr(void *InstancePtr)
 {
-	XGpio_DiscreteWrite(&LedsGpio, 1, 0x01);
-	return;
-
 	XGpio *GpioPtr = (XGpio *)InstancePtr;
 	//u32 Led;
 	//u32 LedState;
@@ -237,12 +236,12 @@ void ButtonsIsr(void *InstancePtr)
 	static u32 PreviousButtons;
 
 	int status = XGpio_InterruptGetStatus(GpioPtr);
-	XGpio_DiscreteWrite(&LedsGpio, 1, status);
+	XGpio_DiscreteWrite(&LedsGpio, LEDS_CHANNEL, status);
 
 	/*
 	 * Disable the interrupt
 	 */
-	XGpio_InterruptDisable(GpioPtr, BUTTONS_INTERRUPT_MASK);
+	XGpio_InterruptDisable(GpioPtr, BUTTONS_CHANNEL);
 
 	/* Keep track of the number of interrupts that occur */
 
@@ -252,8 +251,8 @@ void ButtonsIsr(void *InstancePtr)
 	 * There should not be any other interrupts occurring other than the
 	 * the button changes
 	 */
-	if ((XGpio_InterruptGetStatus(GpioPtr) & BUTTONS_INTERRUPT_MASK) !=
-			BUTTONS_INTERRUPT_MASK) {
+	if ((XGpio_InterruptGetStatus(GpioPtr) & BUTTONS_CHANNEL) !=
+			BUTTONS_CHANNEL) {
 		return;
 	}
 
@@ -263,7 +262,7 @@ void ButtonsIsr(void *InstancePtr)
 	 * states from the previous interrupt. Save a copy of the buttons
 	 * for the next interrupt
 	 */
-	Buttons = XGpio_DiscreteRead(GpioPtr, 1);
+	Buttons = XGpio_DiscreteRead(GpioPtr, BUTTONS_CHANNEL);
 	ButtonsChanged = Buttons ^ PreviousButtons;
 	PreviousButtons = Buttons;
 
@@ -272,7 +271,7 @@ void ButtonsIsr(void *InstancePtr)
 	 * interrupt
 	 */
 	while (ButtonsChanged != 0) {
-		XGpio_DiscreteWrite(&LedsGpio, 1, Buttons);
+		XGpio_DiscreteWrite(&LedsGpio, LEDS_CHANNEL, Buttons);
 
 		/*
 		 * Determine which button changed state and then get
@@ -297,11 +296,11 @@ void ButtonsIsr(void *InstancePtr)
 
 	 /* Clear the interrupt such that it is no longer pending in the GPIO */
 
-	 (void)XGpio_InterruptClear(GpioPtr, BUTTONS_INTERRUPT_MASK);
+	 (void)XGpio_InterruptClear(GpioPtr, BUTTONS_CHANNEL);
 
 	 /*
 	  * Enable the interrupt
 	  */
-	 XGpio_InterruptEnable(GpioPtr, BUTTONS_INTERRUPT_MASK);
+	 XGpio_InterruptEnable(GpioPtr, BUTTONS_CHANNEL);
 
 }

@@ -53,6 +53,7 @@ atlys_host.elf: $(OBJS) ../src/lscript.ld $(USER_OBJS)
 	mb-g++ -Wl,-T -Wl,../src/lscript.ld -L../../atlys_host_bsp/microblaze_0/lib -mlittle-endian -mxl-barrel-shift -mxl-pattern-compare -mcpu=v8.50.c -mno-xl-soft-mul -Wl,--no-relax -Wl,--gc-sections -o "atlys_host.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
+	$(MAKE) --no-print-directory post-build
 
 atlys_host.elf.size: atlys_host.elf
 	@echo 'Invoking: MicroBlaze Print Size'
@@ -71,9 +72,14 @@ clean:
 	-$(RM) $(OBJS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(EXECUTABLES)$(ELFSIZE)$(CXX_DEPS)$(C_UPPER_DEPS)$(ELFCHECK)$(S_UPPER_DEPS) atlys_host.elf
 	-@echo ' '
 
+post-build:
+	-@echo 'Create SREC image'
+	-mb-objcopy -O srec atlys_host.elf atlys_host.srec
+	-@echo ' '
+
 secondary-outputs: $(ELFSIZE) $(ELFCHECK)
 
 .PHONY: all clean dependents
-.SECONDARY:
+.SECONDARY: post-build
 
 -include ../makefile.targets
