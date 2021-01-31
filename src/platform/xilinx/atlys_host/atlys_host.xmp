@@ -41,5 +41,5 @@ DCacheAddr: MCB_DDR2,C_S3_AXI_BASEADDR
 DCacheAddr: MCB_DDR2,C_S4_AXI_BASEADDR
 DCacheAddr: MCB_DDR2,C_S5_AXI_BASEADDR
 Processor: microblaze_0
-ElfImp: 
+ElfImp: SDK/Workspace/bootloader/Release/bootloader.elf
 ElfSim: 

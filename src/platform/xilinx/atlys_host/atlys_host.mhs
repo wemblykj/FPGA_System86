@@ -93,7 +93,7 @@ BEGIN axi_intc
  BUS_INTERFACE S_AXI = axi4lite_0
  BUS_INTERFACE INTERRUPT = microblaze_0_interrupt
  PORT S_AXI_ACLK = clk_100_0000MHzPLL0
- PORT INTR = Push_Buttons_5Bits_IP2INTC_Irpt & DIP_Switches_8Bits_IP2INTC_Irpt & axi_vdma_0_mm2s_introut & axi_vdma_0_s2mm_introut
+ PORT INTR = QSPI_FLASH_IP2INTC_Irpt & Push_Buttons_5Bits_IP2INTC_Irpt & DIP_Switches_8Bits_IP2INTC_Irpt & axi_cdma_0_cdma_introut & axi_vdma_0_mm2s_introut & axi_vdma_0_s2mm_introut
 END
 
 BEGIN lmb_v10
@@ -107,7 +107,7 @@ BEGIN lmb_bram_if_cntlr
  PARAMETER INSTANCE = microblaze_0_i_bram_ctrl
  PARAMETER HW_VER = 3.10.c
  PARAMETER C_BASEADDR = 0x00000000
- PARAMETER C_HIGHADDR = 0x00001fff
+ PARAMETER C_HIGHADDR = 0x00003fff
  BUS_INTERFACE SLMB = microblaze_0_ilmb
  BUS_INTERFACE BRAM_PORT = microblaze_0_i_bram_ctrl_2_microblaze_0_bram_block
 END
@@ -123,7 +123,7 @@ BEGIN lmb_bram_if_cntlr
  PARAMETER INSTANCE = microblaze_0_d_bram_ctrl
  PARAMETER HW_VER = 3.10.c
  PARAMETER C_BASEADDR = 0x00000000
- PARAMETER C_HIGHADDR = 0x00001fff
+ PARAMETER C_HIGHADDR = 0x00003fff
  BUS_INTERFACE SLMB = microblaze_0_dlmb
  BUS_INTERFACE BRAM_PORT = microblaze_0_d_bram_ctrl_2_microblaze_0_bram_block
 END
@@ -145,12 +145,12 @@ BEGIN microblaze
  PARAMETER C_ICACHE_BASEADDR = 0xc0000000
  PARAMETER C_ICACHE_HIGHADDR = 0xc7ffffff
  PARAMETER C_USE_ICACHE = 1
- PARAMETER C_CACHE_BYTE_SIZE = 8192
+ PARAMETER C_CACHE_BYTE_SIZE = 16384
  PARAMETER C_ICACHE_ALWAYS_USED = 1
  PARAMETER C_DCACHE_BASEADDR = 0xc0000000
  PARAMETER C_DCACHE_HIGHADDR = 0xc7ffffff
  PARAMETER C_USE_DCACHE = 1
- PARAMETER C_DCACHE_BYTE_SIZE = 8192
+ PARAMETER C_DCACHE_BYTE_SIZE = 16384
  PARAMETER C_DCACHE_ALWAYS_USED = 1
  BUS_INTERFACE M_AXI_DP = axi4lite_0
  BUS_INTERFACE M_AXI_DC = axi4_0
@@ -247,6 +247,7 @@ BEGIN axi_quad_spi
  PORT IO1 = QSPI_FLASH_IO1
  PORT IO0 = QSPI_FLASH_IO0
  PORT EXT_SPI_CLK = clk_100_0000MHzPLL0
+ PORT IP2INTC_Irpt = QSPI_FLASH_IP2INTC_Irpt
 END
 
 BEGIN axi_gpio
@@ -429,5 +430,6 @@ BEGIN axi_cdma
  BUS_INTERFACE M_AXI = axi4_0
  PORT s_axi_lite_aclk = clk_100_0000MHzPLL0
  PORT m_axi_aclk = clk_100_0000MHzPLL0
+ PORT cdma_introut = axi_cdma_0_cdma_introut
 END
 
