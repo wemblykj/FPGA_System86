@@ -38,14 +38,16 @@
 
 /***************************** Include Files *********************************/
 
-#include <xparameters.h>		/* EDK generated parameters */
-#include <xspi.h>				/* SPI device driver */
-#include <xil_exception.h>
-#include <xintc.h>
+#include "xparameters.h"		/* EDK generated parameters */
+#include "xspi.h"				/* SPI device driver */
+#include "xil_exception.h"
+#include "xintc.h"
 
-#include <mb_interface.h>		/* Microblaze */
-#include <xil_cache.h>
-#include <xil_printf.h>
+//#include "mb_interface.h"		/* Microblaze */
+#include "xil_cache.h"
+#include "xil_printf.h"
+
+#include "platform.h"
 
 #include "elf32.h"				/* ELF header definitions */
 
@@ -61,10 +63,10 @@
  * xparameters.h file. They are defined here such that a user can easily
  * change all the needed parameters in one place.
  */
-#define SPI_DEVICE_ID			XPAR_SPI_0_DEVICE_ID
+#define SPI_FLASH_DEVICE_ID			XPAR_QSPI_FLASH_DEVICE_ID
 
-#define INTC_DEVICE_ID		XPAR_INTC_0_DEVICE_ID
-#define SPI_INTR_ID		XPAR_INTC_0_SPI_0_VEC_ID
+#define INTC_DEVICE_ID			XPAR_INTC_0_DEVICE_ID
+#define SPI_INTR_ID				XPAR_INTC_0_SPI_0_VEC_ID
 
 
 
@@ -76,7 +78,7 @@
  * to select the Flash device on the SPI bus, this signal is typically
  * connected to the chip select of the device.
  */
-#define SPI_SELECT 			0x01
+#define SPI_SLAVE_SELECT 			0x01
 
 /*
  * Definitions of the commands shown in this example.
@@ -152,7 +154,8 @@
 /*
  * Base address of the ELF image in the SPI flash
  */
-#define ELF_IMAGE_BASEADDR		0x01FF0000
+//#define ELF_IMAGE_BASEADDR		0x00FF0000
+#define ELF_IMAGE_BASEADDR		0x00000000
 
 /*S
  * Enable debug for the ELF loader
@@ -176,6 +179,8 @@ int SpiFlashEnableHPM(XSpi *SpiPtr);
 static int SpiFlashWaitForFlashReady(void);
 void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount);
 static int SetupInterruptSystem(XSpi *SpiPtr);
+
+int (*boot_app) (void);
 
 /************************** Variable Definitions *****************************/
 
@@ -203,13 +208,13 @@ static int ErrorCount;
  * Buffers used during read and write transactions.
  */
 static u8 ReadBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES + 4];
-static u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
+static u8 WriteBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES];
 
 /*
  * Byte offset value written to Flash. This needs to be redefined for writing
  * different patterns of data to the Flash device.
  */
-//static u8 TestByte = 0x20;
+static u8 TestByte = 0x20;
 
 /************************** Function Definitions *****************************/
 
@@ -234,25 +239,20 @@ int main(void)
 	elf32_hdr hdr;
 	elf32_phdr phdr;
 
+	init_uart();
+
 	xil_printf("Spi numonyx flash quad bootloader\r\n");
 
 	/*
 	 * Disable caches
 	 */
-#if (XPAR_MICROBLAZE_USE_DCACHE == 1)
-	Xil_DCacheInvalidate();
-	Xil_DCacheDisable();
-#endif
-#if (XPAR_MICROBLAZE_USE_ICACHE == 1)
-	Xil_ICacheInvalidate();
-	Xil_ICacheDisable();
-#endif
+	disable_caches();
 
 	/*
 	 * Initialize the SPI driver so that it's ready to use,
 	 * specify the device ID that is generated in xparameters.h.
 	 */
-	ConfigPtr = XSpi_LookupConfig(SPI_DEVICE_ID);
+	ConfigPtr = XSpi_LookupConfig(SPI_FLASH_DEVICE_ID);
 	if (ConfigPtr == NULL) {
 		return XST_DEVICE_NOT_FOUND;
 	}
@@ -260,6 +260,13 @@ int main(void)
 	ret = XSpi_CfgInitialize(&Spi, ConfigPtr,
 				  ConfigPtr->BaseAddress);
 	if (ret != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	//Perform a self-test to ensure that the hardware was built correctly.
+	xil_printf("erase\r\n");
+	ret = XSpi_SelfTest(&Spi);
+	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
@@ -285,6 +292,7 @@ int main(void)
 	 * that the slave select signal does not toggle for every byte of a
 	 * transfer, this must be done before the slave select is set.
 	 */
+	xil_printf("set options\r\n");
 	ret = XSpi_SetOptions(&Spi, XSP_MASTER_OPTION |
 				 XSP_MANUAL_SSELECT_OPTION);
 	if(ret != XST_SUCCESS) {
@@ -294,8 +302,12 @@ int main(void)
 	/*
 	 * Select the quad flash device on the SPI bus, so that it can be
 	 * read and written using the SPI bus.
+	 *
+	 * Been having problems with reading nothing but zeros...
+	 * apparently must be done after device has started
 	 */
-	ret = XSpi_SetSlaveSelect(&Spi, SPI_SELECT);
+	xil_printf("select\r\n");
+	ret = XSpi_SetSlaveSelect(&Spi, SPI_SLAVE_SELECT);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
@@ -303,65 +315,78 @@ int main(void)
 	/*
 	 * Start the SPI driver so that interrupts and the device are enabled.
 	 */
-	XSpi_Start(&Spi);
+	xil_printf("start\r\n");
+	ret = XSpi_Start(&Spi);
+	if(ret != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
 
 	/*
 	 * Perform the Write Enable operation.
 	 */
-	/*ret = SpiFlashWriteEnable(&Spi);
+	ret = SpiFlashWriteEnable(&Spi);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
-	}*/
+	}
+
+	xil_printf("erase\r\n");
 
 	/*
 	 * Perform the Sector Erase operation.
 	 */
-	/*ret = SpiFlashSectorErase(&Spi, Address);
+	ret = SpiFlashSectorErase(&Spi, ELF_IMAGE_BASEADDR /*Address*/);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
-	}*/
-
+	}
 
 	/*
 	 * Perform the Write Enable operation.
 	 */
-	/*ret = SpiFlashWriteEnable(&Spi);
+	ret = SpiFlashWriteEnable(&Spi);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
-	}*/
+	}
+
+	xil_printf("write\r\n");
 
 	/*
 	 * Write the data to the Page using Page Program command.
 	 */
-	/*ret = SpiFlashWrite(&Spi, Address, PAGE_SIZE, COMMAND_PAGE_PROGRAM);
+	ret = SpiFlashWrite(&Spi, ELF_IMAGE_BASEADDR/*Address*/, PAGE_SIZE, COMMAND_PAGE_PROGRAM);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
-	}*/
+	}
 
 	/*
 	 * Clear the read Buffer.
 	 */
-	/*for(Index = 0; Index < PAGE_SIZE + READ_WRITE_EXTRA_BYTES; Index++) {
-		ReadBuffer[Index] = 0x0;
-	}*/
+	for(i = 0; i < PAGE_SIZE + READ_WRITE_EXTRA_BYTES; i++) {
+		ReadBuffer[i] = 0x0;
+	}
+
+	xil_printf("read\r\n");
 
 	/*
 	 * Read the data from the Page using Random Read command.
 	 */
-	/*ret = SpiFlashRead(&Spi, Address, PAGE_SIZE, COMMAND_RANDOM_READ);
+	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR /*Address*/, PAGE_SIZE, COMMAND_RANDOM_READ);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
-	}*/
+	}
+
+	xil_printf("compare\r\n");
 
 	/*
 	 * Compare the data read against the data written.
 	 */
-	/*for(Index = 0; Index < PAGE_SIZE; Index++) {
-		if(ReadBuffer[Index + READ_WRITE_EXTRA_BYTES] !=
-					(u8)(Index + TestByte)) {
+	for(i = 0; i < PAGE_SIZE; i++) {
+		if(ReadBuffer[i + READ_WRITE_EXTRA_BYTES] !=
+					(u8)(i + TestByte)) {
 			return XST_FAILURE;
 		}
-	}*/
+	}
+
+	xil_printf("done\r\n");
 
 	/*
 	 * Clear the Read Buffer.
@@ -397,11 +422,14 @@ int main(void)
 			  QUAD_READ_DUMMY_BYTES; Index++) {
 		ReadBuffer[Index] = 0x0;
 	}*/
-
+#if 0
 	/*
 	 * Read the data from the Page using Quad Output Fast Read command.
+	 *
+	 * unable to configure COMMAND_QUAD_READ hardware, possibly due to HDMI resource
+	 * requirements conflicting with the QSPI flash's IO2 and IO3
 	 */
-	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, sizeof(hdr), COMMAND_QUAD_READ);
+	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, sizeof(hdr), COMMAND_RANDOM_READ/*COMMAND_QUAD_READ*/);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
@@ -517,12 +545,15 @@ int main(void)
 		}
 	}
 
+	enable_caches();
+
 	/**
 	 * Jump to ELF entry address
 	 */
 	xil_printf("\r\nTransferring execution to program @ 0x%x\r\n", hdr.entry);
 
 	((void (*)())hdr.entry)();
+#endif
 
 	// Never reached
 	return XST_SUCCESS;
@@ -595,7 +626,6 @@ int SpiFlashWriteEnable(XSpi *SpiPtr)
 * @note		None
 *
 ******************************************************************************/
-#if 0
 int SpiFlashWrite(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 WriteCmd)
 {
 	u32 Index;
@@ -648,7 +678,6 @@ int SpiFlashWrite(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 WriteCmd)
 
 	return XST_SUCCESS;
 }
-#endif
 
 /*****************************************************************************/
 /**

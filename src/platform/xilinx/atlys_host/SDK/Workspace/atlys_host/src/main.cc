@@ -11,6 +11,8 @@
 
 #include "xintc.h"
 
+#include "platform.h"
+
 /*
  * The following constants map to the names of the hardware instances that
  * were created in the EDK XPS system.  They are only defined here such that
@@ -66,6 +68,8 @@ static XIntc Intc; /* The Instance of the Interrupt Controller Driver */
 int main()
 {
 	int Status;
+
+	init_platform();
 
 	Status = XGpio_Initialize(&LedsGpio, LEDS_DEVICE_ID);
 		if (Status != XST_SUCCESS) {
@@ -136,6 +140,8 @@ int main()
 	 */
 	while (1) {
 	}
+
+	cleanup_platform();
 
 	return XST_SUCCESS;
 }
