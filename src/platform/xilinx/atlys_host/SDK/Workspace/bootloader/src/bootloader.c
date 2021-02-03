@@ -93,7 +93,7 @@
 #define	COMMAND_WRITE_ENABLE		0x06 /* Write Enable command */
 #define COMMAND_SECTOR_ERASE		0xD8 /* Sector Erase command */
 #define COMMAND_BULK_ERASE		0xC7 /* Bulk Erase command */
-#define COMMAND_retREG_READ		0x05 /* ret read command */
+#define COMMAND_STATUSREG_READ		0x05 /* Status read command */
 
 /**
  * This definitions specify the EXTRA bytes in each of the command
@@ -104,8 +104,8 @@
 #define	WRITE_ENABLE_BYTES		1 /* Write Enable bytes */
 #define SECTOR_ERASE_BYTES		4 /* Sector erase extra bytes */
 #define BULK_ERASE_BYTES		1 /* Bulk erase extra bytes */
-#define ret_READ_BYTES		2 /* ret read bytes count */
-#define ret_WRITE_BYTES		2 /* ret write bytes count */
+#define STATUS_READ_BYTES		2 /* Status read bytes count */
+#define STATUS_WRITE_BYTES		2 /* Status write bytes count */
 
 /*
  * Flash not busy mask in the ret register of the flash device.
@@ -148,14 +148,14 @@
 #define QUAD_IO_READ_DUMMY_BYTES	5
 
 
-#define SPI_VALID_DATA_OFFSET (READ_WRITE_EXTRA_BYTES+QUAD_READ_DUMMY_BYTES)
+#define SPI_VALID_DATA_OFFSET (READ_WRITE_EXTRA_BYTES+DUAL_READ_DUMMY_BYTES)
 #define EFFECTIVE_READ_BUFFER_SIZE PAGE_SIZE
 
 /*
  * Base address of the ELF image in the SPI flash
  */
-//#define ELF_IMAGE_BASEADDR		0x00FF0000
-#define ELF_IMAGE_BASEADDR		0x00000000
+#define ELF_IMAGE_BASEADDR		0x00FF0000
+//#define ELF_IMAGE_BASEADDR		0x00000000
 
 /*S
  * Enable debug for the ELF loader
@@ -173,7 +173,7 @@ int SpiFlashWrite(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 WriteCmd);
 int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 ReadCmd);
 int SpiFlashBulkErase(XSpi *SpiPtr);
 int SpiFlashSectorErase(XSpi *SpiPtr, u32 Addr);
-int SpiFlashGetret(XSpi *SpiPtr);
+int SpiFlashGetStatus(XSpi *SpiPtr);
 int SpiFlashQuadEnable(XSpi *SpiPtr);
 int SpiFlashEnableHPM(XSpi *SpiPtr);
 static int SpiFlashWaitForFlashReady(void);
@@ -208,13 +208,14 @@ static int ErrorCount;
  * Buffers used during read and write transactions.
  */
 static u8 ReadBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES + 4];
-static u8 WriteBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES];
+static u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
+//static u8 WriteBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES];
 
 /*
  * Byte offset value written to Flash. This needs to be redefined for writing
  * different patterns of data to the Flash device.
  */
-static u8 TestByte = 0x20;
+static u8 TestByte = 0x65;
 
 /************************** Function Definitions *****************************/
 
@@ -264,7 +265,7 @@ int main(void)
 	}
 
 	//Perform a self-test to ensure that the hardware was built correctly.
-	xil_printf("erase\r\n");
+	xil_printf("test\r\n");
 	ret = XSpi_SelfTest(&Spi);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
@@ -300,6 +301,15 @@ int main(void)
 	}
 
 	/*
+	 * Start the SPI driver so that interrupts and the device are enabled.
+	 */
+	xil_printf("start\r\n");
+	ret = XSpi_Start(&Spi);
+	if(ret != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	/*
 	 * Select the quad flash device on the SPI bus, so that it can be
 	 * read and written using the SPI bus.
 	 *
@@ -312,15 +322,7 @@ int main(void)
 		return XST_FAILURE;
 	}
 
-	/*
-	 * Start the SPI driver so that interrupts and the device are enabled.
-	 */
-	xil_printf("start\r\n");
-	ret = XSpi_Start(&Spi);
-	if(ret != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
-
+#if 0
 	/*
 	 * Perform the Write Enable operation.
 	 */
@@ -364,57 +366,60 @@ int main(void)
 		ReadBuffer[i] = 0x0;
 	}
 
-	xil_printf("read\r\n");
-
 	/*
 	 * Read the data from the Page using Random Read command.
 	 */
-	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR /*Address*/, PAGE_SIZE, COMMAND_RANDOM_READ);
+	/*ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR / *Address* /, PAGE_SIZE, COMMAND_RANDOM_READ);
+	if(ret != XST_SUCCESS) {
+		return XST_FAILURE;
+	}*/
+
+		/*
+	 * Compare the data read against the data written.
+	 */
+	/*for(i = 0; i < PAGE_SIZE; i++) {
+		if(ReadBuffer[i + READ_WRITE_EXTRA_BYTES] !=
+					(u8)(i + TestByte)) {
+			return XST_FAILURE;
+		}
+	}*/
+
+
+
+	/*
+	 * Clear the Read Buffer.
+	 */
+	for(i = 0; i < PAGE_SIZE + READ_WRITE_EXTRA_BYTES +
+	    DUAL_READ_DUMMY_BYTES; i++) {
+		ReadBuffer[i] = 0x0;
+	}
+
+	xil_printf("read\r\n");
+
+	/*
+	 * Read the data from the Page using Dual Output Fast Read command.
+	 */
+	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR /*Address*/, PAGE_SIZE, COMMAND_DUAL_READ);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
-	xil_printf("compare\r\n");
+	//xil_printf("compare:\r\n");
 
 	/*
 	 * Compare the data read against the data written.
 	 */
 	for(i = 0; i < PAGE_SIZE; i++) {
-		if(ReadBuffer[i + READ_WRITE_EXTRA_BYTES] !=
-					(u8)(i + TestByte)) {
+		const u8 read =ReadBuffer[i + READ_WRITE_EXTRA_BYTES + DUAL_READ_DUMMY_BYTES];
+		const u8 expected = (u8)(i + TestByte);
+
+		if(read != expected) {
+			xil_printf("failed: 0x%06x expected 0x%x but got 0x%x\r\n", ELF_IMAGE_BASEADDR+i, expected, read);
 			return XST_FAILURE;
 		}
 	}
 
-	xil_printf("done\r\n");
-
-	/*
-	 * Clear the Read Buffer.
-	 */
-	/*for(Index = 0; Index < PAGE_SIZE + READ_WRITE_EXTRA_BYTES +
-	    DUAL_READ_DUMMY_BYTES; Index++) {
-		ReadBuffer[Index] = 0x0;
-	}*/
-
-	/*
-	 * Read the data from the Page using Dual Output Fast Read command.
-	 */
-	/*ret = SpiFlashRead(&Spi, Address, PAGE_SIZE, COMMAND_DUAL_READ);
-	if(ret != XST_SUCCESS) {
-		return XST_FAILURE;
-	}*/
-
-	/*
-	 * Compare the data read against the data written.
-	 */
-	/*for(Index = 0; Index < PAGE_SIZE; Index++) {
-		if(ReadBuffer[Index + READ_WRITE_EXTRA_BYTES +
-				DUAL_READ_DUMMY_BYTES] !=
-					(u8)(Index + TestByte)) {
-			return XST_FAILURE;
-		}
-	}*/
-
+	//xil_printf("done\r\n");
 	/*
 	 * Clear the read Buffer.
 	 */
@@ -422,18 +427,20 @@ int main(void)
 			  QUAD_READ_DUMMY_BYTES; Index++) {
 		ReadBuffer[Index] = 0x0;
 	}*/
-#if 0
+#else
 	/*
 	 * Read the data from the Page using Quad Output Fast Read command.
 	 *
 	 * unable to configure COMMAND_QUAD_READ hardware, possibly due to HDMI resource
-	 * requirements conflicting with the QSPI flash's IO2 and IO3
+	 * requirements conflicting with the QSPI flash's IO2 and IO3 - DUAL seems to work though
 	 */
-	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, sizeof(hdr), COMMAND_RANDOM_READ/*COMMAND_QUAD_READ*/);
+	xil_printf("read\r\n");
+	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, sizeof(hdr), COMMAND_DUAL_READ/*COMMAND_QUAD_READ*/);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
+	xil_printf("process\r\n");
 	// Extract the elf header
 	if (ret == XST_SUCCESS) {
 		memcpy(&hdr, ReadBuffer + SPI_VALID_DATA_OFFSET, sizeof(hdr));
@@ -550,7 +557,7 @@ int main(void)
 	/**
 	 * Jump to ELF entry address
 	 */
-	xil_printf("\r\nTransferring execution to program @ 0x%x\r\n", hdr.entry);
+	//xil_printf("\r\nTransferring execution to program @ 0x%x\r\n", hdr.entry);
 
 	((void (*)())hdr.entry)();
 #endif
@@ -747,6 +754,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 ReadCmd)
 	return XST_SUCCESS;
 }
 
+#if 0
 /*****************************************************************************/
 /**
 *
@@ -856,7 +864,7 @@ int SpiFlashSectorErase(XSpi *SpiPtr, u32 Addr)
 
 	return XST_SUCCESS;
 }
-
+#endif
 /*****************************************************************************/
 /**
 *
@@ -870,21 +878,21 @@ int SpiFlashSectorErase(XSpi *SpiPtr, u32 Addr)
 *		pointed by the ReadBuffer.
 *
 ******************************************************************************/
-int SpiFlashGetret(XSpi *SpiPtr)
+int SpiFlashGetStatus(XSpi *SpiPtr)
 {
 	int ret;
 
 	/*
 	 * Prepare the Write Buffer.
 	 */
-	WriteBuffer[BYTE1] = COMMAND_retREG_READ;
+	WriteBuffer[BYTE1] = COMMAND_STATUSREG_READ;
 
 	/*
 	 * Initiate the Transfer.
 	 */
 	TransferInProgress = TRUE;
 	ret = XSpi_Transfer(SpiPtr, WriteBuffer, ReadBuffer,
-						ret_READ_BYTES);
+						STATUS_READ_BYTES);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
@@ -929,7 +937,7 @@ int SpiFlashWaitForFlashReady(void)
 		 * Get the ret Register. The ret register content is
 		 * stored at the second byte pointed by the ReadBuffer.
 		 */
-		ret = SpiFlashGetret(&Spi);
+		ret = SpiFlashGetStatus(&Spi);
 		if(ret != XST_SUCCESS) {
 			return XST_FAILURE;
 		}
