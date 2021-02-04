@@ -84,3 +84,5 @@ webtalk_pn.xml
 **/synthesis/
 *.wdb
 src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/devl/projnav/raw.txt
+/src/platform/xilinx/atlys_host/SDK.org/Workspace/.metadata/.lock
+.lock
