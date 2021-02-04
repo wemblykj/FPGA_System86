@@ -54,7 +54,7 @@
 #include <stdio.h>
 #include <string.h>
 
-
+#define USE_TEST 1
 
 /************************** Constant Definitions *****************************/
 
@@ -208,8 +208,12 @@ static int ErrorCount;
  * Buffers used during read and write transactions.
  */
 static u8 ReadBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES + 4];
+
+#ifndef USE_TEST
 static u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
-//static u8 WriteBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES];
+#else
+static u8 WriteBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES];
+#endif
 
 /*
  * Byte offset value written to Flash. This needs to be redefined for writing
@@ -235,14 +239,19 @@ int main(void)
 {
 	XSpi_Config *ConfigPtr;	/* Pointer to Configuration data */
 
+#ifndef USE_TEST
 	int ret, i, j;
 	u32 addr;
 	elf32_hdr hdr;
 	elf32_phdr phdr;
+#else
+	int ret, i;
+#endif
 
 	init_uart();
 
-	xil_printf("Spi numonyx flash quad bootloader\r\n");
+	xil_printf("Spi Numonyx flash Quad SPI bootloader\r\n");
+	xil_printf("%s - %d\r\n", __DATE__, __TIME__);
 
 	/*
 	 * Disable caches
@@ -322,7 +331,9 @@ int main(void)
 		return XST_FAILURE;
 	}
 
-#if 0
+#ifdef USE_TEST
+	xil_printf("TEST MODE\r\n");
+
 	/*
 	 * Perform the Write Enable operation.
 	 */
@@ -560,7 +571,7 @@ int main(void)
 	//xil_printf("\r\nTransferring execution to program @ 0x%x\r\n", hdr.entry);
 
 	((void (*)())hdr.entry)();
-#endif
+#endif // USE_TEST
 
 	// Never reached
 	return XST_SUCCESS;
@@ -633,6 +644,7 @@ int SpiFlashWriteEnable(XSpi *SpiPtr)
 * @note		None
 *
 ******************************************************************************/
+#ifdef USE_TEST
 int SpiFlashWrite(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 WriteCmd)
 {
 	u32 Index;
@@ -685,6 +697,7 @@ int SpiFlashWrite(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 WriteCmd)
 
 	return XST_SUCCESS;
 }
+#endif
 
 /*****************************************************************************/
 /**
@@ -754,7 +767,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 ReadCmd)
 	return XST_SUCCESS;
 }
 
-#if 0
+#ifdef USE_TEST
 /*****************************************************************************/
 /**
 *
@@ -864,7 +877,8 @@ int SpiFlashSectorErase(XSpi *SpiPtr, u32 Addr)
 
 	return XST_SUCCESS;
 }
-#endif
+#endif // USE_TEST
+
 /*****************************************************************************/
 /**
 *
