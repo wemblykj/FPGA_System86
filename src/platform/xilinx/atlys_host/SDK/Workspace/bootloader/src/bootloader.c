@@ -295,6 +295,7 @@ int main(void)
 	 * driver instance as the callback reference so the handler is able to
 	 * access the instance data.
 	 */
+	xil_printf("set status handler\r\n");
 	XSpi_SetStatusHandler(&Spi, &Spi, (XSpi_StatusHandler)SpiHandler);
 
 	/*
@@ -328,6 +329,7 @@ int main(void)
 	xil_printf("select\r\n");
 	ret = XSpi_SetSlaveSelect(&Spi, SPI_SLAVE_SELECT);
 	if(ret != XST_SUCCESS) {
+		xil_printf("failed\r\n");
 		return XST_FAILURE;
 	}
 
@@ -339,6 +341,7 @@ int main(void)
 	 */
 	ret = SpiFlashWriteEnable(&Spi);
 	if(ret != XST_SUCCESS) {
+		xil_printf("failed\r\n");
 		return XST_FAILURE;
 	}
 
@@ -349,6 +352,7 @@ int main(void)
 	 */
 	ret = SpiFlashSectorErase(&Spi, ELF_IMAGE_BASEADDR /*Address*/);
 	if(ret != XST_SUCCESS) {
+		xil_printf("failed\r\n");
 		return XST_FAILURE;
 	}
 
@@ -357,6 +361,7 @@ int main(void)
 	 */
 	ret = SpiFlashWriteEnable(&Spi);
 	if(ret != XST_SUCCESS) {
+		xil_printf("failed\r\n");
 		return XST_FAILURE;
 	}
 
@@ -367,6 +372,7 @@ int main(void)
 	 */
 	ret = SpiFlashWrite(&Spi, ELF_IMAGE_BASEADDR/*Address*/, PAGE_SIZE, COMMAND_PAGE_PROGRAM);
 	if(ret != XST_SUCCESS) {
+		xil_printf("failed\r\n");
 		return XST_FAILURE;
 	}
 
@@ -412,10 +418,11 @@ int main(void)
 	 */
 	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR /*Address*/, PAGE_SIZE, COMMAND_DUAL_READ);
 	if(ret != XST_SUCCESS) {
+		xil_printf("failed\r\n");
 		return XST_FAILURE;
 	}
 
-	//xil_printf("compare:\r\n");
+	xil_printf("compare:\r\n");
 
 	/*
 	 * Compare the data read against the data written.
@@ -430,7 +437,7 @@ int main(void)
 		}
 	}
 
-	//xil_printf("done\r\n");
+	xil_printf("done\r\n");
 	/*
 	 * Clear the read Buffer.
 	 */
@@ -596,8 +603,10 @@ int SpiFlashWriteEnable(XSpi *SpiPtr)
 	/*
 	 * Wait while the Flash is busy.
 	 */
+	xil_printf("wait for flash\r\n");
 	ret = SpiFlashWaitForFlashReady();
 	if(ret != XST_SUCCESS) {
+		xil_printf("failed\r\n");
 		return XST_FAILURE;
 	}
 
@@ -610,9 +619,11 @@ int SpiFlashWriteEnable(XSpi *SpiPtr)
 	 * Initiate the Transfer.
 	 */
 	TransferInProgress = TRUE;
+	xil_printf("xfer\r\n");
 	ret = XSpi_Transfer(SpiPtr, WriteBuffer, NULL,
 				WRITE_ENABLE_BYTES);
 	if(ret != XST_SUCCESS) {
+		xil_printf("failed\r\n");
 		return XST_FAILURE;
 	}
 
@@ -620,6 +631,7 @@ int SpiFlashWriteEnable(XSpi *SpiPtr)
 	 * Wait till the Transfer is complete and check if there are any errors
 	 * in the transaction..
 	 */
+	xil_printf("wait for interrupt\r\n");
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
@@ -993,6 +1005,7 @@ int SpiFlashWaitForFlashReady(void)
 ******************************************************************************/
 void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount)
 {
+	//xil_printf("interrupt received\r\n");
 	/*
 	 * Indicate the transfer on the SPI bus is no longer in progress
 	 * regardless of the ret event.
