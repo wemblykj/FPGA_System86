@@ -54,7 +54,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define USE_TEST 1
+//#define USE_TEST 1
 
 /************************** Constant Definitions *****************************/
 
@@ -154,10 +154,10 @@
 /*
  * Base address of the ELF image in the SPI flash
  */
-#define ELF_IMAGE_BASEADDR		0x00FF0000
-//#define ELF_IMAGE_BASEADDR		0x00000000
-
-/*S
+//#define ELF_IMAGE_BASEADDR		0x00FF0000
+#define ELF_IMAGE_BASEADDR		0x00000000 // does not seem to match with address entered in Adept
+// pretty sure the XSpi is byte based so I'm thinking the Adept address is not be
+/*
  * Enable debug for the ELF loader
  */
 #define DEBUG_ELF_LOADER
@@ -209,11 +209,11 @@ static int ErrorCount;
  */
 static u8 ReadBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES + 4];
 
-#ifndef USE_TEST
-static u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
-#else
+//#ifndef USE_TEST
+//static u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
+//#else
 static u8 WriteBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES];
-#endif
+//#endif
 
 /*
  * Byte offset value written to Flash. This needs to be redefined for writing
@@ -242,15 +242,15 @@ int main(void)
 #ifndef USE_TEST
 	int ret, i, j;
 	u32 addr;
-	elf32_hdr hdr;
-	elf32_phdr phdr;
+	elf32_hdr hdr = {};
+	elf32_phdr phdr = {};
 #else
 	int ret, i;
 #endif
 
 	init_uart();
 
-	xil_printf("Spi Numonyx flash Quad SPI bootloader\r\n");
+	//xil_printf("Spi Numonyx flash Quad SPI bootloader\r\n");
 	xil_printf("%s - %d\r\n", __DATE__, __TIME__);
 
 	/*
@@ -284,8 +284,10 @@ int main(void)
 	 * Connect the SPI driver to the interrupt subsystem such that
 	 * interrupts can occur. This function is application specific.
 	 */
+	xil_printf("interrupts\r\n");
 	ret = SetupInterruptSystem(&Spi);
 	if(ret != XST_SUCCESS) {
+		xil_printf("failed\r\n");
 		return XST_FAILURE;
 	}
 
@@ -307,6 +309,7 @@ int main(void)
 	ret = XSpi_SetOptions(&Spi, XSP_MASTER_OPTION |
 				 XSP_MANUAL_SSELECT_OPTION);
 	if(ret != XST_SUCCESS) {
+		xil_printf("failed\r\n");
 		return XST_FAILURE;
 	}
 
@@ -452,11 +455,21 @@ int main(void)
 	 * unable to configure COMMAND_QUAD_READ hardware, possibly due to HDMI resource
 	 * requirements conflicting with the QSPI flash's IO2 and IO3 - DUAL seems to work though
 	 */
+
+	memset(&ReadBuffer, 2, sizeof(ReadBuffer));
+
 	xil_printf("read\r\n");
 	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, sizeof(hdr), COMMAND_DUAL_READ/*COMMAND_QUAD_READ*/);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
+
+	xil_printf("read buffer:\r\n");
+	for (i = 0; i < sizeof(ReadBuffer); i++) {
+		xil_printf("0x%x ", ReadBuffer[i]);
+	}
+
+	memset(&hdr, 0, sizeof(hdr));
 
 	xil_printf("process\r\n");
 	// Extract the elf header
@@ -466,15 +479,14 @@ int main(void)
 #ifdef DEBUG_ELF_LOADER
 		xil_printf("hdr.ident:\r\n");
 		for (i = 0; i < HDR_IDENT_NBYTES; i++) {
-			putnum(hdr.ident[i]);
-			xil_printf("\r\n");
+			xil_printf("0x%x\r\n", hdr.ident[i]);
 		}
 #endif
 	} else {
 		xil_printf("Failed to read ELF header");
 		return -1;
 	}
-
+#if 0
 	/*
 	 * Validate ELF header
 	 */
@@ -492,7 +504,7 @@ int main(void)
 	for (i = 0; i < hdr.phnum; i++) {
 		ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + hdr.phoff + i * sizeof(phdr), sizeof(phdr), COMMAND_QUAD_READ);
 		if(ret != XST_SUCCESS) {
-			xil_printf("Failed to read ELF program header");
+			xil_printf("Failed");// to read ELF program header");
 			return XST_FAILURE;
 		}
 
@@ -508,16 +520,16 @@ int main(void)
 					ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + phdr.offset + addr,
 							phdr.filesz - addr, COMMAND_QUAD_READ);
 					if(ret != XST_SUCCESS) {
-						xil_printf("Failed to read ELF program section");
+						xil_printf("Failed");// to read ELF program section");
 						return XST_FAILURE;
 					}
 
 #ifdef DEBUG_ELF_LOADER
-					xil_printf("End of section: %d\r\n", i);
+					//xil_printf("End of section: %d\r\n", i);
 
-					xil_printf("filesz: %d\r\n", phdr.filesz);
+					//xil_printf("filesz: %d\r\n", phdr.filesz);
 
-					xil_printf("addr: 0x%x\r\n", addr);
+					//xil_printf("addr: 0x%x\r\n", addr);
 
 					xil_printf("segment end:\r\n");
 					for (j = 15; j >= 0; j--) {
@@ -530,7 +542,7 @@ int main(void)
 					ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + phdr.offset + addr,
 							EFFECTIVE_READ_BUFFER_SIZE, COMMAND_QUAD_READ);
 					if(ret != XST_SUCCESS) {
-						xil_printf("Failed to read ELF program segment");
+						xil_printf("Failed");// to read ELF program segment");
 						return XST_FAILURE;
 					}
 
@@ -556,7 +568,7 @@ int main(void)
 						xil_printf(".");
 					}
 				} else {
-					xil_printf("Failed to read ELF program segment");
+					xil_printf("Failed");// to read ELF program segment");
 					return -1;
 				}
 			}
@@ -578,6 +590,7 @@ int main(void)
 	//xil_printf("\r\nTransferring execution to program @ 0x%x\r\n", hdr.entry);
 
 	((void (*)())hdr.entry)();
+#endif // investigating strange behaviour
 #endif // USE_TEST
 
 	// Never reached
@@ -1005,7 +1018,7 @@ int SpiFlashWaitForFlashReady(void)
 ******************************************************************************/
 void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount)
 {
-	//xil_printf("interrupt received\r\n");
+	xil_printf("interrupt received\r\n");
 	/*
 	 * Indicate the transfer on the SPI bus is no longer in progress
 	 * regardless of the ret event.
