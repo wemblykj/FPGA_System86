@@ -72,29 +72,40 @@ library proc_common_v3_00_a;
 -------------------------------------------------------------------------------
 library axi_lite_ipif_v1_01_a; 
 
-------------------------------------------------------------------------------
--- Entity section
-------------------------------------------------------------------------------
--- Definition of Generics:
+-------------------------------------------------------------------------------
+--                     Defination of Generics :                              --
+-------------------------------------------------------------------------------
+-- AXI generics
+--  C_BASEADDR      -- Base address of the core
+--  C_HIGHADDR      -- Permits alias of address space
+--                           by making greater than xFFF
+--  C_M_AXI_ADDR_WIDTH    -- Width of Master AXI Address interface (in bits)
+--  C_M_AXI_DATA_WIDTH    -- Width of the Master AXI Data interface (in bits)
+--  C_S_AXI_ADDR_WIDTH    -- Width of Slave AXI Address interface (in bits)
+--  C_S_AXI_DATA_WIDTH    -- Width of the Slave AXI Data interface (in bits)
+
+-- C_FAMILY               -- XILINX FPGA family
+-- C_INSTANCE             -- Instance name ot the core in the EDK system
+
 --   C_SLAVE_BASE_ADDR            -- Base address to which all external RAM requests will 
 --                                   be mapped on the AXI bus
 --
---   C_FAMILY                     -- FPGA Family
---   C_M_AXI_LITE_ADDR_WIDTH      -- Master-Intf address bus width
---   C_M_AXI_LITE_DATA_WIDTH      -- Master-Intf data bus width
 --
 -- Definition of Ports:
---   slave_addr_offset            -- An offset from C_BASEADDR for with incoming 
---                                   requests will be mapped
 --
 -------------------------------------------------------------------------------
 --                  Defination of Ports                                      --
 -------------------------------------------------------------------------------
 -- AXI Global Signals
---_AXI_ACLK            -- AXI Clock
--- AXI_ARESETN          -- AXI Reset
+--   slave_addr_offset            -- An offset from C_BASEADDR for with incoming 
+--                                   requests will be mapped
+-- AXI Global Signals
+-- S_AXI_ACLK            -- AXI Clock
+-- S_AXI_ARESETN          -- AXI Reset
 
 -- AXI Slave Lite signals
+-- S_AXI_ACLK            -- AXI Clock
+-- S_AXI_ARESETN          -- AXI Reset
 -- S_AXI_AWADDR          -- AXI Write address
 -- S_AXI_AWVALID         -- Write address valid
 -- S_AXI_AWREADY         -- Write address ready
@@ -118,18 +129,18 @@ library axi_lite_ipif_v1_01_a;
 entity axi_ram is
   generic
   (
-      --Family Generics
-      C_PCIE_BLK_LOCN               : string  := "0";
-      C_XLNX_REF_BOARD              : string  := "NONE";
-      C_FAMILY                      : string  := "virtex6";
-      C_INSTANCE                    : string  := "AXI_PCIe";
-    
       -- RAM generics
       C_RAM_ADDR_WIDTH              : std_logic_vector     := 16;
       C_RAM_DATA_WIDTH              : std_logic_vector     := 8;
 
+      --Family Generics
+      C_XLNX_REF_BOARD              : string  := "NONE";
+      C_FAMILY                      : string  := "virtex6";
+      C_INSTANCE                    : string  := "AXI_PCIe";
+    
       -- Mapping generics
       C_MAPPED_BASE_ADDR            : std_logic_vector     := X"C0000000";
+      C_USE_DYNAMIC_MAPPING         : std_logic := 0;
 
       -- Master AXI Generics
       -- C_M_AXI_THREAD_ID_WIDTH       : integer := 4;
@@ -148,12 +159,13 @@ entity axi_ram is
       output_enable           : in std_logic;
       address                 : in std_logic_vector(C_RAM_ADDR_WIDTH-1 downto 0);
       data                    : inout std_logic_vector(C_RAM_DATA_WIDTH-1 downto 0);
+      mapping_addr            : in std_logic_vector(C_M_AXI_ADDRE_WIDTH-1 downto 0);
   
       -- AXI Global
-      AXI_ACLK                : in  std_logic; -- AXI clock
-      AXI_ARESETN             : in  std_logic; -- AXI active low synchronous reset
 
       -- AXI Master Write Address Channel
+      M_AXI_ACLK              : in  std_logic; -- AXI clock
+      M_AXI_ARESETN           : in  std_logic; -- AXI active low synchronous reset
       M_AXI_AWADDR            : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
       M_AXI_AWLEN             : out std_logic_vector(7 downto 0);
       M_AXI_AWSIZE            : out std_logic_vector(2 downto 0);
@@ -197,24 +209,25 @@ entity axi_ram is
       M_AXI_RREADY            : out std_logic;
 
       -- AXI Slave Lite Interface - CFG Block
-      S_AXI_AWADDR        : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Write address
-      S_AXI_AWVALID       : in  std_logic;                     -- AXI Lite Write Address Valid
-      S_AXI_AWREADY       : out std_logic;                     -- AXI Lite Write Address Core ready
-      S_AXI_WDATA         : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Write Data
-      S_AXI_WSTRB         : in  std_logic_vector((C_S_AXI_ADDR_WIDTH/8)-1 downto 0);  -- AXI Lite Write Data strobe
-      S_AXI_WVALID        : in  std_logic;                     -- AXI Lite Write data Valid
-      S_AXI_WREADY        : out std_logic;                     -- AXI Lite Write Data Core ready
-      S_AXI_BRESP         : out std_logic_vector(1 downto 0);  -- AXI Lite Write Data strobe
-      S_AXI_BVALID        : out std_logic;                     -- AXI Lite Write data Valid
-      S_AXI_BREADY        : in  std_logic;                     -- AXI Lite Write Data Core ready
-
-      S_AXI_ARADDR        : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Read address
-      S_AXI_ARVALID       : in  std_logic;                     -- AXI Lite Read Address Valid
+      S_AXI_ACLK          : in  std_logic; -- AXI clock
+      S_AXI_ARESETN       : in  std_logic; -- AXI active low synchronous reset
       S_AXI_ARREADY       : out std_logic;                     -- AXI Lite Read Address Core ready
+      S_AXI_ARVALID       : in  std_logic;                     -- AXI Lite Read Address Valid
+      S_AXI_ARADDR        : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Read address
       S_AXI_RDATA         : out std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Read Data
       S_AXI_RRESP         : out std_logic_vector(1 downto 0);  -- AXI Lite Read Data strobe
       S_AXI_RVALID        : out std_logic;                     -- AXI Lite Read data Valid
       S_AXI_RREADY        : in  std_logic                     -- AXI Lite Read Data Core ready
+      S_AXI_AWREADY       : out std_logic;                     -- AXI Lite Write Address Core ready
+      S_AXI_AWVALID       : in  std_logic;                     -- AXI Lite Write Address Valid
+      S_AXI_AWADDR        : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Write address
+      S_AXI_WREADY        : out std_logic;                     -- AXI Lite Write Data Core ready
+      S_AXI_WVALID        : in  std_logic;                     -- AXI Lite Write data Valid
+      S_AXI_WDATA         : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Write Data
+      S_AXI_WSTRB         : in  std_logic_vector((C_S_AXI_ADDR_WIDTH/8)-1 downto 0);  -- AXI Lite Write Data strobe
+      S_AXI_BREADY        : in  std_logic;                     -- AXI Lite Write Data Core ready
+      S_AXI_BVALID        : out std_logic;                     -- AXI Lite Write data Valid
+      S_AXI_BRESP         : out std_logic_vector(1 downto 0);  -- AXI Lite Write Data strobe
   );
 
 -------------------------------------------------------------------------------
