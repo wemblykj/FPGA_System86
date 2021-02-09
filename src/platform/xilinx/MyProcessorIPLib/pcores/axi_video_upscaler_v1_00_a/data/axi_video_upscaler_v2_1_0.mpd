@@ -12,7 +12,7 @@ BEGIN axi_video_upscaler
 OPTION IPTYPE = PERIPHERAL
 OPTION IMP_NETLIST = TRUE
 OPTION HDL = MIXED
-OPTION IP_GROUP = WemblyKJ:MICROBLAZE:USER
+OPTION IP_GROUP = WemblyKJ:Video
 OPTION DESC = AXI Video Upscaler
 OPTION LONG_DESC = Provides basic upscaling of standard video signals.
 OPTION ARCH_SUPPORT_MAP = (others=DEVELOPMENT)

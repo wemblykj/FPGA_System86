@@ -148,8 +148,8 @@ entity axi_ram is
       C_M_AXI_DATA_WIDTH            : integer := 32;
         
       -- Slave AXI-Lite Generics
-      C_S_AXI_ADDR_WIDTH            : integer := 32;
-      C_S_AXI_DATA_WIDTH            : integer := 32;i
+      C_S_AXI_ADDR_WIDTH            : integer := 1;
+      C_S_AXI_DATA_WIDTH            : integer := 32;
   );
   port
   (
@@ -235,16 +235,20 @@ entity axi_ram is
 -------------------------------------------------------------------------------
 
   attribute MAX_FANOUT                    : string;
-  attribute MAX_FANOUT   of axi_aclk    : signal is "10000";
-  attribute MAX_FANOUT   of axi_aresetn : signal is "10000";
+  attribute MAX_FANOUT   of M_AXI_ACLK    : signal is "10000";
+  attribute MAX_FANOUT   of M_AXI_ARESETN : signal is "10000";
+  attribute MAX_FANOUT   of S_AXI_ACLK    : signal is "10000";
+  attribute MAX_FANOUT   of S_AXI_ARESETN : signal is "10000";
 -------------------------------------------------------------------------------
 -- Attributes for MPD file
 -------------------------------------------------------------------------------
   attribute IP_GROUP             	: string ;
   attribute IP_GROUP of axi_ram 	: entity is "LOGICORE";
   attribute SIGIS                	: string ;
-  attribute SIGIS of axi_aclk           : signal is "Clk";
-  attribute SIGIS of axi_aresetn        : signal is "Rst";
+  attribute SIGIS of M_AXI_ACLK     : signal is "Clk";
+  attribute SIGIS of M_AXI_ARESETN  : signal is "Rst";
+  attribute SIGIS of S_AXI_ACLK     : signal is "Clk";
+  attribute SIGIS of S_AXI_ARESETN  : signal is "Rst";
 
 end entity axi_ram;
 

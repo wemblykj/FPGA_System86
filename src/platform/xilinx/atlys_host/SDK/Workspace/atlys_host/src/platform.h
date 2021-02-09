@@ -24,4 +24,9 @@
 void init_platform();
 void cleanup_platform();
 
+void enable_caches();
+void disable_caches();
+
+void init_uart();
+
 #endif
