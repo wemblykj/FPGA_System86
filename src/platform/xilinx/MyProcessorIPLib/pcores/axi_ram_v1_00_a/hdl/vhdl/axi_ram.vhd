@@ -141,20 +141,20 @@ entity axi_ram is
       C_FAMILY                      : string  := "virtex6";
       C_INSTANCE                    : string  := "AXI_PCIe";
     
-      -- Mapping generics
-      C_MAPPED_BASE_ADDR            : std_logic_vector     := X"C0000000";
-      C_USE_DYNAMIC_MAPPING         : std_logic := 0;
-
       -- Master AXI Generics
       -- C_M_AXI_THREAD_ID_WIDTH       : integer := 4;
       C_M_AXI_ADDR_WIDTH            : integer := 32;
       C_M_AXI_DATA_WIDTH            : integer := 32;
-        
+
+		-- Mapping generics
+      C_MAPPED_BASE_ADDR            : std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0)     := X"C0000000";
+      C_USE_DYNAMIC_MAPPING         : std_logic := '0';
+		
       -- Slave AXI-Lite Generics
-		C_BASEADDR                    : std_logic_vector := X"FFFFFFFF";
-		C_HIGHADDR                    : std_logic_vector := X"00000000";
-      C_S_AXI_ADDR_WIDTH            : integer := 1;
+		C_S_AXI_ADDR_WIDTH            : integer := 1;
       C_S_AXI_DATA_WIDTH            : integer := 32
+		C_BASEADDR                    : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0) := X"FFFFFFFF";
+		C_HIGHADDR                    : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0) := X"00000000"
   );
   port
   (
