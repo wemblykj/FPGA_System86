@@ -364,6 +364,4 @@ begin -- architecture IMP
         Bus2IP_WrCE    => bus2ip_wrce
        );
 
-    );
-
-end IMP;
+end architecture imp;
