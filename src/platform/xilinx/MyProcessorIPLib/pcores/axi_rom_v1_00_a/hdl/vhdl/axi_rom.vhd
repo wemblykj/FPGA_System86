@@ -62,131 +62,172 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
---library proc_common_v3_00_a;
+library proc_common_v3_00_a;
 --use proc_common_v3_00_a.proc_common_pkg.all;
 --use proc_common_v3_00_a.ipif_pkg.all;
 -- use proc_common_v3_00_a.soft_reset;
 
--- library axi_lite_ipif_v1_01_a;
---use axi_lite_ipif_v1_01_a.axi_lite_ipif;
+-------------------------------------------------------------------------------
+-- axi_gpio_v1_01_b library is used for axi4 component declarations
+-------------------------------------------------------------------------------
+library axi_lite_ipif_v1_01_a; 
 
-library axi_master_lite_v1_00_a;
-use axi_master_lite_v1_00_a.axi_master_lite;
+-------------------------------------------------------------------------------
+--                     Defination of Generics :                              --
+-------------------------------------------------------------------------------
+-- AXI generics
+--  C_BASEADDR      -- Base address of the core
+--  C_HIGHADDR      -- Permits alias of address space
+--                           by making greater than xFFF
+--  C_M_AXI_ADDR_WIDTH    -- Width of Master AXI Address interface (in bits)
+--  C_M_AXI_DATA_WIDTH    -- Width of the Master AXI Data interface (in bits)
+--  C_S_AXI_ADDR_WIDTH    -- Width of Slave AXI Address interface (in bits)
+--  C_S_AXI_DATA_WIDTH    -- Width of the Slave AXI Data interface (in bits)
 
--- library axi_rom_v1_00_a;
--- use axi_rom_v1_00_a.user_logic;
+-- C_FAMILY               -- XILINX FPGA family
+-- C_INSTANCE             -- Instance name ot the core in the EDK system
 
-------------------------------------------------------------------------------
--- Entity section
-------------------------------------------------------------------------------
--- Definition of Generics:
---   C_SLAVE_BASE_ADDR            -- Base address to which all external RAM requests will 
+--   C_SLAVE_BASE_ADDR            -- Base address to which all external ROM requests will 
 --                                   be mapped on the AXI bus
 --
---   C_FAMILY                     -- FPGA Family
---   C_M_AXI_LITE_ADDR_WIDTH      -- Master-Intf address bus width
---   C_M_AXI_LITE_DATA_WIDTH      -- Master-Intf data bus width
 --
 -- Definition of Ports:
+--
+-------------------------------------------------------------------------------
+--                  Defination of Ports                                      --
+-------------------------------------------------------------------------------
+-- AXI Global Signals
 --   slave_addr_offset            -- An offset from C_BASEADDR for with incoming 
 --                                   requests will be mapped
---
---   m_axi_lite_aclk              -- AXI4LITE master: Clock
---   m_axi_lite_aresetn           -- AXI4LITE master: Reset
---   md_error                     -- AXI4LITE master: Error
---   m_axi_lite_arready           -- AXI4LITE master: Read address ready
---   m_axi_lite_arvalid           -- AXI4LITE master: read address valid
---   m_axi_lite_araddr            -- AXI4LITE master: read address protection
---   m_axi_lite_arprot            -- AXI4LITE master: Read address protection
---   m_axi_lite_rready            -- AXI4LITE master: Read data ready
---   m_axi_lite_rvalid            -- AXI4LITE master: Read data valid
---   m_axi_lite_rdata             -- AXI4LITE master: Read data
---   m_axi_lite_rresp             -- AXI4LITE master: read data response
---   m_axi_lite_awready           -- AXI4LITE master: write address ready
---   m_axi_lite_awvalid           -- AXI4LITE master: write address valid
---   m_axi_lite_awaddr            -- AXI4LITE master: write address valid
---   m_axi_lite_awprot            -- AXI4LITE master: write address protection
---   m_axi_lite_wready            -- AXI4LITE master: write data ready
---   m_axi_lite_wvalid            -- AXI4LITE master: write data valid
---   m_axi_lite_wdata             -- AXI4LITE master: write data
---   m_axi_lite_wstrb             -- AXI4LITE master: write data strobe
---   m_axi_lite_bready            -- AXI4LITE master: read response ready
---   m_axi_lite_bvalid            -- AXI4LITE master: read response valid
---   m_axi_lite_bresp             -- AXI4LITE master: read response
+-- AXI Global Signals
+-- S_AXI_ACLK            -- AXI Clock
+-- S_AXI_ARESETN          -- AXI Reset
+
+-- AXI Slave Lite signals
+-- S_AXI_ACLK            -- AXI Clock
+-- S_AXI_ARESETN          -- AXI Reset
+-- S_AXI_AWADDR          -- AXI Write address
+-- S_AXI_AWVALID         -- Write address valid
+-- S_AXI_AWREADY         -- Write address ready
+-- S_AXI_WDATA           -- Write data
+-- S_AXI_WSTRB           -- Write strobes
+-- S_AXI_WVALID          -- Write valid
+-- S_AXI_WREADY          -- Write ready
+-- S_AXI_BRESP           -- Write response
+-- S_AXI_BVALID          -- Write response valid
+-- S_AXI_BREADY          -- Response ready
+-- S_AXI_ARADDR          -- Read address
+-- S_AXI_ARVALID         -- Read address valid
+-- S_AXI_ARREADY         -- Read address ready
+-- S_AXI_RDATA           -- Read data
+-- S_AXI_RRESP           -- Read response
+-- S_AXI_RVALID          -- Read valid
+-- S_AXI_RREADY          -- Read ready
+
 ------------------------------------------------------------------------------
 
 entity axi_rom is
   generic
   (
-    -- ADD USER GENERICS BELOW THIS LINE ---------------
+      -- ROM generics
+      C_ROM_ADDR_WIDTH              : std_logic_vector     := 16;
+      C_ROM_DATA_WIDTH              : std_logic_vector     := 8;
 
-    -- RAM attributes
-    C_ROM_ADDR_WIDTH               : std_logic_vector     := 16;
-    C_ROM_DATA_WIDTH               : std_logic_vector     := 8;
+      --Family Generics
+      C_XLNX_REF_BOARD              : string  := "NONE";
+      C_FAMILY                      : string  := "virtex6";
+      C_INSTANCE                    : string  := "AXI_PCIe";
+    
+      -- Mapping generics
+      C_MAPPED_BASE_ADDR            : std_logic_vector     := X"C0000000";
+      C_USE_DYNAMIC_MAPPING         : std_logic := 0;
 
-    -- Slave address
-    C_SLAVE_BASE_ADDR              : std_logic_vector     := X"C0000000";
-    C_USE_DYNAMIC_ADDR_OFFSET      : std_logic            := 0;
-    -- ADD USER GENERICS ABOVE THIS LINE ---------------
-
-    -- DO NOT EDIT BELOW THIS LINE ---------------------
-    -- Bus protocol parameters, do not add to or delete
-    C_FAMILY                       : string               := "virtex6";
-    C_M_AXI_LITE_ADDR_WIDTH        : integer              := 32;
-    C_M_AXI_LITE_DATA_WIDTH        : integer              := 32
-    -- DO NOT EDIT ABOVE THIS LINE ---------------------
-	 
+      -- Master AXI Generics
+      -- C_M_AXI_THREAD_ID_WIDTH       : integer := 4;
+      C_M_AXI_ADDR_WIDTH            : integer := 32;
+      C_M_AXI_DATA_WIDTH            : integer := 32;
+        
+      -- Slave AXI-Lite Generics
+      C_S_AXI_ADDR_WIDTH            : integer := 1;
+      C_S_AXI_DATA_WIDTH            : integer := 32;
   );
   port
   (
-    -- ADD USER PORTS BELOW THIS LINE ------------------
+      -- ROM ports
+      chip_enable             : in std_logic;
+      output_enable           : in std_logic;
+      address                 : in std_logic_vector(C_ROM_ADDR_WIDTH-1 downto 0);
+      data                    : inout std_logic_vector(C_ROM_DATA_WIDTH-1 downto 0);
+      mapping_addr            : in std_logic_vector(C_M_AXI_ADDRE_WIDTH-1 downto 0);
+  
+      -- AXI Global
 
-    -- RAM ports
-    chip_enable                    : in std_logic;
-    output_enable                  : in std_logic;
-    address                        : in std_logic_vector(C_ROM_ADDR_WIDTH-1 downto 0);
-    data                           : inout std_logic_vector(C_ROM_DATA_WIDTH-1 downto 0);
+      -- AXI Master Write Address Channel
+      M_AXI_ACLK              : in  std_logic; -- AXI clock
+      M_AXI_ARESETN           : in  std_logic; -- AXI active low synchronous reset
+     
+      -- AXI Master Read Address Channel
+      --M_AXI_ARID              : out std_logic_vector(C_M_AXI_THREAD_ID_WIDTH-1 downto 0);
+      M_AXI_ARADDR            : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
+      M_AXI_ARLEN             : out std_logic_vector(7 downto 0);
+      M_AXI_ARSIZE            : out std_logic_vector(2 downto 0);
+      M_AXI_ARBURST           : out std_logic_vector(1 downto 0);
+      M_AXI_ARPROT            : out std_logic_vector(2 downto 0);
+      M_AXI_ARVALID           : out std_logic;
+      M_AXI_ARREADY           : in  std_logic;
+      M_AXI_ARLOCK            : out std_logic;
+      M_AXI_ARCACHE           : out std_logic_vector(3 downto 0);
 
-    -- Slave address
-    slave_addr_offset              : in  std_logic_vector(C_M_AXI_LITE_ADDR_WIDTH-1 downto 0);
+      -- AXI Master Read Data Channel
+      M_AXI_RDATA             : in  std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
+      M_AXI_RRESP             : in  std_logic_vector(1 downto 0);
+      M_AXI_RLAST             : in  std_logic;
+      M_AXI_RVALID            : in  std_logic;
+      M_AXI_RREADY            : out std_logic;
 
-    -- ADD USER PORTS ABOVE THIS LINE ------------------
-
-    -- DO NOT EDIT BELOW THIS LINE ---------------------
-    -- Bus protocol ports, do not add to or delete
-    m_axi_lite_aclk                : in  std_logic;
-    m_axi_lite_aresetn             : in  std_logic;
-    md_error                       : out std_logic;
-    m_axi_lite_arready             : in  std_logic;
-    m_axi_lite_arvalid             : out std_logic;
-    m_axi_lite_araddr              : out std_logic_vector(C_M_AXI_LITE_ADDR_WIDTH-1 downto 0);
-    m_axi_lite_arprot              : out std_logic_vector(2 downto 0);
-    m_axi_lite_rready              : out std_logic;
-    m_axi_lite_rvalid              : in  std_logic;
-    m_axi_lite_rdata               : in  std_logic_vector(C_M_AXI_LITE_DATA_WIDTH-1 downto 0);
-    m_axi_lite_rresp               : in  std_logic_vector(1 downto 0);
-    m_axi_lite_awready             : in  std_logic;
-    m_axi_lite_awvalid             : out std_logic;
-    m_axi_lite_awaddr              : out std_logic_vector(C_M_AXI_LITE_ADDR_WIDTH-1 downto 0);
-    m_axi_lite_awprot              : out std_logic_vector(2 downto 0);
-    m_axi_lite_wready              : in  std_logic;
-    m_axi_lite_wvalid              : out std_logic;
-    m_axi_lite_wdata               : out std_logic_vector(C_M_AXI_LITE_DATA_WIDTH-1 downto 0);
-    m_axi_lite_wstrb               : out std_logic_vector((C_M_AXI_LITE_DATA_WIDTH/8)-1 downto 0);
-    m_axi_lite_bready              : out std_logic;
-    m_axi_lite_bvalid              : in  std_logic;
-    m_axi_lite_bresp               : in  std_logic_vector(1 downto 0)
-    -- DO NOT EDIT ABOVE THIS LINE ---------------------
+      -- AXI Slave Lite Interface - CFG Block
+      S_AXI_ACLK          : in  std_logic; -- AXI clock
+      S_AXI_ARESETN       : in  std_logic; -- AXI active low synchronous reset
+      S_AXI_ARREADY       : out std_logic;                     -- AXI Lite Read Address Core ready
+      S_AXI_ARVALID       : in  std_logic;                     -- AXI Lite Read Address Valid
+      S_AXI_ARADDR        : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Read address
+      S_AXI_RDATA         : out std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Read Data
+      S_AXI_RRESP         : out std_logic_vector(1 downto 0);  -- AXI Lite Read Data strobe
+      S_AXI_RVALID        : out std_logic;                     -- AXI Lite Read data Valid
+      S_AXI_RREADY        : in  std_logic                     -- AXI Lite Read Data Core ready
+      S_AXI_AWREADY       : out std_logic;                     -- AXI Lite Write Address Core ready
+      S_AXI_AWVALID       : in  std_logic;                     -- AXI Lite Write Address Valid
+      S_AXI_AWADDR        : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Write address
+      S_AXI_WREADY        : out std_logic;                     -- AXI Lite Write Data Core ready
+      S_AXI_WVALID        : in  std_logic;                     -- AXI Lite Write data Valid
+      S_AXI_WDATA         : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Write Data
+      S_AXI_WSTRB         : in  std_logic_vector((C_S_AXI_ADDR_WIDTH/8)-1 downto 0);  -- AXI Lite Write Data strobe
+      S_AXI_BREADY        : in  std_logic;                     -- AXI Lite Write Data Core ready
+      S_AXI_BVALID        : out std_logic;                     -- AXI Lite Write data Valid
+      S_AXI_BRESP         : out std_logic_vector(1 downto 0);  -- AXI Lite Write Data strobe
   );
 
-  attribute MAX_FANOUT : string;
-  attribute SIGIS : string;
+-------------------------------------------------------------------------------
+-- fan-out attributes for XST
+-------------------------------------------------------------------------------
 
-  attribute MAX_FANOUT of m_axi_lite_aclk       : signal is "10000";
-  attribute MAX_FANOUT of m_axi_lite_aresetn       : signal is "10000";
-  attribute SIGIS of m_axi_lite_aclk       : signal is "Clk";
-  attribute SIGIS of m_axi_lite_aresetn       : signal is "Rst";
-end entity axi_lite_ram;
+  attribute MAX_FANOUT                    : string;
+  attribute MAX_FANOUT   of M_AXI_ACLK    : signal is "10000";
+  attribute MAX_FANOUT   of M_AXI_ARESETN : signal is "10000";
+  attribute MAX_FANOUT   of S_AXI_ACLK    : signal is "10000";
+  attribute MAX_FANOUT   of S_AXI_ARESETN : signal is "10000";
+-------------------------------------------------------------------------------
+-- Attributes for MPD file
+-------------------------------------------------------------------------------
+  attribute IP_GROUP             	: string ;
+  attribute IP_GROUP of axi_rom 	: entity is "LOGICORE";
+  attribute SIGIS                	: string ;
+  attribute SIGIS of M_AXI_ACLK     : signal is "Clk";
+  attribute SIGIS of M_AXI_ARESETN  : signal is "Rst";
+  attribute SIGIS of S_AXI_ACLK     : signal is "Clk";
+  attribute SIGIS of S_AXI_ARESETN  : signal is "Rst";
+
+end entity axi_rom;
 
 ------------------------------------------------------------------------------
 -- Architecture section
@@ -194,78 +235,89 @@ end entity axi_lite_ram;
 
 architecture IMP of axi_rom is
  
-  ------------------------------------------
-  -- IP Interconnect (IPIC) signal declarations
-  ------------------------------------------
+-------------------------------------------------------------------------------
+-- Signal and Type Declarations
+-------------------------------------------------------------------------------
 
-  signal ipif_ip2bus_mstrd_req          : std_logic;
-  signal ipif_ip2bus_mstwr_req          : std_logic;
-  signal ipif_ip2bus_mst_addr           : std_logic_vector(0 to C_M_AXI_LITE_ADDR_WIDTH-1);
-  signal ipif_ip2bus_mst_be             : std_logic_vector(0 to (C_M_AXI_LITE_DATA_WIDTH/8)-1);
-  signal ipif_ip2bus_mst_lock           : std_logic;
-  signal ipif_ip2bus_mst_reset          : std_logic;
-  signal ipif_bus2ip_mst_cmdack         : std_logic;
-  signal ipif_bus2ip_mst_cmplt          : std_logic;
-  signal ipif_bus2ip_mst_error          : std_logic;
-  signal ipif_bus2ip_mst_rearbitrate    : std_logic;
-  signal ipif_bus2ip_mst_cmd_timeout    : std_logic;
-  signal ipif_bus2ip_mstrd_d            : std_logic_vector(0 to C_M_AXI_LITE_DATA_WIDTH-1);
-  signal ipif_bus2ip_mstrd_src_rdy_n    : std_logic;
-  signal ipif_ip2bus_mstwr_d            : std_logic_vector(0 to C_M_AXI_LITE_DATA_WIDTH-1);
-  signal ipif_bus2ip_mstwr_dst_rdy_n    : std_logic;
+signal mapped_base_addr    : std_logic_vector(0 to C_S_AXI_ADDR_WIDTH-1);
 
-begin
+-- IPIC Used Signals
+
+signal bus2ip_addr    : std_logic_vector(0 to C_S_AXI_ADDR_WIDTH-1);
+signal bus2ip_data    : std_logic_vector(0 to C_S_AXI_DATA_WIDTH-1);
+signal bus2ip_rnw     : std_logic;
+signal bus2ip_cs      : std_logic_vector(0 to 0 + bo2na
+						      (C_INTERRUPT_PRESENT=1));
+signal bus2ip_rdce    : std_logic_vector(0 to calc_num_ce(ARD_NUM_CE_ARRAY)-1);
+signal bus2ip_wrce    : std_logic_vector(0 to calc_num_ce(ARD_NUM_CE_ARRAY)-1);
+
+signal bus2ip_be      : std_logic_vector(0 to (C_S_AXI_DATA_WIDTH / 8) - 1);
+signal bus2ip_clk     : std_logic;
+signal bus2ip_resetn  : std_logic;
+
+signal ip2bus_data_i      : std_logic_vector(0 to C_S_AXI_DATA_WIDTH-1);
+signal ip2bus_wrack_i     : std_logic;
+signal ip2bus_rdack_i     : std_logic;
+signal ip2bus_error_i     : std_logic;
+
+-------------------------------------------------------------------------------
+-- Architecture
+-------------------------------------------------------------------------------
+
+begin -- architecture IMP
 
 
-  ------------------------------------------
-  -- instantiate axi_master_lite
-  ------------------------------------------
-  AXI_MASTER_LITE_I : entity axi_master_lite_v1_00_a.axi_master_lite
-    generic map
-    (
-      C_M_AXI_LITE_ADDR_WIDTH        => C_M_AXI_LITE_ADDR_WIDTH,
-      C_M_AXI_LITE_DATA_WIDTH        => C_M_AXI_LITE_DATA_WIDTH,
-      C_FAMILY                       => C_FAMILY
-    )
-    port map
-    (
-      m_axi_lite_aclk                => m_axi_lite_aclk,
-      m_axi_lite_aresetn             => m_axi_lite_aresetn,
-      md_error                       => md_error,
-      m_axi_lite_arready             => m_axi_lite_arready,
-      m_axi_lite_arvalid             => m_axi_lite_arvalid,
-      m_axi_lite_araddr              => m_axi_lite_araddr,
-      m_axi_lite_arprot              => m_axi_lite_arprot,
-      m_axi_lite_rready              => m_axi_lite_rready,
-      m_axi_lite_rvalid              => m_axi_lite_rvalid,
-      m_axi_lite_rdata               => m_axi_lite_rdata,
-      m_axi_lite_rresp               => m_axi_lite_rresp,
-      m_axi_lite_awready             => m_axi_lite_awready,
-      m_axi_lite_awvalid             => m_axi_lite_awvalid,
-      m_axi_lite_awaddr              => m_axi_lite_awaddr,
-      m_axi_lite_awprot              => m_axi_lite_awprot,
-      m_axi_lite_wready              => m_axi_lite_wready,
-      m_axi_lite_wvalid              => m_axi_lite_wvalid,
-      m_axi_lite_wdata               => m_axi_lite_wdata,
-      m_axi_lite_wstrb               => m_axi_lite_wstrb,
-      m_axi_lite_bready              => m_axi_lite_bready,
-      m_axi_lite_bvalid              => m_axi_lite_bvalid,
-      m_axi_lite_bresp               => m_axi_lite_bresp,
-      ip2bus_mstrd_req               => ipif_ip2bus_mstrd_req,
-      ip2bus_mstwr_req               => ipif_ip2bus_mstwr_req,
-      ip2bus_mst_addr                => ipif_ip2bus_mst_addr,
-      ip2bus_mst_be                  => ipif_ip2bus_mst_be,
-      ip2bus_mst_lock                => ipif_ip2bus_mst_lock,
-      ip2bus_mst_reset               => ipif_ip2bus_mst_reset,
-      bus2ip_mst_cmdack              => ipif_bus2ip_mst_cmdack,
-      bus2ip_mst_cmplt               => ipif_bus2ip_mst_cmplt,
-      bus2ip_mst_error               => ipif_bus2ip_mst_error,
-      bus2ip_mst_rearbitrate         => ipif_bus2ip_mst_rearbitrate,
-      bus2ip_mst_cmd_timeout         => ipif_bus2ip_mst_cmd_timeout,
-      bus2ip_mstrd_d                 => ipif_bus2ip_mstrd_d,
-      bus2ip_mstrd_src_rdy_n         => ipif_bus2ip_mstrd_src_rdy_n,
-      ip2bus_mstwr_d                 => ipif_ip2bus_mstwr_d,
-      bus2ip_mstwr_dst_rdy_n         => ipif_bus2ip_mstwr_dst_rdy_n
+
+    AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
+      generic map
+       (
+        C_S_AXI_ADDR_WIDTH        => C_S_AXI_ADDR_WIDTH,
+        C_S_AXI_DATA_WIDTH        => C_S_AXI_DATA_WIDTH,
+        C_S_AXI_MIN_SIZE          => C_AXI_MIN_SIZE,
+        C_USE_WSTRB               => C_USE_WSTRB,
+        C_DPHASE_TIMEOUT          => C_DPHASE_TIMEOUT,
+        C_ARD_ADDR_RANGE_ARRAY    => ARD_ADDR_RANGE_ARRAY,
+        C_ARD_NUM_CE_ARRAY        => ARD_NUM_CE_ARRAY,
+        C_FAMILY                  => C_FAMILY
+       )
+     port map
+       (
+        S_AXI_ACLK          =>  S_AXI_ACLK,
+        S_AXI_ARESETN       =>  S_AXI_ARESETN,
+        S_AXI_AWADDR        =>  S_AXI_AWADDR,
+        S_AXI_AWVALID       =>  S_AXI_AWVALID,
+        S_AXI_AWREADY       =>  S_AXI_AWREADY,
+        S_AXI_WDATA         =>  S_AXI_WDATA,
+        S_AXI_WSTRB         =>  S_AXI_WSTRB,
+        S_AXI_WVALID        =>  S_AXI_WVALID,
+        S_AXI_WREADY        =>  S_AXI_WREADY,
+        S_AXI_BRESP         =>  S_AXI_BRESP,
+        S_AXI_BVALID        =>  S_AXI_BVALID,
+        S_AXI_BREADY        =>  S_AXI_BREADY,
+        S_AXI_ARADDR        =>  S_AXI_ARADDR,
+        S_AXI_ARVALID       =>  S_AXI_ARVALID,
+        S_AXI_ARREADY       =>  S_AXI_ARREADY,
+        S_AXI_RDATA         =>  S_AXI_RDATA,
+        S_AXI_RRESP         =>  S_AXI_RRESP,
+        S_AXI_RVALID        =>  S_AXI_RVALID,
+        S_AXI_RREADY        =>  S_AXI_RREADY,
+     
+        -- IP Interconnect (IPIC) port signals 
+        Bus2IP_Clk     => bus2ip_clk,
+        Bus2IP_Resetn  => bus2ip_resetn,
+        IP2Bus_Data    => ip2bus_data_i,
+        IP2Bus_WrAck   => ip2bus_wrack_i,
+        IP2Bus_RdAck   => ip2bus_rdack_i,
+        IP2Bus_Error   => ip2bus_error_i,
+        Bus2IP_Addr    => bus2ip_addr,
+        Bus2IP_Data    => bus2ip_data,
+        Bus2IP_RNW     => bus2ip_rnw,
+        Bus2IP_BE      => bus2ip_be,
+        Bus2IP_CS      => bus2ip_cs,
+        Bus2IP_RdCE    => bus2ip_rdce,
+        Bus2IP_WrCE    => bus2ip_wrce
+       );
+
     );
 
 end IMP;

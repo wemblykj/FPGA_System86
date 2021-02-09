@@ -4,9 +4,9 @@ VerMgmt: 14.7
 IntStyle: default
 Flow: ise
 ModuleSearchPath: /opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
-ModuleSearchPath: C:/Development/FPGA/Digilent/Atlys_AXI_BSB_Support/lib;/opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
 ModuleSearchPath: C:/Development/FPGA/Digilent/Atlys_AXI_BSB_Support/lib
 ModuleSearchPath: C:/Xilinx/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
+ModuleSearchPath: C:/Development/FPGA/FPGA_System86/src/platform/xilinx
 MHS File: atlys_host.mhs
 Architecture: spartan6
 Device: xc6slx45
@@ -28,6 +28,9 @@ UcfFile: data/atlys_host.ucf
 EnableParTimingError: 1
 ShowLicenseDialog: 1
 BInfo: 
+LockAddr: MCB_DDR2,C_S0_AXI_BASEADDR
+LockAddr: MCB_DDR2,C_S1_AXI_BASEADDR
+LockAddr: MCB_DDR2,C_S2_AXI_BASEADDR
 ICacheAddr: MCB_DDR2,C_S0_AXI_BASEADDR
 ICacheAddr: MCB_DDR2,C_S1_AXI_BASEADDR
 ICacheAddr: MCB_DDR2,C_S2_AXI_BASEADDR

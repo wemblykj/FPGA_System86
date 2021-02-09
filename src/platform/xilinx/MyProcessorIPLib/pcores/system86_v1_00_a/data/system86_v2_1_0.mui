@@ -27,7 +27,7 @@
 		        <item>&C_VIDEO_COMPONENT_DEPTH;</item>
 		</group>
 	</view>
-    	<view id="System">
+    <view id="System">
 		<display>System</display>
 		<group id="Timing">
 			<display>System timing options/display>

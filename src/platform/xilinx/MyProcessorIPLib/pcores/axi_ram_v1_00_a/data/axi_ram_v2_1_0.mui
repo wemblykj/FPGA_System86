@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-
 <!DOCTYPE doc SYSTEM "../../ipdialog.dtd" [
 	<!ENTITY C_RAM_ADDR_WIDTH '
 	<widget id="C_RAM_ADDR_WIDTH">
-		<key>C_RAM_ADDR_WIDT</key>
-		<label>The address width of the TTL SRAM</label>
-		<tip></tip>
+		<key>C_RAM_ADDR_WIDTH</key>
+		<label>Address Width</label>
+		<tip>The address width of the TTL SRAM</tip>
 	</widget>
 	'>
 	<!ENTITY C_RAM_DATA_WIDTH '
 	<widget id="C_RAM_DATA_WIDTH">
-		<key>C_RAM_DATA_WIDT</key>
-		<label>The data width of the TTL SRAM</label>
-		<tip></tip>
+		<key>C_RAM_DATA_WIDTH</key>
+		<label>Data Width</label>
+		<tip>The data width of the TTL SRAM</tip>
 	</widget>
 	'>
-	<!ENTITY C_MAPPED_BASE_ADDRESS '
-	<widget id="C_MAPPED_BASE_ADDRESS">
-		<key>C_MAPPED_BASE_ADDRESS</key>
-		<label>The base address on the AXI4 bus to which SRAM requests will be mapped</label>
-		<tip></tip>
+	<!ENTITY C_MAPPED_BASE_ADDR '
+	<widget id="C_MAPPED_BASE_ADDR">
+		<key>C_MAPPED_BASE_ADDR</key>
+		<label>Mapped Address</label>
+		<tip>The base address on the AXI4 bus
+			 to which SRAM requests will be mapped</tip>
 	</widget>
 	'>
 	<!ENTITY C_USE_DYNAMIC_MAPPING '
 	<widget id="C_USE_DYNAMIC_MAPPING">
 		<key>C_USE_DYNAMIC_MAPPING</key>
-		<label>Allow the base address to be configured over slave AXI Lite</label>
-		<tip></tip>
+		<label>Dynamic mapping</label>
+		<tip>Allow the mapped base address to be
+			 configured over slave AXI Lite</tip>
 	</widget>
 	'>
 	<!ENTITY C_FAMILY '
@@ -46,30 +47,14 @@
 	<!ENTITY C_BASEADDR '
 	<widget id="C_BASEADDR">
 		<key>C_BASEADDR</key>
-		<label>AXI Base Address </label>
+		<label>AXI4-Lite Base Address </label>
 		<tip></tip>
 	</widget>
 	'>
 	<!ENTITY C_HIGHADDR '
 	<widget id="C_HIGHADDR">
 		<key>C_HIGHADDR</key>
-		<label>AXI High Address</label>
-		<tip></tip>
-	</widget>
-	'>
-	<!ENTITY C_S_AXI_DATA_WIDTH '
-	<widget id="C_S_AXI_DATA_WIDTH">
-		<key>C_S_AXI_DATA_WIDTH</key>
-		<label>AXI Slave Port Data Width</label>
-		<tip>May only be set to 32-bit for Spartan-6 implementations.  
-		     May only be set to 64-bit for Virtex-6 implementations. 
-		     7-Series may be set to 64-bit or 128-bit implementations.</tip>
-	</widget>
-	'>
-	<!ENTITY C_S_AXI_ADDR_WIDTH '
-	<widget id="C_S_AXI_ADDR_WIDTH">
-		<key>C_S_AXI_ADDR_WIDTH</key>
-		<label>AXI Slave Port Address Width</label>
+		<label>AXI4-Lite High Address</label>
 		<tip></tip>
 	</widget>
 	'>
@@ -85,28 +70,43 @@
 	<!ENTITY C_M_AXI_ADDR_WIDTH '
 	<widget id="C_M_AXI_ADDR_WIDTH">
 		<key>C_M_AXI_ADDR_WIDTH</key>
-		<label>AXI Master Port Address Width</label>
+		<label>AXI4 Master Port Address Width</label>
+		<tip></tip>
+	</widget>
+	'>
+	<!ENTITY C_S_AXI_DATA_WIDTH '
+	<widget id="C_S_AXI_DATA_WIDTH">
+		<key>C_S_AXI_DATA_WIDTH</key>
+		<label>AXI4-Lite Slave Data Width</label>
+		<tip>May only be set to 32-bit for Spartan-6 implementations.  
+		     May only be set to 64-bit for Virtex-6 implementations. 
+		     7-Series may be set to 64-bit or 128-bit implementations.</tip>
+	</widget>
+	'>
+	<!ENTITY C_S_AXI_ADDR_WIDTH '
+	<widget id="C_S_AXI_ADDR_WIDTH">
+		<key>C_S_AXI_ADDR_WIDTH</key>
+		<label>AXI4-Lite Slave Address Width</label>
 		<tip></tip>
 	</widget>
 	'>
 	<!ENTITY C_S_AXI_PROTOCOL '
-		<widget id="C_S_AXI_PROTOCOL">
+	<widget id="C_S_AXI_PROTOCOL">
 		<key>C_S_AXI_PROTOCOL</key>
-		<label>AXI Protocol</label>
+		<label>AXI4-Lite Slave Protocol</label>
 		<tip></tip>
         </widget>
 	'>
+	
 ]>
 
 <doc>
-	<view id="User">
-		<display>User</display>
+	<view id="Config">
+		<display>Config</display>
 		<group id="SRAM">
 			<display>SRAM Attributes</display>	
 			<item>&C_RAM_ADDR_WIDTH;</item>
 			<item>&C_RAM_DATA_WIDTH;</item>			
-			<item>&C_MAPPED_BASE_ADDR;</item>			
-			<item>&C_USE_DYNAMIC_MAPPING;</item>
 		</group>
 		<group id="Mapping">
 			<display>SRAM to AXI Memory Mapping</display>	
@@ -114,8 +114,8 @@
 			<item>&C_USE_DYNAMIC_MAPPING;</item>
 		</group>
 	</view>
-        <view id="System">
-                <display>System</display>
+    <view id="System">
+        <display>System</display>
 		<group id="Addresses">
 			<display>Addresses</display>
 			<item>&C_BASEADDR;</item>
@@ -131,7 +131,6 @@
 		</group>
 		<group id="Hidden">
 			<display>Hidden</display>
-			<item>&C_XLNX_REF_BOARD;</item>
 			<item>&C_FAMILY;</item>
 			<item>&C_INSTANCE;</item>
 		</group>

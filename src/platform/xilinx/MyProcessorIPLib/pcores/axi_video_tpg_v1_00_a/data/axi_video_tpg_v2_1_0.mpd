@@ -14,7 +14,7 @@ OPTION VLNV = WemblyKJ|video_lib
 OPTION IPTYPE = PERIPHERAL
 OPTION IMP_NETLIST = TRUE
 OPTION HDL = MIXED
-OPTION IP_GROUP = WemblyKJ:MICROBLAZE:USER
+OPTION IP_GROUP = WemblyKJ:Video
 OPTION DESC = AXI Video Test Pattern Generator
 OPTION LONG_DESC = Basic test pattern generater with standard video signals
 OPTION ARCH_SUPPORT_MAP = (others=DEVELOPMENT)
