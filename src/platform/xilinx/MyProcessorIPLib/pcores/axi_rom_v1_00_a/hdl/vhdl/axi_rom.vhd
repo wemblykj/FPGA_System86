@@ -135,6 +135,10 @@ entity axi_rom is
       -- ROM generics
       C_ROM_ADDR_WIDTH              : integer := 16;
       C_ROM_DATA_WIDTH              : integer := 8;
+      
+		-- Mapping generics
+      C_MAPPED_BASE_ADDR            : std_logic_vector     := X"C0000000";
+      C_USE_DYNAMIC_MAPPING         : std_logic := '0'
 
       --Family Generics
       C_XLNX_REF_BOARD              : string  := "NONE";
@@ -146,16 +150,11 @@ entity axi_rom is
       C_M_AXI_ADDR_WIDTH            : integer := 32;
       C_M_AXI_DATA_WIDTH            : integer := 32;
       
-		-- Mapping generics
-      C_MAPPED_BASE_ADDR            : std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0)     := X"C0000000";
-      C_USE_DYNAMIC_MAPPING         : std_logic := '0';
-		
-      -- Slave AXI-Lite Generics
+		-- Slave AXI-Lite Generics
 		C_S_AXI_ADDR_WIDTH            : integer := 1;
       C_S_AXI_DATA_WIDTH            : integer := 32;
-		C_BASEADDR                    : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0) := X"FFFFFFFF";
-		C_HIGHADDR                    : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0) := X"00000000"
-      
+		C_BASEADDR                    : std_logic_vector := X"FFFFFFFF";
+		C_HIGHADDR                    : std_logic_vector := X"00000000";
   );
   port
   (

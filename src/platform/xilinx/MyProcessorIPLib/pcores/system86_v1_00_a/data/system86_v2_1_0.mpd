@@ -20,8 +20,23 @@ OPTION USAGE_LEVEL = BASE_USER
 ## Bus Interfaces
 BUS_INTERFACE BUS=CONN_J4, BUS_STD=conn_j4, BUS_TYPE=TARGET
 BUS_INTERFACE BUS=CONN_J5, BUS_STD=conn_j5, BUS_TYPE=INITIATOR
-BUS_INTERFACE BUS=M_ROM, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
-BUS_INTERFACE BUS=M_RAM, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
+
+BUS_INTERFACE BUS=EPROM_3R, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=EPROM_3S, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=EPROM_4V, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=EPROM_5V, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=EPROM_6U, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=EPROM_7S, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=EPROM_9C, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=EPROM_12C, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
+
+BUS_INTERFACE BUS=SRAM_3F, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=SRAM_4N, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=SRAM_4R, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=SRAM_7N, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=SRAM_10M, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=SRAM_11K, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
+
 BUS_INTERFACE BUS=VIDEO_OUT, BUS_STD=video, BUS_TYPE=INITIATOR
 
 ## Parameters
@@ -60,20 +75,81 @@ PORT conn_j4_data = Data, DIR=O, VEC = [7:0], BUS = CONN_J4
 PORT conn_j4_voice = Voice, DIR=I, BUS = CONN_J4
 
 # EPROM 3R
-PORT eprom_3r_ce = ChipEnable, DIR=I, BUS = M_ROM
-PORT eprom_3r_oe = OutputEnable, DIR=I, BUS = M_ROM
-PORT eprom_3r_addr = Addr, DIR=I, VEC = [8:0], BUS = M_ROM
-PORT eprom_3r_data = Data, DIR=O, VEC = [7:0], BUS = M_ROM
+PORT eprom_3r_ce = ChipEnable, DIR=I, BUS = EPROM_3R
+PORT eprom_3r_oe = OutputEnable, DIR=I, BUS = EPROM_3R
+PORT eprom_3r_addr = Addr, DIR=I, VEC = [8:0], BUS = EPROM_3R
+PORT eprom_3r_data = Data, DIR=O, VEC = [7:0], BUS = EPROM_3R
 # EPROM 3S
-PORT eprom_3s_ce = ChipEnable, DIR=I, BUS = M_ROM
-PORT eprom_3s_oe = OutputEnable, DIR=I, BUS = M_ROM
-PORT eprom_3s_addr = Addr, DIR=I, VEC = [8:0], BUS = M_ROM
-PORT eprom_3s_data = Data, DIR=O, VEC = [3:0], BUS = M_ROM
-#
-PORT sram_4r_ce = ChipEnable, DIR=I, BUS = M_RAM
-PORT sram_4r_we = WriteEnable, DIR=I, BUS = M_RAM
-PORT sram_4r_oe = OutputEnable, DIR=I, BUS = M_RAM
-PORT sram_4r_addr = Addr, DIR=I, VEC = [12:0], BUS = M_RAM
-#PORT sram_4r_data = Data, DIR=IO, VEC = [7:0], BUS = M_RAM
+PORT eprom_3s_ce = ChipEnable, DIR=I, BUS = EPROM_3S
+PORT eprom_3s_oe = OutputEnable, DIR=I, BUS = EPROM_3S
+PORT eprom_3s_addr = Addr, DIR=I, VEC = [8:0], BUS = EPROM_3S
+PORT eprom_3s_data = Data, DIR=O, VEC = [3:0], BUS = EPROM_3S
+# EPROM 4V
+PORT eprom_4v_ce = ChipEnable, DIR=I, BUS = EPROM_4V
+PORT eprom_4v_oe = OutputEnable, DIR=I, BUS = EPROM_4V
+PORT eprom_4v_addr = Addr, DIR=I, VEC = [8:0], BUS = EPROM_4V
+PORT eprom_4v_data = Data, DIR=O, VEC = [7:0], BUS = EPROM_4V
+# EPROM 5V
+PORT eprom_5v_ce = ChipEnable, DIR=I, BUS = EPROM_5V
+PORT eprom_5v_oe = OutputEnable, DIR=I, BUS = EPROM_5V
+PORT eprom_5v_addr = Addr, DIR=I, VEC = [8:0], BUS = EPROM_5V
+PORT eprom_5v_data = Data, DIR=O, VEC = [7:0], BUS = EPROM_5V
+# EPROM 6U
+PORT eprom_6u_ce = ChipEnable, DIR=I, BUS = EPROM_6U
+PORT eprom_6u_oe = OutputEnable, DIR=I, BUS = EPROM_6U
+PORT eprom_6u_addr = Addr, DIR=I, VEC = [8:0], BUS = EPROM_6U
+PORT eprom_6u_data = Data, DIR=O, VEC = [7:0], BUS = EPROM_6U
+# EPROM 7S
+PORT eprom_7s_ce = ChipEnable, DIR=I, BUS = EPROM_7S
+PORT eprom_7s_oe = OutputEnable, DIR=I, BUS = EPROM_7S
+PORT eprom_7s_addr = Addr, DIR=I, VEC = [8:0], BUS = EPROM_7S
+PORT eprom_7s_data = Data, DIR=O, VEC = [7:0], BUS = EPROM_7S
+# EPROM 9C
+PORT eprom_9c_ce = ChipEnable, DIR=I, BUS = EPROM_9C
+PORT eprom_9c_oe = OutputEnable, DIR=I, BUS = EPROM_9C
+PORT eprom_9c_addr = Addr, DIR=I, VEC = [8:0], BUS = EPROM_9C
+PORT eprom_9c_data = Data, DIR=O, VEC = [7:0], BUS = EPROM_9C
+# EPROM 12C
+PORT eprom_12c_ce = ChipEnable, DIR=I, BUS = EPROM_12C
+PORT eprom_12c_oe = OutputEnable, DIR=I, BUS = EPROM_12C
+PORT eprom_12c_addr = Addr, DIR=I, VEC = [8:0], BUS = EPROM_12C
+PORT eprom_12c_data = Data, DIR=O, VEC = [7:0], BUS = EPROM_12C
+
+# SRAM 3F
+PORT sram_3f_ce = WriteEnable, DIR=I, BUS = SRAM_3F
+PORT sram_3f_oe = OutputEnable, DIR=I, BUS = SRAM_3F
+PORT sram_3f_we = WriteEnable, DIR=I, BUS = SRAM_3F
+PORT sram_3f_addr = Addr, DIR=I, VEC = [12:0], BUS = SRAM_3F
+PORT sram_3f_data = Data, DIR=IO, VEC = [7:0], BUS = SRAM_3F
+# SRAM 4N
+PORT sram_4n_ce = WriteEnable, DIR=I, BUS = SRAM_4N
+PORT sram_4n_oe = OutputEnable, DIR=I, BUS = SRAM_4N
+PORT sram_4n_we = WriteEnable, DIR=I, BUS = SRAM_4N
+PORT sram_4n_addr = Addr, DIR=I, VEC = [12:0], BUS = SRAM_4N
+PORT sram_4n_data = Data, DIR=IO, VEC = [7:0], BUS = SRAM_4N
+# SRAM 4R
+PORT sram_4r_ce = WriteEnable, DIR=I, BUS = SRAM_4R
+PORT sram_4r_oe = OutputEnable, DIR=I, BUS = SRAM_4R
+PORT sram_4r_we = WriteEnable, DIR=I, BUS = SRAM_4R
+PORT sram_4r_addr = Addr, DIR=I, VEC = [12:0], BUS = SRAM_4R
+PORT sram_4r_data = Data, DIR=IO, VEC = [7:0], BUS = SRAM_4R
+# SRAM 7N
+PORT sram_7n_we = WriteEnable, DIR=I, BUS = SRAM_7N
+PORT sram_7n_addr = Addr, DIR=I, VEC = [12:0], BUS = SRAM_7N
+PORT sram_7n_oe = OutputEnable, DIR=I, BUS = SRAM_7N
+PORT sram_7n_data = Data, DIR=IO, VEC = [7:0], BUS = SRAM_7N
+# SRAM 10M
+PORT sram_10m_ce = WriteEnable, DIR=I, BUS = SRAM_10M
+PORT sram_10m_oe = OutputEnable, DIR=I, BUS = SRAM_10M
+PORT sram_10m_we = WriteEnable, DIR=I, BUS = SRAM_10M
+PORT sram_10m_addr = Addr, DIR=I, VEC = [12:0], BUS = SRAM_10M
+PORT sram_10m_data = Data, DIR=IO, VEC = [7:0], BUS = SRAM_10M
+BUS_INTERFACE BUS=SRAM_11K, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
+# SRAM 11K
+PORT sram_11k_ce = WriteEnable, DIR=I, BUS = SRAM_11K
+PORT sram_11k_oe = OutputEnable, DIR=I, BUS = SRAM_11K
+PORT sram_11k_we = WriteEnable, DIR=I, BUS = SRAM_11K
+PORT sram_11k_addr = Addr, DIR=I, VEC = [12:0], BUS = SRAM_11K
+PORT sram_11k_data = Data, DIR=IO, VEC = [7:0], BUS = SRAM_11K
 
 END

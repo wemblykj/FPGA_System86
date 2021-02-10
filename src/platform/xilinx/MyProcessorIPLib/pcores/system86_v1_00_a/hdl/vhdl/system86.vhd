@@ -300,13 +300,331 @@ port(
 	BANK				: in std_logic;
 	
 	prom_3r_ce		: out std_logic;
+	prom_3r_oe		: out std_logic;
 	prom_3r_addr	: out std_logic_vector(8 downto 0) := "000000000";
 	prom_3r_data	: in  std_logic_vector(7 downto 0) := "00000000";
 	
 	prom_3s_ce		: out std_logic;
+	prom_3s_oe		: out std_logic;
 	prom_3s_addr	: out std_logic_vector(8 downto 0) := "000000000";
 	prom_3s_data  : in  std_logic_vector(3 downto 0) := "0000";
 	
+	prom_4v_ce		: out std_logic;
+	prom_4v_oe		: out std_logic;
+	prom_4v_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	prom_4v_data  : in  std_logic_vector(3 downto 0) := "0000";
+	
+	prom_5v_ce		: out std_logic;
+	prom_5v_oe		: out std_logic;
+	prom_5v_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	prom_5v_data  : in  std_logic_vector(3 downto 0) := "0000";
+	
+	prom_6u_ce		: out std_logic;
+	prom_6u_oe		: out std_logic;
+	prom_6u_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	prom_6u_data  : in  std_logic_vector(3 downto 0) := "0000";
+	
+	prom_7s_ce		: out std_logic;
+	prom_7s_oe		: out std_logic;
+	prom_7s_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	prom_7s_data  : in  std_logic_vector(3 downto 0) := "0000";
+	
+	prom_9c_ce		: out std_logic;
+	prom_9c_oe		: out std_logic;
+	prom_9c_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	prom_9c_data  : in  std_logic_vector(3 downto 0) := "0000";
+	
+	prom_12c_ce		: out std_logic;
+	prom_12c_oe		: out std_logic;
+	prom_12c_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	prom_12c_data  : in  std_logic_vector(3 downto 0) := "0000";
+	
+	sram_3f_ce		: out std_logic;
+	sram_3f_oe		: out std_logic;
+	sram_3f_we		: out std_logic;
+	sram_3f_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	sram_3f_data  : in  std_logic_vector(3 downto 0) := "0000";
+	
+	sram_4n_ce		: out std_logic;
+	sram_4n_oe		: out std_logic;
+	sram_4n_we		: out std_logic;
+	sram_4n_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	sram_4n_data  : in  std_logic_vector(3 downto 0) := "0000";
+
+	sram_4r_ce		: out std_logic;
+	sram_4r_oe		: out std_logic;
+	sram_4r_we		: out std_logic;
+	sram_4r_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	sram_4r_data  : in  std_logic_vector(3 downto 0) := "0000";
+
+	sram_7n_ce		: out std_logic;
+	sram_7n_oe		: out std_logic;
+	sram_7n_we		: out std_logic;
+	sram_7n_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	sram_7n_data  : in  std_logic_vector(3 downto 0) := "0000";
+
+	sram_10m_ce		: out std_logic;
+	sram_10m_oe		: out std_logic;
+	sram_10m_we		: out std_logic;
+	sram_10m_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	sram_10m_data  : in  std_logic_vector(3 downto 0) := "0000";
+
+	sram_11k_ce		: out std_logic;
+	sram_11k_oe		: out std_logic;
+	sram_11k_we		: out std_logic;
+	sram_11k_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	sram_11k_data  : in  std_logic_vector(3 downto 0) := "0000";
+
+	SYNC				: out std_logic;
+	RED				: out std_logic_vector(3 downto 0);
+	GREEN				: out std_logic_vector(3 downto 0);
+	BLUE				: out std_logic_vector(3 downto 0)
+);
+end component;
+
+component Blanking_To_Count
+generic(
+	ACTIVE_COLS  		: integer := 640;
+   ACTIVE_ROWS  		: integer := 480
+);
+port (
+	i_Clk : in std_logic;
+	i_Rst : in std_logic;
+   i_HSync : in std_logic;
+   i_VSync : in std_logic;
+	i_HBlank : in std_logic;
+   i_VBlank : in std_logic;
+	o_Locked : out std_logic;
+   o_HSync : out std_logic;
+   o_VSync : out std_logic;
+	o_HBlank : out std_logic;
+   o_VBlank : out std_logic;
+	o_Active : out std_logic;
+   o_Col_Count  : out std_logic_vector(9 downto 0);
+   o_Row_Count  : out std_logic_vector(9 downto 0)
+);
+end component;
+
+component Test_Pattern_Gen
+generic(
+	COMPONENT_DEPTH 		: integer := 3;
+   TOTAL_COLS  		: integer := 384;
+   TOTAL_ROWS   		: integer := 264;
+   ACTIVE_COLS  		: integer := 288;
+   ACTIVE_ROWS  		: integer := 224;
+	USE_BLANKING  		: integer := 1;
+	SYNC_PULSE_HORZ  	: integer := 32;
+	SYNC_PULSE_VERT  	: integer := 8;
+	FRONT_PORCH_HORZ  : integer := 32;
+	BACK_PORCH_HORZ   : integer := 32;
+	FRONT_PORCH_VERT  : integer := 8;
+	BACK_PORCH_VERT   : integer := 24
+	
+);
+port (
+	i_Clk : in std_logic;
+	i_Rst : in std_logic;
+   i_Pattern : in std_logic_vector(3 downto 0);
+	SYNC				: out std_logic;
+	RED				: out std_logic_vector(3 downto 0);
+	GREEN				: out std_logic_vector(3 downto 0);
+	BLUE				: out std_logic_vector(3 downto 0)
+);
+end component;
+
+component Blanking_To_Count
+generic(
+	ACTIVE_COLS  		: integer := 640;
+   ACTIVE_ROWS  		: integer := 480
+);
+port (
+	i_Clk : in std_logic;
+	i_Rst : in std_logic;
+   i_HSync : in std_logic;
+   i_VSync : in std_logic;
+	i_HBlank : in std_logic;
+   i_VBlank : in std_logic;
+	o_Locked : out std_logic;
+   o_HSync : out std_logic;
+   o_VSync : out std_logic;
+	o_HBlank : out std_logic;
+   o_VBlank : out std_logic;
+	o_Active : out std_logic;
+   o_Col_Count  : out std_logic_vector(9 downto 0);
+   o_Row_Count  : out std_logic_vector(9 downto 0)
+);
+end component;
+
+component Test_Pattern_Gen
+generic(
+	COMPONENT_DEPTH 		: integer := 3;
+   TOTAL_COLS  		: integer := 384;
+   TOTAL_ROWS   		: integer := 264;
+   ACTIVE_COLS  		: integer := 288;
+   ACTIVE_ROWS  		: integer := 224;
+	USE_BLANKING  		: integer := 1;
+	SYNC_PULSE_HORZ  	: integer := 32;
+	SYNC_PULSE_VERT  	: integer := 8;
+	FRONT_PORCH_HORZ  : integer := 32;
+	BACK_PORCH_HORZ   : integer := 32;
+	FRONT_PORCH_VERT  : integer := 8;
+	BACK_PORCH_VERT   : integer := 24
+	
+);
+port (
+	i_Clk : in std_logic;
+	i_Rst : in std_logic;
+   i_Pattern : in std_logic_vector(3 downto 0);
+	SYNC				: out std_logic;
+	RED				: out std_logic_vector(3 downto 0);
+	GREEN				: out std_logic_vector(3 downto 0);
+	BLUE				: out std_logic_vector(3 downto 0)
+);
+end component;
+
+component Blanking_To_Count
+generic(
+	ACTIVE_COLS  		: integer := 640;
+   ACTIVE_ROWS  		: integer := 480
+);
+port (
+	i_Clk : in std_logic;
+	i_Rst : in std_logic;
+   i_HSync : in std_logic;
+   i_VSync : in std_logic;
+	i_HBlank : in std_logic;
+   i_VBlank : in std_logic;
+	o_Locked : out std_logic;
+   o_HSync : out std_logic;
+   o_VSync : out std_logic;
+	o_HBlank : out std_logic;
+   o_VBlank : out std_logic;
+	o_Active : out std_logic;
+   o_Col_Count  : out std_logic_vector(9 downto 0);
+   o_Row_Count  : out std_logic_vector(9 downto 0)
+);
+end component;
+
+component Test_Pattern_Gen
+generic(
+	COMPONENT_DEPTH 		: integer := 3;
+   TOTAL_COLS  		: integer := 384;
+   TOTAL_ROWS   		: integer := 264;
+   ACTIVE_COLS  		: integer := 288;
+   ACTIVE_ROWS  		: integer := 224;
+	USE_BLANKING  		: integer := 1;
+	SYNC_PULSE_HORZ  	: integer := 32;
+	SYNC_PULSE_VERT  	: integer := 8;
+	FRONT_PORCH_HORZ  : integer := 32;
+	BACK_PORCH_HORZ   : integer := 32;
+	FRONT_PORCH_VERT  : integer := 8;
+	BACK_PORCH_VERT   : integer := 24
+	
+);
+port (
+	i_Clk : in std_logic;
+	i_Rst : in std_logic;
+   i_Pattern : in std_logic_vector(3 downto 0);
+	SYNC				: out std_logic;
+	RED				: out std_logic_vector(3 downto 0);
+	GREEN				: out std_logic_vector(3 downto 0);
+	BLUE				: out std_logic_vector(3 downto 0)
+);
+end component;
+
+component Blanking_To_Count
+generic(
+	ACTIVE_COLS  		: integer := 640;
+   ACTIVE_ROWS  		: integer := 480
+);
+port (
+	i_Clk : in std_logic;
+	i_Rst : in std_logic;
+   i_HSync : in std_logic;
+   i_VSync : in std_logic;
+	i_HBlank : in std_logic;
+   i_VBlank : in std_logic;
+	o_Locked : out std_logic;
+   o_HSync : out std_logic;
+   o_VSync : out std_logic;
+	o_HBlank : out std_logic;
+   o_VBlank : out std_logic;
+	o_Active : out std_logic;
+   o_Col_Count  : out std_logic_vector(9 downto 0);
+   o_Row_Count  : out std_logic_vector(9 downto 0)
+);
+end component;
+
+component Test_Pattern_Gen
+generic(
+	COMPONENT_DEPTH 		: integer := 3;
+   TOTAL_COLS  		: integer := 384;
+   TOTAL_ROWS   		: integer := 264;
+   ACTIVE_COLS  		: integer := 288;
+   ACTIVE_ROWS  		: integer := 224;
+	USE_BLANKING  		: integer := 1;
+	SYNC_PULSE_HORZ  	: integer := 32;
+	SYNC_PULSE_VERT  	: integer := 8;
+	FRONT_PORCH_HORZ  : integer := 32;
+	BACK_PORCH_HORZ   : integer := 32;
+	FRONT_PORCH_VERT  : integer := 8;
+	BACK_PORCH_VERT   : integer := 24
+	
+);
+port (
+	i_Clk : in std_logic;
+	i_Rst : in std_logic;
+   i_Pattern : in std_logic_vector(3 downto 0);
+	SYNC				: out std_logic;
+	RED				: out std_logic_vector(3 downto 0);
+	GREEN				: out std_logic_vector(3 downto 0);
+	BLUE				: out std_logic_vector(3 downto 0)
+);
+end component;
+
+component Blanking_To_Count
+generic(
+	ACTIVE_COLS  		: integer := 640;
+   ACTIVE_ROWS  		: integer := 480
+);
+port (
+	i_Clk : in std_logic;
+	i_Rst : in std_logic;
+   i_HSync : in std_logic;
+   i_VSync : in std_logic;
+	i_HBlank : in std_logic;
+   i_VBlank : in std_logic;
+	o_Locked : out std_logic;
+   o_HSync : out std_logic;
+   o_VSync : out std_logic;
+	o_HBlank : out std_logic;
+   o_VBlank : out std_logic;
+	o_Active : out std_logic;
+   o_Col_Count  : out std_logic_vector(9 downto 0);
+   o_Row_Count  : out std_logic_vector(9 downto 0)
+);
+end component;
+
+component Test_Pattern_Gen
+generic(
+	COMPONENT_DEPTH 		: integer := 3;
+   TOTAL_COLS  		: integer := 384;
+   TOTAL_ROWS   		: integer := 264;
+   ACTIVE_COLS  		: integer := 288;
+   ACTIVE_ROWS  		: integer := 224;
+	USE_BLANKING  		: integer := 1;
+	SYNC_PULSE_HORZ  	: integer := 32;
+	SYNC_PULSE_VERT  	: integer := 8;
+	FRONT_PORCH_HORZ  : integer := 32;
+	BACK_PORCH_HORZ   : integer := 32;
+	FRONT_PORCH_VERT  : integer := 8;
+	BACK_PORCH_VERT   : integer := 24
+	
+);
+port (
+	i_Clk : in std_logic;
+	i_Rst : in std_logic;
+   i_Pattern : in std_logic_vector(3 downto 0);
 	SYNC				: out std_logic;
 	RED				: out std_logic_vector(3 downto 0);
 	GREEN				: out std_logic_vector(3 downto 0);
