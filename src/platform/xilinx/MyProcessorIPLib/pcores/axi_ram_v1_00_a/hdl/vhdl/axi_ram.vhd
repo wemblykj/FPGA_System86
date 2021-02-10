@@ -162,7 +162,7 @@ entity axi_ram is
       chip_enable             : in std_logic;
       write_enable            : in std_logic;
       output_enable           : in std_logic;
-      address                 : in std_logic_vector(C_RAM_ADDR_WIDTH-1 downto 0);
+      addr                    : in std_logic_vector(C_RAM_ADDR_WIDTH-1 downto 0);
       data                    : inout std_logic_vector(C_RAM_DATA_WIDTH-1 downto 0);
       mapping_addr            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
   
@@ -219,7 +219,7 @@ entity axi_ram is
       S_AXI_ARREADY       : out std_logic;                     -- AXI Lite Read Address Core ready
       S_AXI_ARVALID       : in  std_logic;                     -- AXI Lite Read Address Valid
       S_AXI_ARADDR        : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Read address
-      S_AXI_RDATA         : out std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Read Data
+      S_AXI_RDATA         : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0); -- AXI Lite Read Data
       S_AXI_RRESP         : out std_logic_vector(1 downto 0);  -- AXI Lite Read Data strobe
       S_AXI_RVALID        : out std_logic;                     -- AXI Lite Read data Valid
       S_AXI_RREADY        : in  std_logic;                     -- AXI Lite Read Data Core ready
@@ -228,8 +228,8 @@ entity axi_ram is
       S_AXI_AWADDR        : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Write address
       S_AXI_WREADY        : out std_logic;                     -- AXI Lite Write Data Core ready
       S_AXI_WVALID        : in  std_logic;                     -- AXI Lite Write data Valid
-      S_AXI_WDATA         : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Write Data
-      S_AXI_WSTRB         : in  std_logic_vector((C_S_AXI_ADDR_WIDTH/8)-1 downto 0);  -- AXI Lite Write Data strobe
+      S_AXI_WDATA         : in  std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0); -- AXI Lite Write Data
+      S_AXI_WSTRB         : in  std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);  -- AXI Lite Write Data strobe
       S_AXI_BREADY        : in  std_logic;                     -- AXI Lite Write Data Core ready
       S_AXI_BVALID        : out std_logic;                     -- AXI Lite Write data Valid
       S_AXI_BRESP         : out std_logic_vector(1 downto 0)   -- AXI Lite Write Data strobe
