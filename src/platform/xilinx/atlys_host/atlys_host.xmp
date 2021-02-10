@@ -3,6 +3,7 @@ XmpVersion: 14.7
 VerMgmt: 14.7
 IntStyle: default
 Flow: ise
+ModuleSearchPath: /home/paul/development/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/axi_rom_v1_00_a/../../../
 ModuleSearchPath: /opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
 ModuleSearchPath: C:/Development/FPGA/Digilent/Atlys_AXI_BSB_Support/lib
 ModuleSearchPath: C:/Xilinx/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib

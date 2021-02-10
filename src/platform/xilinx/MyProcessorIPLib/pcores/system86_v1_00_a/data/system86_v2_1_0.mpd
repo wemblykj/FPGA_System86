@@ -12,20 +12,21 @@ OPTION IMP_NETLIST = TRUE
 OPTION DESC = Wembly's Namco System86 Replication
 OPTION LONG_DESC = A generic FPGA implementation of the Namco System86 arcade board
 OPTION HDL = MIXED
-OPTION IP_GROUP = Arcade:System86
+OPTION IP_GROUP = WemblyKJ:Arcade
 OPTION USAGE_LEVEL = BASE_USER
 
-IO_INTERFACE IO_IF = VIDEO_OUT, IO_TYPE = video_out
+#IO_INTERFACE IO_IF = VIDEO_OUT, IO_TYPE = video_out
 
 ## Bus Interfaces
 BUS_INTERFACE BUS=CONN_J4, BUS_STD=conn_j4, BUS_TYPE=TARGET
 BUS_INTERFACE BUS=CONN_J5, BUS_STD=conn_j5, BUS_TYPE=INITIATOR
 BUS_INTERFACE BUS=M_ROM, BUS_STD=ttl_rom, BUS_TYPE=INITIATOR
 BUS_INTERFACE BUS=M_RAM, BUS_STD=ttl_ram, BUS_TYPE=INITIATOR
+BUS_INTERFACE BUS=VIDEO_OUT, BUS_STD=video, BUS_TYPE=INITIATOR
 
 ## Parameters
-PARAMETER C_USE_HARDWARE_CLOCKS = 1, DT = INTEGER, PERMIT = BASE_USER, RANGE=(0:1)
-PARAMETER C_VIDEO_COMPONENT_DEPTH = 8, DT = INTEGER, IO_IF = VIDEO_OUT, PERMIT = BASE_USER, RANGE=(4,8)
+PARAMETER C_USE_HARDWARE_CLOCKS=1, DT=INTEGER, PERMIT=BASE_USER, RANGE=(0:1)
+PARAMETER C_VIDEO_COMPONENT_DEPTH=8, DT=INTEGER, BUS=VIDEO_OUT, PERMIT=BASE_USER, RANGE=(4,8)
 
 ## Peripheral ports
 # Global ports
@@ -38,16 +39,16 @@ PORT clk_6m = "", DIR=I, SIGIS=CLK, ISVALID=(C_USE_HARDWARE_CLOCKS == 1)
 PORT rst = "", DIR=I, SIGIS=RST
 
 # Component video
-PORT vid_clk = "", DIR = O, SIGIS=CLK, IO_IF = VIDEO_OUT, IO_IS = Clk
-PORT vid_data = "", DIR = O, VEC = [((3*C_VIDEO_COMPONENT_DEPTH)-1):0], IO_IF = VIDEO_OUT, IO_IS = Data
-PORT vid_red = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = Red
-PORT vid_green = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = Green
-PORT vid_blue = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = Blue
-PORT vid_hblank = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = HorizontalBlank
-PORT vid_vblank = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = VerticalBlank
-PORT vid_csync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = CompositeSync
-PORT vid_hsync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = HorizontalSync
-PORT vid_vsync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = VerticalSync
+PORT vid_clk = Clock, DIR = O, SIGIS=CLK, BUS=VIDEO_OUT # IO_IF = VIDEO_OUT, IO_IS = Clk
+PORT vid_data = RGB, DIR = O, VEC = [((3*C_VIDEO_COMPONENT_DEPTH)-1):0], BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = Data
+PORT vid_red = RedComponent, DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = Red
+PORT vid_green = GreenComponent, DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = Green
+PORT vid_blue = BlueComponent, DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = Blue
+PORT vid_hblank = HorizontalBlank, DIR = O, BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = HorizontalBlank
+PORT vid_vblank = VerticalBlank, DIR = O, BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = VerticalBlank
+PORT vid_csync = CompositSync, DIR = O, BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = CompositeSync
+PORT vid_hsync = HorizontalSync, DIR = O, BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = HorizontalSync
+PORT vid_vsync = VerticalSync, DIR = O, BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = VerticalSync
 
 # J4
 PORT conn_j4_reset = Reset, DIR=O, BUS = CONN_J4
