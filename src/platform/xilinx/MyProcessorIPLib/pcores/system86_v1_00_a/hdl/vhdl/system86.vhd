@@ -82,10 +82,18 @@ entity system86 is
 	(
 		C_VIDEO_COMPONENT_DEPTH		: integer	:= 8;
 		
-		C_EPROM_7116_ADDR_WIDTH 	: integer	:= 9;
-		C_EPROM_7116_DATA_WIDTH 	: integer	:= 4;
-		C_EPROM_7124_ADDR_WIDTH 	: integer	:= 9;
-		C_EPROM_7124_DATA_WIDTH 	: integer	:= 8;
+		C_EPROM_M27512_ADDR_WIDTH 	: integer	:= 16;
+		C_EPROM_M27512_DATA_WIDTH 	: integer	:= 8;
+		C_EPROM_M27256_ADDR_WIDTH 	: integer	:= 15;
+		C_EPROM_M27256_DATA_WIDTH 	: integer	:= 8;
+		C_EPROM_M7138_ADDR_WIDTH 	: integer	:= 11;
+		C_EPROM_M7138_DATA_WIDTH 	: integer	:= 8;
+		C_EPROM_M7124_ADDR_WIDTH 	: integer	:= 9;
+		C_EPROM_M7124_DATA_WIDTH 	: integer	:= 8;
+		C_EPROM_M7116_ADDR_WIDTH 	: integer	:= 9;
+		C_EPROM_M7116_DATA_WIDTH 	: integer	:= 4;
+		C_EPROM_M7112_ADDR_WIDTH 	: integer	:= 4;
+		C_EPROM_M7112_DATA_WIDTH 	: integer	:= 8;
 		
 		C_SRAM_CY6462_ADDR_WIDTH 	: integer	:= 13;
 		C_SRAM_CY6462_DATA_WIDTH 	: integer	:= 8
@@ -149,23 +157,91 @@ entity system86 is
 		-- (imagine the board has been socketed and the chips are simply external modules with independent busses!)
 		--
 		
-		-- SRAM 4r
-		sram_4r_ce     	: in	std_logic;
-		sram_4r_we     	: in	std_logic;
-		sram_4r_oe     	: in	std_logic;
-		sram_4r_addr   	: in	std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0);
-		sram_4r_data   	: inout	std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0);
+		prom_3r_ce		: out std_logic;
+		prom_3r_oe		: out std_logic;
+		prom_3r_addr	: out std_logic_vector(C_EPROM_M7124_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_3r_data	: in  std_logic_vector(C_EPROM_M7124_DATA_WIDTH-1 downto 0) := "00000000";
 		
-		-- EPROM 3R
-		prom_3r_ce     	: out	std_logic;
-		prom_3r_addr   	: out	std_logic_vector(C_EPROM_7124_ADDR_WIDTH-1 downto 0);
-		prom_3r_data   	: in	std_logic_vector(C_EPROM_7124_DATA_WIDTH-1 downto 0);
+		prom_3s_ce		: out std_logic;
+		prom_3s_oe		: out std_logic;
+		prom_3s_addr	: out std_logic_vector(C_EPROM_M7116_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_3s_data  	: in  std_logic_vector(C_EPROM_M7116_DATA_WIDTH-1 downto 0) := "0000";
 		
-		-- EPROM 3S
-		prom_3s_ce     	: out	std_logic;
-		prom_3s_addr   	: out	std_logic_vector(C_EPROM_7116_ADDR_WIDTH-1 downto 0);
-		prom_3s_data   	: in	std_logic_vector(C_EPROM_7116_DATA_WIDTH-1 downto 0)
+		prom_4v_ce		: out std_logic;
+		prom_4v_oe		: out std_logic;
+		prom_4v_addr	: out std_logic_vector(C_EPROM_M7138_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_4v_data  	: in  std_logic_vector(C_EPROM_M7138_DATA_WIDTH-1 downto 0) := "0000";
 		
+		prom_5v_ce		: out std_logic;
+		prom_5v_oe		: out std_logic;
+		prom_5v_addr	: out std_logic_vector(C_EPROM_M7138_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_5v_data  	: in  std_logic_vector(C_EPROM_M7138_DATA_WIDTH-1 downto 0) := "0000";
+		
+		prom_6u_ce		: out std_logic;
+		prom_6u_oe		: out std_logic;
+		prom_6u_addr	: out std_logic_vector(C_EPROM_M7112_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_6u_data  	: in  std_logic_vector(C_EPROM_M7112_DATA_WIDTH-1 downto 0) := "0000";
+		
+		prom_7s_ce		: out std_logic;
+		prom_7s_oe		: out std_logic;
+		prom_7s_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_7s_data  	: in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "0000";
+		
+		prom_9c_ce		: out std_logic;
+		prom_9c_oe		: out std_logic;
+		prom_9c_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_9c_data  	: in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "0000";
+		
+		prom_9d_ce		: out std_logic;
+		prom_9d_oe		: out std_logic;
+		prom_9d_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_9d_data  	: in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "0000";
+		
+		prom_12c_ce		: out std_logic;
+		prom_12c_oe		: out std_logic;
+		prom_12c_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_12c_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "0000";
+		
+		prom_12d_ce		: out std_logic;
+		prom_12d_oe		: out std_logic;
+		prom_12d_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_12d_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "0000";
+		
+		sram_3f_ce		: out std_logic;
+		sram_3f_oe		: out std_logic;
+		sram_3f_we		: out std_logic;
+		sram_3f_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "000000000";
+		sram_3f_data  	: in  std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000";
+		
+		sram_4n_ce		: out std_logic;
+		sram_4n_oe		: out std_logic;
+		sram_4n_we		: out std_logic;
+		sram_4n_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "000000000";
+		sram_4n_data  	: in  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "0000";
+
+		sram_4r_ce		: out std_logic;
+		sram_4r_oe		: out std_logic;
+		sram_4r_we		: out std_logic;
+		sram_4r_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "000000000";
+		sram_4r_data  	: in  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "0000";
+
+		sram_7n_ce		: out std_logic;
+		sram_7n_oe		: out std_logic;
+		sram_7n_we		: out std_logic;
+		sram_7n_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "000000000";
+		sram_7n_data  	: in  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "0000";
+
+		sram_10m_ce		: out std_logic;
+		sram_10m_oe		: out std_logic;
+		sram_10m_we		: out std_logic;
+		sram_10m_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "000000000";
+		sram_10m_data  : in  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "0000";
+
+		--sram_11k_ce		: out std_logic;
+		--sram_11k_oe		: out std_logic;
+		--sram_11k_we		: out std_logic;
+		--sram_11k_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "000000000";
+		--sram_11k_data  : in  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "0000";		
 	);
 
 attribute SIGIS : string; 
@@ -329,16 +405,6 @@ port(
 	prom_7s_addr	: out std_logic_vector(8 downto 0) := "000000000";
 	prom_7s_data  : in  std_logic_vector(3 downto 0) := "0000";
 	
-	prom_9c_ce		: out std_logic;
-	prom_9c_oe		: out std_logic;
-	prom_9c_addr	: out std_logic_vector(8 downto 0) := "000000000";
-	prom_9c_data  : in  std_logic_vector(3 downto 0) := "0000";
-	
-	prom_12c_ce		: out std_logic;
-	prom_12c_oe		: out std_logic;
-	prom_12c_addr	: out std_logic_vector(8 downto 0) := "000000000";
-	prom_12c_data  : in  std_logic_vector(3 downto 0) := "0000";
-	
 	sram_3f_ce		: out std_logic;
 	sram_3f_oe		: out std_logic;
 	sram_3f_we		: out std_logic;
@@ -368,12 +434,6 @@ port(
 	sram_10m_we		: out std_logic;
 	sram_10m_addr	: out std_logic_vector(8 downto 0) := "000000000";
 	sram_10m_data  : in  std_logic_vector(3 downto 0) := "0000";
-
-	sram_11k_ce		: out std_logic;
-	sram_11k_oe		: out std_logic;
-	sram_11k_we		: out std_logic;
-	sram_11k_addr	: out std_logic_vector(8 downto 0) := "000000000";
-	sram_11k_data  : in  std_logic_vector(3 downto 0) := "0000";
 
 	SYNC				: out std_logic;
 	RED				: out std_logic_vector(3 downto 0);
