@@ -163,7 +163,10 @@ entity axi_ram is
       write_enable            : in std_logic;
       output_enable           : in std_logic;
       addr                    : in std_logic_vector(C_RAM_ADDR_WIDTH-1 downto 0);
-      data                    : inout std_logic_vector(C_RAM_DATA_WIDTH-1 downto 0);
+      --data                    : inout std_logic_vector(C_RAM_DATA_WIDTH-1 downto 0);
+	  data_I                  : in std_logic_vector((C_ROM_DATA_WIDTH-1) downto 0);
+      data_O                  : out std_logic_vector((C_ROM_DATA_WIDTH-1) downto 0);
+      data_T                  : out std_logic;
       mapping_addr            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
   
       -- AXI Global
