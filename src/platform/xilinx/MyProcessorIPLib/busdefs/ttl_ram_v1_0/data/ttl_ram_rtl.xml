@@ -82,35 +82,5 @@
 				</spirit:onSlave>
 			</spirit:wire>
 		</spirit:port>
-		<spirit:port>
-			<spirit:logicalName>DataRead</spirit:logicalName>
-			<spirit:description>Data read</spirit:description>
-			<spirit:wire>
-				<spirit:qualifier>
-					<spirit:isData>true</spirit:isData>
-				</spirit:qualifier>
-				<spirit:onMaster>
-					<spirit:direction>in</spirit:direction>
-				</spirit:onMaster>
-				<spirit:onSlave>
-					<spirit:direction>out</spirit:direction>
-				</spirit:onSlave>
-			</spirit:wire>
-		</spirit:port>
-		<spirit:port>
-			<spirit:logicalName>DataWrite</spirit:logicalName>
-			<spirit:description>Data write</spirit:description>
-			<spirit:wire>
-				<spirit:qualifier>
-					<spirit:isData>true</spirit:isData>
-				</spirit:qualifier>
-				<spirit:onMaster>
-					<spirit:direction>out</spirit:direction>
-				</spirit:onMaster>
-				<spirit:onSlave>
-					<spirit:direction>in</spirit:direction>
-				</spirit:onSlave>
-			</spirit:wire>
-		</spirit:port>
 	</spirit:ports>
 </spirit:abstractionDefinition>
