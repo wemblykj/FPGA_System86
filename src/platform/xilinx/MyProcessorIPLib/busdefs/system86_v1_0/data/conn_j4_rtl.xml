@@ -4,10 +4,10 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4 http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/index.xsd">
 	<spirit:vendor>paul.wightmore@gmail.com</spirit:vendor>
-	<spirit:library>system86.busdefs</spirit:library>
+	<spirit:library>bsb_lib.rtl_busdefs</spirit:library>
 	<spirit:name>conn_j4_rtl</spirit:name>
 	<spirit:version>1.0</spirit:version>
-	<spirit:busType spirit:vendor="paul.wightmore@gmail.com" spirit:library="system86.busdefs"
+	<spirit:busType spirit:vendor="paul.wightmore@gmail.com" spirit:library="bsb_lib.rtl_busdefs"
 		spirit:name="conn_j4" spirit:version="1.0" />
 	<spirit:ports>
 		<spirit:port>

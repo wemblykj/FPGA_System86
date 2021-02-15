@@ -151,7 +151,7 @@ entity axi_rom is
       C_M_AXI_DATA_WIDTH            : integer := 32;
       
 		-- Slave AXI-Lite Generics
-		C_S_AXI_ADDR_WIDTH            : integer := 1;
+		C_S_AXI_ADDR_WIDTH            : integer := 32;
       C_S_AXI_DATA_WIDTH            : integer := 32;
 		C_BASEADDR                    : std_logic_vector := X"FFFFFFFF";
 		C_HIGHADDR                    : std_logic_vector := X"00000000"
@@ -160,12 +160,12 @@ entity axi_rom is
   (
       -- ROM ports
       chip_enable             : in std_logic;
-      output_enable           : in std_logic;
-      addr	 						: in std_logic_vector(C_ROM_ADDR_WIDTH-1 downto 0);
+      --output_enable           : in std_logic;
+      --addr	 						: in std_logic_vector(C_ROM_ADDR_WIDTH-1 downto 0);
       --data                    : inout std_logic_vector(C_ROM_DATA_WIDTH-1 downto 0);
-		data_I                  : in std_logic_vector((C_ROM_DATA_WIDTH-1) downto 0);
-      data_O                  : out std_logic_vector((C_ROM_DATA_WIDTH-1) downto 0);
-      data_T                  : out std_logic;
+      --data_T                  : in std_logic;
+      --data_I                  : in std_logic_vector((C_ROM_DATA_WIDTH-1) downto 0);
+      --data_O                  : out std_logic_vector((C_ROM_DATA_WIDTH-1) downto 0);
       mapping_addr            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
   
       -- AXI Global
@@ -268,7 +268,7 @@ constant DPHASE_TIMEOUT     : integer := 0;
 -- Signal and Type Declarations
 -------------------------------------------------------------------------------
 
-signal mapped_base_addr    : std_logic_vector(0 to C_S_AXI_ADDR_WIDTH-1);
+signal mapped_base_addr    : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
 
 signal bus2ip_clk      : std_logic;
 signal bus2ip_resetn   : std_logic;
@@ -279,15 +279,15 @@ signal ip2bus_wrack         : std_logic;
 signal ip2bus_addrack       : std_logic;
 signal ip2bus_error        : std_logic;
 -- IPIC address, data signals
-signal ip2bus_data          : std_logic_vector(0 to (C_S_AXI_DATA_WIDTH-1));
+signal ip2bus_data          : std_logic_vector((C_S_AXI_DATA_WIDTH-1) downto 0);
 
-signal bus2ip_addr          : std_logic_vector(0 to (C_S_AXI_ADDR_WIDTH-1));
+signal bus2ip_addr          : std_logic_vector((C_S_AXI_ADDR_WIDTH-1) downto 0);
 --signal bus2ip_addr_temp     : std_logic_vector(0 to (C_S_AXI_MEM_ADDR_WIDTH-1));
 -- lower two bits address to generate the byte level address
 --signal bus2ip_addr_reg      : std_logic_vector(0 to 2);
 
 -- Bus2IP_* Signals
-signal bus2ip_data          : std_logic_vector(0 to (C_S_AXI_DATA_WIDTH-1));
+signal bus2ip_data          : std_logic_vector((C_S_AXI_DATA_WIDTH-1) downto 0);
 -- below little endian signals are for data & BE swapping
 --signal temp_bus2ip_data     : std_logic_vector((C_S_AXI_MEM_DATA_WIDTH-1) downto 0);
 --signal temp_ip2bus_data     : std_logic_vector((C_S_AXI_MEM_DATA_WIDTH-1) downto 0);
@@ -299,16 +299,17 @@ signal bus2ip_rnw           : std_logic;
 --
 --signal bus2ip_cs_i          : std_logic;
 signal bus2ip_cs            : std_logic_vector
-                              (0 to ((AXI_ARD_ADDR_RANGE_ARRAY'LENGTH)/2)-1);
+										(((AXI_ARD_ADDR_RANGE_ARRAY'LENGTH)/2)-1 downto 0);
+                              --(0 to calc_num_ce(ARD_ADDR_RANGE_ARRAY)-1);
 --signal temp_bus2ip_cs       : std_logic_vector
 --                              (((AXI_ARD_ADDR_RANGE_ARRAY'LENGTH)/2)-1 downto 0);
 
 signal bus2ip_rdce          : std_logic_vector
-                              (0 to calc_num_ce(AXI_ARD_NUM_CE_ARRAY)-1);
+                              (calc_num_ce(AXI_ARD_NUM_CE_ARRAY)-1 downto 0);
 signal bus2ip_wrce          : std_logic_vector
-                              (0 to calc_num_ce(AXI_ARD_NUM_CE_ARRAY)-1);
+                              (calc_num_ce(AXI_ARD_NUM_CE_ARRAY)-1 downto 0);
 --
-signal bus2ip_be            : std_logic_vector(0 to (C_S_AXI_DATA_WIDTH/8)-1);
+signal bus2ip_be            : std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
 signal bus2ip_burst         : std_logic;
 
 -------------------------------------------------------------------------------
@@ -325,8 +326,8 @@ begin -- architecture IMP
         C_S_AXI_MIN_SIZE          => AXI_MIN_SIZE,
         C_USE_WSTRB               => USE_WSTRB,
         C_DPHASE_TIMEOUT          => DPHASE_TIMEOUT,
-        C_ARD_ADDR_RANGE_ARRAY    => ARD_ADDR_RANGE_ARRAY,
-        C_ARD_NUM_CE_ARRAY        => ARD_NUM_CE_ARRAY,
+        C_ARD_ADDR_RANGE_ARRAY    => AXI_ARD_ADDR_RANGE_ARRAY,
+        C_ARD_NUM_CE_ARRAY        => AXI_ARD_NUM_CE_ARRAY,
         C_FAMILY                  => C_FAMILY
        )
      port map
