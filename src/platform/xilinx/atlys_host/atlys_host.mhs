@@ -684,6 +684,11 @@ BEGIN axi_gpio
  PORT IP2INTC_Irpt = DIP_Switches_8Bits_IP2INTC_Irpt
 END
 
+BEGIN system86
+ PARAMETER INSTANCE = system86_0
+ PARAMETER HW_VER = 1.00.a
+END
+
 # BEGIN axi2axi_connector
 # PARAMETER INSTANCE = axi2axi_connector_ram
 # PARAMETER HW_VER = 1.00.a
