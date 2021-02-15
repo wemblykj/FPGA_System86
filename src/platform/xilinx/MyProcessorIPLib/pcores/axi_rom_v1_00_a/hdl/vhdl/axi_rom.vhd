@@ -63,17 +63,22 @@ use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
 library proc_common_v3_00_a;
--- SLV64_ARRAY_TYPE refered from ipif_pkg
 use proc_common_v3_00_a.ipif_pkg.SLV64_ARRAY_TYPE;
--- INTEGER_ARRAY_TYPE refered from ipif_pkg
 use proc_common_v3_00_a.ipif_pkg.INTEGER_ARRAY_TYPE;
--- calc_num_ce comoponent refered from ipif_pkg
 use proc_common_v3_00_a.ipif_pkg.calc_num_ce;
+
+
 
 -------------------------------------------------------------------------------
 -- axi_gpio_v1_01_b library is used for axi4 component declarations
 -------------------------------------------------------------------------------
 library axi_lite_ipif_v1_01_a; 
+
+-------------------------------------------------------------------------------
+-- axi_rom_v1_00_a library is used for axi_rom component declarations
+-------------------------------------------------------------------------------
+
+library axi_rom_v1_00_a; 
 
 -------------------------------------------------------------------------------
 --                     Defination of Generics :                              --
@@ -133,8 +138,8 @@ entity axi_rom is
   generic
   (
       -- ROM generics
-      C_ROM_ADDR_WIDTH              : integer := 16;
-      C_ROM_DATA_WIDTH              : integer := 8;
+      C_ROM_ADDR_WIDTH              : integer range 4 to 16 := 16;
+      C_ROM_DATA_WIDTH              : integer range 4 to 8 := 8;
       
 		-- Mapping generics
       C_MAPPED_BASE_ADDR            : std_logic_vector     := X"C0000000";
@@ -143,7 +148,7 @@ entity axi_rom is
       --Family Generics
       C_XLNX_REF_BOARD              : string  := "NONE";
       C_FAMILY                      : string  := "virtex6";
-      C_INSTANCE                    : string  := "AXI_PCIe";
+      C_INSTANCE                    : string  := "axi_rom_inst";
       
       -- Master AXI Generics
       -- C_M_AXI_THREAD_ID_WIDTH       : integer := 4;
@@ -151,22 +156,22 @@ entity axi_rom is
       C_M_AXI_DATA_WIDTH            : integer := 32;
       
 		-- Slave AXI-Lite Generics
-		C_S_AXI_ADDR_WIDTH            : integer := 32;
-      C_S_AXI_DATA_WIDTH            : integer := 32;
-		C_BASEADDR                    : std_logic_vector := X"FFFFFFFF";
-		C_HIGHADDR                    : std_logic_vector := X"00000000"
+		C_S_AXI_ADDR_WIDTH            : integer range 8 to 8 := 8;
+      C_S_AXI_DATA_WIDTH            : integer range 32 to 32 := 32
+		--C_BASEADDR                    : std_logic_vector := X"FFFFFFFF";
+		--C_HIGHADDR                    : std_logic_vector := X"00000000"
   );
   port
   (
       -- ROM ports
-      chip_enable             : in std_logic;
+      --chip_enable             : in std_logic;
       --output_enable           : in std_logic;
       --addr	 						: in std_logic_vector(C_ROM_ADDR_WIDTH-1 downto 0);
       --data                    : inout std_logic_vector(C_ROM_DATA_WIDTH-1 downto 0);
       --data_T                  : in std_logic;
       --data_I                  : in std_logic_vector((C_ROM_DATA_WIDTH-1) downto 0);
       --data_O                  : out std_logic_vector((C_ROM_DATA_WIDTH-1) downto 0);
-      mapping_addr            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
+      --mapping_addr            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
   
       -- AXI Global
 
@@ -194,25 +199,34 @@ entity axi_rom is
       M_AXI_RREADY            : out std_logic;
 
       -- AXI Slave Lite Interface - CFG Block
-      S_AXI_ACLK          : in  std_logic; -- AXI clock
-      S_AXI_ARESETN       : in  std_logic; -- AXI active low synchronous reset
-      S_AXI_ARREADY       : out std_logic;                     -- AXI Lite Read Address Core ready
-      S_AXI_ARVALID       : in  std_logic;                     -- AXI Lite Read Address Valid
-      S_AXI_ARADDR        : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Read address
-      S_AXI_RDATA         : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0); -- AXI Lite Read Data
-      S_AXI_RRESP         : out std_logic_vector(1 downto 0);  -- AXI Lite Read Data strobe
-      S_AXI_RVALID        : out std_logic;                     -- AXI Lite Read data Valid
-      S_AXI_RREADY        : in  std_logic;                     -- AXI Lite Read Data Core ready
-      S_AXI_AWREADY       : out std_logic;                     -- AXI Lite Write Address Core ready
-      S_AXI_AWVALID       : in  std_logic;                     -- AXI Lite Write Address Valid
-      S_AXI_AWADDR        : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0); -- AXI Lite Write address
-      S_AXI_WREADY        : out std_logic;                     -- AXI Lite Write Data Core ready
-      S_AXI_WVALID        : in  std_logic;                     -- AXI Lite Write data Valid
-      S_AXI_WDATA         : in  std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0); -- AXI Lite Write Data
-      S_AXI_WSTRB         : in  std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);  -- AXI Lite Write Data strobe
-      S_AXI_BREADY        : in  std_logic;                     -- AXI Lite Write Data Core ready
-      S_AXI_BVALID        : out std_logic;                     -- AXI Lite Write data Valid
-      S_AXI_BRESP         : out std_logic_vector(1 downto 0)   -- AXI Lite Write Data strobe
+		S_AXI_ACLK              : in  std_logic;
+    S_AXI_ARESETN           : in  std_logic;
+    S_AXI_AWADDR            : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 
+    								downto 0);
+    S_AXI_AWVALID           : in  std_logic;
+    S_AXI_AWREADY           : out std_logic;
+    
+    S_AXI_WDATA             : in  std_logic_vector(C_S_AXI_DATA_WIDTH-1 
+    								downto 0);
+    S_AXI_WSTRB             : in  std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 
+    								downto 0);
+    S_AXI_WVALID            : in  std_logic;
+    S_AXI_WREADY            : out std_logic;
+    
+    S_AXI_BRESP             : out std_logic_vector(1 downto 0);
+    S_AXI_BVALID            : out std_logic;
+    S_AXI_BREADY            : in  std_logic;
+    
+    S_AXI_ARADDR            : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 
+    								downto 0);
+    S_AXI_ARVALID           : in  std_logic;
+    S_AXI_ARREADY           : out std_logic;
+    
+    S_AXI_RDATA             : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 
+    								downto 0);
+    S_AXI_RRESP             : out std_logic_vector(1 downto 0);
+    S_AXI_RVALID            : out std_logic;
+    S_AXI_RREADY            : in  std_logic
   );
 
 -------------------------------------------------------------------------------
@@ -243,24 +257,20 @@ end entity axi_rom;
 
 architecture IMP of axi_rom is
 
-constant ZERO_ADDR_PAD         : std_logic_vector(64-C_S_AXI_ADDR_WIDTH-1 downto 0)
-                                 := (others => '0');
- 
-constant AXI_ARD_NUM_CE_ARRAY         : INTEGER_ARRAY_TYPE := (0 => 1);
- 
-constant AXI_ARD_ADDR_RANGE_ARRAY  : SLV64_ARRAY_TYPE :=
-                                 (ZERO_ADDR_PAD & C_BASEADDR, 
-                                  ZERO_ADDR_PAD & C_HIGHADDR);
-
 -------------------  Constant Declaration Section BEGIN -----------------------
 
+constant ZERO_ADDR_PAD         : std_logic_vector(0 to 31)
+                                 := (others => '0');
+
+constant BASEADDR  : std_logic_vector(31 downto 0):= X"00000000";
+constant HIGHADDR  : std_logic_vector(31 downto 0):= X"000000FF";
 
 constant ARD_ADDR_RANGE_ARRAY  : SLV64_ARRAY_TYPE :=
-                                 (ZERO_ADDR_PAD & C_BASEADDR, 
-                                  ZERO_ADDR_PAD & C_HIGHADDR);
-constant ARD_NUM_CE_ARRAY      : INTEGER_ARRAY_TYPE := (0 => 1);
+                                 (ZERO_ADDR_PAD & BASEADDR, 
+                                  ZERO_ADDR_PAD & HIGHADDR);
+constant ARD_NUM_CE_ARRAY      : INTEGER_ARRAY_TYPE := (0 => 8);
 
-constant AXI_MIN_SIZE       : std_logic_vector(31 downto 0) := X"00001FFF";
+constant AXI_MIN_SIZE       : std_logic_vector(31 downto 0) := X"000000FF";
 constant USE_WSTRB          : integer := 1;
 constant DPHASE_TIMEOUT     : integer := 0;
   
@@ -279,35 +289,22 @@ signal ip2bus_wrack         : std_logic;
 signal ip2bus_addrack       : std_logic;
 signal ip2bus_error        : std_logic;
 -- IPIC address, data signals
-signal ip2bus_data          : std_logic_vector((C_S_AXI_DATA_WIDTH-1) downto 0);
+signal ip2bus_data          : std_logic_vector(0 to (C_S_AXI_DATA_WIDTH-1));
 
-signal bus2ip_addr          : std_logic_vector((C_S_AXI_ADDR_WIDTH-1) downto 0);
---signal bus2ip_addr_temp     : std_logic_vector(0 to (C_S_AXI_MEM_ADDR_WIDTH-1));
--- lower two bits address to generate the byte level address
---signal bus2ip_addr_reg      : std_logic_vector(0 to 2);
+signal bus2ip_addr          : std_logic_vector(0 to (C_S_AXI_ADDR_WIDTH-1));
 
 -- Bus2IP_* Signals
 signal bus2ip_data          : std_logic_vector((C_S_AXI_DATA_WIDTH-1) downto 0);
--- below little endian signals are for data & BE swapping
---signal temp_bus2ip_data     : std_logic_vector((C_S_AXI_MEM_DATA_WIDTH-1) downto 0);
---signal temp_ip2bus_data     : std_logic_vector((C_S_AXI_MEM_DATA_WIDTH-1) downto 0);
---signal temp_bus2ip_be       : std_logic_vector(((C_S_AXI_MEM_DATA_WIDTH/8)-1) downto 0);
 --
 signal bus2ip_rnw           : std_logic;
---signal bus2ip_rdreq_i       : std_logic;
---signal bus2ip_wrreq_i       : std_logic;
 --
---signal bus2ip_cs_i          : std_logic;
 signal bus2ip_cs            : std_logic_vector
-										(((AXI_ARD_ADDR_RANGE_ARRAY'LENGTH)/2)-1 downto 0);
-                              --(0 to calc_num_ce(ARD_ADDR_RANGE_ARRAY)-1);
---signal temp_bus2ip_cs       : std_logic_vector
---                              (((AXI_ARD_ADDR_RANGE_ARRAY'LENGTH)/2)-1 downto 0);
+										(((ARD_ADDR_RANGE_ARRAY'LENGTH)/2)-1 downto 0);
 
 signal bus2ip_rdce          : std_logic_vector
-                              (calc_num_ce(AXI_ARD_NUM_CE_ARRAY)-1 downto 0);
+                              (0 to calc_num_ce(ARD_NUM_CE_ARRAY)-1);
 signal bus2ip_wrce          : std_logic_vector
-                              (calc_num_ce(AXI_ARD_NUM_CE_ARRAY)-1 downto 0);
+                              (0 to calc_num_ce(ARD_NUM_CE_ARRAY)-1);
 --
 signal bus2ip_be            : std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
 signal bus2ip_burst         : std_logic;
@@ -326,8 +323,8 @@ begin -- architecture IMP
         C_S_AXI_MIN_SIZE          => AXI_MIN_SIZE,
         C_USE_WSTRB               => USE_WSTRB,
         C_DPHASE_TIMEOUT          => DPHASE_TIMEOUT,
-        C_ARD_ADDR_RANGE_ARRAY    => AXI_ARD_ADDR_RANGE_ARRAY,
-        C_ARD_NUM_CE_ARRAY        => AXI_ARD_NUM_CE_ARRAY,
+        C_ARD_ADDR_RANGE_ARRAY    => ARD_ADDR_RANGE_ARRAY,
+        C_ARD_NUM_CE_ARRAY        => ARD_NUM_CE_ARRAY,
         C_FAMILY                  => C_FAMILY
        )
      port map
