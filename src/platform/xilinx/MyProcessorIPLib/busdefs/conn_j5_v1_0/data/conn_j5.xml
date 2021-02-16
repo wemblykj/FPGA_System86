@@ -4,9 +4,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4 http://www.spiritconsortium.org/XMLSchema/SPIRIT/1.4/index.xsd">
 	<spirit:vendor>paul.wightmore@gmail.com</spirit:vendor>
-	<spirit:library>bsb_lib.rtl_busdefs</spirit:library>
-	<spirit:name>conn_j4</spirit:name>
+	<spirit:library>bsblib.rtl_busdefs</spirit:library>
+	<spirit:name>conn_j5</spirit:name>
 	<spirit:version>1.0</spirit:version>
 	<spirit:directConnection>true</spirit:directConnection>
 	<spirit:isAddressable>false</spirit:isAddressable>
+	<spirit:maxMasters>1</spirit:maxMasters>
+	<spirit:maxSlaves>1</spirit:maxSlaves>
 </spirit:busDefinition>

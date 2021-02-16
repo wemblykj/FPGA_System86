@@ -164,7 +164,7 @@ entity axi_rom is
   port
   (
       -- ROM ports
-      --chip_enable             : in std_logic;
+      chip_enable             : in std_logic;
       --output_enable           : in std_logic;
       --addr	 						: in std_logic_vector(C_ROM_ADDR_WIDTH-1 downto 0);
       --data                    : inout std_logic_vector(C_ROM_DATA_WIDTH-1 downto 0);
@@ -365,4 +365,4 @@ begin -- architecture IMP
         Bus2IP_WrCE    => bus2ip_wrce
        );
 
-end architecture imp;
+end imp;

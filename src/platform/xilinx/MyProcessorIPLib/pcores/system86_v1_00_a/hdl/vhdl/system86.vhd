@@ -86,11 +86,12 @@ library system86_v1_00_a;
 entity system86 is
 	generic
 	(
-		--  -- System Parameter
-
+		--Family Generics
+      C_XLNX_REF_BOARD              : string  := "NONE";
 		C_FAMILY               : string                         := "virtex6";
 		C_INSTANCE             : string                         := "system86_inst";
-		
+
+		--  -- System Parameter		
 		--C_VIDEO_COMPONENT_DEPTH		: integer	:= 8;
 		
 --		C_EPROM_M27512_ADDR_WIDTH 	: integer	:= 16;
@@ -261,6 +262,13 @@ entity system86 is
 	);
 
 -------------------------------------------------------------------------------
+-- fan-out attributes for XST
+-------------------------------------------------------------------------------
+
+  attribute MAX_FANOUT                    : string;
+  attribute MAX_FANOUT   of CLK_48M       : signal is "10000";
+  
+-------------------------------------------------------------------------------
 -- Attributes for MPD file
 -------------------------------------------------------------------------------
   attribute IP_GROUP             	: string ;
@@ -290,13 +298,14 @@ end entity system86;
 -- You will need to modify this example or implement a new architecture for
 -- ENTITY system86 to implement your coprocessor
 
-architecture rtl of system86 is
+architecture IMP of system86 is
 
 --
 -- global signals
 --
 
 -- timing subsystem outputs
+signal CLK_48M_tmp		: std_logic;
 --signal CLK_24M		: std_logic;
 --signal CLK_12M		: std_logic;
 --signal CLK_6M		: std_logic;
@@ -354,7 +363,7 @@ architecture rtl of system86 is
 --	enable 		: in std_logic := '1';
 --	
 --	-- input clocks
---	CLK_48M 		: in std_logic;
+-- CLK_48M 		: in std_logic;
 --	
 --	-- soft generated clocks
 --	CLK_24M		: out std_logic;
@@ -772,7 +781,7 @@ architecture rtl of system86 is
 -- Architecture
 -------------------------------------------------------------------------------
 
-begin -- architecture RTL
+begin -- architecture IMP
 
 ----
 ----	timing_subsys: timing_subsystem
@@ -885,6 +894,13 @@ begin -- architecture RTL
 ----		o_Blu_Video		=> tpg_blue(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4)
 ----	);
 ----	
+process(CLK_48M)
+begin
+	if falling_edge(CLK_48M) then
+		CLK_48M_tmp <= CLK_48M; 
+		prom_3r_ce <= CLK_48M_tmp;
+	end if;
+end process;
 ----	process(CLK_6M)
 ----	begin
 ----		if falling_edge(CLK_6M) then
@@ -946,4 +962,4 @@ begin -- architecture RTL
 ----	conn_j2_green <= GREEN;
 ----	conn_j2_blue <= BLUE;
 	
-end architecture rtl;
+end imp;
