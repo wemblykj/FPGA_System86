@@ -9,9 +9,10 @@ BEGIN system86
 ## Peripheral Options
 OPTION IPTYPE = PERIPHERAL
 OPTION IMP_NETLIST = TRUE
+OPTION HDL = VHDL
 OPTION DESC = Wembly's Namco System86 Replication
 OPTION LONG_DESC = A generic FPGA implementation of the Namco System86 arcade board
-OPTION HDL = MIXED
+OPTION ARCH_SUPPORT_MAP = (others=DEVELOPMENT)
 OPTION IP_GROUP = WemblyKJ:Arcade
 OPTION USAGE_LEVEL = BASE_USER
 
