@@ -256,11 +256,10 @@ entity axi_rom is
       C_INSTANCE                    : string  := "axi_rom_inst";
       
       -- Master AXI Generics
-      --C_M_AXI_THREAD_ID_WIDTH       : integer := 4;
+      C_M_AXI_THREAD_ID_WIDTH       : integer := 1;
       C_M_AXI_ADDR_WIDTH            : integer := 32;
       C_M_AXI_DATA_WIDTH            : integer := 32;
       C_M_AXI_PROTOCOL              : string                    := "AXI4";
-		C_M_AXI_THREAD_ID_WIDTH       : integer                   := 4;
 		
 		-- Slave AXI-Lite Generics
 		C_S_AXI_ADDR_WIDTH            : integer range 8 to 8 := 8;
@@ -271,7 +270,7 @@ entity axi_rom is
   port
   (
       -- ROM ports
-      chip_enable             : in std_logic;
+      chip_enable             : in std_logic := '0';
       --output_enable           : in std_logic;
       --addr	 						: in std_logic_vector(C_ROM_ADDR_WIDTH-1 downto 0);
       --data                    : inout std_logic_vector(C_ROM_DATA_WIDTH-1 downto 0);
