@@ -12,11 +12,6 @@ OPTION IMP_NETLIST = TRUE
 OPTION HDL = VHDL
 OPTION DESC = Wembly's Namco System86 Replication
 OPTION LONG_DESC = A generic FPGA implementation of the Namco System86 arcade board
-<<<<<<< HEAD
-OPTION ARCH_SUPPORT_MAP = (others=DEVELOPMENT)
-=======
-OPTION HDL = VHDL
->>>>>>> 1f3824c525fec9b215c3b84e22b7071344cad761
 OPTION IP_GROUP = WemblyKJ:Arcade
 OPTION USAGE_LEVEL = BASE_USER
 
