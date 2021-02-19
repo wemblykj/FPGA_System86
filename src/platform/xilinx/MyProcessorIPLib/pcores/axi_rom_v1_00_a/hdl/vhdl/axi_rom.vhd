@@ -70,9 +70,14 @@ use proc_common_v3_00_a.ipif_pkg.calc_num_ce;
 
 
 -------------------------------------------------------------------------------
--- axi_gpio_v1_01_b library is used for axi4 component declarations
+-- axi_lite_ipif_v1_01_a library is used for axi4 component declarations
 -------------------------------------------------------------------------------
 library axi_lite_ipif_v1_01_a; 
+
+-------------------------------------------------------------------------------
+-- axi_master_lite_v2_00_a library is used for axi4 component declarations
+-------------------------------------------------------------------------------
+library axi_master_lite_v2_00_a;
 
 -------------------------------------------------------------------------------
 -- axi_rom_v1_00_a library is used for axi_rom component declarations
@@ -453,6 +458,56 @@ signal bus2ip_burst         : std_logic;
 
 begin -- architecture IMP
 
+	 AXI_MASTER_LITE_I : entity axi_master_lite_v2_00_a.axi_master_lite
+	 generic map
+       (
+        C_M_AXI_ADDR_WIDTH        => C_M_AXI_ADDR_WIDTH,
+        C_M_AXI_DATA_WIDTH        => C_M_AXI_DATA_WIDTH,
+        C_M_AXI_MIN_SIZE          => AXI_MIN_SIZE,
+        C_USE_WSTRB               => USE_WSTRB,
+        C_DPHASE_TIMEOUT          => DPHASE_TIMEOUT,
+        C_ARD_ADDR_RANGE_ARRAY    => ARD_ADDR_RANGE_ARRAY,
+        C_ARD_NUM_CE_ARRAY        => ARD_NUM_CE_ARRAY,
+        C_FAMILY                  => C_FAMILY
+       )
+     port map
+       (
+        M_AXI_ACLK          =>  M_AXI_ACLK,
+        M_AXI_ARESETN       =>  M_AXI_ARESETN,
+        M_AXI_AWADDR        =>  M_AXI_AWADDR,
+        M_AXI_AWVALID       =>  M_AXI_AWVALID,
+        M_AXI_AWREADY       =>  M_AXI_AWREADY,
+        M_AXI_WDATA         =>  M_AXI_WDATA,
+        M_AXI_WSTRB         =>  M_AXI_WSTRB,
+        M_AXI_WVALID        =>  M_AXI_WVALID,
+        M_AXI_WREADY        =>  M_AXI_WREADY,
+        M_AXI_BRESP         =>  M_AXI_BRESP,
+        M_AXI_BVALID        =>  M_AXI_BVALID,
+        M_AXI_BREADY        =>  M_AXI_BREADY,
+        M_AXI_ARADDR        =>  M_AXI_ARADDR,
+        M_AXI_ARVALID       =>  M_AXI_ARVALID,
+        M_AXI_ARREADY       =>  M_AXI_ARREADY,
+        M_AXI_RDATA         =>  M_AXI_RDATA,
+        M_AXI_RRESP         =>  M_AXI_RRESP,
+        M_AXI_RVALID        =>  M_AXI_RVALID,
+        M_AXI_RREADY        =>  M_AXI_RREADY,
+     
+        -- IP Interconnect (IPIC) port signals 
+        Bus2IP_Clk     => bus2ip_clk,
+        Bus2IP_Resetn  => bus2ip_resetn,
+        IP2Bus_Data    => ip2bus_data,
+        IP2Bus_WrAck   => ip2bus_wrack,
+        IP2Bus_RdAck   => ip2bus_rdack,
+        IP2Bus_Error   => ip2bus_error,
+        Bus2IP_Addr    => bus2ip_addr,
+        Bus2IP_Mst_Data    => bus2ip_data,
+        Bus2IP_Mst_RNW     => bus2ip_rnw,
+        Bus2IP_Mst_BE      => bus2ip_be,
+        Bus2IP_Mst_CS      => bus2ip_cs,
+        Bus2IP_Mst_RdCE    => bus2ip_rdce,
+        Bus2IP_Mst_WrCE    => bus2ip_wrce
+       );
+		 
     AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
       generic map
        (
