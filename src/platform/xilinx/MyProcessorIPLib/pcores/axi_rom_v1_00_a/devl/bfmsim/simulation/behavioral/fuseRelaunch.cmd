@@ -1,1 +1,0 @@
--incremental "work.bfm_system_tb" "work.glbl" -prj "bfm_system.prj" -L "xilinxcorelib_ver" -L "secureip" -L "unisims_ver" -L "unimacro_ver" -o "isim_bfm_system" 

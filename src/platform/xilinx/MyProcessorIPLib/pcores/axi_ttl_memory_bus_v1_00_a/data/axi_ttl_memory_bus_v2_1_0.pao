@@ -1,0 +1,13 @@
+##############################################################################
+## Filename:          /home/administrator/Development/test_rig/pcores/axi_rom_v1_00_a/data/axi_rom_v2_1_0.pao
+## Description:       Peripheral Analysis Order
+## Date:              Wed Mar 20 13:15:10 2019 (by Create and Import Peripheral Wizard)
+##############################################################################
+
+## Helper Libraries
+lib proc_common_v3_00_a all
+lib axi_lite_ipif_v1_01_a all 
+lib axi_master_lite_v2_00_a all 
+
+## AXI ROM Core 
+lib axi_ttl_memory_bus_v1_00_a axi_ttl_memory_bus vhdl
