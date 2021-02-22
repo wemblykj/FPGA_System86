@@ -1,0 +1,16 @@
+##############################################################################
+#
+# (c) Copyright 2021 Paul Wightmore. All rights reserved.
+#
+##############################################################################
+
+OPTION psf_version = 2.1;
+
+BEGIN driver ttl_memory_bus
+
+  OPTION supported_peripherals = (axi_ttl_memory_bus);
+  OPTION driver_state = ACTIVE;
+  OPTION depends = (common_v1_00_a);
+  OPTION copyfiles = all;
+
+END driver
