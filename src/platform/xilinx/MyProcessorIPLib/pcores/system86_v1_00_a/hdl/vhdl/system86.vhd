@@ -87,12 +87,13 @@ entity system86 is
 	generic
 	(
 		--Family Generics
-      C_XLNX_REF_BOARD              : string  := "NONE";
+		C_XLNX_REF_BOARD              : string  := "NONE";
 		C_FAMILY               : string                         := "virtex6";
 		C_INSTANCE             : string                         := "system86_inst";
 
 		--  -- System Parameter		
-		--C_VIDEO_COMPONENT_DEPTH		: integer	:= 8;
+		C_USE_HARDWARE_CLOCKS		: integer 	:= 0;
+		C_VIDEO_COMPONENT_DEPTH		: integer	:= 8;
 		
 --		C_EPROM_M27512_ADDR_WIDTH 	: integer	:= 16;
 --		C_EPROM_M27512_DATA_WIDTH 	: integer	:= 8;
@@ -121,16 +122,16 @@ entity system86 is
 		--enable 				: in std_logic := 1;				-- enable the simulation
 
 		-- simulation video
---		vid_clk				: out    std_logic;
---		vid_data				: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
---		vid_red				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
---		vid_green			: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
---		vid_blue				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
---		vid_csync			: out    std_logic;
---		vid_hsync			: out    std_logic;
---		vid_vsync			: out    std_logic;
---		vid_hblank			: out    std_logic;
---		vid_vblank			: out    std_logic;
+		vid_clk				: out    std_logic;
+		vid_data			: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
+		vid_red				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_green			: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_blue			: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_csync			: out    std_logic;
+		vid_hsync			: out    std_logic;
+		vid_vsync			: out    std_logic;
+		vid_hblank			: out    std_logic;
+		vid_vblank			: out    std_logic;
 		
 		-- simulation generated  system clock
 		CLK_48M				: in	std_logic;					-- 49.152 MHz system clock

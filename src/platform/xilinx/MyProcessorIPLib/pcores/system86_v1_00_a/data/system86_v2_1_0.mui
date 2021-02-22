@@ -15,6 +15,20 @@
 		<tip>Defines the bit width of the output video components. The choices are wither the native 4-bit wide components or an 8-bit expanded width for compatability with external IP that will generally require an 8-bit signal as a minimum</tip>
 	</widget>
 	'>
+	<!ENTITY C_VIDEO_OUT_TYPE '
+	<widget id="C_VIDEO_OUT_TYPE">
+		<key>C_VIDEO_OUT_TYPE</key>
+		<label>Video Output Type</label>
+		<tip>Defines the video output method</tip>
+	</widget>
+	'>
+	<!ENTITY C_VIDEO_SYNC_TYPE '
+	<widget id="C_VIDEO_SYNC_TYPE">
+		<key>C_VIDEO_SYNC_TYPE</key>
+		<label>Video Sync Generation</label>
+		<tip>Defines the video sync signal type</tip>
+	</widget>
+	'>
 
 ]>
 
@@ -28,6 +42,8 @@
 		<group id="Video">
 			<display>Video generation options</display>
 			<item>&C_VIDEO_COMPONENT_DEPTH;</item>
+			<item>&C_VIDEO_OUT_TYPE;</item>
+			<item>&C_VIDEO_SYNC_TYPE;</item>
 		</group>
 	</view>
 </doc>

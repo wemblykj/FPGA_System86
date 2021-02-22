@@ -4,14 +4,14 @@
 	<widget id="C_ADDR_WIDTH">
 		<key>C_ADDR_WIDTH</key>
 		<label>Address Width</label>
-		<tip>The address width of the TTL ROM</tip>
+		<tip>The width of the TTL memory address bus</tip>
 	</widget>
 	'>
 	<!ENTITY C_DATA_WIDTH '
 	<widget id="C_DATA_WIDTH">
 		<key>C_DATA_WIDTH</key>
 		<label>Data Width</label>
-		<tip>The data width of the TTL ROM</tip>
+		<tip>The width of the TTL memory data bus</tip>
 	</widget>
 	'>
 	<!ENTITY C_READONLY '

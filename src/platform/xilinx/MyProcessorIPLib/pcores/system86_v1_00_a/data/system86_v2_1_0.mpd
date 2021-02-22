@@ -15,7 +15,7 @@ OPTION LONG_DESC = A generic FPGA implementation of the Namco System86 arcade bo
 OPTION IP_GROUP = WemblyKJ:Arcade
 OPTION USAGE_LEVEL = BASE_USER
 
-#IO_INTERFACE IO_IF = VIDEO_OUT, IO_TYPE = video_out
+IO_INTERFACE IO_IF = VIDEO_OUT, IO_TYPE = video, ISVALID = (C_VIDEO_OUT_TYPE==0)
 
 ## Bus Interfaces
 #BUS_INTERFACE BUS=CONN_J4, BUS_STD=conn_j4, BUS_TYPE = TARGET
@@ -41,158 +41,161 @@ BUS_INTERFACE BUS = SRAM_3F, BUS_STD = ttl_ram, BUS_TYPE = INITIATOR
 #BUS_INTERFACE BUS = SRAM_10M, BUS_STD = ttl_ram, BUS_TYPE = INITIATOR
 #BUS_INTERFACE BUS = SRAM_11K, BUS_STD = ttl_ram, BUS_TYPE = INITIATOR
 
-#BUS_INTERFACE BUS=VIDEO_OUT, BUS_STD=video, BUS_TYPE = INITIATOR
+BUS_INTERFACE BUS = VIDEO_BUS, BUS_STD = video, BUS_TYPE = MASTER, ISVALID = (C_VIDEO_OUT_TYPE==1)
 
 ## Parameters
-PARAMETER C_FAMILY = virtex6, DT = STRING
-PARAMETER C_INSTANCE = system86_inst, DT = STRING
-#PARAMETER C_USE_HARDWARE_CLOCKS=0, DT=INTEGER, PERMIT=BASE_USER, RANGE=(0:1)
-#PARAMETER C_VIDEO_COMPONENT_DEPTH=8, DT=INTEGER, BUS=VIDEO_OUT, PERMIT=BASE_USER, RANGE=(4,8)
-#PARAMETER C_EPROM_M27512_ADDR_WIDTH=16, DT=INTEGER, ASSIGNMENT = CONSTANT 
-#PARAMETER C_EPROM_M27512_DATA_WIDTH=8, DT=INTEGER, ASSIGNMENT = CONSTANT 
-#PARAMETER C_EPROM_M27256_ADDR_WIDTH=15, DT=INTEGER, ASSIGNMENT = CONSTANT 
-#PARAMETER C_EPROM_M27256_DATA_WIDTH=8, DT=INTEGER, ASSIGNMENT = CONSTANT 
-#PARAMETER C_EPROM_MB7138_ADDR_WIDTH=11, DT=INTEGER, ASSIGNMENT = CONSTANT 
-#PARAMETER C_EPROM_MB7138_DATA_WIDTH=8, DT=INTEGER, ASSIGNMENT = CONSTANT 
-PARAMETER C_EPROM_MB7124_ADDR_WIDTH=9, DT=INTEGER, ASSIGNMENT = CONSTANT 
-PARAMETER C_EPROM_MB7124_DATA_WIDTH=8, DT=INTEGER, ASSIGNMENT = CONSTANT 
-#PARAMETER C_EPROM_MB7116_ADDR_WIDTH=9, DT=INTEGER, ASSIGNMENT = CONSTANT 
-#PARAMETER C_EPROM_MB7116_DATA_WIDTH=4, DT=INTEGER, ASSIGNMENT = CONSTANT 
-#PARAMETER C_EPROM_MB7112_ADDR_WIDTH=5, DT=INTEGER, ASSIGNMENT = CONSTANT 
-#PARAMETER C_EPROM_MB7112_DATA_WIDTH=8, DT=INTEGER, ASSIGNMENT = CONSTANT 
-PARAMETER C_SRAM_CY6462_ADDR_WIDTH=13, DT=INTEGER, ASSIGNMENT = CONSTANT 
-PARAMETER C_SRAM_CY6462_DATA_WIDTH=8, DT=INTEGER, ASSIGNMENT = CONSTANT 
+PARAMETER C_FAMILY=virtex6, DT=STRING
+PARAMETER C_INSTANCE=system86_inst, DT=STRING
+PARAMETER C_USE_HARDWARE_CLOCKS = 0, DT = INTEGER, PERMIT=BASE_USER, RANGE = (0:1) #, VALUES = (0 = CUS27, 1 = External), ASSIGNMENT = OPTIONAL
+PARAMETER C_VIDEO_COMPONENT_DEPTH = 4, DT = INTEGER, BUS = VIDEO_BUS, PERMIT=BASE_USER, RANGE=(4,8), ASSIGNMENT = OPTIONAL
+PARAMETER C_VIDEO_OUT_TYPE = 0, DT = INTEGER, BUS = VIDEO_BUS, PERMIT=BASE_USER, RANGE = (0,1), ASSIGNMENT = OPTIONAL, VALUES = (0=IO_IF, 1=BUS), TYPE = NON_HDL
+PARAMETER C_VIDEO_SYNC_TYPE = 0, DT = INTEGER, IFIO = VIDEO_OUT, PERMIT=BASE_USER, RANGE = (0,1), ASSIGNMENT = OPTIONAL, VALUES = (0=Composite, 1=Discrete), ISVALID = (C_VIDEO_OUT_TYPE == 0), TYPE = NON_HDL
+#PARAMETER C_EPROM_M27512_ADDR_WIDTH = 16, DT = INTEGER, ASSIGNMENT = CONSTANT 
+#PARAMETER C_EPROM_M27512_DATA_WIDTH = 8, DT = INTEGER, ASSIGNMENT = CONSTANT 
+#PARAMETER C_EPROM_M27256_ADDR_WIDTH = 15, DT = INTEGER, ASSIGNMENT = CONSTANT 
+#PARAMETER C_EPROM_M27256_DATA_WIDTH = 8, DT = INTEGER, ASSIGNMENT = CONSTANT 
+#PARAMETER C_EPROM_MB7138_ADDR_WIDTH = 11, DT = INTEGER, ASSIGNMENT = CONSTANT 
+#PARAMETER C_EPROM_MB7138_DATA_WIDTH = 8, DT = INTEGER, ASSIGNMENT = CONSTANT 
+PARAMETER C_EPROM_MB7124_ADDR_WIDTH=9, DT=INTEGER, ASSIGNMENT=CONSTANT 
+PARAMETER C_EPROM_MB7124_DATA_WIDTH=8, DT=INTEGER, ASSIGNMENT=CONSTANT 
+#PARAMETER C_EPROM_MB7116_ADDR_WIDTH = 9, DT = INTEGER, ASSIGNMENT = CONSTANT 
+#PARAMETER C_EPROM_MB7116_DATA_WIDTH = 4, DT = INTEGER, ASSIGNMENT = CONSTANT 
+#PARAMETER C_EPROM_MB7112_ADDR_WIDTH = 5, DT = INTEGER, ASSIGNMENT = CONSTANT 
+#PARAMETER C_EPROM_MB7112_DATA_WIDTH = 8, DT = INTEGER, ASSIGNMENT = CONSTANT 
+PARAMETER C_SRAM_CY6462_ADDR_WIDTH=13, DT=INTEGER, ASSIGNMENT=CONSTANT 
+PARAMETER C_SRAM_CY6462_DATA_WIDTH=8, DT=INTEGER, ASSIGNMENT=CONSTANT 
 
 ## Peripheral ports
 # Global ports
-PORT CLK_48M = "", DIR=I, SIGIS=CLK
+PORT CLK_48M = "", DIR = I, SIGIS = CLK
 
-#PORT clk_24m = "", DIR=I, SIGIS=CLK, ISVALID=(C_USE_HARDWARE_CLOCKS == 1)
-#PORT clk_12m = "", DIR=I, SIGIS=CLK, ISVALID=(C_USE_HARDWARE_CLOCKS == 1)
-#PORT clk_6m = "", DIR=I, SIGIS=CLK, ISVALID=(C_USE_HARDWARE_CLOCKS == 1)
+PORT CLK_24M = "", DIR = I, SIGIS = CLK, ISVALID = (C_USE_HARDWARE_CLOCKS == 1)
+PORT CLK_12M = "", DIR = I, SIGIS = CLK, ISVALID = (C_USE_HARDWARE_CLOCKS == 1)
+PORT CLK_6M = "", DIR = I, SIGIS = CLK, ISVALID = (C_USE_HARDWARE_CLOCKS == 1)
 
-#PORT rst = "", DIR=I, SIGIS=RST
+#PORT rst = "", DIR = I, SIGIS=RST
 
-# Component video
-#PORT vid_clk = Clock, DIR = O, SIGIS=CLK, BUS=VIDEO_OUT # IO_IF = VIDEO_OUT, IO_IS = Clk
-#PORT vid_data = RGB, DIR = O, VEC = [((3*C_VIDEO_COMPONENT_DEPTH)-1):0], BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = Data
-#PORT vid_red = RedComponent, DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = Red
-#PORT vid_green = GreenComponent, DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = Green
-#PORT vid_blue = BlueComponent, DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = Blue
-#PORT vid_hblank = HorizontalBlank, DIR = O, BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = HorizontalBlank
-#PORT vid_vblank = VerticalBlank, DIR = O, BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = VerticalBlank
-#PORT vid_csync = CompositSync, DIR = O, BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = CompositeSync
-#PORT vid_hsync = HorizontalSync, DIR = O, BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = HorizontalSync
-#PORT vid_vsync = VerticalSync, DIR = O, BUS=VIDEO_OUT #IO_IF = VIDEO_OUT, IO_IS = VerticalSync
+# Component video IF
+#PORT vid_clk = "", DIR = O, SIGIS = CLK, IO_IF = VIDEO_OUT, IO_IS = VideoClock, ISVALID = (C_VIDEO_OUT_TYPE==0)
+#PORT vid_red = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = RedComponent, ISVALID = (C_VIDEO_OUT_TYPE == 0)
+#PORT vid_green = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = GreenComponent, ISVALID = (C_VIDEO_OUT_TYPE == 0)
+#PORT vid_blue = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = BlueComponent, ISVALID = (C_VIDEO_OUT_TYPE == 0)
+#PORT vid_csync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = CompositeSync, ISVALID = (C_VIDEO_OUT_TYPE == 0 && C_VIDEO_SYNC_TYPE == 0)
+#PORT vid_hsync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = HorizontalSync, ISVALID = (C_VIDEO_OUT_TYPE == 0 && C_VIDEO_SYNC_TYPE == 1)
+#PORT vid_vsync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = VerticalSync, ISVALID = (C_VIDEO_OUT_TYPE == 0 && C_VIDEO_SYNC_TYPE == 1)
+
+# Component video BUS
+PORT vid_clk = Clock, DIR = O, SIGIS = CLK, BUS = VIDEO_BUS, IO_IF = VIDEO_OUT, IO_IS = VideoClock, ISVALID = (C_VIDEO_OUT_TYPE == 1)
+#PORT vid_data = RGB, DIR = O, VEC = [((3*C_VIDEO_COMPONENT_DEPTH)-1):0], BUS=VIDEO_OUT, ISVALID = (C_VIDEO_OUT_TYPE==1)
+#PORT vid_hblank = HorizontalBlank, DIR = O, BUS=VIDEO_OUT, ISVALID = (C_VIDEO_OUT_TYPE == 1)
+#PORT vid_vblank = VerticalBlank, DIR = O, BUS=VIDEO_OUT, ISVALID = (C_VIDEO_OUT_TYPE == 1)
+#PORT vid_hsync = HorizontalSync, DIR = O, BUS=VIDEO_OUT, ISVALID = (C_VIDEO_OUT_TYPE == 1)
+#PORT vid_vsync = VerticalSync, DIR = O, BUS=VIDEO_OUT, ISVALID = (C_VIDEO_OUT_TYPE == 1)
 
 # J4
-#PORT conn_j4_reset = Reset, DIR=O, BUS=CONN_J4
-#PORT conn_j4_ce = ChipEnable, DIR=O, BUS=CONN_J4
-#PORT conn_j4_oe = OutputEnable, DIR=O, BUS=CONN_J4
-#PORT conn_j4_we = WriteEnable, DIR=O, BUS=CONN_J4
-#PORT conn_j4_addr = Addr, DIR=O, VEC = [14:0], BUS=CONN_J4
-#PORT conn_j4_data = Data, DIR=IO, VEC = [7:0], BUS=CONN_J4
-#PORT conn_j4_voice = Voice, DIR=I, BUS=CONN_J4
+#PORT conn_j4_reset = Reset, DIR = O, BUS=CONN_J4
+#PORT conn_j4_ce = ChipEnable, DIR = O, BUS=CONN_J4
+#PORT conn_j4_oe = OutputEnable, DIR = O, BUS=CONN_J4
+#PORT conn_j4_we = WriteEnable, DIR = O, BUS=CONN_J4
+#PORT conn_j4_addr = Addr, DIR = O, VEC = [14:0], BUS=CONN_J4
+#PORT conn_j4_data = Data, DIR = IO, VEC = [7:0], BUS=CONN_J4
+#PORT conn_j4_voice = Voice, DIR = I, BUS=CONN_J4
 
 # EPROM 3R
-PORT prom_3r_ce = ChipEnable, DIR=O, BUS = EPROM_3R
-PORT prom_3r_oe = OutputEnable, DIR=O, BUS = EPROM_3R
-PORT prom_3r_addr = Addr, DIR=O, VEC = [(C_EPROM_MB7124_ADDR_WIDTH-1):0], BUS = EPROM_3R
-PORT prom_3r_data = Data, DIR=I, VEC = [(C_EPROM_MB7124_DATA_WIDTH-1):0], BUS = EPROM_3R
+PORT prom_3r_ce = ChipEnable, DIR = O, BUS = EPROM_3R
+PORT prom_3r_oe = OutputEnable, DIR = O, BUS = EPROM_3R
+PORT prom_3r_addr = Addr, DIR = O, VEC = [(C_EPROM_MB7124_ADDR_WIDTH-1):0], BUS = EPROM_3R
+PORT prom_3r_data = Data, DIR = I, VEC = [(C_EPROM_MB7124_DATA_WIDTH-1):0], BUS = EPROM_3R
 # EPROM 3S
-#PORT prom_3s_ce = ChipEnable, DIR=O, BUS = EPROM_3S
-#PORT prom_3s_oe = OutputEnable, DIR=O, BUS = EPROM_3S
-#PORT prom_3s_addr = Addr, DIR=O, VEC = [(C_EPROM_MB7116_ADDR_WIDTH-1):0], BUS = EPROM_3S
-#PORT prom_3s_data = Data, DIR=I, VEC = [(C_EPROM_MB7116_DATA_WIDTH-1):0], BUS = EPROM_3S
+#PORT prom_3s_ce = ChipEnable, DIR = O, BUS = EPROM_3S
+#PORT prom_3s_oe = OutputEnable, DIR = O, BUS = EPROM_3S
+#PORT prom_3s_addr = Addr, DIR = O, VEC = [(C_EPROM_MB7116_ADDR_WIDTH-1):0], BUS = EPROM_3S
+#PORT prom_3s_data = Data, DIR = I, VEC = [(C_EPROM_MB7116_DATA_WIDTH-1):0], BUS = EPROM_3S
 # EPROM 4R
-#PORT prom_4r_ce = ChipEnable, DIR=O, BUS = EPROM_4R
-#PORT prom_4r_oe = OutputEnable, DIR=O, BUS = EPROM_4R
-#PORT prom_4r_addr = Addr, DIR=O, VEC = [(C_EPROM_M27512_ADDR_WIDTH-1):0], BUS = EPROM_4R
-#PORT prom_4r_data = Data, DIR=I, VEC = [(C_EPROM_M27512_DATA_WIDTH-1):0], BUS = EPROM_4R
+#PORT prom_4r_ce = ChipEnable, DIR = O, BUS = EPROM_4R
+#PORT prom_4r_oe = OutputEnable, DIR = O, BUS = EPROM_4R
+#PORT prom_4r_addr = Addr, DIR = O, VEC = [(C_EPROM_M27512_ADDR_WIDTH-1):0], BUS = EPROM_4R
+#PORT prom_4r_data = Data, DIR = I, VEC = [(C_EPROM_M27512_DATA_WIDTH-1):0], BUS = EPROM_4R
 # EPROM 4V
-#PORT prom_4v_ce = ChipEnable, DIR=O, BUS = EPROM_4V
-#PORT prom_4v_oe = OutputEnable, DIR=O, BUS = EPROM_4V
-#PORT prom_4v_addr = Addr, DIR=O, VEC = [(C_EPROM_MB7138_ADDR_WIDTH-1):0], BUS = EPROM_4V
-#PORT prom_4v_data = Data, DIR=I, VEC = [(C_EPROM_MB7138_DATA_WIDTH-1):0], BUS = EPROM_4V
+#PORT prom_4v_ce = ChipEnable, DIR = O, BUS = EPROM_4V
+#PORT prom_4v_oe = OutputEnable, DIR = O, BUS = EPROM_4V
+#PORT prom_4v_addr = Addr, DIR = O, VEC = [(C_EPROM_MB7138_ADDR_WIDTH-1):0], BUS = EPROM_4V
+#PORT prom_4v_data = Data, DIR = I, VEC = [(C_EPROM_MB7138_DATA_WIDTH-1):0], BUS = EPROM_4V
 # EPROM 5V
-#PORT prom_5v_ce = ChipEnable, DIR=O, BUS = EPROM_5V
-#PORT prom_5v_oe = OutputEnable, DIR=O, BUS = EPROM_5V
-#PORT prom_5v_addr = Addr, DIR=O, VEC = [(C_EPROM_MB7138_ADDR_WIDTH-1):0], BUS = EPROM_5V
-#PORT prom_5v_data = Data, DIR=I, VEC = [(C_EPROM_MB7138_DATA_WIDTH-1):0], BUS = EPROM_5V
+#PORT prom_5v_ce = ChipEnable, DIR = O, BUS = EPROM_5V
+#PORT prom_5v_oe = OutputEnable, DIR = O, BUS = EPROM_5V
+#PORT prom_5v_addr = Addr, DIR = O, VEC = [(C_EPROM_MB7138_ADDR_WIDTH-1):0], BUS = EPROM_5V
+#PORT prom_5v_data = Data, DIR = I, VEC = [(C_EPROM_MB7138_DATA_WIDTH-1):0], BUS = EPROM_5V
 # EPROM 6U
-#PORT prom_6u_ce = ChipEnable, DIR=O, BUS = EPROM_6U
-#PORT prom_6u_oe = OutputEnable, DIR=O, BUS = EPROM_6U
-#PORT prom_6u_addr = Addr, DIR=O, VEC = [(C_EPROM_MB7112_ADDR_WIDTH-1):0], BUS = EPROM_6U
-#PORT prom_6u_data = Data_I, DIR=I, VEC = [(C_EPROM_MB7112_DATA_WIDTH-1):0], BUS = EPROM_6U
+#PORT prom_6u_ce = ChipEnable, DIR = O, BUS = EPROM_6U
+#PORT prom_6u_oe = OutputEnable, DIR = O, BUS = EPROM_6U
+#PORT prom_6u_addr = Addr, DIR = O, VEC = [(C_EPROM_MB7112_ADDR_WIDTH-1):0], BUS = EPROM_6U
+#PORT prom_6u_data = Data_I, DIR = I, VEC = [(C_EPROM_MB7112_DATA_WIDTH-1):0], BUS = EPROM_6U
 # EPROM 7R
-#PORT prom_7r_ce = ChipEnable, DIR=O, BUS = EPROM_7R
-#PORT prom_7r_oe = OutputEnable, DIR=O, BUS = EPROM_7R
-#PORT prom_7r_addr = Addr, DIR=O, VEC = [(C_EPROM_M27512_ADDR_WIDTH-1):0], BUS = EPROM_7R
-#PORT prom_7r_data = Data, DIR=I, VEC = [(C_EPROM_M27512_DATA_WIDTH-1):0], BUS = EPROM_7R
+#PORT prom_7r_ce = ChipEnable, DIR = O, BUS = EPROM_7R
+#PORT prom_7r_oe = OutputEnable, DIR = O, BUS = EPROM_7R
+#PORT prom_7r_addr = Addr, DIR = O, VEC = [(C_EPROM_M27512_ADDR_WIDTH-1):0], BUS = EPROM_7R
+#PORT prom_7r_data = Data, DIR = I, VEC = [(C_EPROM_M27512_DATA_WIDTH-1):0], BUS = EPROM_7R
 # EPROM 7S
-#PORT prom_7s_ce = ChipEnable, DIR=O, BUS = EPROM_7S
-#PORT prom_7s_oe = OutputEnable, DIR=O, BUS = EPROM_7S
-#PORT prom_7s_addr = Addr, DIR=O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_7S
-#PORT prom_7s_data = Data, DIR=I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_7S
+#PORT prom_7s_ce = ChipEnable, DIR = O, BUS = EPROM_7S
+#PORT prom_7s_oe = OutputEnable, DIR = O, BUS = EPROM_7S
+#PORT prom_7s_addr = Addr, DIR = O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_7S
+#PORT prom_7s_data = Data, DIR = I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_7S
 # EPROM 9C
-#PORT prom_9c_ce = ChipEnable, DIR=O, BUS = EPROM_9C
-#PORT prom_9c_oe = OutputEnable, DIR=O, BUS = EPROM_9C
-#PORT prom_9c_addr = Addr, DIR=O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_9C
-#PORT prom_9c_data = Data, DIR=I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_9C
+#PORT prom_9c_ce = ChipEnable, DIR = O, BUS = EPROM_9C
+#PORT prom_9c_oe = OutputEnable, DIR = O, BUS = EPROM_9C
+#PORT prom_9c_addr = Addr, DIR = O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_9C
+#PORT prom_9c_data = Data, DIR = I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_9C
 # EPROM 9D
-#PORT prom_9d_ce = ChipEnable, DIR=O, BUS = EPROM_9D
-#PORT prom_9d_oe = OutputEnable, DIR=O, BUS = EPROM_9D
-#PORT prom_9d_addr = Addr, DIR=O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_9D
-#PORT prom_9d_data = Data, DIR=I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_9D
+#PORT prom_9d_ce = ChipEnable, DIR = O, BUS = EPROM_9D
+#PORT prom_9d_oe = OutputEnable, DIR = O, BUS = EPROM_9D
+#PORT prom_9d_addr = Addr, DIR = O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_9D
+#PORT prom_9d_data = Data, DIR = I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_9D
 # EPROM 12C
-#PORT prom_12c_ce = ChipEnable, DIR=O, BUS = EPROM_12C
-#PORT prom_12c_oe = OutputEnable, DIR=O, BUS = EPROM_12C
-#PORT prom_12c_addr = Addr, DIR=O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_12C
-#PORT prom_12c_data = Data, DIR=I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_12C
+#PORT prom_12c_ce = ChipEnable, DIR = O, BUS = EPROM_12C
+#PORT prom_12c_oe = OutputEnable, DIR = O, BUS = EPROM_12C
+#PORT prom_12c_addr = Addr, DIR = O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_12C
+#PORT prom_12c_data = Data, DIR = I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_12C
 # EPROM 12D
-#PORT prom_12d_ce = ChipEnable, DIR=O, BUS = EPROM_12D
-#PORT prom_12d_oe = OutputEnable, DIR=O, BUS = EPROM_12D
-#PORT prom_12d_addr = Addr, DIR=O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_12D
-#PORT prom_12d_data = Data, DIR=I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_12D
+#PORT prom_12d_ce = ChipEnable, DIR = O, BUS = EPROM_12D
+#PORT prom_12d_oe = OutputEnable, DIR = O, BUS = EPROM_12D
+#PORT prom_12d_addr = Addr, DIR = O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_12D
+#PORT prom_12d_data = Data, DIR = I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_12D
 # SRAM 3F
-PORT sram_3f_ce = ChipEnable, DIR=O, BUS = SRAM_3F
-PORT sram_3f_oe = OutputEnable, DIR=O, BUS = SRAM_3F
-PORT sram_3f_we = WriteEnable, DIR=O, BUS = SRAM_3F
-PORT sram_3f_addr = Addr, DIR=O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH-1):0], BUS = SRAM_3F
-#PORT sram_3f_data_T = Data, DIR=I, BUS = SRAM_3F
-#PORT sram_3f_data_I = Data, DIR=I, VEC = [(C_SRAM_CY6462_DATA_WIDTH-1):0], BUS = SRAM_3F
-#PORT sram_3f_data_O = Data, DIR=O, VEC = [(C_SRAM_CY6462_DATA_WIDTH-1):0], BUS = SRAM_3F
-#PORT sram_3f_data = Data, DIR=IO, THREE_STATE = TRUE, TRI_I = sram_3f_data_I, TRI_O = sram_3f_data_O, TRI_T = sram_3f_data_T, VEC = [(C_SRAM_CY6462_DATA_WIDTH-1):0], BUS = SRAM_3F
-PORT sram_3f_data = Data, DIR=IO, THREE_STATE = FALSE, VEC = [(C_SRAM_CY6462_DATA_WIDTH-1):0], BUS = SRAM_3F
+PORT sram_3f_ce = ChipEnable, DIR = O, BUS = SRAM_3F
+PORT sram_3f_oe = OutputEnable, DIR = O, BUS = SRAM_3F
+PORT sram_3f_we = WriteEnable, DIR = O, BUS = SRAM_3F
+PORT sram_3f_addr = Addr, DIR = O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH-1):0], BUS = SRAM_3F
+PORT sram_3f_data = Data, DIR = IO, THREE_STATE = FALSE, VEC = [(C_SRAM_CY6462_DATA_WIDTH-1):0], BUS = SRAM_3F
 # SRAM 4N
-#PORT sram_4n_ce = ChipEnable, DIR=O, BUS = SRAM_4N
-#PORT sram_4n_oe = OutputEnable, DIR=O, BUS = SRAM_4N
-#PORT sram_4n_we = WriteEnable, DIR=O, BUS = SRAM_4N
-#PORT sram_4n_addr = Addr, DIR=O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH):0], BUS = SRAM_4N
-#PORT sram_4n_data = Data, DIR=IO, VEC = [(C_SRAM_CY6462_DATA_WIDTH):0], BUS = SRAM_4N
+#PORT sram_4n_ce = ChipEnable, DIR = O, BUS = SRAM_4N
+#PORT sram_4n_oe = OutputEnable, DIR = O, BUS = SRAM_4N
+#PORT sram_4n_we = WriteEnable, DIR = O, BUS = SRAM_4N
+#PORT sram_4n_addr = Addr, DIR = O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH):0], BUS = SRAM_4N
+#PORT sram_4n_data = Data, DIR = IO, VEC = [(C_SRAM_CY6462_DATA_WIDTH):0], BUS = SRAM_4N
 # SRAM 4R
-#PORT sram_4r_ce = ChipEnable, DIR=O, BUS = SRAM_4R
-#PORT sram_4r_oe = OutputEnable, DIR=O, BUS = SRAM_4R
-#PORT sram_4r_we = WriteEnable, DIR=O, BUS = SRAM_4R
-#PORT sram_4r_addr = Addr, DIR=O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH):0], BUS = SRAM_4R
-#PORT sram_4r_data = Data, DIR=IO, VEC = [(C_SRAM_CY6462_DATA_WIDTH):0], BUS = SRAM_4R
+#PORT sram_4r_ce = ChipEnable, DIR = O, BUS = SRAM_4R
+#PORT sram_4r_oe = OutputEnable, DIR = O, BUS = SRAM_4R
+#PORT sram_4r_we = WriteEnable, DIR = O, BUS = SRAM_4R
+#PORT sram_4r_addr = Addr, DIR = O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH):0], BUS = SRAM_4R
+#PORT sram_4r_data = Data, DIR = IO, VEC = [(C_SRAM_CY6462_DATA_WIDTH):0], BUS = SRAM_4R
 # SRAM 7N
-#PORT sram_7n_ce = ChipEnable, DIR=O, BUS = SRAM_7N
-#PORT sram_7n_oe = OutputEnable, DIR=O, BUS = SRAM_7N
-#PORT sram_7n_we = WriteEnable, DIR=O, BUS = SRAM_7N
-#PORT sram_7n_addr = Addr, DIR=O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH):0], BUS = SRAM_7N
-#PORT sram_7n_data = Data, DIR=IO, VEC = [(C_SRAM_CY6462_DATA_WIDTH):0], BUS = SRAM_7N
+#PORT sram_7n_ce = ChipEnable, DIR = O, BUS = SRAM_7N
+#PORT sram_7n_oe = OutputEnable, DIR = O, BUS = SRAM_7N
+#PORT sram_7n_we = WriteEnable, DIR = O, BUS = SRAM_7N
+#PORT sram_7n_addr = Addr, DIR = O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH):0], BUS = SRAM_7N
+#PORT sram_7n_data = Data, DIR = IO, VEC = [(C_SRAM_CY6462_DATA_WIDTH):0], BUS = SRAM_7N
 # SRAM 10M
-#PORT sram_10m_ce = ChipEnable, DIR=O, BUS = SRAM_10M
-#PORT sram_10m_oe = OutputEnable, DIR=O, BUS = SRAM_10M
-#PORT sram_10m_we = WriteEnable, DIR=O, BUS = SRAM_10M
-#PORT sram_10m_addr = Addr, DIR=O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH):0], BUS = SRAM_10M
-#PORT sram_10m_data = Data, DIR=IO, VEC = [(C_SRAM_CY6462_DATA_WIDTH):0], BUS = SRAM_10M
+#PORT sram_10m_ce = ChipEnable, DIR = O, BUS = SRAM_10M
+#PORT sram_10m_oe = OutputEnable, DIR = O, BUS = SRAM_10M
+#PORT sram_10m_we = WriteEnable, DIR = O, BUS = SRAM_10M
+#PORT sram_10m_addr = Addr, DIR = O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH):0], BUS = SRAM_10M
+#PORT sram_10m_data = Data, DIR = IO, VEC = [(C_SRAM_CY6462_DATA_WIDTH):0], BUS = SRAM_10M
 ## SRAM 11K
-#PORT sram_11k_ce = ChipEnable, DIR=O, BUS = SRAM_11K
-#PORT sram_11k_oe = OutputEnable, DIR=O, BUS = SRAM_11K
-#PORT sram_11k_we = WriteEnable, DIR=O, BUS = SRAM_11K
-#PORT sram_11k_addr = Addr, DIR=O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH):0], BUS = SRAM_11K
-#PORT sram_11k_data = Data, DIR=IO, VEC = [(C_SRAM_CY6462_DATA_WIDTH):0], BUS = SRAM_11K
+#PORT sram_11k_ce = ChipEnable, DIR = O, BUS = SRAM_11K
+#PORT sram_11k_oe = OutputEnable, DIR = O, BUS = SRAM_11K
+#PORT sram_11k_we = WriteEnable, DIR = O, BUS = SRAM_11K
+#PORT sram_11k_addr = Addr, DIR = O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH):0], BUS = SRAM_11K
+#PORT sram_11k_data = Data, DIR = IO, VEC = [(C_SRAM_CY6462_DATA_WIDTH):0], BUS = SRAM_11K
 
 END
