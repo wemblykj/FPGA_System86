@@ -159,7 +159,11 @@ PORT sram_3f_ce = ChipEnable, DIR=O, BUS = SRAM_3F
 PORT sram_3f_oe = OutputEnable, DIR=O, BUS = SRAM_3F
 PORT sram_3f_we = WriteEnable, DIR=O, BUS = SRAM_3F
 PORT sram_3f_addr = Addr, DIR=O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH-1):0], BUS = SRAM_3F
-PORT sram_3f_data = Data, DIR=IO, VEC = [(C_SRAM_CY6462_DATA_WIDTH-1):0], BUS = SRAM_3F
+#PORT sram_3f_data_T = Data, DIR=I, BUS = SRAM_3F
+#PORT sram_3f_data_I = Data, DIR=I, VEC = [(C_SRAM_CY6462_DATA_WIDTH-1):0], BUS = SRAM_3F
+#PORT sram_3f_data_O = Data, DIR=O, VEC = [(C_SRAM_CY6462_DATA_WIDTH-1):0], BUS = SRAM_3F
+#PORT sram_3f_data = Data, DIR=IO, THREE_STATE = TRUE, TRI_I = sram_3f_data_I, TRI_O = sram_3f_data_O, TRI_T = sram_3f_data_T, VEC = [(C_SRAM_CY6462_DATA_WIDTH-1):0], BUS = SRAM_3F
+PORT sram_3f_data = Data, DIR=IO, THREE_STATE = FALSE, VEC = [(C_SRAM_CY6462_DATA_WIDTH-1):0], BUS = SRAM_3F
 # SRAM 4N
 #PORT sram_4n_ce = ChipEnable, DIR=O, BUS = SRAM_4N
 #PORT sram_4n_oe = OutputEnable, DIR=O, BUS = SRAM_4N

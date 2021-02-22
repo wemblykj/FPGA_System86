@@ -274,11 +274,9 @@ entity axi_ttl_memory_bus is
       -- ROM ports
       chip_enable : in std_logic := '0';
       output_enable           : in std_logic;
-	  write_enable            : in std_logic;
-      addr	 				  : in std_logic_vector((C_ADDR_WIDTH-1) downto 0);
-      data_T                  : in std_logic;
-      data_I                  : in std_logic_vector((C_DATA_WIDTH-1) downto 0);
-      data_O                  : out std_logic_vector((C_DATA_WIDTH-1) downto 0);
+  	   write_enable            : in std_logic;
+      addr	  				      : in std_logic_vector((C_ADDR_WIDTH-1) downto 0);
+      data                    : inout std_logic_vector((C_DATA_WIDTH-1) downto 0);
       --mapping_addr            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
 
       -- AXI Global

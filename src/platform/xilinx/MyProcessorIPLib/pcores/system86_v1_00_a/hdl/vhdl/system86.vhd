@@ -228,9 +228,7 @@ entity system86 is
 		sram_3f_oe		: out std_logic;
 		sram_3f_we		: out std_logic;
 		sram_3f_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
-		sram_3f_data_T	: out std_logic;
-		sram_3f_data_I  : in std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
-		sram_3f_data_O  : out std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000"
+		sram_3f_data   : inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000"
 --		
 --		sram_4n_ce		: out std_logic;
 --		sram_4n_oe		: out std_logic;
