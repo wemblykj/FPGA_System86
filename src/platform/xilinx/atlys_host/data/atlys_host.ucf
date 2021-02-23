@@ -52,9 +52,66 @@ NET RS232_Uart_1_sin LOC = "A16"  |  IOSTANDARD = "LVCMOS33";
 NET RS232_Uart_1_sout LOC = "B16"  |  IOSTANDARD = "LVCMOS33";
 NET rzq IOSTANDARD = "LVCMOS18_JEDEC";
 NET zio IOSTANDARD = "LVCMOS18_JEDEC";
+
+# onboard VHDCI
+# Channnel 1 connects to P signals, Channel 2 to N signals
+#NET "VHDCIIO1<0>"  LOC = "U16"; # Bank = 2,  Pin name = IO_L2P_CMPCLK,        	Sch name = EXP-IO1_P
+#NET "VHDCIIO1<1>"  LOC = "U15"; # Bank = 2,  Pin name = *IO_L5P,        		Sch name = EXP-IO2_P
+#NET "VHDCIIO1<2>"  LOC = "U13"; # Bank = 2,  Pin name = IO_L14P_D11,        	Sch name = EXP-IO3_P
+#NET "VHDCIIO1<3>"  LOC = "M11"; # Bank = 2,  Pin name = *IO_L15P,        		Sch name = EXP-IO4_P
+#NET "VHDCIIO1<4>"  LOC = "R11"; # Bank = 2,  Pin name = IO_L16P,        		Sch name = EXP-IO5_P
+#NET "VHDCIIO1<5>"  LOC = "T12"; # Bank = 2,  Pin name = *IO_L19P,        		Sch name = EXP-IO6_P
+#NET "VHDCIIO1<6>"  LOC = "N10"; # Bank = 2,  Pin name = *IO_L20P,        		Sch name = EXP-IO7_P
+#NET "VHDCIIO1<7>"  LOC = "M10"; # Bank = 2,  Pin name = *IO_L22P,        		Sch name = EXP-IO8_P
+#NET "VHDCIIO1<8>"  LOC = "U11"; # Bank = 2,  Pin name = IO_L23P,        		Sch name = EXP-IO9_P
+#NET "VHDCIIO1<9>"  LOC = "R10"; # Bank = 2,  Pin name = IO_L29P_GCLK3,        	Sch name = EXP-IO10_P
+#NET "VHDCIIO1<10>" LOC = "U10"; # Bank = 2,  Pin name = IO_L30P_GCLK1_D13,      Sch name = EXP-IO11_P
+#NET "VHDCIIO1<11>" LOC = "R8";  # Bank = 2,  Pin name = IO_L31P_GCLK31_D14,     Sch name = EXP-IO12_P
+#NET "VHDCIIO1<12>" LOC = "M8";  # Bank = 2,  Pin name = *IO_L40P,        		Sch name = EXP-IO13_P
+#NET "VHDCIIO1<13>" LOC = "U8";  # Bank = 2,  Pin name = IO_L41P,        		Sch name = EXP-IO14_P
+#NET "VHDCIIO1<14>" LOC = "U7";  # Bank = 2,  Pin name = IO_L43P,        		Sch name = EXP-IO15_P
+#NET "VHDCIIO1<15>" LOC = "N7";  # Bank = 2,  Pin name = *IO_L44P,        		Sch name = EXP-IO16_P
+#NET "VHDCIIO1<16>" LOC = "T6";  # Bank = 2,  Pin name = IO_L45P,        		Sch name = EXP-IO17_P
+#NET "VHDCIIO1<17>" LOC = "R7";  # Bank = 2,  Pin name = IO_L46P,        		Sch name = EXP-IO18_P
+#NET "VHDCIIO1<18>" LOC = "N6";  # Bank = 2,  Pin name = *IO_L47P,        		Sch name = EXP-IO19_P
+#NET "VHDCIIO1<19>" LOC = "U5";  # Bank = 2,  Pin name = IO_49P_D3,        		Sch name = EXP-IO20_P
+#
+#NET "VHDCIIO2<0>"  LOC = "V16"; # Bank = 2,  Pin name = IO_L2N_CMPMOSI,        	Sch name = EXP-IO1_N
+#NET "VHDCIIO2<1>"  LOC = "V15"; # Bank = 2,  Pin name = *IO_L5N,        		Sch name = EXP-IO2_N
+#NET "VHDCIIO2<2>"  LOC = "V13"; # Bank = 2,  Pin name = IO_L14N_D12,        	Sch name = EXP-IO3_N
+#NET "VHDCIIO2<3>"  LOC = "N11"; # Bank = 2,  Pin name = *IO_L15N,        		Sch name = EXP-IO4_N
+#NET "VHDCIIO2<4>"  LOC = "T11"; # Bank = 2,  Pin name = IO_L16N_VREF,        	Sch name = EXP-IO5_N
+#NET "VHDCIIO2<5>"  LOC = "V12"; # Bank = 2,  Pin name = *IO_L19N,        		Sch name = EXP-IO6_N
+#NET "VHDCIIO2<6>"  LOC = "P11"; # Bank = 2,  Pin name = *IO_L20N,        		Sch name = EXP-IO7_N
+#NET "VHDCIIO2<7>"  LOC = "N9";  # Bank = 2,  Pin name = *IO_L22N,        		Sch name = EXP-IO8_N
+#NET "VHDCIIO2<8>"  LOC = "V11"; # Bank = 2,  Pin name = IO_L23N,        		Sch name = EXP-IO9_N
+#NET "VHDCIIO2<9>"  LOC = "T10"; # Bank = 2,  Pin name = IO_L29N_GCLK2,          Sch name = EXP-IO10_N
+#NET "VHDCIIO2<10>" LOC = "V10"; # Bank = 2,  Pin name = IO_L30N_GCLK0_USERCCLK, Sch name = EXP-IO11_N
+#NET "VHDCIIO2<11>" LOC = "T8";  # Bank = 2,  Pin name = IO_L31N_GCLK30_D15,     Sch name = EXP-IO12_N
+#NET "VHDCIIO2<12>" LOC = "N8";  # Bank = 2,  Pin name = *IO_L40N,        		Sch name = EXP-IO13_N
+#NET "VHDCIIO2<13>" LOC = "V8";  # Bank = 2,  Pin name = IO_L41N_VREF,        	Sch name = EXP-IO14_N
+#NET "VHDCIIO2<14>" LOC = "V7";  # Bank = 2,  Pin name = IO_L43N,        		Sch name = EXP-IO15_N
+#NET "VHDCIIO2<15>" LOC = "P8";  # Bank = 2,  Pin name = *IO_L44N,        		Sch name = EXP-IO16_N
+#NET "VHDCIIO2<16>" LOC = "V6";  # Bank = 2,  Pin name = IO_L45N,        		Sch name = EXP-IO17_N
+#NET "VHDCIIO2<17>" LOC = "T7";  # Bank = 2,  Pin name = IO_L46N,        		Sch name = EXP-IO18_N
+#NET "VHDCIIO2<18>" LOC = "P7";  # Bank = 2,  Pin name = *IO_L47N,        		Sch name = EXP-IO19_N
+#NET "VHDCIIO2<19>" LOC = "V5";  # Bank = 2,  Pin name = IO_49N_D4,        		Sch name = EXP-IO20_N 
+
 #
 # additional constraints
 #
+
+# System86 VHDCIO mappings
+NET system86_0_vid_clk_pin  LOC = "U16"  |  IOSTANDARD = "LVCMOS33"; 	# Bank = 2,  Pin name = IO_L2P_CMPCLK,        	Sch name = EXP-IO1_P
+NET system86_0_vid_red_pin[0]  LOC = "U15"  |  IOSTANDARD = "LVCMOS33"; 	# Bank = 2,  Pin name = *IO_L5P,        		Sch name = EXP-IO2_P
+NET system86_0_vid_red_pin[1]  LOC = "U13"  |  IOSTANDARD = "LVCMOS33"; 	# Bank = 2,  Pin name = IO_L14P_D11,        	Sch name = EXP-IO3_P
+NET system86_0_vid_red_pin[2]  LOC = "M11"  |  IOSTANDARD = "LVCMOS33"; 	# Bank = 2,  Pin name = *IO_L15P,        		Sch name = EXP-IO4_P
+NET system86_0_vid_red_pin[3]  LOC = "R11"  |  IOSTANDARD = "LVCMOS33"; 	# Bank = 2,  Pin name = IO_L16P,        		Sch name = EXP-IO5_P
+#NET "GreenComponent<1>"  LOC = "T12"; # Bank = 2,  Pin name = *IO_L19P,        		Sch name = EXP-IO6_P
+#NET "GreenComponent<2>"  LOC = "N10"; # Bank = 2,  Pin name = *IO_L20P,        		Sch name = EXP-IO7_P
+#NET "BlueComponent<0>"  LOC = "M10"; # Bank = 2,  Pin name = *IO_L22P,        		Sch name = EXP-IO8_P
+#NET "BlueComponent<1>"  LOC = "U11"; # Bank = 2,  Pin name = IO_L23P,        		Sch name = EXP-IO9_P
+#NET "BlueComponent<2>"  LOC = "R10"; # Bank = 2,  Pin name = IO_L29P_GCLK3,        	Sch name = EXP-IO10_P
 
 NET "GCLK" TNM_NET = sys_clk_pin;
 TIMESPEC TS_sys_clk_pin = PERIOD sys_clk_pin 100000 kHz;
@@ -94,4 +151,3 @@ NET "*Inst_DynClkGen?PllOut_x1" TNM_NET = hdmipclk;
 
 TIMESPEC TS_path1 = FROM globclk TO hdmipclk 14 ns;
 TIMESPEC TS_path2 = FROM hdmipclk TO globclk 10 ns;
-

@@ -123,10 +123,10 @@ entity system86 is
 
 		-- simulation video
 		vid_clk				: out    std_logic;
-		vid_data			: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
+		vid_data				: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
 		vid_red				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
 		vid_green			: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		vid_blue			: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_blue				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
 		vid_csync			: out    std_logic;
 		vid_hsync			: out    std_logic;
 		vid_vsync			: out    std_logic;
@@ -135,6 +135,10 @@ entity system86 is
 		
 		-- simulation generated  system clock
 		CLK_48M				: in	std_logic;					-- 49.152 MHz system clock
+		
+		--CLK_24M_ext			: in	std_logic;					-- 49.152 MHz system clock
+		--CLK_12M_ext			: in	std_logic;					-- 49.152 MHz system clock
+		--CLK_6M_ext				: in	std_logic;					-- 49.152 MHz system clock
 		
 		--
 		-- System 86 external connectors
