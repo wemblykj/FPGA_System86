@@ -6,11 +6,14 @@
 
 OPTION psf_version = 2.1;
 
-BEGIN driver ttl_memory_bus
+BEGIN driver ttlmembus
 
   OPTION supported_peripherals = (axi_ttl_memory_bus);
   OPTION driver_state = ACTIVE;
   OPTION depends = (common_v1_00_a);
   OPTION copyfiles = all;
 
+ BEGIN INTERFACE linux
+ END INTERFACE
+ 
 END driver

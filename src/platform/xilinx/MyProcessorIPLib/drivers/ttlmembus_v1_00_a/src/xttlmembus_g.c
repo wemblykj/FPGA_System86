@@ -2,6 +2,8 @@
 *
 * (c) Copyright 2021 Paul Wightmore. All rights reserved.
 *
+* Driver stub based on GPIO driver
+*
 *****************************************************************************/
 
 /***************************** Include Files *********************************/
@@ -31,5 +33,7 @@ XTtlMemBus_Config XTtlMemBus_ConfigTable[] = {
 	{
 	 XPAR_TTLMEMBUS_0_DEVICE_ID,
 	 XPAR_TTLMEMBUS_0_BASEADDR,
+	 XPAR_TTLMEMBUS_0_MAPPED_BASEADDR
+	 XPAR_TTLMEMBUS_0_USE_DYNAMIC_MAPPING,
 	 XPAR_TTLMEMBUS_0_READONLY}
 };

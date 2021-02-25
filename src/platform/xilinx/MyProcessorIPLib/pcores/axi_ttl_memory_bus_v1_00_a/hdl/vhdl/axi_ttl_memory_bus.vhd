@@ -261,7 +261,7 @@ entity axi_ttl_memory_bus is
     C_M_AXI_THREAD_ID_WIDTH : integer := 1;
     C_M_AXI_ADDR_WIDTH : integer := 32;
     C_M_AXI_DATA_WIDTH : integer := 32;
-    C_M_AXI_PROTOCOL : string := "AXI4LITE";
+    C_M_AXI_PROTOCOL : string := "AXI4";
 
     -- Slave AXI-Lite Generics
     C_S_AXI_ADDR_WIDTH : integer range 8 to 8 := 8;
@@ -288,22 +288,22 @@ entity axi_ttl_memory_bus is
     -- AXI Write Address Channel Signals
     --M_AXI_AWID         : out std_logic_vector 
     --                         (C_M_AXI_THREAD_ID_WIDTH-1 downto 0);
-    M_AXI_AWLEN : out std_logic_vector (7 downto 0);
-    M_AXI_AWSIZE : out std_logic_vector (2 downto 0);
-    M_AXI_AWBURST : out std_logic_vector (1 downto 0);
-    --M_AXI_AWCACHE      : out std_logic_vector (3 downto 0);
+    -- M_AXI_AWLEN : out std_logic_vector (7 downto 0);
+    -- M_AXI_AWSIZE : out std_logic_vector (2 downto 0);
+    -- M_AXI_AWBURST : out std_logic_vector (1 downto 0);
+    -- --M_AXI_AWCACHE      : out std_logic_vector (3 downto 0);
     M_AXI_AWADDR : out std_logic_vector(C_M_AXI_ADDR_WIDTH - 1 downto 0);
     --M_AXI_AWPROT       : out std_logic_vector(2 downto 0);
     M_AXI_AWVALID : out std_logic;
     M_AXI_AWREADY : in std_logic;
-    M_AXI_AWLOCK : out std_logic;
+    -- M_AXI_AWLOCK : out std_logic;
     -- AXI Write Data Channel Signals
-    M_AXI_WID : out std_logic_vector
-    (C_M_AXI_THREAD_ID_WIDTH - 1 downto 0);
+    -- M_AXI_WID : out std_logic_vector
+    -- (C_M_AXI_THREAD_ID_WIDTH - 1 downto 0);
     M_AXI_WDATA : out std_logic_vector(C_M_AXI_DATA_WIDTH - 1 downto 0);
     M_AXI_WSTRB : out std_logic_vector
     ((C_M_AXI_DATA_WIDTH/8) - 1 downto 0);
-    M_AXI_WLAST : out std_logic;
+    -- M_AXI_WLAST : out std_logic;
     M_AXI_WVALID : out std_logic;
     M_AXI_WREADY : in std_logic;
 
@@ -318,13 +318,13 @@ entity axi_ttl_memory_bus is
     --M_AXI_ARID         : out std_logic_vector 
     --                         (C_M_AXI_THREAD_ID_WIDTH-1 downto 0);
     M_AXI_ARLEN : out std_logic_vector(7 downto 0);
-    M_AXI_ARSIZE : out std_logic_vector(2 downto 0);
-    M_AXI_ARBURST : out std_logic_vector(1 downto 0);
+    -- M_AXI_ARSIZE : out std_logic_vector(2 downto 0);
+    -- M_AXI_ARBURST : out std_logic_vector(1 downto 0);
     --M_AXI_ARPROT       : out std_logic_vector(2 downto 0);
     --M_AXI_ARCACHE      : out std_logic_vector(3 downto 0);
     M_AXI_ARVALID : out std_logic;
     M_AXI_ARADDR : out std_logic_vector(C_M_AXI_ADDR_WIDTH - 1 downto 0);
-    M_AXI_ARLOCK : out std_logic;
+    -- M_AXI_ARLOCK : out std_logic;
     M_AXI_ARREADY : in std_logic;
 
     -- AXI Read Data Channel Sigals
@@ -333,7 +333,7 @@ entity axi_ttl_memory_bus is
     M_AXI_RDATA : in std_logic_vector(C_M_AXI_DATA_WIDTH - 1 downto 0);
     M_AXI_RRESP : in std_logic_vector(1 downto 0);
     M_AXI_RVALID : in std_logic;
-    M_AXI_RLAST : in std_logic;
+    -- M_AXI_RLAST : in std_logic;
     M_AXI_RREADY : out std_logic;
 
     -- AXI Slave Lite Interface - CFG Block
