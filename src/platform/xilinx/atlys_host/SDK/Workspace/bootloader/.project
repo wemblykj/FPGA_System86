@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>bootloader</name>
-	<comment>atlys_host_bsp - microblaze_0</comment>
+	<comment></comment>
 	<projects>
-		<project>atlys_host_bsp</project>
+		<project>bootloader_bsp</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

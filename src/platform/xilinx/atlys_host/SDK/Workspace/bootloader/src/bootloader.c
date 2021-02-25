@@ -158,9 +158,7 @@
 /*
  * Enable debug for the ELF loader
  */
-#define DEBUG_ELF_LOADER
-
-static const int DefaultReadCommand = COMMAND_DUAL_READ;
+//#define DEBUG_ELF_LOADER
 
 /**************************** Type Definitions *******************************/
 
@@ -168,7 +166,7 @@ static const int DefaultReadCommand = COMMAND_DUAL_READ;
 
 /************************** Function Prototypes ******************************/
 
-int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 ReadCmd);
+int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount);
 int SpiFlashGetStatus(XSpi *SpiPtr);
 static int SpiFlashWaitForFlashReady(void);
 void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount);
@@ -190,18 +188,18 @@ INTC InterruptController;
  * The following variables are shared between non-interrupt processing and
  * interrupt processing such that they must be global.
  */
-volatile static int TransferInProgress;
+volatile static int TransferInProgress = FALSE;
 
 /*
  * The following variable tracks any errors that occur during interrupt
  * processing.
  */
-static int ErrorCount;
+volatile static int ErrorCount = 0;
 
 /*
  * Buffers used during read and write transactions.
  */
-static u8 ReadBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES + 4];
+static u8 ReadBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES + QUAD_READ_DUMMY_BYTES];
 
 static u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
 
@@ -320,8 +318,8 @@ int main(void)
 
 	memset(&ReadBuffer, 2, sizeof(ReadBuffer));
 
-	xil_printf("read\r\n");
-	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, sizeof(hdr), DefaultReadCommand);
+	//xil_printf("read\r\n");
+	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, sizeof(hdr));
 	if(ret != XST_SUCCESS) {
 		xil_printf("E1");
 		return XST_FAILURE;
@@ -330,7 +328,7 @@ int main(void)
 	memset(&hdr, 0, sizeof(hdr));
 
 	// Extract the elf header
-	xil_printf("extract\r\n");
+	//xil_printf("extract\r\n");
 	if (ret == XST_SUCCESS) {
 		memcpy(&hdr, ReadBuffer + SPI_VALID_DATA_OFFSET, sizeof(hdr));
 
@@ -362,7 +360,7 @@ int main(void)
 	 * Read ELF program headers
 	 */
 	for (i = 0; i < hdr.phnum; i++) {
-		ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + hdr.phoff + i * sizeof(phdr), sizeof(phdr), DefaultReadCommand);
+		ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + hdr.phoff + i * sizeof(phdr), sizeof(phdr));
 		if(ret != XST_SUCCESS) {
 			//xil_printf("Failed to read ELF program header");
 			xil_printf("E4");
@@ -379,7 +377,7 @@ int main(void)
 				if (addr + EFFECTIVE_READ_BUFFER_SIZE > phdr.filesz) {
 
 					ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + phdr.offset + addr,
-							phdr.filesz - addr, DefaultReadCommand);
+							phdr.filesz - addr);
 					if(ret != XST_SUCCESS) {
 						//xil_printf("Failed to read ELF program section");
 						xil_printf("E5");
@@ -402,7 +400,7 @@ int main(void)
 
 				} else {
 					ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + phdr.offset + addr,
-							EFFECTIVE_READ_BUFFER_SIZE, DefaultReadCommand);
+							EFFECTIVE_READ_BUFFER_SIZE);
 					if(ret != XST_SUCCESS) {
 						//xil_printf("Failed to read ELF program segment");
 						xil_printf("E6");
@@ -462,63 +460,6 @@ int main(void)
 /*****************************************************************************/
 /**
 *
-* This function enables writes to the Numonyx Serial Flash memory.
-*
-* @param	SpiPtr is a pointer to the instance of the Spi device.
-*
-* @return	XST_SUCCESS if successful else XST_FAILURE.
-*
-* @note		None
-*
-******************************************************************************/
-int SpiFlashWriteEnable(XSpi *SpiPtr)
-{
-	int ret;
-
-	/*
-	 * Wait while the Flash is busy.
-	 */
-	xil_printf("wait for flash\r\n");
-	ret = SpiFlashWaitForFlashReady();
-	if(ret != XST_SUCCESS) {
-		xil_printf("failed\r\n");
-		return XST_FAILURE;
-	}
-
-	/*
-	 * Prepare the WriteBuffer.
-	 */
-	WriteBuffer[BYTE1] = COMMAND_WRITE_ENABLE;
-
-	/*
-	 * Initiate the Transfer.
-	 */
-	TransferInProgress = TRUE;
-	//xil_printf("xfer\r\n");
-	ret = XSpi_Transfer(SpiPtr, WriteBuffer, NULL,
-				WRITE_ENABLE_BYTES);
-	if(ret != XST_SUCCESS) {
-		//xil_printf("failed\r\n");
-		return XST_FAILURE;
-	}
-
-	/*
-	 * Wait till the Transfer is complete and check if there are any errors
-	 * in the transaction..
-	 */
-	//xil_printf("wait for interrupt\r\n");
-	while(TransferInProgress);
-	if(ErrorCount != 0) {
-		ErrorCount = 0;
-		return XST_FAILURE;
-	}
-
-	return XST_SUCCESS;
-}
-
-/*****************************************************************************/
-/**
-*
 * This function reads the data from the Numonyx Serial Flash Memory
 *
 * @param	SpiPtr is a pointer to the instance of the Spi device.
@@ -531,17 +472,41 @@ int SpiFlashWriteEnable(XSpi *SpiPtr)
 * @note		None
 *
 ******************************************************************************/
-int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 ReadCmd)
+int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount)
 {
 	int ret;
+	u8 ReadCmd = COMMAND_RANDOM_READ;
+	u8 ModeExtraBytes = 0;
+
+	switch (SpiPtr->SpiMode)
+	{
+	case XSP_STANDARD_MODE:
+		//ReadCmd = COMMAND_RANDOM_READ;
+		//ModeExtraBytes = 0;
+		xil_printf("standard mode\r\n");
+		break;
+	case XSP_DUAL_MODE:
+		ReadCmd = COMMAND_DUAL_READ;
+		ModeExtraBytes = DUAL_READ_DUMMY_BYTES;
+		xil_printf("dual mode\r\n");
+		break;
+	case XSP_QUAD_MODE:
+		ReadCmd = COMMAND_QUAD_READ;
+		ModeExtraBytes = QUAD_READ_DUMMY_BYTES;
+		xil_printf("quad mode\r\n");
+		break;
+	}
 
 	/*
 	 * Wait while the Flash is busy.
 	 */
+	xil_printf("w 1\r\n");
 	ret = SpiFlashWaitForFlashReady();
 	if(ret != XST_SUCCESS) {
+		xil_printf("ER1\r\n");
 		return XST_FAILURE;
 	}
+	//xil_printf("d 1\r\n");
 
 	/*
 	 * Prepare the WriteBuffer.
@@ -551,35 +516,30 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount, u8 ReadCmd)
 	WriteBuffer[BYTE3] = (u8) (Addr >> 8);
 	WriteBuffer[BYTE4] = (u8) Addr;
 
-	if (ReadCmd == COMMAND_DUAL_READ) {
-		ByteCount += DUAL_READ_DUMMY_BYTES;
-	} else if (ReadCmd == COMMAND_DUAL_IO_READ) {
-		ByteCount += DUAL_READ_DUMMY_BYTES;
-	} else if (ReadCmd == COMMAND_QUAD_IO_READ) {
-		ByteCount += QUAD_IO_READ_DUMMY_BYTES;
-	} else if (ReadCmd==COMMAND_QUAD_READ) {
-		ByteCount += QUAD_READ_DUMMY_BYTES;
-	}
-
 	/*
 	 * Initiate the Transfer.
 	 */
 	TransferInProgress = TRUE;
+	xil_printf("xfs\r\n");
 	ret = XSpi_Transfer( SpiPtr, WriteBuffer, ReadBuffer,
-				(ByteCount + READ_WRITE_EXTRA_BYTES));
+				(ByteCount + ModeExtraBytes + READ_WRITE_EXTRA_BYTES));
 	if(ret != XST_SUCCESS) {
+		xil_printf("ER2\r\n");
 		return XST_FAILURE;
 	}
-
+	//xil_printf("xfe\r\n");
 	/*
 	 * Wait till the Transfer is complete and check if there are any errors
 	 * in the transaction.
 	 */
+	xil_printf("w 2\r\n");
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
+		xil_printf("ER3\r\n");
 		return XST_FAILURE;
 	}
+	xil_printf("d 2\r\n");
 
 	return XST_SUCCESS;
 }
@@ -610,9 +570,11 @@ int SpiFlashGetStatus(XSpi *SpiPtr)
 	 * Initiate the Transfer.
 	 */
 	TransferInProgress = TRUE;
+	//xil_printf("xf1");
 	ret = XSpi_Transfer(SpiPtr, WriteBuffer, ReadBuffer,
 						STATUS_READ_BYTES);
 	if(ret != XST_SUCCESS) {
+		xil_printf("EST1\r\n");
 		return XST_FAILURE;
 	}
 
@@ -620,9 +582,11 @@ int SpiFlashGetStatus(XSpi *SpiPtr)
 	 * Wait till the Transfer is complete and check if there are any errors
 	 * in the transaction..
 	 */
+	//xil_printf("xf2");
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
+		xil_printf("EST2\r\n");
 		return XST_FAILURE;
 	}
 
@@ -654,8 +618,10 @@ int SpiFlashWaitForFlashReady(void)
 		 * Get the ret Register. The ret register content is
 		 * stored at the second byte pointed by the ReadBuffer.
 		 */
+		//xil_printf("get status\r\n");
 		ret = SpiFlashGetStatus(&Spi);
 		if(ret != XST_SUCCESS) {
+			xil_printf("EWT1\r\n");
 			return XST_FAILURE;
 		}
 
@@ -706,6 +672,7 @@ void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount)
 	 * If the event was not transfer done, then track it as an error.
 	 */
 	if (retEvent != XST_SPI_TRANSFER_DONE) {
+		xil_printf("XFE: %d\r\n", retEvent);
 		ErrorCount++;
 	}
 }
