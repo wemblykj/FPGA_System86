@@ -153,7 +153,9 @@
  * Base address of the ELF image in the SPI flash
  */
 //#define ELF_IMAGE_BASEADDR		0x00FF0000
-#define ELF_IMAGE_BASEADDR		0x00000000 // does not seem to match with address entered in Adept
+#define ELF_IMAGE_BASEADDR		0x00000000
+#define DDR_BASEADDR			XPAR_MCB_DDR2_S0_AXI_BASEADDR
+
 // pretty sure the XSpi is byte based so I'm thinking the Adept address is not be
 /*
  * Enable debug for the ELF loader
@@ -166,7 +168,7 @@
 
 /************************** Function Prototypes ******************************/
 
-int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount);
+int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount);
 int SpiFlashGetStatus(XSpi *SpiPtr);
 static int SpiFlashWaitForFlashReady(void);
 void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount);
@@ -224,10 +226,7 @@ int main(void)
 	int ret, i;
 	u32 addr;
 	elf32_hdr hdr = {};
-	elf32_phdr phdr = {};;
-#ifdef DEBUG_ELF_LOADER
-	int j;
-#endif
+	elf32_phdr phdr = {};
 
 	init_uart();
 
@@ -318,19 +317,13 @@ int main(void)
 
 	memset(&ReadBuffer, 2, sizeof(ReadBuffer));
 
-	//xil_printf("read\r\n");
-	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, sizeof(hdr));
+	memset(&hdr, 0, sizeof(hdr));
+
+	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, (u8*)&hdr, sizeof(hdr));
 	if(ret != XST_SUCCESS) {
 		xil_printf("E1");
 		return XST_FAILURE;
 	}
-
-	memset(&hdr, 0, sizeof(hdr));
-
-	// Extract the elf header
-	//xil_printf("extract\r\n");
-	if (ret == XST_SUCCESS) {
-		memcpy(&hdr, ReadBuffer + SPI_VALID_DATA_OFFSET, sizeof(hdr));
 
 #ifdef DEBUG_ELF_LOADER
 	xil_printf("hdr.ident:\r\n");
@@ -338,11 +331,6 @@ int main(void)
 		xil_printf("0x%x\r\n", hdr.ident[i]);
 	}
 #endif
-	} else {
-		//xil_printf("Failed to read ELF header");
-		xil_printf("E2");
-		return XST_FAILURE;
-	}
 
 	/*
 	 * Validate ELF header
@@ -360,78 +348,44 @@ int main(void)
 	 * Read ELF program headers
 	 */
 	for (i = 0; i < hdr.phnum; i++) {
-		ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + hdr.phoff + i * sizeof(phdr), sizeof(phdr));
+		xil_printf("header %d\r\n", i);
+		ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + hdr.phoff + i * sizeof(phdr), (u8*)&phdr, sizeof(phdr));
 		if(ret != XST_SUCCESS) {
 			//xil_printf("Failed to read ELF program header");
 			xil_printf("E4");
 			return XST_FAILURE;
 		}
 
-		memcpy(&phdr, ReadBuffer + SPI_VALID_DATA_OFFSET, sizeof(phdr));
-
 		if (phdr.type == PHDR_TYPE_LOAD) {
 			/*
 			 * Copy program segment from flash to RAM
 			 */
-			for (addr = 0; addr < phdr.filesz; addr += EFFECTIVE_READ_BUFFER_SIZE) {
-				if (addr + EFFECTIVE_READ_BUFFER_SIZE > phdr.filesz) {
-
-					ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + phdr.offset + addr,
-							phdr.filesz - addr);
-					if(ret != XST_SUCCESS) {
-						//xil_printf("Failed to read ELF program section");
-						xil_printf("E5");
-						return XST_FAILURE;
-					}
+			int bytesToRead = phdr.filesz;
+			u32 srcAddr = ELF_IMAGE_BASEADDR + phdr.offset;
+			u8* pDest = DDR_BASEADDR + phdr.paddr;
 
 #ifdef DEBUG_ELF_LOADER
-					xil_printf("End of section: %d\r\n", i);
-
-					xil_printf("filesz: %d\r\n", phdr.filesz);
-
-					xil_printf("addr: 0x%x\r\n", addr);
-
-					xil_printf("segment end:\r\n");
-					for (j = 15; j >= 0; j--) {
-						xil_printf("0x%x ", ReadBuffer[SPI_VALID_DATA_OFFSET + phdr.filesz - addr - j]);
-					}
-					xil_printf("\r\n");
+			xil_printf("Start of section: %d\r\n", i);
+			xil_printf("filesz: %d\r\n", bytesToRead);
+			xil_printf("addr: 0x08%x\r\n", pDest);
 #endif
+			while (bytesToRead > 0)
+			{
+				int blockSize = (bytesToRead < EFFECTIVE_READ_BUFFER_SIZE) ? bytesToRead : EFFECTIVE_READ_BUFFER_SIZE;
 
-				} else {
-					ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + phdr.offset + addr,
-							EFFECTIVE_READ_BUFFER_SIZE);
-					if(ret != XST_SUCCESS) {
-						//xil_printf("Failed to read ELF program segment");
-						xil_printf("E6");
-						return XST_FAILURE;
-					}
-
-#ifdef DEBUG_ELF_LOADER
-					if (addr == 0) {
-						xil_printf("segment start:\r\n");
-						for (j = 0; j < EFFECTIVE_READ_BUFFER_SIZE; j++) {
-							xil_printf("0x%x ", ReadBuffer[SPI_VALID_DATA_OFFSET + j]);
-						}
-						xil_printf("\r\n");
-					}
-#endif
+				ret = SpiFlashRead(&Spi, srcAddr, pDest, blockSize);
+				if(ret != XST_SUCCESS) {
+					//xil_printf("Failed to read ELF program section");
+					xil_printf("E5");
+					return XST_FAILURE;
 				}
 
-				if (ret == XST_SUCCESS) {
-					if (addr + EFFECTIVE_READ_BUFFER_SIZE > phdr.filesz) {
-						memcpy((void*)phdr.paddr + addr, ReadBuffer + SPI_VALID_DATA_OFFSET, phdr.filesz - addr);
-					} else {
-						memcpy((void*)phdr.paddr + addr, ReadBuffer + SPI_VALID_DATA_OFFSET, EFFECTIVE_READ_BUFFER_SIZE);
-					}
+				srcAddr += blockSize;
+				pDest += blockSize;
+				bytesToRead -= blockSize;
 
-					if (addr % 1024 == 0) {
-						xil_printf(".");
-					}
-				} else {
-					//xil_printf("Failed to read ELF program segment");
-					xil_printf("E7");
-					return XST_FAILURE;
+				if (bytesToRead % 1024 == 0) {
+					xil_printf(".");
 				}
 			}
 
@@ -441,6 +395,9 @@ int main(void)
 			if (phdr.memsz > phdr.filesz) {
 				memset((void*)(phdr.paddr + phdr.filesz), 0, phdr.memsz - phdr.filesz);
 			}
+		}
+		else {
+			xil_printf("type: %d\r\n", phdr.type);
 		}
 	}
 
@@ -472,7 +429,7 @@ int main(void)
 * @note		None
 *
 ******************************************************************************/
-int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount)
+int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
 {
 	int ret;
 	u8 ReadCmd = COMMAND_RANDOM_READ;
@@ -499,10 +456,11 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount)
 		break;
 	}
 
+	const int ExtraBytes = READ_WRITE_EXTRA_BYTES + ModeExtraBytes;
 	/*
 	 * Wait while the Flash is busy.
 	 */
-	xil_printf("w 1\r\n");
+	//xil_printf("w 1\r\n");
 	ret = SpiFlashWaitForFlashReady();
 	if(ret != XST_SUCCESS) {
 		xil_printf("ER1\r\n");
@@ -524,7 +482,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount)
 	TransferInProgress = TRUE;
 	xil_printf("ItT\r\n");
 	ret = XSpi_Transfer( SpiPtr, WriteBuffer, ReadBuffer,
-				(ByteCount + ModeExtraBytes + READ_WRITE_EXTRA_BYTES));
+				(ByteCount + ExtraBytes));
 	if(ret != XST_SUCCESS) {
 		xil_printf("ER2\r\n");
 		return XST_FAILURE;
@@ -534,7 +492,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount)
 	 * Wait till the Transfer is complete and check if there are any errors
 	 * in the transaction.
 	 */
-	xil_printf("w 2\r\n");
+	//xil_printf("w 2\r\n");
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
@@ -542,6 +500,8 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount)
 		return XST_FAILURE;
 	}
 	xil_printf("d 2\r\n");
+
+	memcpy(Dest, ReadBuffer + ExtraBytes, ByteCount);
 
 	return XST_SUCCESS;
 }
@@ -683,8 +643,9 @@ void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount)
 		 */
 		TransferInProgress = FALSE;
 	}
+#ifdef USE_INTR_ALL
 	else {
-		XSpi_IntrDisable(SpiPtr, XSP_INTR_ALL);
+		XSpi_IntrDisable(SpiPtr, status);
 
 		xil_printf("INT: 0x%x\r\n", status);
 
@@ -695,6 +656,7 @@ void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount)
 
 		XSpi_IntrEnable(SpiPtr, status);
 	}
+#endif
 }
 
 /*****************************************************************************/
@@ -755,7 +717,9 @@ static int SetupInterruptSystem(XSpi *SpiPtr)
 	 */
 	XIntc_Enable(&InterruptController, SPI_INTR_ID);
 
+#ifdef USE_INTR_ALL
 	XSpi_IntrEnable(SpiPtr, XSP_INTR_ALL);
+#endif
 
 	/*
 	 * Initialize the exception table.
