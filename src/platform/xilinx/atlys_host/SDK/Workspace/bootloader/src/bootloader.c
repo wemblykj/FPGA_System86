@@ -158,7 +158,7 @@
 /*
  * Enable debug for the ELF loader
  */
-//#define DEBUG_ELF_LOADER
+#define DEBUG_ELF_LOADER
 
 /**************************** Type Definitions *******************************/
 
@@ -231,7 +231,7 @@ int main(void)
 
 	init_uart();
 
-	xil_printf("Spi Numonyx flash Quad SPI bootloader\r\n");
+	//xil_printf("Spi Numonyx flash Quad SPI bootloader\r\n");
 	xil_printf("%s - %d\r\n", __DATE__, __TIME__);
 
 	/*
@@ -449,8 +449,8 @@ int main(void)
 	/**
 	 * Jump to ELF entry address
 	 */
-	xil_printf("\r\nTransferring execution to program @ 0x%x\r\n", hdr.entry);
-
+	//xil_printf("\r\nTransferring execution to program @ 0x%x\r\n", hdr.entry);
+	xil_printf("done\r\n");
 	((void (*)())hdr.entry)();
 
 	// Never reached
@@ -483,17 +483,19 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount)
 	case XSP_STANDARD_MODE:
 		//ReadCmd = COMMAND_RANDOM_READ;
 		//ModeExtraBytes = 0;
-		xil_printf("standard mode\r\n");
+		//xil_printf("standard mode\r\n");
 		break;
 	case XSP_DUAL_MODE:
 		ReadCmd = COMMAND_DUAL_READ;
 		ModeExtraBytes = DUAL_READ_DUMMY_BYTES;
-		xil_printf("dual mode\r\n");
+		//xil_printf("dual mode\r\n");
+		xil_printf("QDM\r\n");
 		break;
 	case XSP_QUAD_MODE:
 		ReadCmd = COMMAND_QUAD_READ;
 		ModeExtraBytes = QUAD_READ_DUMMY_BYTES;
-		xil_printf("quad mode\r\n");
+		//xil_printf("quad mode\r\n");
+		xil_printf("QQM\r\n");
 		break;
 	}
 
@@ -506,7 +508,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount)
 		xil_printf("ER1\r\n");
 		return XST_FAILURE;
 	}
-	//xil_printf("d 1\r\n");
+	xil_printf("d 1\r\n");
 
 	/*
 	 * Prepare the WriteBuffer.
@@ -520,7 +522,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u32 ByteCount)
 	 * Initiate the Transfer.
 	 */
 	TransferInProgress = TRUE;
-	xil_printf("xfs\r\n");
+	xil_printf("ItT\r\n");
 	ret = XSpi_Transfer( SpiPtr, WriteBuffer, ReadBuffer,
 				(ByteCount + ModeExtraBytes + READ_WRITE_EXTRA_BYTES));
 	if(ret != XST_SUCCESS) {
@@ -574,7 +576,7 @@ int SpiFlashGetStatus(XSpi *SpiPtr)
 	ret = XSpi_Transfer(SpiPtr, WriteBuffer, ReadBuffer,
 						STATUS_READ_BYTES);
 	if(ret != XST_SUCCESS) {
-		xil_printf("EST1\r\n");
+		//xil_printf("EST1\r\n");
 		return XST_FAILURE;
 	}
 
@@ -586,7 +588,7 @@ int SpiFlashGetStatus(XSpi *SpiPtr)
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
-		xil_printf("EST2\r\n");
+		//xil_printf("EST2\r\n");
 		return XST_FAILURE;
 	}
 
@@ -662,18 +664,36 @@ int SpiFlashWaitForFlashReady(void)
 ******************************************************************************/
 void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount)
 {
-	/*
-	 * Indicate the transfer on the SPI bus is no longer in progress
-	 * regardless of the ret event.
-	 */
-	TransferInProgress = FALSE;
+	XSpi *SpiPtr = (XSpi*)CallBackRef;
 
-	/*
-	 * If the event was not transfer done, then track it as an error.
-	 */
-	if (retEvent != XST_SPI_TRANSFER_DONE) {
-		xil_printf("XFE: %d\r\n", retEvent);
-		ErrorCount++;
+	u32 status = XSpi_IntrGetStatus(SpiPtr);
+	if (status == 0){
+		/*
+		 * If the event was not transfer done, then track it as an error.
+		 */
+		if (retEvent != XST_SPI_TRANSFER_DONE) {
+			xil_printf("XFE: %d\r\n", retEvent);
+			ErrorCount++;
+		}
+
+		xil_printf("#");
+		/*
+		 * Indicate the transfer on the SPI bus is no longer in progress
+		 * regardless of the ret event.
+		 */
+		TransferInProgress = FALSE;
+	}
+	else {
+		XSpi_IntrDisable(SpiPtr, XSP_INTR_ALL);
+
+		xil_printf("INT: 0x%x\r\n", status);
+
+		XSpi_IntrClear(SpiPtr, status);
+
+		//status = XSpi_IntrGetStatus(SpiPtr);
+		//xil_printf("INTACK: 0x%x\r\n", status);
+
+		XSpi_IntrEnable(SpiPtr, status);
 	}
 }
 
@@ -734,6 +754,8 @@ static int SetupInterruptSystem(XSpi *SpiPtr)
 	 * Enable the interrupt for the SPI.
 	 */
 	XIntc_Enable(&InterruptController, SPI_INTR_ID);
+
+	XSpi_IntrEnable(SpiPtr, XSP_INTR_ALL);
 
 	/*
 	 * Initialize the exception table.
