@@ -154,7 +154,7 @@
  */
 //#define ELF_IMAGE_BASEADDR		0x00FF0000
 #define ELF_IMAGE_BASEADDR		0x00000000
-#define DDR_BASEADDR			XPAR_MCB_DDR2_S0_AXI_BASEADDR
+//#define DDR_BASE_ADDR		XPAR_S6DDR_0_S0_AXI_BASEADDR
 
 // pretty sure the XSpi is byte based so I'm thinking the Adept address is not be
 /*
@@ -169,7 +169,7 @@
 /************************** Function Prototypes ******************************/
 
 int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount);
-int SpiFlashGetStatus(XSpi *SpiPtr);
+int SpiFlashGetStatus(XSpi *SpiPtr, u8* Status);
 static int SpiFlashWaitForFlashReady(void);
 void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount);
 static int SetupInterruptSystem(XSpi *SpiPtr);
@@ -198,13 +198,6 @@ volatile static int TransferInProgress = FALSE;
  */
 volatile static int ErrorCount = 0;
 
-/*
- * Buffers used during read and write transactions.
- */
-static u8 ReadBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES + QUAD_READ_DUMMY_BYTES];
-
-static u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
-
 /************************** Function Definitions *****************************/
 
 /*****************************************************************************/
@@ -224,7 +217,7 @@ int main(void)
 	XSpi_Config *ConfigPtr;	/* Pointer to Configuration data */
 
 	int ret, i;
-	u32 addr;
+	//u32 addr;
 	elf32_hdr hdr = {};
 	elf32_phdr phdr = {};
 
@@ -315,10 +308,9 @@ int main(void)
 	 * requirements conflicting with the QSPI flash's IO2 and IO3 - DUAL seems to work though
 	 */
 
-	memset(&ReadBuffer, 2, sizeof(ReadBuffer));
-
 	memset(&hdr, 0, sizeof(hdr));
 
+	xil_printf("read header");
 	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, (u8*)&hdr, sizeof(hdr));
 	if(ret != XST_SUCCESS) {
 		xil_printf("E1");
@@ -326,10 +318,15 @@ int main(void)
 	}
 
 #ifdef DEBUG_ELF_LOADER
-	xil_printf("hdr.ident:\r\n");
-	for (i = 0; i < HDR_IDENT_NBYTES; i++) {
-		xil_printf("0x%x\r\n", hdr.ident[i]);
-	}
+	xil_printf("entry: 0x%08x\r\n", hdr.entry);
+	xil_printf("phoff: 0x%08x\r\n", hdr.phoff);
+	xil_printf("shoff: 0x%08x\r\n", hdr.shoff);
+	//xil_printf("ehsize: 0x%04x\r\n", hdr.ehsize);
+	//xil_printf("phentsize: 0x%04x\r\n", hdr.phentsize);
+	//xil_printf("phnum: 0x%04x\r\n", hdr.phnum);
+	//xil_printf("shentsize: 0x%04x\r\n", hdr.shentsize);
+	//xil_printf("shnum: 0x%04x\r\n", hdr.shnum);
+	//xil_printf("shstrndx: 0x%04x\r\n", hdr.shstrndx);
 #endif
 
 	/*
@@ -348,7 +345,7 @@ int main(void)
 	 * Read ELF program headers
 	 */
 	for (i = 0; i < hdr.phnum; i++) {
-		xil_printf("header %d\r\n", i);
+		//xil_printf("header %d\r\n", i);
 		ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR + hdr.phoff + i * sizeof(phdr), (u8*)&phdr, sizeof(phdr));
 		if(ret != XST_SUCCESS) {
 			//xil_printf("Failed to read ELF program header");
@@ -357,18 +354,39 @@ int main(void)
 		}
 
 		if (phdr.type == PHDR_TYPE_LOAD) {
+#ifdef DEBUG_ELF_LOADER
+			xil_printf("Start of section: %d\r\n", i);
+			xil_printf("offset: %d\r\n", phdr.offset);
+			xil_printf("filesz: %d\r\n", phdr.filesz);
+			//xil_printf("memsz: %d\r\n", phdr.memsz);
+			//xil_printf("vaddr: 0x%08x\r\n", phdr.vaddr);
+			xil_printf("paddr: 0x%08x\r\n", phdr.paddr);
+#endif
+			u32 srcAddr = ELF_IMAGE_BASEADDR + phdr.offset;
+
+			// ignore vector table
+			if (phdr.paddr == 0) {
+				u32 entry;
+				ret = SpiFlashRead(&Spi, srcAddr, (u8*)&entry, sizeof(entry));
+				if(ret != XST_SUCCESS) {
+					//xil_printf("Failed to read ELF program section");
+					xil_printf("E5");
+					return XST_FAILURE;
+				}
+
+				xil_printf("entry: %x\r\n", entry);
+				continue;
+			}
+
+
 			/*
 			 * Copy program segment from flash to RAM
 			 */
 			int bytesToRead = phdr.filesz;
-			u32 srcAddr = ELF_IMAGE_BASEADDR + phdr.offset;
-			u8* pDest = DDR_BASEADDR + phdr.paddr;
 
-#ifdef DEBUG_ELF_LOADER
-			xil_printf("Start of section: %d\r\n", i);
-			xil_printf("filesz: %d\r\n", bytesToRead);
-			xil_printf("addr: 0x08%x\r\n", pDest);
-#endif
+			u8* pDest = (u8*)phdr.paddr;
+
+
 			while (bytesToRead > 0)
 			{
 				int blockSize = (bytesToRead < EFFECTIVE_READ_BUFFER_SIZE) ? bytesToRead : EFFECTIVE_READ_BUFFER_SIZE;
@@ -434,6 +452,7 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
 	int ret;
 	u8 ReadCmd = COMMAND_RANDOM_READ;
 	u8 ModeExtraBytes = 0;
+	//int i;
 
 	switch (SpiPtr->SpiMode)
 	{
@@ -457,16 +476,15 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
 	}
 
 	const int ExtraBytes = READ_WRITE_EXTRA_BYTES + ModeExtraBytes;
+
 	/*
-	 * Wait while the Flash is busy.
+	 * Buffers used during read and write transactions.
 	 */
-	//xil_printf("w 1\r\n");
-	ret = SpiFlashWaitForFlashReady();
-	if(ret != XST_SUCCESS) {
-		xil_printf("ER1\r\n");
-		return XST_FAILURE;
-	}
-	xil_printf("d 1\r\n");
+	u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
+	u8 ReadBuffer[PAGE_SIZE + READ_WRITE_EXTRA_BYTES + ModeExtraBytes];
+
+	memset(&WriteBuffer, 0, sizeof(WriteBuffer));
+	memset(&ReadBuffer, 0, sizeof(ReadBuffer));
 
 	/*
 	 * Prepare the WriteBuffer.
@@ -475,6 +493,17 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
 	WriteBuffer[BYTE2] = (u8) (Addr >> 16);
 	WriteBuffer[BYTE3] = (u8) (Addr >> 8);
 	WriteBuffer[BYTE4] = (u8) Addr;
+
+	/*
+	 * Wait while the Flash is busy.
+	 */
+	xil_printf("w 1\r\n");
+	ret = SpiFlashWaitForFlashReady();
+	if(ret != XST_SUCCESS) {
+		xil_printf("ER1\r\n");
+		return XST_FAILURE;
+	}
+	xil_printf("d 1\r\n");
 
 	/*
 	 * Initiate the Transfer.
@@ -501,6 +530,11 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
 	}
 	xil_printf("d 2\r\n");
 
+	/*xil_printf("ReadBuffer:\r\n");
+		for (i = 0; i < ByteCount; i++) {
+			xil_printf("0x%x\r\n", ReadBuffer[i]);
+		}*/
+
 	memcpy(Dest, ReadBuffer + ExtraBytes, ByteCount);
 
 	return XST_SUCCESS;
@@ -519,9 +553,14 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
 *		pointed by the ReadBuffer.
 *
 ******************************************************************************/
-int SpiFlashGetStatus(XSpi *SpiPtr)
+int SpiFlashGetStatus(XSpi *SpiPtr, u8* Status)
 {
 	int ret;
+	u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
+	u8 ReadBuffer[READ_WRITE_EXTRA_BYTES + STATUS_READ_BYTES + 8];
+
+	memset(WriteBuffer, 0, sizeof(WriteBuffer));
+	memset(ReadBuffer, 0, sizeof(ReadBuffer));
 
 	/*
 	 * Prepare the Write Buffer.
@@ -532,11 +571,11 @@ int SpiFlashGetStatus(XSpi *SpiPtr)
 	 * Initiate the Transfer.
 	 */
 	TransferInProgress = TRUE;
-	//xil_printf("xf1");
+	xil_printf("xf\r\n");
 	ret = XSpi_Transfer(SpiPtr, WriteBuffer, ReadBuffer,
 						STATUS_READ_BYTES);
 	if(ret != XST_SUCCESS) {
-		//xil_printf("EST1\r\n");
+		xil_printf("EST1\r\n");
 		return XST_FAILURE;
 	}
 
@@ -544,13 +583,15 @@ int SpiFlashGetStatus(XSpi *SpiPtr)
 	 * Wait till the Transfer is complete and check if there are any errors
 	 * in the transaction..
 	 */
-	//xil_printf("xf2");
+	xil_printf("xf2\r\n");
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
-		//xil_printf("EST2\r\n");
+		xil_printf("EST2\r\n");
 		return XST_FAILURE;
 	}
+
+	*Status = ReadBuffer[1];
 
 	return XST_SUCCESS;
 }
@@ -572,7 +613,6 @@ int SpiFlashGetStatus(XSpi *SpiPtr)
 int SpiFlashWaitForFlashReady(void)
 {
 	int ret;
-	u8 retReg;
 
 	while(1) {
 
@@ -580,8 +620,9 @@ int SpiFlashWaitForFlashReady(void)
 		 * Get the ret Register. The ret register content is
 		 * stored at the second byte pointed by the ReadBuffer.
 		 */
-		//xil_printf("get status\r\n");
-		ret = SpiFlashGetStatus(&Spi);
+		xil_printf("get status\r\n");
+		u8 status;
+		ret = SpiFlashGetStatus(&Spi, &status);
 		if(ret != XST_SUCCESS) {
 			xil_printf("EWT1\r\n");
 			return XST_FAILURE;
@@ -591,8 +632,7 @@ int SpiFlashWaitForFlashReady(void)
 		 * Check if the flash is ready to accept the next command.
 		 * If so break.
 		 */
-		retReg = ReadBuffer[1];
-		if((retReg & FLASH_SR_IS_READY_MASK) == 0) {
+		if((status & FLASH_SR_IS_READY_MASK) == 0) {
 			break;
 		}
 	}
@@ -624,39 +664,12 @@ int SpiFlashWaitForFlashReady(void)
 ******************************************************************************/
 void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount)
 {
-	XSpi *SpiPtr = (XSpi*)CallBackRef;
-
-	u32 status = XSpi_IntrGetStatus(SpiPtr);
-	if (status == 0){
-		/*
-		 * If the event was not transfer done, then track it as an error.
-		 */
-		if (retEvent != XST_SPI_TRANSFER_DONE) {
-			xil_printf("XFE: %d\r\n", retEvent);
-			ErrorCount++;
-		}
-
-		xil_printf("#");
-		/*
-		 * Indicate the transfer on the SPI bus is no longer in progress
-		 * regardless of the ret event.
-		 */
-		TransferInProgress = FALSE;
+	if (retEvent != XST_SPI_TRANSFER_DONE) {
+		xil_printf("XFE: %d\r\n", retEvent);
+		ErrorCount++;
 	}
-#ifdef USE_INTR_ALL
-	else {
-		XSpi_IntrDisable(SpiPtr, status);
 
-		xil_printf("INT: 0x%x\r\n", status);
-
-		XSpi_IntrClear(SpiPtr, status);
-
-		//status = XSpi_IntrGetStatus(SpiPtr);
-		//xil_printf("INTACK: 0x%x\r\n", status);
-
-		XSpi_IntrEnable(SpiPtr, status);
-	}
-#endif
+	TransferInProgress = FALSE;
 }
 
 /*****************************************************************************/
@@ -716,10 +729,6 @@ static int SetupInterruptSystem(XSpi *SpiPtr)
 	 * Enable the interrupt for the SPI.
 	 */
 	XIntc_Enable(&InterruptController, SPI_INTR_ID);
-
-#ifdef USE_INTR_ALL
-	XSpi_IntrEnable(SpiPtr, XSP_INTR_ALL);
-#endif
 
 	/*
 	 * Initialize the exception table.
