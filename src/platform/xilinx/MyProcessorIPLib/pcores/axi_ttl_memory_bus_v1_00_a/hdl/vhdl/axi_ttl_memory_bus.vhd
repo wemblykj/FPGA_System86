@@ -250,7 +250,7 @@ entity axi_ttl_memory_bus is
     C_DATA_WIDTH : integer range 4 to 8 := 8;
 
     -- Mapping generics
-    C_MAPPED_BASEADDR : std_logic_vector := X"C0000000";
+    C_MAPPED_ADDRESS : std_logic_vector := X"C0000000";
     C_USE_DYNAMIC_MAPPING : std_logic := '0';
 
     --Family Generics

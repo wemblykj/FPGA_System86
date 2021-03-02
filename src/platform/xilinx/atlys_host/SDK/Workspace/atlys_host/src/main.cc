@@ -1,5 +1,7 @@
 /*
- * Empty C++ Application
+ * Copyright (c) 2021 Paul Wightmore
+ *
+ * License: https://www.apache.org/licenses/LICENSE-2.0
  */
 
 //#include "platform.h"
