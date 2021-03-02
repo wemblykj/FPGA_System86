@@ -11,3 +11,4 @@ lib axi_master_lite_v2_00_a all
 
 ## AXI ROM Core 
 lib axi_ttl_memory_bus_v1_00_a axi_ttl_memory_bus vhdl
+lib axi_ttl_memory_bus_v1_00_a axi_slave verilog
