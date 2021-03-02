@@ -1,6 +1,8 @@
-module axi_slave #(parameter C_S_AXI_ADDR_WIDTH = 32,
+module axi_slave #(parameter C_REGISTER_COUNT = 1,
+				   parameter C_S_AXI_ADDR_WIDTH = 32,
                   parameter C_S_AXI_DATA_WIDTH = 32)
-       (input wire  										S_AXI_ACLK,
+       (input wire [(C_REGISTER_COUNT*C_S_AXI_DATA_WIDTH)-1:0] packed_registers, //[0:C_REGISTER_COUNT-1],
+	    input wire  										S_AXI_ACLK,
         input wire  										S_AXI_ARESETN,
         input wire [C_S_AXI_ADDR_WIDTH-1:0] 		S_AXI_ARADDR,
         input wire 										S_AXI_ARVALID,
@@ -18,6 +20,11 @@ module axi_slave #(parameter C_S_AXI_ADDR_WIDTH = 32,
 		  output wire [1:0] 								S_AXI_BRESP,
         output wire 				 						S_AXI_BVALID,
         input wire 				 						S_AXI_BREADY);
+
+reg [C_S_AXI_DATA_WIDTH:0] registers [0:C_REGISTER_COUNT-1];
+genvar i;
+for (i=0;i<C_REGISTER_COUNT;i=i+1) 
+  assign packed_registers[C_S_AXI_DATA_WIDTH*i+(C_S_AXI_DATA_WIDTH-1):C_S_AXI_DATA_WIDTH*i] = registers[i];
 
 localparam [1:0]
 	Idle = 2'b00,
@@ -76,14 +83,29 @@ always @(state) begin
 	endcase
 end
 
+integer j;
 always @(posedge S_AXI_ACLK or negedge S_AXI_ARESETN) begin
-   if (!S_AXI_ARESETN) begin
+  if (!S_AXI_ARESETN) begin
+    for (j =  0; j < C_REGISTER_COUNT; j = j + 1) 
+      registers[j] = 0;
+  end else if (S_AXI_AWREADY)
+    if (S_AXI_ARADDR < C_REGISTER_COUNT)
+      registers[S_AXI_AWADDR] = S_AXI_WDATA;
+end
+
+always @(posedge S_AXI_ACLK or negedge S_AXI_ARESETN) begin
+    if (!S_AXI_ARESETN) begin
       s_axi_rresp_i <= 0;
-		s_axi_rdata_i <= 0;
-   end /*else if (state = SM_READ) begin
-		s_axi_rresp_i <= (IP2Bus_Error) & '0';
-      s_axi_rdata_i <=  IP2Bus_Data;
-   end*/
+      s_axi_rdata_i <= 0;
+    end else if (state == Read) begin
+      if (S_AXI_ARADDR < C_REGISTER_COUNT) begin
+        s_axi_rresp_i <= 1;
+        s_axi_rdata_i <=  registers[S_AXI_ARADDR];
+      end else begin
+        s_axi_rresp_i <= 0;
+        s_axi_rdata_i <=  0;
+      end
+   end
 end
 
 assign S_AXI_RRESP = s_axi_rresp_i;
@@ -92,10 +114,10 @@ assign S_AXI_RDATA = s_axi_rdata_i;
 always @(posedge S_AXI_ACLK or negedge S_AXI_ARESETN) begin
 	if (!S_AXI_ARESETN)
 		s_axi_rvalid_i <= 0;
-   else if ((state == Read) && rd_done)
-      s_axi_rvalid_i <= 1;
-   else if (S_AXI_RREADY)
-      s_axi_rvalid_i <= 0;
+  else if ((state == Read) && rd_done)
+    s_axi_rvalid_i <= 1;
+  else if (S_AXI_RREADY)
+    s_axi_rvalid_i <= 0;
 end
 
 always @(posedge S_AXI_ACLK or negedge S_AXI_ARESETN) begin

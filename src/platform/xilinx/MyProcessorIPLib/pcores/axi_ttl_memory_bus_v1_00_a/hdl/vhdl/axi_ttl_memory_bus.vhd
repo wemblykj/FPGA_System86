@@ -59,8 +59,18 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+package axi_slave_pkg is
+  type register_array is array(natural range <>) of std_logic_vector;
+end package;
+
+library ieee;
+use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
+
+use work.axi_slave_pkg.all;
 
 library proc_common_v3_00_a;
 use proc_common_v3_00_a.ipif_pkg.SLV64_ARRAY_TYPE;
@@ -83,6 +93,7 @@ library axi_master_lite_v2_00_a;
 
 library axi_ttl_memory_bus_v1_00_a;
 use axi_ttl_memory_bus_v1_00_a.all;
+
 
 -------------------------------------------------------------------------------
 --                     Defination of Generics :                              --
@@ -398,27 +409,29 @@ architecture IMP of axi_ttl_memory_bus is
 
 	component axi_slave
     generic (
-      C_S_AXI_ADDR_WIDTH : integer := 0;
-      C_S_AXI_DATA_WIDTH : integer := 0
+      C_REGISTER_COUNT : integer := 1;
+      C_S_AXI_ADDR_WIDTH : integer := 32;
+      C_S_AXI_DATA_WIDTH : integer := 32
     );
     port (
-		S_AXI_ACLK : in std_logic;
-		S_AXI_ARESETN : in std_logic;
+    packed_registers : in std_logic_vector((C_REGISTER_COUNT * C_S_AXI_DATA_WIDTH) - 1 downto 0);
+	  S_AXI_ACLK : in std_logic;
+	  S_AXI_ARESETN : in std_logic;
       S_AXI_ARADDR : in std_logic_vector(C_S_AXI_ADDR_WIDTH - 1 downto 0);
       S_AXI_ARVALID : in std_logic;
       S_AXI_ARREADY : out std_logic;
-      --S_AXI_RDATA : out std_logic_vector(C_S_AXI_DATA_WIDTH - 1 downto 0);
-		--S_AXI_RRESP : out std_logic_vector(1 downto 0);
-      --S_AXI_RVALID : out std_logic;
+      S_AXI_RDATA : out std_logic_vector(C_S_AXI_DATA_WIDTH - 1 downto 0);
+	  S_AXI_RRESP : out std_logic_vector(1 downto 0);
+      S_AXI_RVALID : out std_logic;
       S_AXI_RREADY : in std_logic;
 		S_AXI_AWADDR : in std_logic_vector(C_S_AXI_ADDR_WIDTH - 1 downto 0);
       S_AXI_AWVALID : in std_logic;
-      --S_AXI_AWREADY : out std_logic;
+      S_AXI_AWREADY : out std_logic;
       S_AXI_WDATA : in std_logic_vector(C_S_AXI_DATA_WIDTH - 1 downto 0);
 		S_AXI_WVALID : in std_logic;
-      --S_AXI_WREADY : out std_logic;
-		--S_AXI_BRESP : out std_logic_vector(1 downto 0);
-      --S_AXI_BVALID : out std_logic;
+      S_AXI_WREADY : out std_logic;
+		S_AXI_BRESP : out std_logic_vector(1 downto 0);
+      S_AXI_BVALID : out std_logic;
       S_AXI_BREADY : in std_logic
     );
   end component;
@@ -445,6 +458,15 @@ architecture IMP of axi_ttl_memory_bus is
     );
   end component;
 
+function flatten_registers(registers : register_array) return std_logic_vector is
+  variable flat : std_logic_vector((registers'length * C_M_AXI_DATA_WIDTH) - 1 downto 0);
+begin
+  for i in registers'range loop
+    flat((i * C_M_AXI_DATA_WIDTH) + (C_M_AXI_DATA_WIDTH-1) downto (i * C_M_AXI_DATA_WIDTH)) := registers(i);
+  end loop;
+  return flat;
+end function;
+
   -------------------  Constant Declaration Section BEGIN -----------------------
 
   constant ZERO_ADDR_PAD : std_logic_vector(0 to 31)
@@ -462,12 +484,15 @@ architecture IMP of axi_ttl_memory_bus is
   constant USE_WSTRB : integer := 1;
   constant DPHASE_TIMEOUT : integer := 0;
 
+  constant REGISTER_COUNT : integer := 2;
+  
   -------------------------------------------------------------------------------
   -- Signal and Type Declarations
   -------------------------------------------------------------------------------
 
   signal mapped_base_addr : std_logic_vector(C_S_AXI_ADDR_WIDTH - 1 downto 0);
-
+  signal registers : register_array(0 to REGISTER_COUNT - 1)(C_S_AXI_DATA_WIDTH - 1 downto 0);
+  
   -- AXI Lite Master
   -----------------------------------------------------------------------------
   -- IP Master Request/Qualifers
@@ -656,28 +681,30 @@ begin -- architecture IMP
 	AXI_SLAVE_I : entity axi_ttl_memory_bus_v1_00_a.axi_slave
     generic map
     (
+      C_REGISTER_COUNT => C_REGISTER_COUNT,
       C_S_AXI_ADDR_WIDTH => C_S_AXI_ADDR_WIDTH,
       C_S_AXI_DATA_WIDTH => C_S_AXI_DATA_WIDTH
     )
     port map
     (
+      packed_registers => flatten_registers(registers),
       S_AXI_ACLK => S_AXI_ACLK,
       S_AXI_ARESETN => S_AXI_ARESETN,
       S_AXI_ARADDR => S_AXI_ARADDR,
       S_AXI_ARVALID => S_AXI_ARVALID,
       S_AXI_ARREADY => S_AXI_ARREADY,
---      S_AXI_RDATA => S_AXI_RDATA,
---      S_AXI_RRESP => S_AXI_RRESP,
---      S_AXI_RVALID => S_AXI_RVALID,
+      S_AXI_RDATA => S_AXI_RDATA,
+      S_AXI_RRESP => S_AXI_RRESP,
+      S_AXI_RVALID => S_AXI_RVALID,
       S_AXI_RREADY => S_AXI_RREADY,
       S_AXI_AWADDR => S_AXI_AWADDR,
       S_AXI_AWVALID => S_AXI_AWVALID,
---      S_AXI_AWREADY => S_AXI_AWREADY,
+      S_AXI_AWREADY => S_AXI_AWREADY,
       S_AXI_WDATA => S_AXI_WDATA,
       S_AXI_WVALID => S_AXI_WVALID,
---      S_AXI_WREADY => S_AXI_WREADY,
---      S_AXI_BRESP => S_AXI_BRESP,
---      S_AXI_BVALID => S_AXI_BVALID,
+      S_AXI_WREADY => S_AXI_WREADY,
+      S_AXI_BRESP => S_AXI_BRESP,
+      S_AXI_BVALID => S_AXI_BVALID,
       S_AXI_BREADY => S_AXI_BREADY
     );
 	 
