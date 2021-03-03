@@ -21,12 +21,12 @@
 		<tip>The TTL bus is read-only</tip>
 	</widget>
 	'>
-	<!ENTITY C_MAPPED_BASEADDR '
-	<widget id="C_MAPPED_BASEADDR">
-		<key>C_MAPPED_BASEADDR</key>
+	<!ENTITY C_MAPPED_ADDRESS '
+	<widget id="C_MAPPED_ADDRESS">
+		<key>C_MAPPED_ADDRESS</key>
 		<label>Mapped Address</label>
 		<tip>The base address on the AXI4 bus
-			 to which ROM requests will be mapped</tip>
+			 to which TTL memory requests will be mapped</tip>
 	</widget>
 	'>
 	<!ENTITY C_USE_DYNAMIC_MAPPING '
@@ -118,7 +118,7 @@
 		</group>
 		<group id="Mapping">
 			<display>ROM to AXI Memory Mapping</display>	
-			<item>&C_MAPPED_BASEADDR;</item>			
+			<item>&C_MAPPED_ADDRESS;</item>			
 			<item>&C_USE_DYNAMIC_MAPPING;</item>
 		</group>
 	</view>

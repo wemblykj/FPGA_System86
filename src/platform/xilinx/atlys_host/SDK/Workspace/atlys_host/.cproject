@@ -185,7 +185,7 @@
 								</inputType>
 								<inputType id="xilinx.gnu.linker.input.lscript.1648934387" name="Linker Script" superClass="xilinx.gnu.linker.input.lscript"/>
 							</tool>
-							<tool commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS} -mxl-mode-app-model novectors" id="xilinx.gnu.mb.cxx.toolchain.linker.release.243720607" name="MicroBlaze g++ linker" superClass="xilinx.gnu.mb.cxx.toolchain.linker.release">
+							<tool commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="xilinx.gnu.mb.cxx.toolchain.linker.release.243720607" name="MicroBlaze g++ linker" superClass="xilinx.gnu.mb.cxx.toolchain.linker.release">
 								<option id="xilinx.gnu.mb.linker.inferred.mbversion.1642636636" name="MicroBlaze Version" superClass="xilinx.gnu.mb.linker.inferred.mbversion" value="8.50.c" valueType="string"/>
 								<option id="xilinx.gnu.mb.linker.inferred.norelax.202602526" name="No relaxation (-Wl,--no-relax)" superClass="xilinx.gnu.mb.linker.inferred.norelax" value="true" valueType="boolean"/>
 								<option id="xilinx.gnu.mb.linker.inferred.garbage.2101381733" name="Enable garbage collector (-Wl,--gc-sections)" superClass="xilinx.gnu.mb.linker.inferred.garbage" value="true" valueType="boolean"/>
@@ -203,7 +203,7 @@
 								<option id="xilinx.gnu.c.linker.option.lscript.1809036818" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="../src/lscript.ld" valueType="string"/>
 								<option id="xilinx.gnu.c.link.option.nostart.1301762692" name="Do not use standard start files (-nostartfiles)" superClass="xilinx.gnu.c.link.option.nostart" value="false" valueType="boolean"/>
 								<option id="xilinx.gnu.c.link.option.ldflags.369322036" name="Linker Flags" superClass="xilinx.gnu.c.link.option.ldflags" value="" valueType="string"/>
-								<option id="xilinx.gnu.c.link.option.other.1754914884" name="Other options (-XLinker [option])" superClass="xilinx.gnu.c.link.option.other" valueType="stringList"/>
+								<option id="xilinx.gnu.c.link.option.other.1754914884" name="Other options (-XLinker [option])" superClass="xilinx.gnu.c.link.option.other"/>
 								<inputType id="xilinx.gnu.linker.input.1762367392" superClass="xilinx.gnu.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
