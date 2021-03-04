@@ -30,9 +30,11 @@ extern "C" {
 typedef struct {
 	u16 DeviceId;					/* Unique ID  of device */
 	u32 BaseAddress;				/* Device base address */
+	int AddressWidth;				/* Address width of TTL bus */
+	int DataWidth;					/* Data width of TTL bus */
+	int ReadOnly;					/* Memory is read-only (ROM) */
 	u32 MappedBaseAddress;			/* The AXI bus address to which the memory bus is mapped */
 	int SupportsDynamicMapping;  	/* The AXI bus address can be configured */
-	int ReadOnly;					/* Memory is read-only (ROM) */
 } XTtlMemBus_Config;
 
 /**
@@ -43,9 +45,11 @@ typedef struct {
 typedef struct {
 	u32 BaseAddress;				/* Device base address */
 	u32 IsReady;					/* Device is initialized and ready */
+	int AddressWidth;				/* Address width of TTL bus */
+	int DataWidth;					/* Data width of TTL bus */
+	int ReadOnly;					/* Memory is read-only (ROM) */
 	u32 MappedBaseAddress;			/* The AXI bus address to which the memory bus is mapped */
 	int SupportsDynamicMapping;  	/* The AXI bus address can be configured */
-	int ReadOnly;					/* Memory is read-only (ROM) */
 } XTtlMemBus;
 
 /***************** Macros (Inline Functions) Definitions ********************/
@@ -69,9 +73,66 @@ int XTtlMemBus_GetSupportsDynamicMapping(XTtlMemBus *InstancePtr);
 int XTtlMemBus_GetEnabled(XTtlMemBus *InstancePtr);
 int XTtlMemBus_Start(XTtlMemBus *InstancePtr);
 void XTtlMemBus_Stop(XTtlMemBus *InstancePtr);
+u32 XTtlMemBus_GetErrors(XTtlMemBus *InstancePtr);
+
 void XTtlMemBus_SetBaseAddress(XTtlMemBus *InstancePtr, u32 BaseAddress);
 u32 XTtlMemBus_GetBaseAddress(XTtlMemBus *InstancePtr);
-u32 XTtlMemBus_GetErrors(XTtlMemBus *InstancePtr);
+void XTtlMemBus_SetBaseAddress(XTtlMemBus *InstancePtr, u32 BaseAddress);
+u32 XTtlMemBus_GetBaseAddress(XTtlMemBus *InstancePtr);
+
+///< Set the value of the bus register
+void XTtlMemBus_SetBus(XTtlMemBus *InstancePtr, u32 Bus);
+///< Get the current value of the bus register
+u32 XTtlMemBus_GetBus(XTtlMemBus *InstancePtr);
+
+///< Set the value of the bus address register
+void XTtlMemBus_SetBusAddress(XTtlMemBus *InstancePtr, u32 BusAddress);
+///< Get the current value of the bus address register
+u32 XTtlMemBus_GetBusAddress(XTtlMemBus *InstancePtr);
+
+///< Set the value of the bus data register
+void XTtlMemBus_SetBusData(XTtlMemBus *InstancePtr, u32 BusData);
+///< Get the current value of the bus data register
+u32 XTtlMemBus_GetBusData(XTtlMemBus *InstancePtr);
+
+///< Get the current value of the bus fault value register
+void XTtlMemBus_SetBusFaultValue(XTtlMemBus *InstancePtr, u32 FaultValue);
+///< Get the current value of the bus fault value register
+u32 XTtlMemBus_GetBusFaultValue(XTtlMemBus *InstancePtr);
+///< Get the current value of the bus fault enable register
+void XTtlMemBus_SetBusFaultEnabled(XTtlMemBus *InstancePtr, u32 FaultEnabled);
+///< Get the current value of the bus fault enable register
+u32 XTtlMemBus_GetBusFaultEnabled(XTtlMemBus *InstancePtr);
+
+///< Set the value of the bus fault register and enable the lines identified by \a BusMask
+void XTtlMemBus_SetBusFault(XTtlMemBus *InstancePtr, u32 Value, u32 BusMask);
+///< Enable bus faults for the lines identified in \a BusMask
+void XTtlMemBus_EnableBusFault(XTtlMemBus *InstancePtr, u32 BusMask);
+///< Disable bus faults for the lines identified in \a BusMask
+void XTtlMemBus_DisableBusFault(XTtlMemBus *InstancePtr, u32 BusMask);
+///< Clear the all fault bits in the fault register
+void XTtlMemBus_ClearBusFault(XTtlMemBus *InstancePtr);
+
+///< Set the value of the write enable bit in the fault register and enable the write enable fault
+void XTtlMemBus_SetWriteEnableFault(XTtlMemBus *InstancePtr, int Logic);
+///< Clear the write enable fault bits in the fault register
+void XTtlMemBus_ClearWriteEnableFault(XTtlMemBus *InstancePtr);
+
+///< Set the value of the output enable bit in the fault register and enable the output enable fault
+void XTtlMemBus_SetOutputEnableFault(XTtlMemBus *InstancePtr, int Logic);
+///< Clear the output enable bits in the fault register
+void XTtlMemBus_ClearOutputEnableFault(XTtlMemBus *InstancePtr);
+
+///< Set the value of the bus address in the fault register
+void XTtlMemBus_SetAddresFault(XTtlMemBus *InstancePtr, u32 Address, AddressMask);
+///< Clear the address bus bits in the fault register
+void XTtlMemBus_ClearAddressFault(XTtlMemBus *InstancePtr);
+
+///< Set the value of the bus data fault in the fault register
+void XTtlMemBus_SetDataFault(XTtlMemBus *InstancePtr, u32 BusData);
+///< Clear the data bus bits in the fault register
+void XTtlMemBus_ClearDataFault(XTtlMemBus *InstancePtr);
+
 
 
 /*
