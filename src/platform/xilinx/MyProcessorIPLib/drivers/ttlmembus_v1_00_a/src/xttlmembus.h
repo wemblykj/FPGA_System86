@@ -124,7 +124,7 @@ void XTtlMemBus_SetOutputEnableFault(XTtlMemBus *InstancePtr, int Logic);
 void XTtlMemBus_ClearOutputEnableFault(XTtlMemBus *InstancePtr);
 
 ///< Set the value of the bus address in the fault register
-void XTtlMemBus_SetAddresFault(XTtlMemBus *InstancePtr, u32 Address, AddressMask);
+void XTtlMemBus_SetAddresFault(XTtlMemBus *InstancePtr, u32 Address, u32 AddressMask);
 ///< Clear the address bus bits in the fault register
 void XTtlMemBus_ClearAddressFault(XTtlMemBus *InstancePtr);
 

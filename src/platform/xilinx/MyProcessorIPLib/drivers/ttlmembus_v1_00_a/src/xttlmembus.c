@@ -123,7 +123,7 @@ int XTtlMemBus_GetEnabled(XTtlMemBus *InstancePtr)
 {
 	u32 status = XTtlMemBus_GetStatus(InstancePtr);
 	
-	return (status & XTTLMEMBUS_CR_RUNNING_MASK) == XTTLMEMBUS_CR_RUNNING_MASK;
+	return (status & XTTLMEMBUS_SR_RUNNING_MASK) == XTTLMEMBUS_CR_RUNNING_MASK;
 }
 	
 /****************************************************************************/
@@ -249,10 +249,10 @@ u32 XTtlMemBus_GetErrors(XTtlMemBus *InstancePtr)
 *****************************************************************************/
 void XTtlMemBus_SetBus(XTtlMemBus *InstancePtr, u32 Bus)
 {
-	Xil_AssertNonvoid(InstancePtr != NULL);
-	Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+	Xil_AssertVoid(InstancePtr != NULL);
+	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 	
-	XTtlMemBus_WriteReg(RegBase, XTTLMEMBUS_BUS_OFFSET, Bus));
+	XTtlMemBus_WriteReg(InstancePtr->BaseAddress, XTTLMEMBUS_BUS_OFFSET, Bus));
 }
 
 /****************************************************************************/
@@ -269,7 +269,7 @@ u32 XTtlMemBus_GetBus(XTtlMemBus *InstancePtr)
 	Xil_AssertNonvoid(InstancePtr != NULL);
 	Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 	
-	return XTtlMemBus_ReadReg(RegBase, XTTLMEMBUS_BUS_OFFSET));
+	return XTtlMemBus_ReadReg(InstancePtr->BaseAddress, XTTLMEMBUS_BUS_OFFSET));
 }
 
 /****************************************************************************/
@@ -365,10 +365,10 @@ u32 XTtlMemBus_GetBusData(XTtlMemBus *InstancePtr)
 *****************************************************************************/
 void XTtlMemBus_SetBusFaultValue(XTtlMemBus *InstancePtr, u32 FaultValue)
 {
-	Xil_AssertNonvoid(InstancePtr != NULL);
-	Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+	Xil_AssertVoid(InstancePtr != NULL);
+	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 	
-	XTtlMemBus_WriteReg(RegBase, XTTLMEMBUS_LINE_FAULT_VALUE_OFFSET, Bus);
+	XTtlMemBus_WriteReg(InstancePtr->BaseAddress, XTTLMEMBUS_LINE_FAULT_VALUE_OFFSET, Bus);
 }
 
 /****************************************************************************/
@@ -407,10 +407,10 @@ u32 XTtlMemBus_GetBusFaultValue(XTtlMemBus *InstancePtr)
 *****************************************************************************/
 void XTtlMemBus_SetBusFaultEnabled(XTtlMemBus *InstancePtr, u32 FaultEnabled)
 {
-	Xil_AssertNonvoid(InstancePtr != NULL);
-	Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+	Xil_AssertVoid(InstancePtr != NULL);
+	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 	
-	XTtlMemBus_WriteReg(RegBase, XTTLMEMBUS_LINE_FAULT_ENABLED_OFFSET, Bus);
+	XTtlMemBus_WriteReg(InstancePtr->BaseAddress, XTTLMEMBUS_LINE_FAULT_ENABLED_OFFSET, Bus);
 }
 
 /****************************************************************************/
