@@ -26,24 +26,27 @@ extern "C" {
  * Register offsets for this device.
  * @{
  */
-#define XTTLMEMBUS_CR_OFFSET			0x0   /**< Control register */
-#define XTTLMEMBUS_SR_OFFSET			0x4   /**< Status register */
-#define XTTLMEMBUS_BASEADDRESS_OFFSET	0x8   /**< Base address for AXI bus mapping */
+#define XTTLMEMBUS_CR_OFFSET			0x00   /**< Control register */
+#define XTTLMEMBUS_SR_OFFSET			0x04   /**< Status register */
+#define XTTLMEMBUS_BUS_OFFSET			0x08   /**< Bus register */
+#define XTTLMEMBUS_LINE_FAULT_VALUE_OFFSET	0x0C   /**< Line fault simulation value register */
+#define XTTLMEMBUS_LINE_FAULT_ENABLE_OFFSET	0x10   /**< Line fault simulation enable register */
+#define XTTLMEMBUS_BASEADDRESS_OFFSET		0x14   /**< Base address for AXI bus mapping */
 
 /** @name Bitmasks of XTTLMEMBUS_CR_OFFSET register
  * @{
  */
-#define XTTLMEMBUS_CR_ENABLE_MASK			0x00000010 	/**< Enable memory bus */
-#define XTTLMEMBUS_CR_DYNAMIC_CTRL_MASK     0x00000020  /**< Dynamic mapping control, if supported by hardware */
+#define XTTLMEMBUS_CR_ENABLE_MASK		0x00000010 	/**< Enable memory bus */
+#define XTTLMEMBUS_CR_DYNAMIC_CTRL_MASK     	0x00000020  /**< Dynamic mapping control, if supported by hardware */
 /*@}*/
 
 /** @name Bitmasks of XTTLMEMBUS_SR_OFFSET register
  * This register reports capabilities and errors
  * @{
  */
-#define XTTLMEMBUS_CR_RUNNING_MASK			0x00000010 	/**< Memory bus is running */
-#define XTTLMEMBUS_SR_ERR_ALL_MASK      	0x00000F00  /**< All errors */
-#define XTTLMEMBUS_SR_ERR_ALL_LSB			9			/**< Least significant bit of error flags */
+#define XTTLMEMBUS_SR_RUNNING_MASK		0x00000010 	/**< Memory bus is running */
+#define XTTLMEMBUS_SR_ERR_ALL_MASK      	0x00000F00  	/**< All errors */
+#define XTTLMEMBUS_SR_ERR_ALL_LSB		9		/**< Least significant bit of error flags */
 /*@}*/
 
 
