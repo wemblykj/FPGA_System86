@@ -45,8 +45,9 @@ typedef struct {
 typedef struct {
 	u32 BaseAddress;				/* Device base address */
 	u32 IsReady;					/* Device is initialized and ready */
-	int AddressWidth;				/* Address width of TTL bus */
-	int DataWidth;					/* Data width of TTL bus */
+	int ControlWidth;				/* Width of TTL control bus */
+	int AddressWidth;				/* Width of TTL address bus */
+	int DataWidth;					/* Width of TTL data bus */
 	int ReadOnly;					/* Memory is read-only (ROM) */
 	u32 MappedBaseAddress;			/* The AXI bus address to which the memory bus is mapped */
 	int SupportsDynamicMapping;  	/* The AXI bus address can be configured */
@@ -68,6 +69,8 @@ XTtlMemBus_Config *XTtlMemBus_LookupConfig(u16 DeviceId);
  */
 int XTtlMemBus_CfgInitialize(XTtlMemBus *InstancePtr, XTtlMemBus_Config * Config,
 			u32 EffectiveAddr);
+void XTtlMemBus_WriteRegMasked(XTtlMemBus *InstancePtr, u32 RegOffset, u32 Data, u32 Mask);
+
 u32 XTtlMemBus_GetStatus(XTtlMemBus *InstancePtr);
 int XTtlMemBus_GetSupportsDynamicMapping(XTtlMemBus *InstancePtr);
 int XTtlMemBus_GetEnabled(XTtlMemBus *InstancePtr);
