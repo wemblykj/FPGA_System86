@@ -46,8 +46,14 @@ typedef struct {
 	u32 BaseAddress;				/* Device base address */
 	u32 IsReady;					/* Device is initialized and ready */
 	int ControlWidth;				/* Width of TTL control bus */
+	int ControlLsb;					/* Width of TTL control bus */
+	int ControlMask;				/* Width of TTL control bus */
 	int AddressWidth;				/* Width of TTL address bus */
+	int AddressLsb;					/* Width of TTL address bus */
+	int AddressMask;				/* Width of TTL address bus */
 	int DataWidth;					/* Width of TTL data bus */
+	int DataLsb;					/* Width of TTL data bus */
+	int DataMask;					/* Width of TTL data bus */
 	int ReadOnly;					/* Memory is read-only (ROM) */
 	u32 MappedBaseAddress;			/* The AXI bus address to which the memory bus is mapped */
 	int SupportsDynamicMapping;  	/* The AXI bus address can be configured */

@@ -122,9 +122,9 @@ void XTtlMemBus_WriteRegMasked(XTtlMemBus *InstancePtr, u32 RegOffset, u32 Data,
 {
 	Xil_AssertVoid(InstancePtr != NULL);
 
-	u32 value = XTtMemBus_ReadReg(InstancePtr->BaseOffset);
+	u32 value = XTtMemBus_ReadReg(InstancePtr->BaseAddress);
 	value &= ~Mask;
-	value |= (Value & Mask);
+	value |= (value & Mask);
 
 	XTtlMemBus_WriteReg(InstancePtr->BaseAddress, RegOffset, value);
 }
@@ -297,12 +297,12 @@ u32 XTtlMemBus_GetErrors(XTtlMemBus *InstancePtr)
 *		function will assert.
 *
 *****************************************************************************/
-void XTtlMemBus_SetBus(XTtlMemBus *InstancePtr, u32 Bus)
+void XTtlMemBus_SetBus(XTtlMemBus *InstancePtr, u32 Bus, u32 BusMask)
 {
 	Xil_AssertVoid(InstancePtr != NULL);
 	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 	
-	XTtlMemBus_WriteReg(InstancePtr->BaseAddress, XTTLMEMBUS_BUS_OFFSET, Bus));
+	XTtlMemBus_WriteRegMasked(InstancePtr->BaseAddress, XTTLMEMBUS_BUS_OFFSET, Bus, BusMask);
 }
 
 /****************************************************************************/
@@ -319,7 +319,7 @@ u32 XTtlMemBus_GetBus(XTtlMemBus *InstancePtr)
 	Xil_AssertNonvoid(InstancePtr != NULL);
 	Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 	
-	return XTtlMemBus_ReadReg(InstancePtr->BaseAddress, XTTLMEMBUS_BUS_OFFSET));
+	return XTtlMemBus_ReadReg(InstancePtr->BaseAddress, XTTLMEMBUS_BUS_OFFSET);
 }
 
 /****************************************************************************/
@@ -339,8 +339,9 @@ void XTtlMemBus_SetBusAddress(XTtlMemBus *InstancePtr, u32 BusAddress)
 {
 	u32 bus;
 
-	bus = XTtlMemBus_GetBus(InstancePtr, Bus);
-	XTtlMemBus_SetBus(InstancePtr, Bus);
+	bus = XTtlMemBus_GetBus(InstancePtr);
+	//address = AddressToRegister(BusAddress)
+	//XTtlMemBus_SetBus(InstancePtr, bus, InstancePtr->AddressMask);
 }
 
 /****************************************************************************/
@@ -356,7 +357,7 @@ u32 XTtlMemBus_GetBusAddress(XTtlMemBus *InstancePtr)
 {
 	u32 bus;
 
-	bus = XTtlMemBus_GetBus(InstancePtr, Bus);
+	bus = XTtlMemBus_GetBus(InstancePtr);
 
 	return bus;
 }
@@ -378,7 +379,7 @@ void XTtlMemBus_SetBusData(XTtlMemBus *InstancePtr, u32 BusData)
 {
 	u32 bus;
 
-	bus = XTtlMemBus_GetBus(InstancePtr, Bus);
+	bus = XTtlMemBus_GetBus(InstancePtr);
 	XTtlMemBus_SetBus(InstancePtr, Bus);
 }
 
@@ -395,7 +396,7 @@ u32 XTtlMemBus_GetBusData(XTtlMemBus *InstancePtr)
 {
 	u32 bus;
 
-	bus = XTtlMemBus_GetBus(InstancePtr, Bus);
+	bus = XTtlMemBus_GetBus(InstancePtr);
 
 	return bus;
 }
@@ -460,7 +461,7 @@ void XTtlMemBus_SetBusFaultEnabled(XTtlMemBus *InstancePtr, u32 FaultEnable, u32
 	Xil_AssertVoid(InstancePtr != NULL);
 	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 	
-	XTtlMemBus_WriteRegMasked(InstancePtr, XTTLMEMBUS_LINE_FAULT_ENABLED_OFFSET, FaultEnable, FaultMask);
+	XTtlMemBus_WriteRegMasked(InstancePtr, XTTLMEMBUS_LINE_FAULT_ENABLE_OFFSET, FaultEnable, FaultMask);
 }
 
 /****************************************************************************/
@@ -641,7 +642,7 @@ void XTtlMemBus_ClearOutputEnableFault(XTtlMemBus *InstancePtr)
 *		function will assert.
 *
 *****************************************************************************/
-void XTtlMemBus_SetAddresFault(XTtlMemBus *InstancePtr, u32 Address, AddressMask)
+void XTtlMemBus_SetAddresFault(XTtlMemBus *InstancePtr, u32 Address, u32 AddressMask)
 {
 }
 
@@ -732,7 +733,7 @@ void XTtlMemBus_DumpRegisters(XTtlMemBus *InstancePtr)
 u32 RegisterToControl(XTtlMemBus * InstancePtr, u32 RegValue)
 {
 	Xil_AssertNonvoid(InstancePtr != NULL);
-	return (RegValue >> InstancePtr->ControlLsb) InstancePtr->ControlMask;
+	return (RegValue >> InstancePtr->ControlLsb) & InstancePtr->ControlMask;
 }
 
 u32 ControlToRegister(XTtlMemBus * InstancePtr, u32 Control)
@@ -744,7 +745,7 @@ u32 ControlToRegister(XTtlMemBus * InstancePtr, u32 Control)
 u32 RegisterToAddress(XTtlMemBus * InstancePtr, u32 RegValue)
 {
 	Xil_AssertNonvoid(InstancePtr != NULL);
-	return (RegValue >> InstancePtr->AddressLsb) InstancePtr->AddressMask;
+	return (RegValue >> InstancePtr->AddressLsb) & InstancePtr->AddressMask;
 }
 
 u32 AddressToRegister(XTtlMemBus * InstancePtr, u32 Address)
@@ -756,7 +757,7 @@ u32 AddressToRegister(XTtlMemBus * InstancePtr, u32 Address)
 u32 RegisterToData(XTtlMemBus * InstancePtr, u32 RegValue)
 {
 	Xil_AssertNonvoid(InstancePtr != NULL);
-	return (RegValue >> InstancePtr->DataLsb) InstancePtr->DataMask;
+	return (RegValue >> InstancePtr->DataLsb) & InstancePtr->DataMask;
 }
 
 u32 DataToRegister(XTtlMemBus * InstancePtr, u32 Data)
