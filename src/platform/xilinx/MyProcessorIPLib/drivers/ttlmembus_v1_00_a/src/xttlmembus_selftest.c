@@ -1,3 +1,5 @@
+#include "xttlmembus.h"
+
 /******************************************************************************
 *
 * (c) Copyright 2021 Paul Wightmore. All rights reserved.
@@ -16,7 +18,7 @@ int XTtlMemBus_SelfTest(XTtlMemBus * InstancePtr)
 	 * all inputs, there is not way to guarantee the value read so don't
 	 * test it.
 	 */
-	(void) XTtlMemBus_DiscreteRead(InstancePtr, 1);
+	//(void) XTtlMemBus_DiscreteRead(InstancePtr, 1);
 
 	return (XST_SUCCESS);
 }

@@ -22,12 +22,8 @@
 
 /************************** Function Prototypes *****************************/
 
-u32 RegisterToControl(XTtlMemBus * InstancePtr, u32 RegValue);
-u32 ControlToRegister(XTtlMemBus * InstancePtr, u32 Control);
-u32 RegisterToAddress(XTtlMemBus * InstancePtr, u32 RegValue);
-u32 AddressToRegister(XTtlMemBus * InstancePtr, u32 Address);
-u32 RegisterToData(XTtlMemBus * InstancePtr, u32 RegValue);
-u32 DataToRegister(XTtlMemBus * InstancePtr, u32 Data);
+u16 RegisterToBus(XTtlMemBus_BusAttr *BusAttr, u32 RegValue);
+u32 BusToRegister(XTtlMemBus_BusAttr *BusAttr, u16 BusValue);
 
 /****************************************************************************/
 /**
@@ -74,29 +70,33 @@ int XTtlMemBus_CfgInitialize(XTtlMemBus * InstancePtr, XTtlMemBus_Config * Confi
 	/*
 	 * Set some default values.
 	 */
-	InstancePtr->AddressWidth = Config->AddressWidth;
-	InstancePtr->DataWidth = Config->DataWidth;
+	InstancePtr->ReadOnly = Config->ReadOnly;
 	InstancePtr->MappedBaseAddress = Config->MappedBaseAddress;
 	InstancePtr->SupportsDynamicMapping = Config->SupportsDynamicMapping;
-	InstancePtr->ReadOnly = Config->ReadOnly;
 
 	/*
 	 * Precalculate some inferred values
 	 */
 
-	InstancePtr->ControlWidth = (Config->ReadOnly == TRUE) ? 3 : 2;
-	InstancePtr->ControlMask = (2^InstancePtr->ControlWidth) - 1;
 	int lsb = 0;
-	InstancePtr->ControlLsb = lsb;
-	lsb += InstancePtr->ControlWidth;
+	int ctrlWidth = InstancePtr->CtrlBusAttr.Width;
+	InstancePtr->CtrlBusAttr.Width = (Config->ReadOnly == TRUE) ? 3 : 2;
+	InstancePtr->CtrlBusAttr.Mask = ((2^ctrlWidth) - 1) << lsb;
+	InstancePtr->CtrlBusAttr.Lsb = lsb;
+	
+	lsb += ctrlWidth;
 
-	InstancePtr->AddressMask = (2^InstancePtr->AddressWidth) - 1;
-	InstancePtr->AddressLsb = lsb;
-	lsb += InstancePtr->AddressLsb;
+	InstancePtr->AddrBusAttr.Width = Config->AddressWidth;
+	InstancePtr->AddrBusAttr.Mask = ((2^Config->AddressWidth) - 1) << lsb;
+	InstancePtr->AddrBusAttr.Lsb =  lsb;
+	
+	lsb += Config->AddressWidth;
 
-	InstancePtr->DataMask = (2^InstancePtr->DataWidth) - 1;
-	InstancePtr->DataLsb = lsb;
-	lsb += InstancePtr->DataWidth;
+	InstancePtr->DataBusAttr.Width = Config->DataWidth;
+	InstancePtr->DataBusAttr.Mask = ((2^Config->DataWidth) - 1) << lsb;
+	InstancePtr->DataBusAttr.Lsb = lsb;
+	
+	lsb += Config->DataWidth;
 
 	/*
 	 * Indicate the instance is now ready to use, initialized without error
@@ -286,10 +286,11 @@ u32 XTtlMemBus_GetErrors(XTtlMemBus *InstancePtr)
 
 /****************************************************************************/
 /**
-* Set the base address on the AXI bus to which the memory bus is mapped.
+* Set the tate of the entire TTL memory bus.
 *
 * @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
-* @param	The base address on the AXI bus to which the memory bus is to be mapped.
+* @param	BusRegValue is the state to which the entire TTL bus will be set.
+* @param	BusMask specifies with parts of the bus state will be affected and changed
 *
 * @return	None.
 *
@@ -297,24 +298,24 @@ u32 XTtlMemBus_GetErrors(XTtlMemBus *InstancePtr)
 *		function will assert.
 *
 *****************************************************************************/
-void XTtlMemBus_SetBus(XTtlMemBus *InstancePtr, u32 Bus, u32 BusMask)
+void XTtlMemBus_SetMemBusState(XTtlMemBus *InstancePtr, u32 BusRegValue, u32 BusMask)
 {
 	Xil_AssertVoid(InstancePtr != NULL);
 	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 	
-	XTtlMemBus_WriteRegMasked(InstancePtr->BaseAddress, XTTLMEMBUS_BUS_OFFSET, Bus, BusMask);
+	XTtlMemBus_WriteRegMasked(InstancePtr, XTTLMEMBUS_BUS_OFFSET, BusRegValue, BusMask);
 }
 
 /****************************************************************************/
 /**
-* Get the error status.
+* Get the state of the entire TTL memory bus.
 *
 * @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
 *
-* @return	The error flags.
+* @return	The value of the bus state.
 *
 *****************************************************************************/
-u32 XTtlMemBus_GetBus(XTtlMemBus *InstancePtr)
+u32 XTtlMemBus_GetMemBusState(XTtlMemBus *InstancePtr)
 {
 	Xil_AssertNonvoid(InstancePtr != NULL);
 	Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
@@ -335,13 +336,51 @@ u32 XTtlMemBus_GetBus(XTtlMemBus *InstancePtr)
 *		function will assert.
 *
 *****************************************************************************/
+void XTtlMemBus_WriteBus(XTtlMemBus *InstancePtr, u32 RegOffset, XTtlMemBus_BusAttr *Attr, u16 BusValue)
+{
+	Xil_AssertVoid(InstancePtr != NULL);
+
+	u32 busRegValue = BusToRegister(Attr, BusValue);
+	XTtlMemBus_WriteRegMasked(InstancePtr, RegOffset, busRegValue, Attr->Mask);
+}
+
+/****************************************************************************/
+/**
+* Set the base address on the AXI bus to which the memory bus is mapped.
+*
+* @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
+* @param	The base address on the AXI bus to which the memory bus is to be mapped.
+*
+* @return	None.
+*
+* @note		The hardware must be built for dynamic mapping otherwise this
+*		function will assert.
+*
+*****************************************************************************/
+u16 XTtlMemBus_ReadBus(XTtlMemBus *InstancePtr, u32 RegOffset, XTtlMemBus_BusAttr *Attr)
+{
+	Xil_AssertVoid(InstancePtr != NULL);
+
+	u32 reg = XTtlMemBus_ReadReg(InstancePtr->BaseAddress, RegOffset);
+	return RegisterToBus(Attr, reg); 
+}
+
+/****************************************************************************/
+/**
+* Set the base address on the AXI bus to which the memory bus is mapped.
+*
+* @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
+* @param	The base address on the AXI bus to which the memory bus is to be mapped.
+*
+* @return	None.
+*
+* @note		The hardware must be built for dynamic mapping otherwise this
+*		function will assert.
+*
+*****************************************************************************/
 void XTtlMemBus_SetBusAddress(XTtlMemBus *InstancePtr, u32 BusAddress)
 {
-	u32 bus;
-
-	bus = XTtlMemBus_GetBus(InstancePtr);
-	//address = AddressToRegister(BusAddress)
-	//XTtlMemBus_SetBus(InstancePtr, bus, InstancePtr->AddressMask);
+	WriteBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, InstancePtr->AddrBusAttr, BusAddress);
 }
 
 /****************************************************************************/
@@ -355,11 +394,7 @@ void XTtlMemBus_SetBusAddress(XTtlMemBus *InstancePtr, u32 BusAddress)
 *****************************************************************************/
 u32 XTtlMemBus_GetBusAddress(XTtlMemBus *InstancePtr)
 {
-	u32 bus;
-
-	bus = XTtlMemBus_GetBus(InstancePtr);
-
-	return bus;
+	return ReadBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, InstancePtr->AddrBusAttr);
 }
 
 /****************************************************************************/
@@ -377,10 +412,7 @@ u32 XTtlMemBus_GetBusAddress(XTtlMemBus *InstancePtr)
 *****************************************************************************/
 void XTtlMemBus_SetBusData(XTtlMemBus *InstancePtr, u32 BusData)
 {
-	u32 bus;
-
-	bus = XTtlMemBus_GetBus(InstancePtr);
-	XTtlMemBus_SetBus(InstancePtr, Bus);
+	WriteBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, InstancePtr->DataBusAttr, BusData);
 }
 
 /****************************************************************************/
@@ -394,11 +426,7 @@ void XTtlMemBus_SetBusData(XTtlMemBus *InstancePtr, u32 BusData)
 *****************************************************************************/
 u32 XTtlMemBus_GetBusData(XTtlMemBus *InstancePtr)
 {
-	u32 bus;
-
-	bus = XTtlMemBus_GetBus(InstancePtr);
-
-	return bus;
+	return ReadBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, InstancePtr->DataBusAttr);
 }
 
 /****************************************************************************/
@@ -407,6 +435,7 @@ u32 XTtlMemBus_GetBusData(XTtlMemBus *InstancePtr)
 *
 * @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
 * @param	The base address on the AXI bus to which the memory bus is to be mapped.
+* @param	BusMask specifies with parts of the bus state will be affected and changed
 *
 * @return	None.
 *
@@ -414,12 +443,12 @@ u32 XTtlMemBus_GetBusData(XTtlMemBus *InstancePtr)
 *		function will assert.
 *
 *****************************************************************************/
-void XTtlMemBus_SetBusFaultValue(XTtlMemBus *InstancePtr, u32 FaultValue, u32 FaultMask)
+void XTtlMemBus_SetBusFaultValue(XTtlMemBus *InstancePtr, u32 FaultValue, u32 BusMask)
 {
 	Xil_AssertVoid(InstancePtr != NULL);
 	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 
-	XTtlMemBus_WriteRegMasked(InstancePtr, XTTLMEMBUS_LINE_FAULT_VALUE_OFFSET, FaultValue, FaultMask);
+	XTtlMemBus_WriteRegMasked(InstancePtr, XTTLMEMBUS_LINE_FAULT_VALUE_OFFSET, FaultValue, BusMask);
 }
 
 /****************************************************************************/
@@ -449,6 +478,7 @@ u32 XTtlMemBus_GetBusFaultValue(XTtlMemBus *InstancePtr)
 *
 * @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
 * @param	The base address on the AXI bus to which the memory bus is to be mapped.
+* @param	BusMask specifies with parts of the bus state will be affected and changed
 *
 * @return	None.
 *
@@ -456,12 +486,12 @@ u32 XTtlMemBus_GetBusFaultValue(XTtlMemBus *InstancePtr)
 *		function will assert.
 *
 *****************************************************************************/
-void XTtlMemBus_SetBusFaultEnabled(XTtlMemBus *InstancePtr, u32 FaultEnable, u32 FaultMask)
+void XTtlMemBus_SetBusFaultEnabled(XTtlMemBus *InstancePtr, u32 FaultEnable, u32 BusMask)
 {
 	Xil_AssertVoid(InstancePtr != NULL);
 	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 	
-	XTtlMemBus_WriteRegMasked(InstancePtr, XTTLMEMBUS_LINE_FAULT_ENABLE_OFFSET, FaultEnable, FaultMask);
+	XTtlMemBus_WriteRegMasked(InstancePtr, XTTLMEMBUS_LINE_FAULT_ENABLE_OFFSET, FaultEnable, BusMask);
 }
 
 /****************************************************************************/
@@ -491,6 +521,7 @@ u32 XTtlMemBus_GetBusFaultEnabled(XTtlMemBus *InstancePtr)
 *
 * @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
 * @param	The base address on the AXI bus to which the memory bus is to be mapped.
+* @param	BusMask specifies with parts of the bus state will be affected and changed
 *
 * @return	None.
 *
@@ -512,6 +543,7 @@ void XTtlMemBus_SetBusFault(XTtlMemBus *InstancePtr, u32 Value, u32 BusMask)
 *
 * @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
 * @param	The base address on the AXI bus to which the memory bus is to be mapped.
+* @param	BusMask specifies with parts of the bus state will be affected and changed
 *
 * @return	None.
 *
@@ -530,6 +562,7 @@ void XTtlMemBus_EnableBusFault(XTtlMemBus *InstancePtr, u32 BusMask)
 *
 * @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
 * @param	The base address on the AXI bus to which the memory bus is to be mapped.
+* @param	BusMask specifies with parts of the bus state will be affected and changed
 *
 * @return	None.
 *
@@ -635,6 +668,7 @@ void XTtlMemBus_ClearOutputEnableFault(XTtlMemBus *InstancePtr)
 *
 * @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
 * @param	The base address on the AXI bus to which the memory bus is to be mapped.
+* @param	BusMask specifies with parts of the bus state will be affected and changed
 *
 * @return	None.
 *
@@ -642,7 +676,7 @@ void XTtlMemBus_ClearOutputEnableFault(XTtlMemBus *InstancePtr)
 *		function will assert.
 *
 *****************************************************************************/
-void XTtlMemBus_SetAddresFault(XTtlMemBus *InstancePtr, u32 Address, u32 AddressMask)
+void XTtlMemBus_SetAddressFault(XTtlMemBus *InstancePtr, u32 Address, u32 BusMask)
 {
 }
 
@@ -659,7 +693,25 @@ void XTtlMemBus_SetAddresFault(XTtlMemBus *InstancePtr, u32 Address, u32 Address
 *		function will assert.
 *
 *****************************************************************************/
-void XTtlMemBus_ClearAddressFault(XTtlMemBus *InstancePtr)
+void XTtlMemBus_ClearAddressFault(XTtlMemBus *InstancePtr, u32 BusMask)
+{
+}
+
+/****************************************************************************/
+/**
+* Set the base address on the AXI bus to which the memory bus is mapped.
+*
+* @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
+* @param	The base address on the AXI bus to which the memory bus is to be mapped.
+* @param	BusMask specifies with parts of the bus state will be affected and changed
+*
+* @return	None.
+*
+* @note		The hardware must be built for dynamic mapping otherwise this
+*		function will assert.
+*
+*****************************************************************************/
+void XTtlMemBus_SetDataFault(XTtlMemBus *InstancePtr, u32 BusData, u32 BusMask)
 {
 }
 
@@ -676,24 +728,7 @@ void XTtlMemBus_ClearAddressFault(XTtlMemBus *InstancePtr)
 *		function will assert.
 *
 *****************************************************************************/
-void XTtlMemBus_SetDataFault(XTtlMemBus *InstancePtr, u32 BusData)
-{
-}
-
-/****************************************************************************/
-/**
-* Set the base address on the AXI bus to which the memory bus is mapped.
-*
-* @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
-* @param	The base address on the AXI bus to which the memory bus is to be mapped.
-*
-* @return	None.
-*
-* @note		The hardware must be built for dynamic mapping otherwise this
-*		function will assert.
-*
-*****************************************************************************/
-void XTtlMemBus_ClearDataFault(XTtlMemBus *InstancePtr)
+void XTtlMemBus_ClearDataFault(XTtlMemBus *InstancePtr, u32 BusMask)
 {
 }
 
@@ -730,39 +765,13 @@ void XTtlMemBus_DumpRegisters(XTtlMemBus *InstancePtr)
 
 	return;
 }
-u32 RegisterToControl(XTtlMemBus * InstancePtr, u32 RegValue)
+
+u16 RegisterToBus(XTtlMemBus_BusAttr *BusAttr, u32 RegValue)
 {
-	Xil_AssertNonvoid(InstancePtr != NULL);
-	return (RegValue >> InstancePtr->ControlLsb) & InstancePtr->ControlMask;
+	return (RegValue & BusAttr->Mask) >> BusAttr->Lsb;
 }
 
-u32 ControlToRegister(XTtlMemBus * InstancePtr, u32 Control)
+u32 BusToRegister(XTtlMemBus_BusAttr *BusAttr, u16 BusValue)
 {
-	Xil_AssertNonvoid(InstancePtr != NULL);
-	return (Control & InstancePtr->ControlMask) << InstancePtr->ControlLsb;
+	return (BusValue << BusAttr->Lsb) & BusAttr->Mask;
 }
-
-u32 RegisterToAddress(XTtlMemBus * InstancePtr, u32 RegValue)
-{
-	Xil_AssertNonvoid(InstancePtr != NULL);
-	return (RegValue >> InstancePtr->AddressLsb) & InstancePtr->AddressMask;
-}
-
-u32 AddressToRegister(XTtlMemBus * InstancePtr, u32 Address)
-{
-	Xil_AssertNonvoid(InstancePtr != NULL);
-	return (Address & InstancePtr->AddressMask) << InstancePtr->AddressLsb;
-}
-
-u32 RegisterToData(XTtlMemBus * InstancePtr, u32 RegValue)
-{
-	Xil_AssertNonvoid(InstancePtr != NULL);
-	return (RegValue >> InstancePtr->DataLsb) & InstancePtr->DataMask;
-}
-
-u32 DataToRegister(XTtlMemBus * InstancePtr, u32 Data)
-{
-	Xil_AssertNonvoid(InstancePtr != NULL);
-	return (Data & InstancePtr->DataMask) << InstancePtr->DataLsb;
-}
-
