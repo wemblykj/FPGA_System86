@@ -15,6 +15,8 @@
 
 #include "platform.h"
 
+#include "xttlmembus.h"
+
 /*
  * The following constants map to the names of the hardware instances that
  * were created in the EDK XPS system.  They are only defined here such that
@@ -43,12 +45,18 @@ void ButtonsIsr(void *InstancePtr);
 
 int SetupInterruptSystem();
 
+int InitialiseMemoryBus(XTtlMemBus *MemBus, u16 DeviceId);
+int InitialiseMemoryBusses();
+
 /************************** Variable Definitions *****************************/
 
 static XGpio ButtonsGpio; 	/* The Instance of the Buttons GPIO Driver */
 static XGpio LedsGpio; 		/* The Instance of the LEDs GPIO Driver */
 
 static XIntc Intc; /* The Instance of the Interrupt Controller Driver */
+
+static XTtlMemBus MemBus_Rom3R;
+static XTtlMemBus MemBus_Ram3F;
 
 /****************************************************************************/
 /**
@@ -125,7 +133,9 @@ int main()
 	 */
 	XGpio_SetDataDirection(&ButtonsGpio, BUTTONS_CHANNEL, 0xFFFF);
 
-		/*
+	InitialiseMemoryBusses();
+
+	/*
 	 * Setup the interrupts such that interrupt processing can occur. If
 	 * an error occurs then exit
 	 */
@@ -311,4 +321,40 @@ void ButtonsIsr(void *InstancePtr)
 	  */
 	 XGpio_InterruptEnable(GpioPtr, BUTTONS_CHANNEL);
 
+}
+
+int InitialiseMemoryBus(XTtlMemBus *MemBus, u16 DeviceId)
+{
+	int Status;
+
+	Status = XTtlMemBus_Initialize(MemBus, DeviceId);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	/*
+	 * Perform a self-test on the IP.  This is a minimal test and only
+	 * verifies that there is not any bus error when reading the data
+	 * register
+	 */
+	XTtlMemBus_SelfTest(MemBus);
+
+	return XST_SUCCESS;
+}
+
+int InitialiseMemoryBusses()
+{
+	int Status;
+
+	Status = InitialiseMemoryBus(&MemBus_Rom3R, XPAR_AXI_ROM_3R_DEVICE_ID);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	Status = InitialiseMemoryBus(&MemBus_Ram3F, XPAR_AXI_RAM_3F_DEVICE_ID);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	return XST_SUCCESS;
 }
