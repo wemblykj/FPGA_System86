@@ -21,16 +21,10 @@ typedef enum SectHdrType {
 	SectHdrType_StrTbl = 3
 } SectHdrType;
 
-#pragma pack(push, 4)
-
 typedef union ElfMagicType {
 	u8 data[4];				///< Raw bytes of magic number
 	u32 asUint;				///< As a 32-bt unsigned int
 } ElfMagicType;
-
-#pragma pack(pop)
-
-#pragma pack(push, 8)
 
 /// @brief The ELF identification information
 typedef struct ElfIdent {
@@ -40,7 +34,7 @@ typedef struct ElfIdent {
 	u8 Version;				///< 1 = Original ELF 
 	u8 OSAbi;				///< Target O/S
 	u8 ABIVersion;			///< Depends on target O/S
-	//u8 Pad[7];				///< Padding for alignment
+	u8 Pad[7];				///< Padding for alignment
 } ElfIdent, *ElfIdentPtr;
 
 typedef struct ElfHeader {
@@ -87,7 +81,8 @@ typedef struct ElfSectionHeader {
 	SizeT EntrySize;		///< Contains size, in bytes, of each [section] entry
 } ElfSectionHeader, *ElfSectionHeaderPtr;
 
-#pragma pack(pop)
+typedef int (*EntryPoint) (void);
 
-const ElfMagicType ElfMagic = {};
+const ElfMagicType ElfMagic = { .asUint = 0x464c457f };
+
 #endif

@@ -7,15 +7,22 @@
 #ifndef __VT_H__
 #define __VT_H__
 
+#pragma pack(push, 8)
+
+typedef struct VectorTableEntry {
+	u8 data[8];
+} VectorTableEntry;
+
 /// @brief Definition for the Microblaze vector table
 /// https://www.xilinx.com/support/documentation/sw_manuals/xilinx2017_2/ug984-vivado-microblaze-ref.pdf
 typedef struct VectorTable {
-	u32 Reset;
-	u32 UserVector;				///< software exception;
-	u32 Interrupt;				///< Interrupt handler 
-	u32 Break;					///< Non-maskable
-	u32 Exception;				///< hardware exception
-	u32 Reserved[10];				
+	VectorTableEntry Reset;
+	VectorTableEntry UserVector;				///< software exception;
+	VectorTableEntry Interrupt;				///< Interrupt handler
+	VectorTableEntry Break;					///< Non-maskable
+	VectorTableEntry Exception;				///< hardware exception
 } VectorTable, *VectorTablePtr;
 
 #endif
+
+#pragma pack(pop)

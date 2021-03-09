@@ -128,7 +128,7 @@ const int StatusReadByte =		2; /* Status read bytes count */
  * Enable debug for the ELF loader
  */
 #define DEBUG_ELF_HEADER
-#define DEBUG_ELF_PROG_HEADER
+//#define DEBUG_ELF_PROG_HEADER
 
 /**************************** Type Definitions *******************************/
 
@@ -142,8 +142,6 @@ static int SpiFlashWaitForFlashReady(void);
 void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount);
 static int SetupInterruptSystem(XSpi *SpiPtr);
 static int ResetInterruptSystem(XSpi *SpiPtr);
-
-int (*EntryPoint) (void);
 
 /************************** Variable Definitions *****************************/
 
@@ -187,7 +185,7 @@ int main(void)
 
 	int ret, i;
 
-	init_uart();
+	init_platform();
 
 	//xil_printf("Spi Numonyx flash Quad SPI bootloader\r\n");
 	xil_printf("%s - %d\r\n", __DATE__, __TIME__);
@@ -273,7 +271,8 @@ int main(void)
 	VectorTable vt = {};
 	int haveVectorTable = FALSE;
 
-	xil_printf("Vector table size: 0x%x", sizeof(vt));
+	xil_printf("VT: %d\r\n", sizeof(vt));
+	//xil_printf("EI size: %d\r\n", sizeof(eh.Ident));
 
 	//xil_printf("read header");
 	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, (u8*)&eh, sizeof(ElfHeader));
@@ -283,10 +282,10 @@ int main(void)
 	}
 
 #ifdef DEBUG_ELF_HEADER
-	xil_printf("Magic: 0x%08x\r\n", eh.Ident.Magic.asUint);
+	//xil_printf("Magic: 0x%08x\r\n", eh.Ident.Magic.asUint);
 	xil_printf("Entry: 0x%08x\r\n", eh.Entry);
-	xil_printf("PrgHdrOfs: 0x%08x\r\n", eh.PrgHdrOfs);
-	//xil_printf("SectHdrOfs: 0x%08x\r\n", eh.SectHdrOfs);
+	xil_printf("PrgHdrOfs: 0x%08x\r\n", ELF_IMAGE_BASEADDR + eh.PrgHdrOfs);
+	//xil_printf("SectHdrOfs: 0x%08x\r\n", ELF_IMAGE_BASEADDR + eh.SectHdrOfs);
 #endif
 
 	/*
@@ -317,13 +316,14 @@ int main(void)
 
 #ifdef DEBUG_ELF_PROG_HEADER
 		xil_printf("Start of section: %d\r\n", i);
-		xil_printf("Type: %d\r\n", ph.Type);
+		xil_printf("Type: %x\r\n", ph.Type);
 #endif
 
 		if (ph.Type == PrgHdrType_Load) {
 #ifdef DEBUG_ELF_PROG_HEADER
-			xil_printf("Offset: %d\r\n", ph.Offset);
-			xil_printf("FileSize: %d\r\n", ph.FileSize);
+			xil_printf("Offset: %d\r\n", ELF_IMAGE_BASEADDR + ph.Offset);
+			//xil_printf("FileSize: %d\r\n", ph.FileSize);
+			//xil_printf("MemSize: %d\r\n", ph.MemSize);
 			xil_printf("PhysAddr: 0x%08x\r\n", ph.PhysAddr);
 #endif
 			u32 segmentOffset = ELF_IMAGE_BASEADDR + ph.Offset;
@@ -368,7 +368,7 @@ int main(void)
 		progHdrOfs += sizeof(ElfProgramHeader);
 	}
 
-	xil_printf("done\r\n");
+	//xil_printf("done\r\n");
 	//xil_printf("\r\nTransferring execution to program @ 0x%x\r\n", hdr.entry);
 	cleanup_platform();
 
@@ -377,11 +377,19 @@ int main(void)
 
 	// Copy over the vector table for the new image
 	if (haveVectorTable == TRUE) {
+		//xil_printf("Reset: %x\r\n", vt.Reset);
+		//xil_printf("Intr: %x\r\n", vt.Interrupt);
 		memcpy((u8*)BASE_VECTORS, &vt, sizeof(VectorTable));
+
+		if (memcmp((u8*)BASE_VECTORS, &vt, sizeof(VectorTable)) != 0) {
+			//xil_printf("Invalid ELF header");
+			xil_printf("E5");
+			return XST_FAILURE;
+		}
 	}
 
 	// Call entry point (in most cases would appear to be a call to the reset vector)
-	((void (*)())eh.Entry)();
+	((EntryPoint)eh.Entry)();
 
 	// Never reached
 	return XST_SUCCESS;
