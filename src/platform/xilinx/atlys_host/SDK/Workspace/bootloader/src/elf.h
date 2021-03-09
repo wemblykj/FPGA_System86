@@ -26,6 +26,8 @@ typedef union ElfMagicType {
 	u32 asUint;				///< As a 32-bt unsigned int
 } ElfMagicType;
 
+#pragma pack(push, 8)
+
 /// @brief The ELF identification information
 typedef struct ElfIdent {
 	ElfMagicType Magic;
@@ -38,7 +40,7 @@ typedef struct ElfIdent {
 } ElfIdent, *ElfIdentPtr;
 
 typedef struct ElfHeader {
-	ElfIdent Ident;		///< Te ELFs identification info
+	ElfIdent Ident;			///< The ELFs identification info
 	u16 Type;				///< Object file type
 	u16 Machine;			///< Target ISA
 	u32 Version;			///< 1 = Original ELF 
@@ -81,8 +83,12 @@ typedef struct ElfSectionHeader {
 	SizeT EntrySize;		///< Contains size, in bytes, of each [section] entry
 } ElfSectionHeader, *ElfSectionHeaderPtr;
 
+/// @brief Calling declaration for the entry point
 typedef int (*EntryPoint) (void);
 
+#pragma pack(pop)
+
+/// @brief Instance of the ELF magic number
 const ElfMagicType ElfMagic = { .asUint = 0x464c457f };
 
 #endif

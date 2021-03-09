@@ -10,7 +10,7 @@
 #pragma pack(push, 8)
 
 typedef struct VectorTableEntry {
-	u8 data[8];
+	u8 data[8];								///< 8 bytes of arbitrary code
 } VectorTableEntry;
 
 /// @brief Definition for the Microblaze vector table
@@ -23,6 +23,6 @@ typedef struct VectorTable {
 	VectorTableEntry Exception;				///< hardware exception
 } VectorTable, *VectorTablePtr;
 
-#endif
-
 #pragma pack(pop)
+
+#endif
