@@ -28,7 +28,7 @@
 
 /************************** Constant Definitions *****************************/
 
-#define MAX_BLOCKSIZE 64		///< Maximum block size for reading from flash
+#define MAX_BLOCKSIZE 128		///< Maximum block size for reading from flash
 
 /*
  * The following constants map to the XPAR parameters created in the
@@ -155,7 +155,7 @@ typedef struct _ReadCommandAttr
 } ReadCommandAttr;
 
 #define READ_STATUS_ATTR \
-	{ ReadCommand_Status, 2 }
+	{ ReadCommand_Status, 1 }
 
 #define STANDARD_READ_ATTR \
 	{ Command_Read_Standard, 0 }
@@ -177,7 +177,7 @@ ReadCommandAttr ReadModes[] = {
 /************************** Function Prototypes ******************************/
 
 static ReadCommandAttr SpiFlashReadMode(XSpi *SpiPtr);
-static int SpiFlashReadRaw(XSpi *SpiPtr, u8* WriteBuffer, u8* ReadBuffer, u32 BufferSize);
+static int SpiFlashReadRaw(XSpi *SpiPtr, /*u8* WriteBuffer, u8* ReadBuffer,*/ u32 BufferSize);
 static int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 Size);
 static int SpiFlashVerify(XSpi *SpiPtr, u32 Addr, const u8* Dest, u32 Size);
 static int SpiFlashGetStatus(XSpi *SpiPtr, u8* Status);
@@ -207,6 +207,15 @@ volatile static int TransferInProgress = FALSE;
  * processing.
  */
 volatile static int ErrorCount = 0;
+
+/*
+ * Buffers used during read and write transactions.
+ * Were using global buffers. Tried to allocate read buffer on the stack
+ * but for some unknown reason the transfers were screwing up the stack
+ * despite the buffer being of adequate size for the data and quad read dummy bytes
+ */
+u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
+u8 ReadBuffer[READ_WRITE_EXTRA_BYTES + 4 + MAX_BLOCKSIZE];
 
 /************************** Function Definitions *****************************/
 
@@ -308,19 +317,23 @@ int main(void)
 	 * unable to configure COMMAND_QUAD_READ hardware, possibly due to HDMI resource
 	 * requirements conflicting with the QSPI flash's IO2 and IO3 - DUAL seems to work though
 	 */
+	// disable memory caches whilst transferring image to DDR
+	disable_caches();
 
 	ElfHeader eh = {};
 	VectorTable vt = {};
 	u8 haveVectorTable = FALSE;
 
+	//xil_printf("header\r\n");
 	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, (u8*)&eh, sizeof(ElfHeader));
 	if(ret != XST_SUCCESS) {
 		xil_printf("E1");
 		return XST_FAILURE;
 	}
 
+	//xil_printf("/header\r\n");
 #ifdef DEBUG_ELF_HEADER
-	//xil_printf("Magic: 0x%08x\r\n", eh.Ident.Magic.asUint);
+	xil_printf("Magic: 0x%08x\r\n", eh.Ident.Magic.asUint);
 	xil_printf("Entry: 0x%08x\r\n", eh.Entry);
 	xil_printf("PrgHdrOfs: 0x%08x\r\n", ELF_IMAGE_BASEADDR + eh.PrgHdrOfs);
 	//xil_printf("SectHdrOfs: 0x%08x\r\n", ELF_IMAGE_BASEADDR + eh.SectHdrOfs);
@@ -335,10 +348,7 @@ int main(void)
 		return XST_FAILURE;
 	}
 
-	// disable memory caches whilst transferring image to DDR
-	disable_caches();
-
-	/**
+		/**
 	 * Read ELF program headers
 	 */
 	u32 progHdrOfs = ELF_IMAGE_BASEADDR + eh.PrgHdrOfs;
@@ -398,15 +408,17 @@ int main(void)
 				pDest += blockSize;
 				bytesToRead -= blockSize;
 
-				if (bytesToRead % 1024 == 0) {
+				//if (bytesToRead % 512 == 0) {
 					xil_printf(".");
-				}
+				//}
 			}
 
 			// Pad the end of section with zeros
 			if (ph.FileSize < ph.MemSize) {
 				memset(pDest, 0, ph.MemSize - ph.FileSize);
 			}
+
+			xil_printf("\r\n");
 		}
 
 		// next program header entry
@@ -420,18 +432,15 @@ int main(void)
 
 	// Copy over the vector table for the new image
 	if (haveVectorTable == TRUE) {
-		//xil_printf("Reset: %x\r\n", vt.Reset);
-		//xil_printf("Intr: %x\r\n", vt.Interrupt);
 		memcpy(BASE_VECTORS, &vt, sizeof(VectorTable));
 
 		if (memcmp(BASE_VECTORS, &vt, sizeof(VectorTable)) != 0) {
-			//xil_printf("Invalid ELF header");
 			xil_printf("E7");
 			return XST_FAILURE;
 		}
 	}
 
-	//xil_printf("\r\nCalling entry point at 0x%x\r\n", eh.Entry);
+	xil_printf("\r\nCalling entry point at 0x%x\r\n", eh.Entry);
 	// Call entry point (in most cases would appear to be a call to the reset vector)
 	((EntryPoint)eh.Entry)();
 
@@ -471,18 +480,17 @@ ReadCommandAttr SpiFlashReadMode(XSpi *SpiPtr)
 * @note		None
 *
 ******************************************************************************/
-int SpiFlashReadRaw(XSpi *SpiPtr, u8* WriteBuffer, u8* ReadBuffer, u32 RawByteCount)
+int SpiFlashReadRaw(XSpi *SpiPtr, /*u8* WriteBuffer, u8* ReadBuffer,*/ u32 RawByteCount)
 {
 	int ret;
 
 	/*
 	 * Initiate the Transfer.
 	 */
-	//xil_printf("ST: %d\r\n", RawByteCount);
 	TransferInProgress = TRUE;
 	ret = XSpi_Transfer( SpiPtr, WriteBuffer, ReadBuffer, RawByteCount);
 	if(ret != XST_SUCCESS) {
-		xil_printf("E1");//_SFRR_T");
+		//xil_printf("E_RR_XT");
 		return XST_FAILURE;
 	}
 	/*
@@ -492,7 +500,7 @@ int SpiFlashReadRaw(XSpi *SpiPtr, u8* WriteBuffer, u8* ReadBuffer, u32 RawByteCo
 	while(TransferInProgress);
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
-		xil_printf("E2");//"E_SFRR_E");
+		//xil_printf("E_RR_E");
 		return XST_FAILURE;
 	}
 
@@ -519,16 +527,26 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
 {
 	int ret;
 
+	/*
+	 * Wait while the Flash is busy.
+	 */
+	ret = SpiFlashWaitForFlashReady();
+	if(ret != XST_SUCCESS) {
+		//xil_printf("E_R_WFFR");
+		return XST_FAILURE;
+	}
+
 	ReadCommandAttr rm = SpiFlashReadMode(SpiPtr);
 	const int RawByteCount = rm.CommandExtraBytes + ByteCount;
-
-	//xil_printf("CA: %x, %d, %d\r\n", rm.Command, rm.CommandExtraBytes, ByteCount);
 
 	/*
 	 * Buffers used during read and write transactions.
 	 */
+	/*u32 BG1 = 0xcdcdcdcd;
 	u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
+	u32 BG2 = 0xcdcdcdcd;
 	u8 ReadBuffer[READ_WRITE_EXTRA_BYTES + RawByteCount];
+	u32 BG3 = 0xcdcdcdcd;*/
 
 	/*
 	 * Prepare the WriteBuffer.
@@ -538,24 +556,13 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
 	WriteBuffer[BYTE3] = (u8) (Addr >> 8);
 	WriteBuffer[BYTE4] = (u8) Addr;
 
-	/*
-	 * Wait while the Flash is busy.
-	 */
-	ret = SpiFlashWaitForFlashReady();
+	ret = SpiFlashReadRaw(SpiPtr, /*WriteBuffer, ReadBuffer,*/ RawByteCount);
 	if(ret != XST_SUCCESS) {
-		//xil_printf("E_SFR_SFWFFR");
+		//xil_printf("E_R_RR");
 		return XST_FAILURE;
 	}
 
-	ret = SpiFlashReadRaw(SpiPtr, &WriteBuffer, &ReadBuffer, RawByteCount);
-	if(ret != XST_SUCCESS) {
-		//xil_printf("E_SFR_SFRR");
-		return XST_FAILURE;
-	}
-
-	//xil_printf("3");
-
-	memcpy(Dest, &ReadBuffer[rm.CommandExtraBytes], ByteCount);
+	memcpy(Dest, ReadBuffer + READ_WRITE_EXTRA_BYTES + rm.CommandExtraBytes, ByteCount);
 
 	return XST_SUCCESS;
 }
@@ -580,14 +587,20 @@ int SpiFlashVerify(XSpi *SpiPtr, u32 Addr, const u8* Src, u32 ByteCount)
 {
 	int ret;
 
+	ret = SpiFlashWaitForFlashReady();
+	if(ret != XST_SUCCESS) {
+		//xil_printf("E_V_WFFR");
+		return XST_FAILURE;
+	}
+
 	ReadCommandAttr rm = SpiFlashReadMode(SpiPtr);
 	const int RawByteCount = rm.CommandExtraBytes + ByteCount;
 
 	/*
 	 * Buffers used during read and write transactions.
 	 */
-	u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
-	u8 ReadBuffer[READ_WRITE_EXTRA_BYTES + RawByteCount];
+	//u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
+	//u8 ReadBuffer[READ_WRITE_EXTRA_BYTES + RawByteCount];
 
 	/*
 	 * Prepare the WriteBuffer.
@@ -600,21 +613,17 @@ int SpiFlashVerify(XSpi *SpiPtr, u32 Addr, const u8* Src, u32 ByteCount)
 	/*
 	 * Wait while the Flash is busy.
 	 */
-	ret = SpiFlashWaitForFlashReady();
+	ret = SpiFlashReadRaw(SpiPtr, /*WriteBuffer, ReadBuffer,*/ RawByteCount);
 	if(ret != XST_SUCCESS) {
-		//xil_printf("E_SFV_SFWFFR");
+		//xil_printf("E_V_RR");
 		return XST_FAILURE;
 	}
 
-	ret = SpiFlashReadRaw(SpiPtr, &WriteBuffer, &ReadBuffer, RawByteCount);
-	if(ret != XST_SUCCESS) {
-		//xil_printf("E_SFV_SFRR");
+	if (memcmp(Src, ReadBuffer + READ_WRITE_EXTRA_BYTES + rm.CommandExtraBytes, ByteCount) != 0)
+	{
+		//xil_printf("E_V_CP");
 		return XST_FAILURE;
 	}
-
-	if (memcmp(Src, &ReadBuffer[rm.CommandExtraBytes], ByteCount) != 0)
-		//xil_printf("E_SFV_CP");
-		return XST_FAILURE;
 
 	return XST_SUCCESS;
 }
@@ -636,30 +645,27 @@ int SpiFlashGetStatus(XSpi *SpiPtr, u8* Status)
 	int ret;
 	ReadCommandAttr rm = READ_STATUS_ATTR;
 
-	//xil_printf("CA: %x, %d\r\n", rm.Command, rm.CommandExtraBytes);
+	const int RawByteCount = rm.CommandExtraBytes + 1;
 
-	/*
+		/*
 	 * Buffers used during read and write transactions.
 	 */
+	/*u32 BG1 = 0xcdcdcdcd;
 	u8 WriteBuffer[READ_WRITE_EXTRA_BYTES];
-	u8 ReadBuffer[READ_WRITE_EXTRA_BYTES + rm.CommandExtraBytes];
+	u32 BG2 = 0xcdcdcdcd;
+	u8 ReadBuffer[RawByteCount];
+	u32 BG3 = 0xcdcdcdcd;*/
 
 	/*
 	 * Prepare the WriteBuffer.
 	 */
 	WriteBuffer[BYTE1] = rm.Command;
 
-	//xil_printf("u\r\n");
-	ret = SpiFlashReadRaw(SpiPtr, &WriteBuffer, &ReadBuffer, rm.CommandExtraBytes);
+	ret = SpiFlashReadRaw(SpiPtr, /*WriteBuffer, ReadBuffer,*/ RawByteCount);
 	if(ret != XST_SUCCESS) {
+		//xil_printf("E_GS_RR");
 		return XST_FAILURE;
 	}
-
-	/*int i;
-	for (i = 0; i < (READ_WRITE_EXTRA_BYTES + rm.CommandExtraBytes); ++i)
-	{
-		xil_printf("ST[%d]: %x\r\n", i, ReadBuffer[i]);
-	}*/
 
 	*Status = ReadBuffer[1];
 
@@ -693,6 +699,7 @@ int SpiFlashWaitForFlashReady(void)
 		u8 status;
 		ret = SpiFlashGetStatus(&Spi, &status);
 		if(ret != XST_SUCCESS) {
+			//xil_printf("E_WFFR_GS");
 			return XST_FAILURE;
 		}
 
