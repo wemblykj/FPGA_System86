@@ -128,6 +128,24 @@
 
 /**************************** Type Definitions *******************************/
 
+typedef enum Result {
+	S_Success						= 0x00000000,
+	E_Fail 							= 0x80000000,
+	E_SpiError						= E_Fail | 0x00100000,
+	E_SpiReadError					= E_SpiError | 0x00010000,
+	E_SpiVerifyError				= E_SpiError | 0x00020000,
+	E_SpiStatusError				= E_SpiError | 0x00002000,
+	E_SpiTransferError				= E_SpiError | 0x00001000,
+	E_SpiTransferStartError			= E_SpiTransferError | 0x00000100,
+	E_SpiTransferCompletionError	= E_SpiTransferError | 0x00000200,
+	E_ElfError						= E_Fail | 0x00200000,
+	E_ElfHeaderMismatch				= E_ElfError | 0x00000100,
+	E_BlockError					= E_Fail | 0x00300000,
+	E_VectorTableError				= E_Fail | 0x00400000,
+	E_VectorTableSizeMismatch		= E_VectorTableError | 0x00000001,
+	E_VectorTableValidation			= E_VectorTableError | 0x00000002
+} Result;
+
 typedef enum ReadMode {
 	ReadMode_Standard,
 	ReadMode_Double,
@@ -172,19 +190,24 @@ ReadCommandAttr ReadModes[] = {
 		QUAD_READ_ATTR
 };
 
+/// @brief Calling declaration for the entry point
+typedef int (*EntryPoint) (void);
+
 /***************** Macros (Inline Functions) Definitions *********************/
 
 /************************** Function Prototypes ******************************/
 
 static ReadCommandAttr SpiFlashReadMode(XSpi *SpiPtr);
-static int SpiFlashReadRaw(XSpi *SpiPtr, /*u8* WriteBuffer, u8* ReadBuffer,*/ u32 BufferSize);
-static int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 Size);
-static int SpiFlashVerify(XSpi *SpiPtr, u32 Addr, const u8* Dest, u32 Size);
-static int SpiFlashGetStatus(XSpi *SpiPtr, u8* Status);
-static int SpiFlashWaitForFlashReady(void);
+static Result SpiFlashReadRaw(XSpi *SpiPtr, /*u8* WriteBuffer, u8* ReadBuffer,*/ u32 BufferSize);
+static Result SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 Size);
+static Result SpiFlashVerify(XSpi *SpiPtr, u32 Addr, const u8* Dest, u32 Size);
+static Result SpiFlashGetStatus(XSpi *SpiPtr, u8* Status);
+static Result SpiFlashWaitForFlashReady(void);
 static void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount);
-static int SetupInterruptSystem(XSpi *SpiPtr);
-static int ResetInterruptSystem(XSpi *SpiPtr);
+static Result SetupInterruptSystem(XSpi *SpiPtr);
+static Result ResetInterruptSystem(XSpi *SpiPtr);
+
+static Result SpiFlashReadElf(XSpi *SpiPtr, u32 Location, EntryPoint* ep, VectorTable* vt);
 
 /************************** Variable Definitions *****************************/
 
@@ -235,11 +258,12 @@ int main(void)
 {
 	XSpi_Config *ConfigPtr;	/* Pointer to Configuration data */
 
-	int ret, i;
+	int ret;
+	Result res;
 
 	init_platform();
 
-	//xil_printf("Spi Numonyx flash Quad SPI bootloader\r\n");
+	xil_printf("Spi Numonyx flash Quad SPI bootloader\r\n");
 	xil_printf("%s - %d\r\n", __DATE__, __TIME__);
 
 	/*
@@ -311,6 +335,15 @@ int main(void)
 		return XST_FAILURE;
 	}
 
+	EntryPoint ep = (EntryPoint)0;
+	VectorTable vt = {};
+
+	res = SpiFlashReadElf(&Spi, ELF_IMAGE_BASEADDR, &ep, &vt);
+	if(res != S_Success) {
+		xil_printf("E_%d\r\n", res);
+		return XST_FAILURE;
+	}
+
 	/*
 	 * Read the data from the Page using Quad Output Fast Read command.
 	 *
@@ -320,46 +353,66 @@ int main(void)
 	// disable memory caches whilst transferring image to DDR
 	disable_caches();
 
-	ElfHeader eh = {};
-	VectorTable vt = {};
-	u8 haveVectorTable = FALSE;
+	// Must [should?] disable interrupts before updating the vector table
+	ResetInterruptSystem(&Spi);
 
-	//xil_printf("header\r\n");
-	ret = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, (u8*)&eh, sizeof(ElfHeader));
-	if(ret != XST_SUCCESS) {
-		xil_printf("E1");
+	cleanup_platform();
+
+	// Copy over the vector table for the new image
+	memcpy(BASE_VECTORS, &vt, sizeof(VectorTable));
+
+	if (memcmp(BASE_VECTORS, &vt, sizeof(VectorTable)) != 0) {
+		xil_printf("E_%d\r\n", E_VectorTableValidation);
 		return XST_FAILURE;
+	}
+
+	xil_printf("\r\nCalling entry point at 0x%x\r\n", ep);
+	// Call entry point (in most cases would appear to be a call to the reset vector)
+	ep();
+
+	xil_printf("elf returned");
+
+	// Never reached
+	return XST_SUCCESS;
+}
+
+static Result SpiFlashReadElf(XSpi *SpiPtr, u32 Location, EntryPoint* ep, VectorTable* vt)
+{
+	int i;
+	Result res;
+
+	ElfHeader eh = {};
+
+	res = SpiFlashRead(&Spi, ELF_IMAGE_BASEADDR, (u8*)&eh, sizeof(ElfHeader));
+	if(res != S_Success) {
+		return res;
 	}
 
 	//xil_printf("/header\r\n");
 #ifdef DEBUG_ELF_HEADER
 	xil_printf("Magic: 0x%08x\r\n", eh.Ident.Magic.asUint);
 	xil_printf("Entry: 0x%08x\r\n", eh.Entry);
-	xil_printf("PrgHdrOfs: 0x%08x\r\n", ELF_IMAGE_BASEADDR + eh.PrgHdrOfs);
-	//xil_printf("SectHdrOfs: 0x%08x\r\n", ELF_IMAGE_BASEADDR + eh.SectHdrOfs);
+	xil_printf("PrgHdrOfs: 0x%08x\r\n", Location + eh.PrgHdrOfs);
+	//xil_printf("SectHdrOfs: 0x%08x\r\n", Location + eh.SectHdrOfs);
 #endif
 
 	/*
 	 * Validate ELF header
 	 */
 	if (memcmp(&eh.Ident.Magic, &ElfMagic, sizeof(ElfMagicType)) != 0) {
-		//xil_printf("Invalid ELF header");
-		xil_printf("E3");
-		return XST_FAILURE;
+		return E_ElfHeaderMismatch;
 	}
 
-		/**
+	/**
 	 * Read ELF program headers
 	 */
 	u32 progHdrOfs = ELF_IMAGE_BASEADDR + eh.PrgHdrOfs;
 	for (i = 0; i < eh.PrgHdrNum; i++) {
 		ElfProgramHeader ph = {};
 
-		ret = SpiFlashRead(&Spi, progHdrOfs, (u8*)&ph, sizeof(ph));
-		if(ret != XST_SUCCESS) {
-			//xil_printf("Failed to read ELF program header");
-			xil_printf("E4");
-			return XST_FAILURE;
+		res = SpiFlashRead(&Spi, progHdrOfs, (u8*)&ph, sizeof(ph));
+		if(res != S_Success) {
+			return res;
 		}
 
 #ifdef DEBUG_ELF_PROG_HEADER
@@ -369,7 +422,7 @@ int main(void)
 
 		if (ph.Type == PrgHdrType_Load) {
 #ifdef DEBUG_ELF_PROG_HEADER
-			xil_printf("Offset: %d\r\n", ELF_IMAGE_BASEADDR + ph.Offset);
+			xil_printf("Offset: %d\r\n", Location + ph.Offset);
 			//xil_printf("FileSize: %d\r\n", ph.FileSize);
 			//xil_printf("MemSize: %d\r\n", ph.MemSize);
 			xil_printf("PhysAddr: 0x%08x\r\n", ph.PhysAddr);
@@ -381,27 +434,25 @@ int main(void)
 
 			if (ph.PhysAddr == 0x00000000) {
 				// Ensure we have the vector table from its expected size in memory
-				Xil_AssertNonvoid(ph.MemSize == sizeof(VectorTable));
+				if (ph.MemSize == sizeof(VectorTable)) {
+					return E_VectorTableSizeMismatch;
+				}
+
 				pDest = (u8*)&vt;
-				haveVectorTable = TRUE;
 			}
 
 			while (bytesToRead > 0)
 			{
 				int blockSize = (bytesToRead < MAX_BLOCKSIZE) ? bytesToRead : MAX_BLOCKSIZE;
 
-				ret = SpiFlashRead(&Spi, segmentOffset, pDest, blockSize);
-				if(ret != XST_SUCCESS) {
-					//xil_printf("Failed to read ELF program section");
-					xil_printf("E5");
-					return XST_FAILURE;
+				res = SpiFlashRead(&Spi, segmentOffset, pDest, blockSize);
+				if(res != S_Success) {
+					return E_BlockError & res;
 				}
 
-				ret = SpiFlashVerify(&Spi, segmentOffset, pDest, blockSize);
-				if(ret != XST_SUCCESS) {
-					//xil_printf("Failed to read ELF program section");
-					xil_printf("E6");
-					return XST_FAILURE;
+				res = SpiFlashVerify(&Spi, segmentOffset, pDest, blockSize);
+				if(res != S_Success) {
+					return E_BlockError & res;
 				}
 
 				segmentOffset += blockSize;
@@ -425,27 +476,9 @@ int main(void)
 		progHdrOfs += sizeof(ElfProgramHeader);
 	}
 
-	// Must [should?] disable interrupts before updating the vector table
-	ResetInterruptSystem(&Spi);
+	ep = (EntryPoint*)eh.Entry;
 
-	cleanup_platform();
-
-	// Copy over the vector table for the new image
-	if (haveVectorTable == TRUE) {
-		memcpy(BASE_VECTORS, &vt, sizeof(VectorTable));
-
-		if (memcmp(BASE_VECTORS, &vt, sizeof(VectorTable)) != 0) {
-			xil_printf("E7");
-			return XST_FAILURE;
-		}
-	}
-
-	xil_printf("\r\nCalling entry point at 0x%x\r\n", eh.Entry);
-	// Call entry point (in most cases would appear to be a call to the reset vector)
-	((EntryPoint)eh.Entry)();
-
-	// Never reached
-	return XST_SUCCESS;
+	return S_Success;
 }
 
 /*****************************************************************************/
@@ -480,7 +513,7 @@ ReadCommandAttr SpiFlashReadMode(XSpi *SpiPtr)
 * @note		None
 *
 ******************************************************************************/
-int SpiFlashReadRaw(XSpi *SpiPtr, /*u8* WriteBuffer, u8* ReadBuffer,*/ u32 RawByteCount)
+Result SpiFlashReadRaw(XSpi *SpiPtr, /*u8* WriteBuffer, u8* ReadBuffer,*/ u32 RawByteCount)
 {
 	int ret;
 
@@ -491,7 +524,7 @@ int SpiFlashReadRaw(XSpi *SpiPtr, /*u8* WriteBuffer, u8* ReadBuffer,*/ u32 RawBy
 	ret = XSpi_Transfer( SpiPtr, WriteBuffer, ReadBuffer, RawByteCount);
 	if(ret != XST_SUCCESS) {
 		//xil_printf("E_RR_XT");
-		return XST_FAILURE;
+		return E_SpiTransferStartError;
 	}
 	/*
 	 * Wait till the Transfer is complete and check if there are any errors
@@ -501,10 +534,10 @@ int SpiFlashReadRaw(XSpi *SpiPtr, /*u8* WriteBuffer, u8* ReadBuffer,*/ u32 RawBy
 	if(ErrorCount != 0) {
 		ErrorCount = 0;
 		//xil_printf("E_RR_E");
-		return XST_FAILURE;
+		return E_SpiTransferCompletionError;
 	}
 
-	return XST_SUCCESS;
+	return S_Success;
 }
 
 /*****************************************************************************/
@@ -523,17 +556,16 @@ int SpiFlashReadRaw(XSpi *SpiPtr, /*u8* WriteBuffer, u8* ReadBuffer,*/ u32 RawBy
 * @note		None
 *
 ******************************************************************************/
-int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
+Result SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
 {
-	int ret;
+	Result res;
 
 	/*
 	 * Wait while the Flash is busy.
 	 */
-	ret = SpiFlashWaitForFlashReady();
-	if(ret != XST_SUCCESS) {
-		//xil_printf("E_R_WFFR");
-		return XST_FAILURE;
+	res = SpiFlashWaitForFlashReady();
+	if(res != S_Success) {
+		return E_SpiReadError & res;
 	}
 
 	ReadCommandAttr rm = SpiFlashReadMode(SpiPtr);
@@ -556,15 +588,14 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
 	WriteBuffer[BYTE3] = (u8) (Addr >> 8);
 	WriteBuffer[BYTE4] = (u8) Addr;
 
-	ret = SpiFlashReadRaw(SpiPtr, /*WriteBuffer, ReadBuffer,*/ RawByteCount);
-	if(ret != XST_SUCCESS) {
-		//xil_printf("E_R_RR");
-		return XST_FAILURE;
+	res = SpiFlashReadRaw(SpiPtr, /*WriteBuffer, ReadBuffer,*/ RawByteCount);
+	if(res != S_Success) {
+		return E_SpiReadError & res;
 	}
 
 	memcpy(Dest, ReadBuffer + READ_WRITE_EXTRA_BYTES + rm.CommandExtraBytes, ByteCount);
 
-	return XST_SUCCESS;
+	return S_Success;
 }
 
 /*****************************************************************************/
@@ -583,14 +614,13 @@ int SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 ByteCount)
 * @note		None
 *
 ******************************************************************************/
-int SpiFlashVerify(XSpi *SpiPtr, u32 Addr, const u8* Src, u32 ByteCount)
+Result SpiFlashVerify(XSpi *SpiPtr, u32 Addr, const u8* Src, u32 ByteCount)
 {
-	int ret;
+	Result res;
 
-	ret = SpiFlashWaitForFlashReady();
-	if(ret != XST_SUCCESS) {
-		//xil_printf("E_V_WFFR");
-		return XST_FAILURE;
+	res = SpiFlashWaitForFlashReady();
+	if(res != XST_SUCCESS) {
+		return E_SpiVerifyError& res;
 	}
 
 	ReadCommandAttr rm = SpiFlashReadMode(SpiPtr);
@@ -613,19 +643,17 @@ int SpiFlashVerify(XSpi *SpiPtr, u32 Addr, const u8* Src, u32 ByteCount)
 	/*
 	 * Wait while the Flash is busy.
 	 */
-	ret = SpiFlashReadRaw(SpiPtr, /*WriteBuffer, ReadBuffer,*/ RawByteCount);
-	if(ret != XST_SUCCESS) {
-		//xil_printf("E_V_RR");
-		return XST_FAILURE;
+	res = SpiFlashReadRaw(SpiPtr, /*WriteBuffer, ReadBuffer,*/ RawByteCount);
+	if(res != S_Success) {
+		return E_SpiVerifyError & res;
 	}
 
 	if (memcmp(Src, ReadBuffer + READ_WRITE_EXTRA_BYTES + rm.CommandExtraBytes, ByteCount) != 0)
 	{
-		//xil_printf("E_V_CP");
-		return XST_FAILURE;
+		return E_SpiVerifyError;
 	}
 
-	return XST_SUCCESS;
+	return S_Success;
 }
 /*****************************************************************************/
 /**
@@ -640,9 +668,9 @@ int SpiFlashVerify(XSpi *SpiPtr, u32 Addr, const u8* Src, u32 ByteCount)
 *		pointed by the ReadBuffer.
 *
 ******************************************************************************/
-int SpiFlashGetStatus(XSpi *SpiPtr, u8* Status)
+Result SpiFlashGetStatus(XSpi *SpiPtr, u8* Status)
 {
-	int ret;
+	Result res;
 	ReadCommandAttr rm = READ_STATUS_ATTR;
 
 	const int RawByteCount = rm.CommandExtraBytes + 1;
@@ -661,15 +689,14 @@ int SpiFlashGetStatus(XSpi *SpiPtr, u8* Status)
 	 */
 	WriteBuffer[BYTE1] = rm.Command;
 
-	ret = SpiFlashReadRaw(SpiPtr, /*WriteBuffer, ReadBuffer,*/ RawByteCount);
-	if(ret != XST_SUCCESS) {
-		//xil_printf("E_GS_RR");
-		return XST_FAILURE;
+	res = SpiFlashReadRaw(SpiPtr, /*WriteBuffer, ReadBuffer,*/ RawByteCount);
+	if(res != S_Success) {
+		return E_SpiStatusError & res;
 	}
 
 	*Status = ReadBuffer[1];
 
-	return XST_SUCCESS;
+	return S_Success;
 }
 
 /*****************************************************************************/
@@ -686,9 +713,9 @@ int SpiFlashGetStatus(XSpi *SpiPtr, u8* Status)
 *.		till the WIP bit of the ret register becomes 0.
 *
 ******************************************************************************/
-int SpiFlashWaitForFlashReady(void)
+Result SpiFlashWaitForFlashReady(void)
 {
-	int ret;
+	Result res;
 
 	while(1) {
 
@@ -697,10 +724,9 @@ int SpiFlashWaitForFlashReady(void)
 		 * stored at the second byte pointed by the ReadBuffer.
 		 */
 		u8 status;
-		ret = SpiFlashGetStatus(&Spi, &status);
-		if(ret != XST_SUCCESS) {
-			//xil_printf("E_WFFR_GS");
-			return XST_FAILURE;
+		res = SpiFlashGetStatus(&Spi, &status);
+		if(res != S_Success) {
+			return res;
 		}
 
 		/*
@@ -712,7 +738,7 @@ int SpiFlashWaitForFlashReady(void)
 		}
 	}
 
-	return XST_SUCCESS;
+	return S_Success;
 }
 
 /*****************************************************************************/
@@ -762,7 +788,7 @@ void SpiHandler(void *CallBackRef, u32 retEvent, unsigned int ByteCount)
 * @note		None
 *
 ******************************************************************************/
-int SetupInterruptSystem(XSpi *SpiPtr)
+Result SetupInterruptSystem(XSpi *SpiPtr)
 {
 	int ret;
 
@@ -773,7 +799,7 @@ int SetupInterruptSystem(XSpi *SpiPtr)
 	 */
 	ret = XIntc_Initialize(&InterruptController, INTC_DEVICE_ID);
 	if(ret != XST_SUCCESS) {
-		return XST_FAILURE;
+		return E_Fail;
 	}
 
 	/*
@@ -821,12 +847,12 @@ int SetupInterruptSystem(XSpi *SpiPtr)
 	 */
 	Xil_ExceptionEnable();
 
-	return XST_SUCCESS;
+	return S_Success;
 }
 
-int ResetInterruptSystem(XSpi *SpiPtr)
+Result ResetInterruptSystem(XSpi *SpiPtr)
 {
 	Xil_ExceptionDisable();
 
-	return XST_SUCCESS;
+	return S_Success;
 }

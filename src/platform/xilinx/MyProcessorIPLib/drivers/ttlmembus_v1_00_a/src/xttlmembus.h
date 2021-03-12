@@ -34,13 +34,14 @@ typedef struct {
  * This typedef contains configuration information for the device.
  */
 typedef struct {
-	u16 DeviceId;					/* Unique ID  of device */
-	u32 BaseAddress;				/* Device base address */
-	int AddressWidth;				/* Address width of TTL bus */
-	int DataWidth;					/* Data width of TTL bus */
-	int ReadOnly;					/* Memory is read-only (ROM) */
+	u16 DeviceId;				/* Unique ID  of device */
+	u32 BaseAddress;			/* Device base address */
+	int AddressWidth;			/* Address width of TTL bus */
+	int DataWidth;				/* Data width of TTL bus */
+	int ReadOnly;				/* Memory is read-only (ROM) */
 	u32 MappedBaseAddress;			/* The AXI bus address to which the memory bus is mapped */
-	int SupportsDynamicMapping;  	/* The AXI bus address can be configured */
+	int SupportsDynamicMapping;  		/* The AXI bus address can be configured */
+	int InterruptPresent;			/* Are interrups supported in h/w */
 } XTtlMemBus_Config;
 
 /**
@@ -49,14 +50,15 @@ typedef struct {
  * to a variable of this type is then passed to the driver API functions.
  */
 typedef struct {
-	u32 BaseAddress;					/* Device base address */
-	u32 IsReady;						/* Device is initialized and ready */
-	int ReadOnly;						/* Memory is read-only (ROM) */
-	u32 MappedBaseAddress;				/* The AXI bus address to which the memory bus is mapped */
+	u32 BaseAddress;			/* Device base address */
+	u32 IsReady;				/* Device is initialized and ready */
+	int ReadOnly;				/* Memory is read-only (ROM) */
+	u32 MappedBaseAddress;			/* The AXI bus address to which the memory bus is mapped */
 	XTtlMemBus_BusAttr CtrlBusAttr;		/* Control bus attributes */
 	XTtlMemBus_BusAttr AddrBusAttr;		/* Address width of TTL bus */
 	XTtlMemBus_BusAttr DataBusAttr;		/* Data width of TTL bus */
 	int SupportsDynamicMapping;  		/* The AXI bus address can be configured */
+	int InterruptPresent;			/* Are interrups supported in h/w */
 } XTtlMemBus;
 
 /***************** Macros (Inline Functions) Definitions ********************/
@@ -156,6 +158,17 @@ int XTtlMemBus_SelfTest(XTtlMemBus *InstancePtr);
 /* Debug utility function
  */
 void XTtlMemBus_DumpRegisters(XTtlMemBus *InstancePtr);
+
+/*
+ * API Functions implemented in xttlmembus_intr.c
+ */
+void XTtlMemBus_InterruptGlobalEnable(XTtlMemBus *InstancePtr);
+void XTtlMemBus_InterruptGlobalDisable(XTtlMemBus *InstancePtr);
+void XTtlMemBus_InterruptEnable(XTtlMemBus *InstancePtr, u32 Mask);
+void XTtlMemBus_InterruptDisable(XTtlMemBus *InstancePtr, u32 Mask);
+void XTtlMemBus_InterruptClear(XTtlMemBus *InstancePtr, u32 Mask);
+u32 XTtlMemBus_InterruptGetEnabled(XTtlMemBus *InstancePtr);
+u32 XTtlMemBus_InterruptGetStatus(XTtlMemBus *InstancePtr);
 
 #ifdef __cplusplus
 }

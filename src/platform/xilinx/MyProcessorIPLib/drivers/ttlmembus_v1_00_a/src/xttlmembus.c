@@ -73,6 +73,7 @@ int XTtlMemBus_CfgInitialize(XTtlMemBus * InstancePtr, XTtlMemBus_Config * Confi
 	InstancePtr->ReadOnly = Config->ReadOnly;
 	InstancePtr->MappedBaseAddress = Config->MappedBaseAddress;
 	InstancePtr->SupportsDynamicMapping = Config->SupportsDynamicMapping;
+	InstancePtr->InterruptPresent = Config->InterruptPresent;
 
 	/*
 	 * Precalculate some inferred values

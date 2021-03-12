@@ -33,10 +33,16 @@ extern "C" {
 #define XTTLMEMBUS_LINE_FAULT_ENABLE_OFFSET	0x10   /**< Line fault simulation enable register */
 #define XTTLMEMBUS_BASEADDRESS_OFFSET		0x14   /**< Base address for AXI bus mapping */
 
+
+#define XTTLMEMBUS_GIE_OFFSET			0x11C  /**< Global interrupt enable register */
+#define XTTLMEMBUS_ISR_OFFSET			0x120  /**< Interrupt status register */
+#define XTTLMEMBUS_IER_OFFSET			0x128  /**< Interrupt enable register */
+
+
 /** @name Bitmasks of XTTLMEMBUS_CR_OFFSET register
  * @{
  */
-#define XTTLMEMBUS_CR_ENABLE_MASK		0x00000010 	/**< Enable memory bus */
+#define XTTLMEMBUS_CR_ENABLE_MASK		0x00000010  /**< Enable memory bus */
 #define XTTLMEMBUS_CR_DYNAMIC_CTRL_MASK     	0x00000020  /**< Dynamic mapping control, if supported by hardware */
 /*@}*/
 
@@ -49,6 +55,27 @@ extern "C" {
 #define XTTLMEMBUS_SR_ERR_ALL_LSB		9		/**< Least significant bit of error flags */
 /*@}*/
 
+
+/** @name Interrupt Status and Enable Register bitmaps and masks
+ *
+ * Bit definitions for the interrupt status register and interrupt enable
+ * registers.
+ * @{
+ */
+#define XTTLMEMBUS_IR_MASK		0x7 /**< Mask of all bits */
+#define XTTLMEMBUS_IR_ADDR_MASK		0x1 /**< Mask for the address interrupt */
+#define XTTLMEMBUS_IR_READ_MASK		0x2 /**< Mask for the read interrupt */
+#define XTTLMEMBUS_IR_WRITE_MASK	0x4 /**< Mask for the write interrupt */
+/*@}*/
+
+
+/** @name Global Interrupt Enable Register bitmaps and masks
+ *
+ * Bit definitions for the Global Interrupt  Enable register
+ * @{
+ */
+#define XTTLMEMBUS_GIE_GINTR_ENABLE_MASK	0x80000000
+/*@}*/
 
 
 

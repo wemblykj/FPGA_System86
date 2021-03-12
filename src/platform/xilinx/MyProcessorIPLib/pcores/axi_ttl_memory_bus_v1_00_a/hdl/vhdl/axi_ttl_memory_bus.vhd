@@ -87,6 +87,8 @@ library axi_ttl_memory_bus_v1_00_a;
 -------------------------------------------------------------------------------
 --                     Defination of Generics :                              --
 -------------------------------------------------------------------------------
+-- C_INTERRUPT_PRESENT    -- TTL memory bus interrupt.
+
 -- AXI generics
 --  C_BASEADDR      -- Base address of the core
 --  C_HIGHADDR      -- Permits alias of address space
@@ -111,10 +113,13 @@ library axi_ttl_memory_bus_v1_00_a;
 -- AXI Global Signals
 --   slave_addr_offset            -- An offset from C_BASEADDR for with incoming 
 --                                   requests will be mapped
+--
+-- IP2INTC_Irpt          -- AXI GPIO Interrupt
+--
 -- AXI Global Signals
 -- S_AXI_ACLK            -- AXI Clock
 -- S_AXI_ARESETN          -- AXI Reset
-
+--
 -- AXI Master Signals
 --
 --  M_AXI_ACLK               -- AXI Clock
@@ -253,6 +258,9 @@ entity axi_ttl_memory_bus is
     C_MAPPED_ADDRESS : std_logic_vector := X"FFFFFFFF";
     C_USE_DYNAMIC_MAPPING : std_logic := '0';
 
+	 -- Interrupts
+	 C_INTERRUPT_PRESENT    : integer range 0 to 1      	    := 0;
+
     --Family Generics
     C_XLNX_REF_BOARD : string := "NONE";
     C_FAMILY : string := "virtex6";
@@ -278,8 +286,13 @@ entity axi_ttl_memory_bus is
     write_enable : in std_logic;
     addr : in std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
     data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0);
-    --mapping_addr            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
+	 
+	 -- Mapping
+    mapping_addr            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
 
+	 -- Interrupt---------------------------------------------------------------
+    IP2INTC_Irpt            : out std_logic;
+	 
     -- AXI Global
 
     -- AXI signals
@@ -377,6 +390,7 @@ entity axi_ttl_memory_bus is
   attribute MAX_FANOUT of M_AXI_ARESETN : signal is "10000";
   attribute MAX_FANOUT of S_AXI_ACLK : signal is "10000";
   attribute MAX_FANOUT of S_AXI_ARESETN : signal is "10000";
+  
   -------------------------------------------------------------------------------
   -- Attributes for MPD file
   -------------------------------------------------------------------------------
@@ -387,6 +401,7 @@ entity axi_ttl_memory_bus is
   attribute SIGIS of M_AXI_ARESETN : signal is "Rst";
   attribute SIGIS of S_AXI_ACLK : signal is "Clk";
   attribute SIGIS of S_AXI_ARESETN : signal is "Rst";
+  attribute SIGIS of IP2INTC_Irpt  	: signal is "INTR_LEVEL_HIGH";
 
 end entity axi_ttl_memory_bus;
 
@@ -461,19 +476,143 @@ end component;
     );
   end component;
 
+-------------------------------------------------------------------------------
+-- 
+-------------------------------------------------------------------------------
+
+type     bo2na_type is array (boolean) of natural; -- boolean to 
+							--natural conversion
+constant bo2na      :  bo2na_type := (false => 0, true => 1);
+
+-------------------------------------------------------------------------------
+-- Function Declarations
+-------------------------------------------------------------------------------
+
+	type BOOLEAN_ARRAY_TYPE is array(natural range <>) of boolean;
+
+	----------------------------------------------------------------------------
+	-- This function returns the number of elements that are true in
+	-- a boolean array.
+	----------------------------------------------------------------------------
+	function num_set( ba : BOOLEAN_ARRAY_TYPE ) return natural is
+		 variable n : natural := 0;
+	begin
+		 for i in ba'range loop
+			  n := n + bo2na(ba(i));
+		 end loop;
+		 return n;
+	end;
+
+	----------------------------------------------------------------------------
+	-- This function returns a num_ce integer array that is constructed by
+	-- taking only those elements of superset num_ce integer array
+	-- that will be defined by the current case.
+	-- The superset num_ce array is given by parameter num_ce_by_ard.
+	-- The current case the ard elements that will be used is given
+	-- by parameter defined_ards.
+	----------------------------------------------------------------------------
+	function qual_ard_num_ce_array( defined_ards  : BOOLEAN_ARRAY_TYPE;
+											  num_ce_by_ard : INTEGER_ARRAY_TYPE
+											) return INTEGER_ARRAY_TYPE is
+		 variable res : INTEGER_ARRAY_TYPE(num_set(defined_ards)-1 downto 0);
+		 variable i : natural := 0;
+		 variable j : natural := defined_ards'left;
+	begin
+		 while i /= res'length loop
+				 -- coverage off
+			  while defined_ards(j) = false loop
+					j := j+1;
+			  end loop;
+				 -- coverage on
+			  res(i) := num_ce_by_ard(j);
+			  i := i+1;
+			  j := j+1;
+		 end loop;
+		 return res;
+	end;
+
+
+	----------------------------------------------------------------------------
+	-- This function returns a addr_range array that is constructed by
+	-- taking only those elements of superset addr_range array
+	-- that will be defined by the current case.
+	-- The superset addr_range array is given by parameter addr_range_by_ard.
+	-- The current case the ard elements that will be used is given
+	-- by parameter defined_ards.
+	----------------------------------------------------------------------------
+	function qual_ard_addr_range_array( defined_ards      : BOOLEAN_ARRAY_TYPE;
+													addr_range_by_ard : SLV64_ARRAY_TYPE
+												 ) return SLV64_ARRAY_TYPE is
+		 variable res : SLV64_ARRAY_TYPE(0 to 2*num_set(defined_ards)-1);
+		 variable i : natural := 0;
+		 variable j : natural := defined_ards'left;
+	begin
+		 while i /= res'length loop
+				 -- coverage off
+			  while defined_ards(j) = false loop
+					j := j+1;
+			  end loop;
+				 -- coverage on        
+			  res(i)   := addr_range_by_ard(2*j);
+			  res(i+1) := addr_range_by_ard((2*j)+1);
+			  i := i+2;
+			  j := j+1;
+		 end loop;
+		 return res;
+	end;
+
+	function qual_ard_ce_valid( defined_ards      : BOOLEAN_ARRAY_TYPE
+												 ) return std_logic_vector is
+		 variable res : std_logic_vector(0 to 31);
+	begin
+			res := (others => '0');
+		 if defined_ards(defined_ards'right) then
+			res(0 to 3) := "1111";
+			res(12) := '1';
+			res(13) := '1';
+			res(15) := '1';
+		 else
+			res(0 to 3) := "1111";
+		 end if;
+		 return res;
+	end;
   -------------------  Constant Declaration Section BEGIN -----------------------
 
   constant ZERO_ADDR_PAD : std_logic_vector(0 to 31)
   := (others => '0');
 
+	constant INTR_TYPE      : integer   := 5;
+
+	constant INTR_BASEADDR  : std_logic_vector(0 to 31):= X"00000100";
+	constant INTR_HIGHADDR  : std_logic_vector(0 to 31):= X"000001FF";
+
   constant BASEADDR : std_logic_vector(31 downto 0) := X"00000000";
   constant HIGHADDR : std_logic_vector(31 downto 0) := X"000000FF";
 
   constant ARD_ADDR_RANGE_ARRAY : SLV64_ARRAY_TYPE :=
-  (ZERO_ADDR_PAD & BASEADDR,
-  ZERO_ADDR_PAD & HIGHADDR);
-  constant ARD_NUM_CE_ARRAY : INTEGER_ARRAY_TYPE := (0 => 8);
+	qual_ard_addr_range_array(
+        (true,C_INTERRUPT_PRESENT=1),
+        (ZERO_ADDR_PAD & BASEADDR, 
+         ZERO_ADDR_PAD & HIGHADDR,
+         ZERO_ADDR_PAD & INTR_BASEADDR,
+         ZERO_ADDR_PAD & INTR_HIGHADDR
+        )
+    );
+  
+	constant ARD_NUM_CE_ARRAY : INTEGER_ARRAY_TYPE :=
+    qual_ard_num_ce_array(
+                (true,C_INTERRUPT_PRESENT=1),
+                (4,16)
+    );  
 
+	constant ARD_CE_VALID : std_logic_vector(0 to 31) :=
+    qual_ard_ce_valid(
+      (true,C_INTERRUPT_PRESENT=1)
+    );
+
+	constant IP_INTR_MODE_ARRAY : INTEGER_ARRAY_TYPE(0 to 0)
+                            := (others => 5);
+									 
   constant AXI_MIN_SIZE : std_logic_vector(31 downto 0) := X"000000FF";
   constant USE_WSTRB : integer := 1;
   constant DPHASE_TIMEOUT : integer := 0;
@@ -484,10 +623,17 @@ end component;
   -- Signal and Type Declarations
   -------------------------------------------------------------------------------
 
+  -- Memory bus
   signal control : std_logic_vector(31 downto 0);
   signal status : std_logic_vector(31 downto 0);
-  signal mapped_address : std_logic_vector(31 downto 0);
   
+  -- Mapping
+  signal mapped_address : std_logic_vector(31 downto 0);
+
+	-- Interrupts
+	signal ip2bus_intrevent     : std_logic_vector(0 to 1);
+
+
   
   -- AXI Lite Master
   -----------------------------------------------------------------------------
@@ -547,10 +693,20 @@ end component;
   (0 to calc_num_ce(ARD_NUM_CE_ARRAY) - 1);
   signal bus2ip_wrce : std_logic_vector
   (0 to calc_num_ce(ARD_NUM_CE_ARRAY) - 1);
+
   --
   signal bus2ip_be : std_logic_vector((C_S_AXI_DATA_WIDTH/8) - 1 downto 0);
   signal bus2ip_burst : std_logic;
-
+ --
+  	signal Intrpt_bus2ip_rdce              : std_logic_vector(0 to 15);
+	signal Intrpt_bus2ip_wrce              : std_logic_vector(0 to 15);
+	signal intr_wr_ce_or_reduce            : std_logic; 
+	signal intr_rd_ce_or_reduce  	       : std_logic;
+	signal ip2Bus_RdAck_intr_reg_hole      : std_logic;
+	signal ip2Bus_RdAck_intr_reg_hole_d1   : std_logic;
+	signal ip2Bus_WrAck_intr_reg_hole      : std_logic;
+	signal ip2Bus_WrAck_intr_reg_hole_d1   : std_logic;
+	
   -------------------------------------------------------------------------------
   -- Architecture
   -------------------------------------------------------------------------------
