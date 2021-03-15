@@ -68,6 +68,13 @@ use proc_common_v3_00_a.ipif_pkg.INTEGER_ARRAY_TYPE;
 use proc_common_v3_00_a.ipif_pkg.calc_num_ce;
 
 -------------------------------------------------------------------------------
+-- axi_ttl_memory_bus_v1_00_a library is used for interrupt controller component 
+-- declarations
+-------------------------------------------------------------------------------
+
+library interrupt_control_v2_01_a; 
+
+-------------------------------------------------------------------------------
 -- axi_lite_ipif_v1_01_a library is used for axi4 component declarations
 -------------------------------------------------------------------------------
 library axi_lite_ipif_v1_01_a;

@@ -123,8 +123,8 @@
 /*
  * Enable debug for the ELF loader
  */
-//#define DEBUG_ELF_HEADER
-//#define DEBUG_ELF_PROG_HEADER
+#define DEBUG_ELF_HEADER
+#define DEBUG_ELF_PROG_HEADER
 
 /**************************** Type Definitions *******************************/
 
@@ -258,7 +258,7 @@ int main(void)
 {
 	XSpi_Config *ConfigPtr;	/* Pointer to Configuration data */
 
-	int ret;
+	int ret, i;
 	Result res;
 
 	init_platform();
@@ -340,7 +340,7 @@ int main(void)
 
 	res = SpiFlashReadElf(&Spi, ELF_IMAGE_BASEADDR, &ep, &vt);
 	if(res != S_Success) {
-		xil_printf("E_%d\r\n", res);
+		xil_printf("E_%08x\r\n", res);
 		return XST_FAILURE;
 	}
 
@@ -358,13 +358,26 @@ int main(void)
 
 	cleanup_platform();
 
-	// Copy over the vector table for the new image
-	memcpy(BASE_VECTORS, &vt, sizeof(VectorTable));
-
-	if (memcmp(BASE_VECTORS, &vt, sizeof(VectorTable)) != 0) {
-		xil_printf("E_%d\r\n", E_VectorTableValidation);
-		return XST_FAILURE;
+	for (i = BASE_VECTORS; i < sizeof(vt); ++i) {
+			if ((i %16) == 0)
+				xil_printf("\r\n0x%x:", i);
+			xil_printf(" 0x%x", *(u8*)i);
 	}
+	// Copy over the vector table for the new image
+	*((VectorTable*)BASE_VECTORS) = vt;
+	//memcpy(BASE_VECTORS, &vt, sizeof(VectorTable));
+
+
+	for (i = BASE_VECTORS; i < sizeof(vt); ++i) {
+		if ((i %16) == 0)
+			xil_printf("\r\n0x%x:", i);
+		xil_printf(" 0x%x", *(u8*)i);
+	}
+
+	/*if (memcmp(BASE_VECTORS, &vt, sizeof(VectorTable)) != 0) {
+		xil_printf("E_%08x\r\n", E_VectorTableValidation);
+		return XST_FAILURE;
+	}*/
 
 	xil_printf("\r\nCalling entry point at 0x%x\r\n", ep);
 	// Call entry point (in most cases would appear to be a call to the reset vector)
@@ -423,8 +436,8 @@ static Result SpiFlashReadElf(XSpi *SpiPtr, u32 Location, EntryPoint* ep, Vector
 		if (ph.Type == PrgHdrType_Load) {
 #ifdef DEBUG_ELF_PROG_HEADER
 			xil_printf("Offset: %d\r\n", Location + ph.Offset);
-			//xil_printf("FileSize: %d\r\n", ph.FileSize);
-			//xil_printf("MemSize: %d\r\n", ph.MemSize);
+			xil_printf("FileSize: %d\r\n", ph.FileSize);
+			xil_printf("MemSize: %d\r\n", ph.MemSize);
 			xil_printf("PhysAddr: 0x%08x\r\n", ph.PhysAddr);
 #endif
 			u32 segmentOffset = ELF_IMAGE_BASEADDR + ph.Offset;
@@ -434,11 +447,11 @@ static Result SpiFlashReadElf(XSpi *SpiPtr, u32 Location, EntryPoint* ep, Vector
 
 			if (ph.PhysAddr == 0x00000000) {
 				// Ensure we have the vector table from its expected size in memory
-				if (ph.MemSize == sizeof(VectorTable)) {
+				if (ph.MemSize != sizeof(VectorTable)) {
 					return E_VectorTableSizeMismatch;
 				}
 
-				pDest = (u8*)&vt;
+				pDest = (u8*)vt;
 			}
 
 			while (bytesToRead > 0)

@@ -37,6 +37,13 @@
 			 configured over slave AXI Lite</tip>
 	</widget>
 	'>
+	<!ENTITY C_INTERRUPT_PRESENT '
+	<widget id="C_INTERRUPT_PRESENT">
+		<key>C_INTERRUPT_PRESENT</key>
+		<label>Enable access request/response interrupts</label>
+		<tip></tip>
+	</widget>
+	'>
 	<!ENTITY C_FAMILY '
 	<widget id="C_FAMILY">
 		<key>C_FAMILY</key>
@@ -120,7 +127,9 @@
 			<display>ROM to AXI Memory Mapping</display>	
 			<item>&C_MAPPED_ADDRESS;</item>			
 			<item>&C_USE_DYNAMIC_MAPPING;</item>
+			<item>&C_INTERRUPT_PRESENT;</item>
 		</group>
+		
 	</view>
     <view id="System">
         <display>System</display>
