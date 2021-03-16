@@ -356,30 +356,31 @@ int main(void)
 	// Must [should?] disable interrupts before updating the vector table
 	ResetInterruptSystem(&Spi);
 
-	cleanup_platform();
-
-	for (i = BASE_VECTORS; i < sizeof(vt); ++i) {
+	/*for (i = BASE_VECTORS; i < sizeof(vt); ++i) {
 			if ((i %16) == 0)
 				xil_printf("\r\n0x%x:", i);
 			xil_printf(" 0x%x", *(u8*)i);
-	}
+	}*/
 	// Copy over the vector table for the new image
 	*((VectorTable*)BASE_VECTORS) = vt;
 	//memcpy(BASE_VECTORS, &vt, sizeof(VectorTable));
 
 
-	for (i = BASE_VECTORS; i < sizeof(vt); ++i) {
+	/*for (i = BASE_VECTORS; i < sizeof(vt); ++i) {
 		if ((i %16) == 0)
 			xil_printf("\r\n0x%x:", i);
 		xil_printf(" 0x%x", *(u8*)i);
-	}
+	}*/
 
 	/*if (memcmp(BASE_VECTORS, &vt, sizeof(VectorTable)) != 0) {
 		xil_printf("E_%08x\r\n", E_VectorTableValidation);
 		return XST_FAILURE;
 	}*/
 
-	xil_printf("\r\nCalling entry point at 0x%x\r\n", ep);
+	xil_printf("\r\nCalling entry point at 0x%08x.\r\n", (void*)ep);
+
+	cleanup_platform();
+
 	// Call entry point (in most cases would appear to be a call to the reset vector)
 	ep();
 
@@ -459,12 +460,12 @@ static Result SpiFlashReadElf(XSpi *SpiPtr, u32 Location, EntryPoint* ep, Vector
 				int blockSize = (bytesToRead < MAX_BLOCKSIZE) ? bytesToRead : MAX_BLOCKSIZE;
 
 				res = SpiFlashRead(&Spi, segmentOffset, pDest, blockSize);
-				if(res != S_Success) {
+				if (res != S_Success) {
 					return E_BlockError & res;
 				}
 
 				res = SpiFlashVerify(&Spi, segmentOffset, pDest, blockSize);
-				if(res != S_Success) {
+				if (res != S_Success) {
 					return E_BlockError & res;
 				}
 
@@ -489,7 +490,7 @@ static Result SpiFlashReadElf(XSpi *SpiPtr, u32 Location, EntryPoint* ep, Vector
 		progHdrOfs += sizeof(ElfProgramHeader);
 	}
 
-	ep = (EntryPoint*)eh.Entry;
+	*ep = (EntryPoint)eh.Entry;
 
 	return S_Success;
 }
