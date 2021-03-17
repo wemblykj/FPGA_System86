@@ -1,0 +1,35 @@
+##############################################################################
+#
+# (c) Copyright 2021 Paul Wightmore. All rights reserved.
+#
+##############################################################################
+
+OPTION psf_version = 2.1;
+
+BEGIN driver ttlmembus
+
+  OPTION supported_peripherals = (xps_uartlite xps_mdm mdm axi_uartlite);
+  OPTION driver_state = ACTIVE;
+  OPTION depends = (xuartlite_v2_01_a);
+  OPTION copyfiles = all;
+
+    BEGIN INTERFACE stdin
+      PROPERTY header = xuartlite_l.h;
+      FUNCTION name = inbyte, value = XUartLite_RecvByte;
+    END INTERFACE
+
+    BEGIN INTERFACE stdout
+      PROPERTY header = xuartlite_l.h;
+      FUNCTION name = outbyte, value = XUartLite_SendByte;
+    END INTERFACE
+
+    BEGIN INTERFACE stdio
+      PROPERTY header = xuartlite_l.h;
+      FUNCTION name = inbyte, value = XUartLite_RecvByte;
+      FUNCTION name = outbyte, value = XUartLite_SendByte;
+    END INTERFACE
+
+ BEGIN INTERFACE linux
+ END INTERFACE
+ 
+END driver

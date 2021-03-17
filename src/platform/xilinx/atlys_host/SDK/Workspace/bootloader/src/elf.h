@@ -83,9 +83,6 @@ typedef struct ElfSectionHeader {
 	SizeT EntrySize;		///< Contains size, in bytes, of each [section] entry
 } ElfSectionHeader, *ElfSectionHeaderPtr;
 
-/// @brief Calling declaration for the entry point
-typedef int (*EntryPoint) (void);
-
 #pragma pack(pop)
 
 /// @brief Instance of the ELF magic number
