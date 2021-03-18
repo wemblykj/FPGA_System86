@@ -1,70 +1,11 @@
 /******************************************************************************
 *
-* (c) Copyright 2002-2013 Xilinx, Inc. All rights reserved.
-*
-* This file contains confidential and proprietary information of Xilinx, Inc.
-* and is protected under U.S. and international copyright and other
-* intellectual property laws.
-*
-* DISCLAIMER
-* This disclaimer is not a license and does not grant any rights to the
-* materials distributed herewith. Except as otherwise provided in a valid
-* license issued to you by Xilinx, and to the maximum extent permitted by
-* applicable law: (1) THESE MATERIALS ARE MADE AVAILABLE "AS IS" AND WITH ALL
-* FAULTS, AND XILINX HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS, EXPRESS,
-* IMPLIED, OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF
-* MERCHANTABILITY, NON-INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE;
-* and (2) Xilinx shall not be liable (whether in contract or tort, including
-* negligence, or under any other theory of liability) for any loss or damage
-* of any kind or nature related to, arising under or in connection with these
-* materials, including for any direct, or any indirect, special, incidental,
-* or consequential loss or damage (including loss of data, profits, goodwill,
-* or any type of loss or damage suffered as a result of any action brought by
-* a third party) even if such damage or loss was reasonably foreseeable or
-* Xilinx had been advised of the possibility of the same.
-*
-* CRITICAL APPLICATIONS
-* Xilinx products are not designed or intended to be fail-safe, or for use in
-* any application requiring fail-safe performance, such as life-support or
-* safety devices or systems, Class III medical devices, nuclear facilities,
-* applications related to the deployment of airbags, or any other applications
-* that could lead to death, personal injury, or severe property or
-* environmental damage (individually and collectively, "Critical
-* Applications"). Customer assumes the sole risk and liability of any use of
-* Xilinx products in Critical Applications, subject only to applicable laws
-* and regulations governing limitations on product liability.
-*
-* THIS COPYRIGHT NOTICE AND DISCLAIMER MUST BE RETAINED AS PART OF THIS FILE
-* AT ALL TIMES.
+* (c) Copyright 2021 Paul Wightmore. All rights reserved.
 *
 ******************************************************************************/
-/****************************************************************************/
-/**
-*
-* @file xuartlite_l.h
-*
-* This header file contains identifiers and low-level driver functions (or
-* macros) that can be used to access the device.  High-level driver functions
-* are defined in xuartlite.h.
-*
-* <pre>
-* MODIFICATION HISTORY:
-*
-* Ver   Who  Date     Changes
-* ----- ---- -------- -------------------------------------------------------
-* 1.00b rpm  04/25/02 First release
-* 1.00b rpm  07/07/03 Removed references to XUartLite_GetControlReg macro
-*                     since the control register is write-only
-* 1.12a mta  03/21/07 Updated to new coding style
-* 1.13a sv   01/21/08 Updated driver to support access through DCR bus
-* 2.00a ktn  10/20/09 Updated to use HAL Processor APIs. The macros have been
-*		      renamed to remove _m from the name.
-* </pre>
-*
-*****************************************************************************/
 
-#ifndef XUARTLITE_L_H /* prevent circular inclusions */
-#define XUARTLITE_L_H /* by using protection macros */
+#ifndef XUARTEXT_L_H /* prevent circular inclusions */
+#define XUARTEXT_L_H /* by using protection macros */
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,88 +17,18 @@ extern "C" {
 #include "xil_assert.h"
 #include "xil_io.h"
 
-/*
- * XPAR_XUARTLITE_USE_DCR_BRIDGE has to be set to 1 if the UartLite device is
- * accessed through a DCR bus connected to a bridge.
- */
-#define XPAR_XUARTLITE_USE_DCR_BRIDGE 0
-
-#if (XPAR_XUARTLITE_USE_DCR_BRIDGE != 0)
-#include "xio_dcr.h"
-#endif
+#include "xuartext_l.h"
 
 
 /************************** Constant Definitions ****************************/
 
-/* UART Lite register offsets */
-
-#if (XPAR_XUARTLITE_USE_DCR_BRIDGE != 0)
-#define XUL_RX_FIFO_OFFSET		0	/* receive FIFO, read only */
-#define XUL_TX_FIFO_OFFSET		1	/* transmit FIFO, write only */
-#define XUL_STATUS_REG_OFFSET		2	/* status register, read only */
-#define XUL_CONTROL_REG_OFFSET		3	/* control reg, write only */
-
-#else
-
-#define XUL_RX_FIFO_OFFSET		0	/* receive FIFO, read only */
-#define XUL_TX_FIFO_OFFSET		4	/* transmit FIFO, write only */
-#define XUL_STATUS_REG_OFFSET		8	/* status register, read only */
-#define XUL_CONTROL_REG_OFFSET		12	/* control reg, write only */
-
-#endif
-
-/* Control Register bit positions */
-
-#define XUL_CR_ENABLE_INTR		0x10	/* enable interrupt */
-#define XUL_CR_FIFO_RX_RESET		0x02	/* reset receive FIFO */
-#define XUL_CR_FIFO_TX_RESET		0x01	/* reset transmit FIFO */
-
-/* Status Register bit positions */
-
-#define XUL_SR_PARITY_ERROR		0x80
-#define XUL_SR_FRAMING_ERROR		0x40
-#define XUL_SR_OVERRUN_ERROR		0x20
-#define XUL_SR_INTR_ENABLED		0x10	/* interrupt enabled */
-#define XUL_SR_TX_FIFO_FULL		0x08	/* transmit FIFO full */
-#define XUL_SR_TX_FIFO_EMPTY		0x04	/* transmit FIFO empty */
-#define XUL_SR_RX_FIFO_FULL		0x02	/* receive FIFO full */
-#define XUL_SR_RX_FIFO_VALID_DATA	0x01	/* data in receive FIFO */
-
-/* The following constant specifies the size of the Transmit/Receive FIFOs.
- * The FIFO size is fixed to 16 in the Uartlite IP and the size is not
- * configurable. This constant is not used in the driver.
- */
-#define XUL_FIFO_SIZE			16
-
-/* Stop bits are fixed at 1. Baud, parity, and data bits are fixed on a
- * per instance basis
- */
-#define XUL_STOP_BITS			1
-
-/* Parity definitions
- */
-#define XUL_PARITY_NONE			0
-#define XUL_PARITY_ODD			1
-#define XUL_PARITY_EVEN			2
 
 /**************************** Type Definitions ******************************/
 
 /***************** Macros (Inline Functions) Definitions ********************/
 
-/*
- * Define the appropriate I/O access method to memory mapped I/O or DCR.
- */
-#if (XPAR_XUARTLITE_USE_DCR_BRIDGE != 0)
-
-#define XUartLite_In32  XIo_DcrIn
-#define XUartLite_Out32 XIo_DcrOut
-
-#else
-
-#define XUartLite_In32  Xil_In32
-#define XUartLite_Out32 Xil_Out32
-
-#endif
+#define XUartExt_In32  XUartLite_In32
+#define XUartExt_Out32 XUartLite_Out32
 
 
 /****************************************************************************/
@@ -172,12 +43,12 @@ extern "C" {
 * @return	None.
 *
 * @note		C-style signature:
-*		void XUartLite_WriteReg(u32 BaseAddress, u32 RegOffset,
+*		void XUartExt_WriteReg(u32 BaseAddress, u32 RegOffset,
 *					u32 Data)
 *
 ****************************************************************************/
-#define XUartLite_WriteReg(BaseAddress, RegOffset, Data) \
-	XUartLite_Out32((BaseAddress) + (RegOffset), (u32)(Data))
+#define XUartExt_WriteReg(BaseAddress, RegOffset, Data) \
+	XUartLite_WriteReg(BaseAddress, RegOffset, Data)
 
 /****************************************************************************/
 /**
@@ -190,11 +61,11 @@ extern "C" {
 * @return	Data read from the register.
 *
 * @note		C-style signature:
-*		u32 XUartLite_ReadReg(u32 BaseAddress, u32 RegOffset)
+*		u32 XUartExt_ReadReg(u32 BaseAddress, u32 RegOffset)
 *
 ****************************************************************************/
-#define XUartLite_ReadReg(BaseAddress, RegOffset) \
-	XUartLite_In32((BaseAddress) + (RegOffset))
+#define XUartExt_ReadReg(BaseAddress, RegOffset) \
+	XUartLite_ReadReg(BaseAddress, RegOffset)
 
 
 /****************************************************************************/
@@ -209,11 +80,11 @@ extern "C" {
 * @return	None.
 *
 * @note		C-style Signature:
-*		void XUartLite_SetControlReg(u32 BaseAddress, u32 Mask);
+*		void XUartExt_SetControlReg(u32 BaseAddress, u32 Mask);
 *
 *****************************************************************************/
-#define XUartLite_SetControlReg(BaseAddress, Mask) \
-	XUartLite_WriteReg((BaseAddress), XUL_CONTROL_REG_OFFSET, (Mask))
+#define XUartExt_SetControlReg(BaseAddress, Mask) \
+	XUartLite_SetControlReg(BaseAddress, Mask)
 
 
 /****************************************************************************/
@@ -227,11 +98,11 @@ extern "C" {
 * @return	A 32-bit value representing the contents of the status register.
 *
 * @note		C-style Signature:
-*		u32 XUartLite_GetStatusReg(u32 BaseAddress);
+*		u32 XUartExt_GetStatusReg(u32 BaseAddress);
 *
 *****************************************************************************/
-#define XUartLite_GetStatusReg(BaseAddress) \
-		XUartLite_ReadReg((BaseAddress), XUL_STATUS_REG_OFFSET)
+#define XUartExt_GetStatusReg(BaseAddress) \
+		XUartLite_GetStatusReg(BaseAddress)
 
 
 /****************************************************************************/
@@ -244,12 +115,11 @@ extern "C" {
 * @return	TRUE if the receiver is empty, FALSE if there is data present.
 *
 * @note		C-style Signature:
-*		int XUartLite_IsReceiveEmpty(u32 BaseAddress);
+*		int XUartExt_IsReceiveEmpty(u32 BaseAddress);
 *
 *****************************************************************************/
-#define XUartLite_IsReceiveEmpty(BaseAddress) \
-  ((XUartLite_GetStatusReg((BaseAddress)) & XUL_SR_RX_FIFO_VALID_DATA) != \
-	XUL_SR_RX_FIFO_VALID_DATA)
+#define XUartExt_IsReceiveEmpty(BaseAddress) \
+		XUartLite_IsReceiveEmpty(BaseAddress)
 
 
 /****************************************************************************/
@@ -262,12 +132,11 @@ extern "C" {
 * @return	TRUE if the transmitter is full, FALSE otherwise.
 *
 * @note		C-style Signature:
-* 		int XUartLite_IsTransmitFull(u32 BaseAddress);
+* 		int XUartExt_IsTransmitFull(u32 BaseAddress);
 *
 *****************************************************************************/
-#define XUartLite_IsTransmitFull(BaseAddress) \
-	((XUartLite_GetStatusReg((BaseAddress)) & XUL_SR_TX_FIFO_FULL) == \
-	  XUL_SR_TX_FIFO_FULL)
+#define XUartExt_IsTransmitFull(BaseAddress) \
+		XUartLite_IsTransmitFull(BaseAddress)
 
 
 /****************************************************************************/
@@ -280,12 +149,11 @@ extern "C" {
 * @return	TRUE if the interrupt is enabled, FALSE otherwise.
 *
 * @note		C-style Signature:
-*		int XUartLite_IsIntrEnabled(u32 BaseAddress);
+*		int XUartExt_IsIntrEnabled(u32 BaseAddress);
 *
 *****************************************************************************/
-#define XUartLite_IsIntrEnabled(BaseAddress) \
-	((XUartLite_GetStatusReg((BaseAddress)) & XUL_SR_INTR_ENABLED) == \
-	  XUL_SR_INTR_ENABLED)
+#define XUartExt_IsIntrEnabled(BaseAddress) \
+		XUartLite_IsIntrEnabled(BaseAddress)
 
 
 /****************************************************************************/
@@ -300,11 +168,11 @@ extern "C" {
 * @return	None.
 *
 * @note		C-style Signature:
-* 		void XUartLite_EnableIntr(u32 BaseAddress);
+* 		void XUartExt_EnableIntr(u32 BaseAddress);
 *
 *****************************************************************************/
-#define XUartLite_EnableIntr(BaseAddress) \
-		XUartLite_SetControlReg((BaseAddress), XUL_CR_ENABLE_INTR)
+#define XUartExt_EnableIntr(BaseAddress) \
+		XUartLite_EnableIntr(BaseAddress)
 
 
 /****************************************************************************/
@@ -319,16 +187,16 @@ extern "C" {
 * @return	None.
 *
 * @note		C-style Signature:
-* 		void XUartLite_DisableIntr(u32 BaseAddress);
+* 		void XUartExt_DisableIntr(u32 BaseAddress);
 *
 *****************************************************************************/
-#define XUartLite_DisableIntr(BaseAddress) \
-		XUartLite_SetControlReg((BaseAddress), 0)
+#define XUartExt_DisableIntr(BaseAddress) \
+		XUartLite_DisableIntr(BaseAddress)
 
 /************************** Function Prototypes *****************************/
 
-void XUartLite_SendByte(u32 BaseAddress, u8 Data);
-u8 XUartLite_RecvByte(u32 BaseAddress);
+void XUartExt_SendByte(u32 BaseAddress, u8 Data);
+u8 XUartExt_RecvByte(u32 BaseAddress);
 
 #ifdef __cplusplus
 }

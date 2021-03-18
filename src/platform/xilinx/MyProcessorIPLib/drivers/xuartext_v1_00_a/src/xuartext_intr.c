@@ -1,66 +1,8 @@
 /******************************************************************************
 *
-* (c) Copyright 2002-2013 Xilinx, Inc. All rights reserved.
-*
-* This file contains confidential and proprietary information of Xilinx, Inc.
-* and is protected under U.S. and international copyright and other
-* intellectual property laws.
-*
-* DISCLAIMER
-* This disclaimer is not a license and does not grant any rights to the
-* materials distributed herewith. Except as otherwise provided in a valid
-* license issued to you by Xilinx, and to the maximum extent permitted by
-* applicable law: (1) THESE MATERIALS ARE MADE AVAILABLE "AS IS" AND WITH ALL
-* FAULTS, AND XILINX HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS, EXPRESS,
-* IMPLIED, OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF
-* MERCHANTABILITY, NON-INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE;
-* and (2) Xilinx shall not be liable (whether in contract or tort, including
-* negligence, or under any other theory of liability) for any loss or damage
-* of any kind or nature related to, arising under or in connection with these
-* materials, including for any direct, or any indirect, special, incidental,
-* or consequential loss or damage (including loss of data, profits, goodwill,
-* or any type of loss or damage suffered as a result of any action brought by
-* a third party) even if such damage or loss was reasonably foreseeable or
-* Xilinx had been advised of the possibility of the same.
-*
-* CRITICAL APPLICATIONS
-* Xilinx products are not designed or intended to be fail-safe, or for use in
-* any application requiring fail-safe performance, such as life-support or
-* safety devices or systems, Class III medical devices, nuclear facilities,
-* applications related to the deployment of airbags, or any other applications
-* that could lead to death, personal injury, or severe property or
-* environmental damage (individually and collectively, "Critical
-* Applications"). Customer assumes the sole risk and liability of any use of
-* Xilinx products in Critical Applications, subject only to applicable laws
-* and regulations governing limitations on product liability.
-*
-* THIS COPYRIGHT NOTICE AND DISCLAIMER MUST BE RETAINED AS PART OF THIS FILE
-* AT ALL TIMES.
+* (c) Copyright 2021 Paul Wightmore. All rights reserved.
 *
 ******************************************************************************/
-/****************************************************************************/
-/**
-*
-* @file xuartlite_intr.c
-*
-* This file contains interrupt-related functions for the UART Lite component
-* (XUartLite).
-*
-* <pre>
-* MODIFICATION HISTORY:
-*
-* Ver   Who  Date     Changes
-* ----- ---- -------- -----------------------------------------------
-* 1.00a ecm  08/31/01 First release
-* 1.00b jhl  02/21/02 Repartitioned the driver for smaller files
-* 1.02a rpm  02/14/07 Added check for outstanding transmission before
-*			calling the send callback (avoids extraneous
-*			callback invocations)
-* 2.00a ktn  10/20/09 Updated to use HAL Processor APIs. The macros have been
-*		      renamed to remove _m from the name.
-* </pre>
-*
-*****************************************************************************/
 
 /***************************** Include Files ********************************/
 
@@ -76,12 +18,12 @@
 
 /************************** Function Prototypes *****************************/
 
-static void ReceiveDataHandler(XUartLite *InstancePtr);
-static void SendDataHandler(XUartLite *InstancePtr);
+static void ReceiveDataHandler(XUartExt *InstancePtr, unsigned int ByteCount);
+static void SendDataHandler(XUartExt *InstancePtr, unsigned int ByteCount);
 
 /************************** Variable Definitions ****************************/
 
-typedef void (*Handler)(XUartLite *InstancePtr);
+typedef void (*Handler)(XUartExt *InstancePtr);
 
 /****************************************************************************/
 /**
@@ -90,7 +32,7 @@ typedef void (*Handler)(XUartLite *InstancePtr);
 * occurs in the driver. The purpose of the handler is to allow application
 * specific processing to be performed.
 *
-* @param	InstancePtr is a pointer to the XUartLite instance.
+* @param	InstancePtr is a pointer to the XUartExt instance.
 * @param	FuncPtr is the pointer to the callback function.
 * @param	CallBackRef is the upper layer callback reference passed back
 *		when the callback function is invoked.
@@ -101,8 +43,8 @@ typedef void (*Handler)(XUartLite *InstancePtr);
 *		know what it is (nor should it)
 *
 *****************************************************************************/
-void XUartLite_SetRecvHandler(XUartLite *InstancePtr,
-				XUartLite_Handler FuncPtr, void *CallBackRef)
+void XUartExt_SetRecvHandler(XUartExt *InstancePtr,
+				XUartExt_DataHandler FuncPtr, void *CallBackRef)
 {
 	/*
 	 * Assert validates the input arguments
@@ -113,7 +55,9 @@ void XUartLite_SetRecvHandler(XUartLite *InstancePtr,
 	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 
 	InstancePtr->RecvHandler = FuncPtr;
-	InstancePtr->RecvCallBackRef = CallBackRef;
+
+	InstancePtr->UartLite->RecvHandler = ReceiveDataHandler;
+	InstancePtr->UartLite->RecvCallBackRef = CallBackRef;
 }
 
 /****************************************************************************/
@@ -123,7 +67,7 @@ void XUartLite_SetRecvHandler(XUartLite *InstancePtr,
 * occurs in the driver. The purpose of the handler is to allow application
 * specific processing to be performed.
 *
-* @param	InstancePtr is a pointer to the XUartLite instance .
+* @param	InstancePtr is a pointer to the XUartExt instance .
 * @param	FuncPtr is the pointer to the callback function.
 * @param	CallBackRef is the upper layer callback reference passed back
 *		when the callback function is invoked.
@@ -134,8 +78,8 @@ void XUartLite_SetRecvHandler(XUartLite *InstancePtr,
 *		know what it is (nor should it)
 *
 *****************************************************************************/
-void XUartLite_SetSendHandler(XUartLite *InstancePtr,
-				XUartLite_Handler FuncPtr, void *CallBackRef)
+void XUartExt_SetSendHandler(XUartExt *InstancePtr,
+				XUartExt_DataHandler FuncPtr, void *CallBackRef)
 {
 	/*
 	 * Assert validates the input arguments
@@ -146,48 +90,41 @@ void XUartLite_SetSendHandler(XUartLite *InstancePtr,
 	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 
 	InstancePtr->SendHandler = FuncPtr;
-	InstancePtr->SendCallBackRef = CallBackRef;
+
+	InstancePtr->UartLite->SendHandler = SendDataHandler;
+	InstancePtr->UartLite->SendCallBackRef = CallBackRef;
 }
 
 /****************************************************************************/
 /**
 *
-* This function is the interrupt handler for the UART lite driver.
-* It must be connected to an interrupt system by the user such that it is
-* called when an interrupt for any UART lite occurs. This function
-* does not save or restore the processor context such that the user must
-* ensure this occurs.
+* This function sets the handler that will be called when an event (interrupt)
+* occurs in the driver. The purpose of the handler is to allow application
+* specific processing to be performed.
 *
-* @param	InstancePtr contains a pointer to the instance of the UART that
-*		the interrupt is for.
+* @param	InstancePtr is a pointer to the XUartExt instance .
+* @param	FuncPtr is the pointer to the callback function.
+* @param	CallBackRef is the upper layer callback reference passed back
+*		when the callback function is invoked.
 *
-* @return	None.
+* @return 	None.
 *
-* @note		None.
+* @note		There is no assert on the CallBackRef since the driver doesn't
+*		know what it is (nor should it)
 *
-******************************************************************************/
-void XUartLite_InterruptHandler(XUartLite *InstancePtr)
+*****************************************************************************/
+void XUartExt_CommandHandler(XUartExt *InstancePtr,
+				XUartExt_CommandHandler FuncPtr, void *CallBackRef)
 {
-	u32 IsrStatus;
-
-	Xil_AssertVoid(InstancePtr != NULL);
-
 	/*
-	 * Read the status register to determine which, coulb be both
-	 * interrupt is active
+	 * Assert validates the input arguments
+	 * CallBackRef not checked, no way to know what is valid
 	 */
-	IsrStatus = XUartLite_ReadReg(InstancePtr->RegBaseAddress,
-					XUL_STATUS_REG_OFFSET);
+	Xil_AssertVoid(InstancePtr != NULL);
+	Xil_AssertVoid(FuncPtr != NULL);
+	Xil_AssertVoid(InstancePtr->UartLite->IsReady == XIL_COMPONENT_IS_READY);
 
-	if ((IsrStatus & (XUL_SR_RX_FIFO_FULL |
-		XUL_SR_RX_FIFO_VALID_DATA)) != 0) {
-		ReceiveDataHandler(InstancePtr);
-	}
-
-	if (((IsrStatus & XUL_SR_TX_FIFO_EMPTY) != 0) &&
-		(InstancePtr->SendBuffer.RequestedBytes > 0)) {
-		SendDataHandler(InstancePtr);
-	}
+	InstancePtr->CommandHandler = FuncPtr;
 }
 
 /****************************************************************************/
@@ -196,39 +133,16 @@ void XUartLite_InterruptHandler(XUartLite *InstancePtr)
 * This function handles the interrupt when data is received, either a single
 * byte when FIFOs are not enabled, or multiple bytes with the FIFO.
 *
-* @param	InstancePtr is a pointer to the XUartLite instance.
+* @param	InstancePtr is a pointer to the XUartExt instance.
 *
 * @return	None.
 *
 * @note		None.
 *
 *****************************************************************************/
-static void ReceiveDataHandler(XUartLite *InstancePtr)
+static void ReceiveDataHandler(XUartExt *InstancePtr, unsigned int ByteCount)
 {
-	/*
-	 * If there are bytes still to be received in the specified buffer
-	 * go ahead and receive them
-	 */
-	if (InstancePtr->ReceiveBuffer.RemainingBytes != 0) {
-		XUartLite_ReceiveBuffer(InstancePtr);
-	}
-
-	/*
-	 * If the last byte of a message was received then call the application
-	 * handler, this code should not use an else from the previous check of
-	 * the number of bytes to receive because the call to receive the buffer
-	 * updates the bytes to receive
-	 */
-	if (InstancePtr->ReceiveBuffer.RemainingBytes == 0) {
-		InstancePtr->RecvHandler(InstancePtr->RecvCallBackRef,
-		InstancePtr->ReceiveBuffer.RequestedBytes -
-		InstancePtr->ReceiveBuffer.RemainingBytes);
-	}
-
-	/*
-	 * Update the receive stats to reflect the receive interrupt
-	 */
-	InstancePtr->Stats.ReceiveInterrupts++;
+	InstancePtr->RecvHandler(InstancePtr->UartLite->RecvCallBackRef, ByteCount);
 }
 
 /****************************************************************************/
@@ -237,47 +151,16 @@ static void ReceiveDataHandler(XUartLite *InstancePtr)
 * This function handles the interrupt when data has been sent, the transmit
 * FIFO is empty (transmitter holding register).
 *
-* @param	InstancePtr is a pointer to the XUartLite instance .
+* @param	InstancePtr is a pointer to the XUartExt instance .
 *
 * @return	None.
 *
 * @note		None.
 *
 *****************************************************************************/
-static void SendDataHandler(XUartLite *InstancePtr)
+static void SendDataHandler(XUartExt *InstancePtr, unsigned int ByteCount)
 {
-	/*
-	 * If there are not bytes to be sent from the specified buffer,
-	 * call the callback function
-	 */
-	if (InstancePtr->SendBuffer.RemainingBytes == 0) {
-		int SaveReq;
-
-		/*
-		 * Save and zero the requested bytes since transmission
-		 * is complete
-		 */
-		SaveReq = InstancePtr->SendBuffer.RequestedBytes;
-		InstancePtr->SendBuffer.RequestedBytes = 0;
-
-		/*
-		 * Call the application handler to indicate
-		 * the data has been sent
-		 */
-		InstancePtr->SendHandler(InstancePtr->SendCallBackRef, SaveReq);
-	}
-	/*
-	 * Otherwise there is still more data to send in the specified buffer
-	 * so go ahead and send it
-	 */
-	else {
-		XUartLite_SendBuffer(InstancePtr);
-	}
-
-	/*
-	 * Update the transmit stats to reflect the transmit interrupt
-	 */
-	InstancePtr->Stats.TransmitInterrupts++;
+	InstancePtr->SendHandler(InstancePtr->UartLite->SendCallBackRef, ByteCount);
 }
 
 
@@ -288,25 +171,18 @@ static void SendDataHandler(XUartLite *InstancePtr)
 * data may still be received by the UART but no interrupt will be generated
 * since the hardware device has no way to disable the receiver.
 *
-* @param	InstancePtr is a pointer to the XUartLite instance.
+* @param	InstancePtr is a pointer to the XUartExt instance.
 *
 * @return	None.
 *
 * @note		None.
 *
 *****************************************************************************/
-void XUartLite_DisableInterrupt(XUartLite *InstancePtr)
+void XUartExt_DisableInterrupt(XUartExt *InstancePtr)
 {
 	Xil_AssertVoid(InstancePtr != NULL);
-	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 
-	/*
-	 * Write to the control register to disable the interrupts, the only
-	 * other bits in this register are the FIFO reset bits such that
-	 * writing them to zero will not affect them.
-	 */
-	XUartLite_WriteReg(InstancePtr->RegBaseAddress,
-				XUL_CONTROL_REG_OFFSET, 0);
+	XUartLite_DisableInterrupt(InstancePtr->UartLite);
 }
 
 /*****************************************************************************/
@@ -318,24 +194,17 @@ void XUartLite_DisableInterrupt(XUartLite *InstancePtr)
 * anytime there is data in the receive FIFO and when the transmit FIFO
 * transitions from not empty to empty.
 *
-* @param	InstancePtr is a pointer to the XUartLite instance.
+* @param	InstancePtr is a pointer to the XUartExt instance.
 *
 * @return	None.
 *
 * @note		None.
 *
 *****************************************************************************/
-void XUartLite_EnableInterrupt(XUartLite *InstancePtr)
+void XUartExt_EnableInterrupt(XUartExt *InstancePtr)
 {
 	Xil_AssertVoid(InstancePtr != NULL);
-	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 
-	/*
-	 * Write to the control register to enable the interrupts, the only
-	 * other bits in this register are the FIFO reset bits such that
-	 * writing them to zero will not affect them.
-	 */
-	XUartLite_WriteReg(InstancePtr->RegBaseAddress,
-				XUL_CONTROL_REG_OFFSET, XUL_CR_ENABLE_INTR);
+	XUartLite_EnableInterrupt(InstancePtr->UartLite);
 }
 
