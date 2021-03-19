@@ -16,7 +16,7 @@ extern "C" {
 #include "xuartext.h"
 #include "xuartext_l.h"
 
-#include "xuartlite_i"
+#include "xuartlite_i.h"
 
 /************************** Constant Definitions ****************************/
 

@@ -179,44 +179,43 @@ component axi_ttl_memory_bus_master
 	C_MST_DWIDTH 		: integer 			:= 32
 	  );
     port(
-      	ChipEnable 		: in std_logic
---      	OutputEnable 		: in std_logic;
---      	WriteEnable 		: in std_logic;
---      	Address 		: in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
---      	Data 			: inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
---      	MappedAddress 		: in std_logic_vector(C_MST_AWIDTH - 1 downto 0)
+      	ChipEnable 		: in std_logic;
+      	OutputEnable 		: in std_logic;
+      	WriteEnable 		: in std_logic;
+      	Address 		: in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
+      	Data 			: inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
+      	MappedAddress 		: in std_logic_vector(C_MST_AWIDTH - 1 downto 0);
 			
---			-----------------------------------------------------------------------------
---    -- IP Master Request/Qualifers
---    -----------------------------------------------------------------------------
---    ip2bus_mstwr_req           : out  std_logic;                                           -- IPIC
---    ip2bus_mst_addr            : out  std_logic_vector(C_M_AXI_LITE_ADDR_WIDTH-1 downto 0);    -- IPIC
---    ip2bus_mst_be              : out  std_logic_vector((C_M_AXI_LITE_DATA_WIDTH/8)-1 downto 0);-- IPIC     
---    ip2bus_mst_lock            : out  std_logic;                                           -- IPIC
---    ip2bus_mst_reset           : out  std_logic;                                           -- IPIC
---                                                                                          -- IPIC
---    -----------------------------------------------------------------------------
---    -- IP Request Status Reply                                                            
---    -----------------------------------------------------------------------------
---    bus2ip_mst_cmdack          : in std_logic;                                           -- IPIC
---    bus2ip_mst_cmplt           : in std_logic;                                           -- IPIC
---    bus2ip_mst_error           : in std_logic;                                           -- IPIC
---    bus2ip_mst_rearbitrate     : in std_logic;                                           -- IPIC
---    bus2ip_mst_cmd_timeout     : in std_logic;                                           -- IPIC
---                                                                                          -- IPIC
---                                                                                          -- IPIC
---    -----------------------------------------------------------------------------
---    -- IPIC Read data                                                                     
---    -----------------------------------------------------------------------------
---    bus2ip_mstrd_d             : in std_logic_vector(C_M_AXI_LITE_DATA_WIDTH-1 downto 0);-- IPIC
---    bus2ip_mstrd_src_rdy_n     : in std_logic;                                           -- IPIC
---                                                                                          -- IPIC
---    -----------------------------------------------------------------------------
---    -- IPIC Write data                                                                    
---    -----------------------------------------------------------------------------
---    ip2bus_mstwr_d             : out  std_logic_vector(C_M_AXI_LITE_DATA_WIDTH-1 downto 0);-- IPIC
---    bus2ip_mstwr_dst_rdy_n     : in  std_logic
-);                                          -- IPIC
+			-----------------------------------------------------------------------------
+    -- IP Master Request/Qualifers
+    -----------------------------------------------------------------------------
+    ip2bus_mstwr_req           : out  std_logic;                                           -- IPIC
+    ip2bus_mst_addr            : out  std_logic_vector(C_M_AXI_LITE_ADDR_WIDTH-1 downto 0);    -- IPIC
+    ip2bus_mst_be              : out  std_logic_vector((C_M_AXI_LITE_DATA_WIDTH/8)-1 downto 0);-- IPIC     
+    ip2bus_mst_lock            : out  std_logic;                                           -- IPIC
+    ip2bus_mst_reset           : out  std_logic;                                           -- IPIC
+                                                                                          -- IPIC
+    -----------------------------------------------------------------------------
+    -- IP Request Status Reply                                                            
+    -----------------------------------------------------------------------------
+    bus2ip_mst_cmdack          : in std_logic;                                           -- IPIC
+    bus2ip_mst_cmplt           : in std_logic;                                           -- IPIC
+    bus2ip_mst_error           : in std_logic;                                           -- IPIC
+    bus2ip_mst_rearbitrate     : in std_logic;                                           -- IPIC
+    bus2ip_mst_cmd_timeout     : in std_logic;                                           -- IPIC
+                                                                                          -- IPIC
+                                                                                          -- IPIC
+    -----------------------------------------------------------------------------
+    -- IPIC Read data                                                                     
+    -----------------------------------------------------------------------------
+    bus2ip_mstrd_d             : in std_logic_vector(C_M_AXI_LITE_DATA_WIDTH-1 downto 0);-- IPIC
+    bus2ip_mstrd_src_rdy_n     : in std_logic;                                           -- IPIC
+                                                                                          -- IPIC
+    -----------------------------------------------------------------------------
+    -- IPIC Write data                                                                    
+    -----------------------------------------------------------------------------
+    ip2bus_mstwr_d             : out  std_logic_vector(C_M_AXI_LITE_DATA_WIDTH-1 downto 0);-- IPIC
+    bus2ip_mstwr_dst_rdy_n     : in  std_logic);                                          -- IPIC
 end component;
 
 ------------------------------------------------------------------------
@@ -298,39 +297,39 @@ begin
 ------------------------------------------------------------------------
 -- Instantiate axi_ttl_memory_bus_master
 ------------------------------------------------------------------------
---    Inst_AxiBusMasterImpl: axi_ttl_memory_bus_master
---    generic map(
---        C_ADDR_WIDTH            => C_ADDR_WIDTH,
---        C_DATA_WIDTH            => C_DATA_WIDTH,
---        C_MST_AWIDTH            => C_MST_AWIDTH,
---        C_MST_DWIDTH            => C_MST_DWIDTH)
---    port map(
---        ChipEnable              => ChipEnable
---        OutputEnable            => OutputEnable,
---        WriteEnable             => WriteEnable,
---	Address                 => Address,
---	Data	                => Data,
---	MappedAddress           => MappedAddress
+    Inst_AxiBusMasterImpl: axi_ttl_memory_bus_master
+    generic map(
+        C_ADDR_WIDTH            => C_ADDR_WIDTH,
+        C_DATA_WIDTH            => C_DATA_WIDTH,
+        C_MST_AWIDTH            => C_MST_AWIDTH,
+        C_MST_DWIDTH            => C_MST_DWIDTH)
+    port map(
+        ChipEnable              => ChipEnable,
+        OutputEnable            => OutputEnable,
+        WriteEnable             => WriteEnable,
+		  Address                 => Address,
+		  Data	                => Data,
+		  MappedAddress           => MappedAddress,
 
---      ip2bus_mstrd_req => ip2bus_mstrd_req,
---      ip2bus_mstwr_req => ip2bus_mstwr_req,
---      ip2bus_mst_addr => ip2bus_mst_addr,
---      ip2bus_mst_be => ip2bus_mst_be,
---      ip2bus_mst_lock => ip2bus_mst_lock,
---      ip2bus_mst_reset => ip2bus_mst_reset,
---
---      bus2ip_mst_cmdack => bus2ip_mst_cmdack,
---      bus2ip_mst_cmplt => bus2ip_mst_cmplt,
---      bus2ip_mst_error => bus2ip_mst_error,
---      bus2ip_mst_rearbitrate => bus2ip_mst_rearbitrate,
---      bus2ip_mst_cmd_timeout => bus2ip_mst_cmd_timeout,
---
---      bus2ip_mstrd_d => bus2ip_mstrd_d,
---      bus2ip_mstrd_src_rdy_n => bus2ip_mstrd_src_rdy_n,
---
---      ip2bus_mstwr_d => ip2bus_mstwr_d,
---      bus2ip_mstwr_dst_rdy_n => bus2ip_mstwr_dst_rdy_n
-      --  );
+      ip2bus_mstrd_req => ip2bus_mstrd_req,
+      ip2bus_mstwr_req => ip2bus_mstwr_req,
+      ip2bus_mst_addr => ip2bus_mst_addr,
+      ip2bus_mst_be => ip2bus_mst_be,
+      ip2bus_mst_lock => ip2bus_mst_lock,
+      ip2bus_mst_reset => ip2bus_mst_reset,
+
+      bus2ip_mst_cmdack => bus2ip_mst_cmdack,
+      bus2ip_mst_cmplt => bus2ip_mst_cmplt,
+      bus2ip_mst_error => bus2ip_mst_error,
+      bus2ip_mst_rearbitrate => bus2ip_mst_rearbitrate,
+      bus2ip_mst_cmd_timeout => bus2ip_mst_cmd_timeout,
+
+      bus2ip_mstrd_d => bus2ip_mstrd_d,
+      bus2ip_mstrd_src_rdy_n => bus2ip_mstrd_src_rdy_n,
+
+      ip2bus_mstwr_d => ip2bus_mstwr_d,
+      bus2ip_mstwr_dst_rdy_n => bus2ip_mstwr_dst_rdy_n
+      );
 
 end Behavioral;
 

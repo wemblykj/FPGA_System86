@@ -23,7 +23,7 @@
 /************************** Function Prototypes *****************************/
 
 static void StubDataHandler(void *CallBackRef, unsigned int ByteCount);
-static void StubCommandHandler(void *CallBackRef, const char* Command, const char* Data);
+static void StubCommandHandler(void *CallBackRef, unsigned int CommandCount);
 
 /****************************************************************************/
 /**
@@ -72,7 +72,7 @@ int XUartExt_CfgInitialize(XUartExt *InstancePtr, XUartExt_Config *Config,
 	InstancePtr->SendHandler = StubDataHandler;
 	InstancePtr->CommandHandler = StubCommandHandler;
 
-	XUartLite_CfgInitialize(InstancePtr->UartLite, Config->UartLite, EffectiveAddr);
+	XUartLite_CfgInitialize(&InstancePtr->Uart, &Config->Uart, EffectiveAddr);
 
 	return XST_SUCCESS;
 }
@@ -113,7 +113,7 @@ unsigned int XUartExt_Send(XUartExt *InstancePtr, u8 *DataBufferPtr,
 {
 	Xil_AssertNonvoid(InstancePtr != NULL);
 
-	return XUartLite_Send(InstancePtr->UartLite, DataBufferPtr, NumBytes);
+	return XUartLite_Send(&InstancePtr->Uart, DataBufferPtr, NumBytes);
 }
 
 
@@ -156,7 +156,7 @@ unsigned int XUartExt_Recv(XUartExt *InstancePtr, u8 *DataBufferPtr,
 	 */
 	Xil_AssertNonvoid(InstancePtr != NULL);
 
-	return XUartLite_Recv(InstancePtr->UartLite, DataBufferPtr, NumBytes);
+	return XUartLite_Recv(&InstancePtr->Uart, DataBufferPtr, NumBytes);
 }
 
 /****************************************************************************/
@@ -178,7 +178,7 @@ void XUartExt_ResetFifos(XUartExt *InstancePtr)
 {
 	Xil_AssertVoid(InstancePtr != NULL);
 
-	return XUartLite_ResetFifos(InstancePtr->UartLite);
+	XUartLite_ResetFifos(&InstancePtr->Uart);
 }
 
 /****************************************************************************/
@@ -198,7 +198,7 @@ int XUartExt_IsSending(XUartExt *InstancePtr)
 {
 	Xil_AssertVoid(InstancePtr != NULL);
 
-	return XUartLite_IsSending(InstancePtr->UartLite);
+	return XUartLite_IsSending(&InstancePtr->Uart);
 }
 
 
@@ -217,7 +217,7 @@ int XUartExt_IsSending(XUartExt *InstancePtr)
 * @note		None.
 *
 *****************************************************************************/
-static void StubHandler(void *CallBackRef, unsigned int ByteCount)
+static void StubDataHandler(void *CallBackRef, unsigned int ByteCount)
 {
 	(void) CallBackRef;
 	(void) ByteCount;
@@ -242,11 +242,10 @@ static void StubHandler(void *CallBackRef, unsigned int ByteCount)
 * @note		None.
 *
 *****************************************************************************/
-static void StubCommandHandler(void *CallBackRef, const char* Command, const char* Data)
+static void StubCommandHandler(void *CallBackRef, unsigned int CommandCount)
 {
 	(void) CallBackRef;
-	(void) Command;
-	(void) Data;
+	(void) CommandCount;
 	/*
 	 * Assert occurs always since this is a stub and should never be called
 	 */

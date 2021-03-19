@@ -40,7 +40,7 @@
 ******************************************************************************/
 void XUartExt_SendByte(u32 BaseAddress, u8 Data)
 {
-	XUartLite_SendByte(BaseAddress, Data;
+	XUartLite_SendByte(BaseAddress, Data);
 }
 
 

@@ -47,7 +47,7 @@ void XUartExt_GetStats(XUartExt *InstancePtr, XUartExt_Stats *StatsPtr)
 	 */
 	Xil_AssertVoid(InstancePtr != NULL);
 
-	return XUartLite_GetStats(InstancePtr->UartLite, StatsPtr);
+	return XUartLite_GetStats(&InstancePtr->Uart, &StatsPtr->Uart);
 }
 
 /****************************************************************************/
@@ -69,6 +69,6 @@ void XUartExt_ClearStats(XUartExt *InstancePtr)
 	 */
 	Xil_AssertVoid(InstancePtr != NULL);
 
-	return XUartLite_ClearStats(InstancePtr->UartLite);
+	return XUartLite_ClearStats(&InstancePtr->Uart);
 }
 

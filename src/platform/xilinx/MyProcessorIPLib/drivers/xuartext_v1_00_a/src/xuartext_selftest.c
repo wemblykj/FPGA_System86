@@ -51,7 +51,7 @@ int XUartExt_SelfTest(XUartExt *InstancePtr)
 {
 	Xil_AssertVoid(InstancePtr != NULL);
 
-	return XUartLite_SelfTest(InstancePtr->UartLite)
+	return XUartLite_SelfTest(&InstancePtr->Uart);
 }
 
 

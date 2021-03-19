@@ -44,7 +44,7 @@ XUartExt_Config *XUartExt_LookupConfig(u16 DeviceId)
 	u32 Index;
 
 	for (Index=0; Index < XPAR_XUARTEXT_NUM_INSTANCES; Index++) {
-		if (XUartExt_ConfigTable[Index]->UartLite.DeviceId == DeviceId) {
+		if (XUartExt_ConfigTable[Index].Uart.DeviceId == DeviceId) {
 			CfgPtr = &XUartExt_ConfigTable[Index];
 			break;
 		}
@@ -86,6 +86,6 @@ int XUartExt_Initialize(XUartExt *InstancePtr, u16 DeviceId)
 	 */
 	Xil_AssertNonvoid(InstancePtr != NULL);
 
-	return XUartLite_Initialise(InstancePtr->UartLite, DeviceId);
+	return XUartLite_Initialise(InstancePtr->Uart, DeviceId);
 }
 

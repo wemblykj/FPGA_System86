@@ -258,7 +258,7 @@ int main(void)
 {
 	XSpi_Config *ConfigPtr;	/* Pointer to Configuration data */
 
-	int ret, i;
+	int ret;
 	Result res;
 
 	init_platform();
@@ -282,10 +282,10 @@ int main(void)
 	}
 
 	//Perform a self-test to ensure that the hardware was built correctly.
-	/*ret = XSpi_SelfTest(&Spi);
+	ret = XSpi_SelfTest(&Spi);
 	if(ret != XST_SUCCESS) {
 		return XST_FAILURE;
-	}*/
+	}
 
 	/*
 	 * Connect the SPI driver to the interrupt subsystem such that

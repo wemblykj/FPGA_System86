@@ -6,8 +6,8 @@
 
 /***************************** Include Files ********************************/
 
-#include "xuartlite.h"
-#include "xuartlite_i.h"
+#include "xuartext.h"
+#include "xuartext_i.h"
 #include "xil_io.h"
 
 /************************** Constant Definitions ****************************/
@@ -52,12 +52,13 @@ void XUartExt_SetRecvHandler(XUartExt *InstancePtr,
 	 */
 	Xil_AssertVoid(InstancePtr != NULL);
 	Xil_AssertVoid(FuncPtr != NULL);
-	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+	Xil_AssertVoid(InstancePtr->Uart.IsReady == XIL_COMPONENT_IS_READY);
 
 	InstancePtr->RecvHandler = FuncPtr;
+	InstancePtr->RecvCallBackRef = CallBackRef;
 
-	InstancePtr->UartLite->RecvHandler = ReceiveDataHandler;
-	InstancePtr->UartLite->RecvCallBackRef = CallBackRef;
+	InstancePtr->Uart.RecvHandler = ReceiveDataHandler;
+	InstancePtr->Uart.RecvCallBackRef = InstancePtr;
 }
 
 /****************************************************************************/
@@ -87,12 +88,13 @@ void XUartExt_SetSendHandler(XUartExt *InstancePtr,
 	 */
 	Xil_AssertVoid(InstancePtr != NULL);
 	Xil_AssertVoid(FuncPtr != NULL);
-	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+	Xil_AssertVoid(InstancePtr->Uart.IsReady == XIL_COMPONENT_IS_READY);
 
 	InstancePtr->SendHandler = FuncPtr;
+	InstancePtr->SendCallBackRef = CallBackRef;
 
-	InstancePtr->UartLite->SendHandler = SendDataHandler;
-	InstancePtr->UartLite->SendCallBackRef = CallBackRef;
+	InstancePtr->Uart.SendHandler = SendDataHandler;
+	InstancePtr->Uart.SendCallBackRef = InstancePtr;
 }
 
 /****************************************************************************/
@@ -113,7 +115,7 @@ void XUartExt_SetSendHandler(XUartExt *InstancePtr,
 *		know what it is (nor should it)
 *
 *****************************************************************************/
-void XUartExt_CommandHandler(XUartExt *InstancePtr,
+void XUartExt_SetCommandHandler(XUartExt *InstancePtr,
 				XUartExt_CommandHandler FuncPtr, void *CallBackRef)
 {
 	/*
@@ -122,9 +124,10 @@ void XUartExt_CommandHandler(XUartExt *InstancePtr,
 	 */
 	Xil_AssertVoid(InstancePtr != NULL);
 	Xil_AssertVoid(FuncPtr != NULL);
-	Xil_AssertVoid(InstancePtr->UartLite->IsReady == XIL_COMPONENT_IS_READY);
+	Xil_AssertVoid(InstancePtr->Uart.IsReady == XIL_COMPONENT_IS_READY);
 
 	InstancePtr->CommandHandler = FuncPtr;
+	InstancePtr->CommandCallBackRef = CallBackRef;
 }
 
 /****************************************************************************/
@@ -142,7 +145,7 @@ void XUartExt_CommandHandler(XUartExt *InstancePtr,
 *****************************************************************************/
 static void ReceiveDataHandler(XUartExt *InstancePtr, unsigned int ByteCount)
 {
-	InstancePtr->RecvHandler(InstancePtr->UartLite->RecvCallBackRef, ByteCount);
+	InstancePtr->RecvHandler(InstancePtr->RecvCallBackRef, ByteCount);
 }
 
 /****************************************************************************/
@@ -160,7 +163,7 @@ static void ReceiveDataHandler(XUartExt *InstancePtr, unsigned int ByteCount)
 *****************************************************************************/
 static void SendDataHandler(XUartExt *InstancePtr, unsigned int ByteCount)
 {
-	InstancePtr->SendHandler(InstancePtr->UartLite->SendCallBackRef, ByteCount);
+	InstancePtr->SendHandler(InstancePtr->SendCallBackRef, ByteCount);
 }
 
 
@@ -182,7 +185,7 @@ void XUartExt_DisableInterrupt(XUartExt *InstancePtr)
 {
 	Xil_AssertVoid(InstancePtr != NULL);
 
-	XUartLite_DisableInterrupt(InstancePtr->UartLite);
+	XUartLite_DisableInterrupt(&InstancePtr->Uart);
 }
 
 /*****************************************************************************/
@@ -205,6 +208,6 @@ void XUartExt_EnableInterrupt(XUartExt *InstancePtr)
 {
 	Xil_AssertVoid(InstancePtr != NULL);
 
-	XUartLite_EnableInterrupt(InstancePtr->UartLite);
+	XUartLite_EnableInterrupt(&InstancePtr->Uart);
 }
 

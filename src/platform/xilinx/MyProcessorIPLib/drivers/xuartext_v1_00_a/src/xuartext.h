@@ -39,22 +39,14 @@ typedef void (*XUartExt_DataHandler)(void *CallBackRef, unsigned int ByteCount);
  * The second argument is the the command proceding the AT command, the third argument is the data
  * associated with theat command.
  */
-typedef void (*XUartExt_CommandHandler)(void *CallBackRef, const char* Command, const char* Data);
+typedef void (*XUartExt_CommandHandler)(void *CallBackRef, unsigned int CommandCount);
 
-#if 0
 /**
  * Statistics for the XUartExt driver
  */
 typedef struct {
-	u32 TransmitInterrupts;		/**< Number of transmit interrupts */
-	u32 ReceiveInterrupts;		/**< Number of receive interrupts */
-	u32 CharactersTransmitted;	/**< Number of characters transmitted */
-	u32 CharactersReceived;		/**< Number of characters received */
-	u32 ReceiveOverrunErrors;	/**< Number of receive overruns */
-	u32 ReceiveParityErrors;	/**< Number of receive parity errors */
-	u32 ReceiveFramingErrors;	/**< Number of receive framing errors */
+	XUartLite_Stats Uart;
 } XUartExt_Stats;
-#endif
 
 /**
  * The following data type is used to manage the buffers that are handled
@@ -71,7 +63,7 @@ typedef struct {
  * This typedef contains configuration information for the device.
  */
 typedef struct {
-	UartLite_Config UartLite;
+	XUartLite_Config Uart;
 } XUartExt_Config;
 
 /**
@@ -80,14 +72,17 @@ typedef struct {
  * to a variable of this type is then passed to the driver API functions.
  */
 typedef struct {
-	XUartLite UartLite;
+	XUartLite Uart;
 
 	XUartExt_Buffer SendBuffer;
 	XUartExt_Buffer ReceiveBuffer;
 
 	XUartExt_DataHandler RecvHandler;
+	void* RecvCallBackRef;
 	XUartExt_DataHandler SendHandler;
+	void* SendCallBackRef;
 	XUartExt_CommandHandler CommandHandler;
+	void* CommandCallBackRef;
 } XUartExt;
 
 
