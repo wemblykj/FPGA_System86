@@ -18,8 +18,8 @@
 
 /************************** Function Prototypes *****************************/
 
-static void ReceiveDataHandler(XUartExt *InstancePtr, unsigned int ByteCount);
-static void SendDataHandler(XUartExt *InstancePtr, unsigned int ByteCount);
+static void ReceiveDataHandler(void* CallBackRef, unsigned int ByteCount);
+static void SendDataHandler(void* CallBackRef, unsigned int ByteCount);
 
 /************************** Variable Definitions ****************************/
 
@@ -143,8 +143,9 @@ void XUartExt_SetCommandHandler(XUartExt *InstancePtr,
 * @note		None.
 *
 *****************************************************************************/
-static void ReceiveDataHandler(XUartExt *InstancePtr, unsigned int ByteCount)
+static void ReceiveDataHandler(void *CallBackRef, unsigned int ByteCount)
 {
+	XUartExt *InstancePtr = CallBackRef;
 	InstancePtr->RecvHandler(InstancePtr->RecvCallBackRef, ByteCount);
 }
 
@@ -161,8 +162,9 @@ static void ReceiveDataHandler(XUartExt *InstancePtr, unsigned int ByteCount)
 * @note		None.
 *
 *****************************************************************************/
-static void SendDataHandler(XUartExt *InstancePtr, unsigned int ByteCount)
+static void SendDataHandler(void *CallBackRef, unsigned int ByteCount)
 {
+	XUartExt *InstancePtr = CallBackRef;
 	InstancePtr->SendHandler(InstancePtr->SendCallBackRef, ByteCount);
 }
 
