@@ -36,8 +36,8 @@ entity axi_ttl_memory_bus_reg is
 		);
     port(
         Control      		 : out std_logic_vector(31 downto 0);
-		  Status       		 : in std_logic_vector(31 downto 0);
-		  MappedAddress  		 : out std_logic_vector(31 downto 0);
+        Status       		 : in std_logic_vector(31 downto 0);
+        MappedAddress  		 : out std_logic_vector(31 downto 0);
 		  
         Bus2IP_Clk          : in  std_logic;
         Bus2IP_Resetn       : in  std_logic;

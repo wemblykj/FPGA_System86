@@ -271,10 +271,11 @@ entity axi_ttl_memory_bus is
     C_HIGHADDR                    : std_logic_vector := X"00000000"
   );
   port (
+    rst               : in std_logic;
     -- ROM ports
-    ChipEnable : in std_logic := '0';
-    OutputEnable : in std_logic;
-    WriteEnable : in std_logic;
+    nChipEnable : in std_logic;
+    nOutputEnable : in std_logic;
+    nWriteEnable : in std_logic;
     Address : in std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
     Data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0);
 	 
@@ -378,20 +379,21 @@ architecture IMP of axi_ttl_memory_bus is
 
 component axi_ttl_memory_bus_master_top
     generic (
-	C_ADDR_WIDTH 		: integer 		:= 16;
-	C_DATA_WIDTH 		: integer 		:= 8;
+    C_ADDR_WIDTH 		: integer 		:= 16;
+    C_DATA_WIDTH 		: integer 		:= 8;
   	C_MAPPED_ADDRESS        : std_logic_vector   	:= X"FFFFFFFF";
-	C_USE_DYNAMIC_MAPPING : std_logic := '0';
-	C_M_AXI_ADDR_WIDTH 	: integer 		:= 32;
-	C_M_AXI_DATA_WIDTH 	: integer 		:= 32;
-	C_FAMILY : string := "virtex6";
-	C_MST_AWIDTH 	: integer 		:= 32;
-	C_MST_DWIDTH 	: integer 		:= 32
+    C_USE_DYNAMIC_MAPPING : std_logic := '0';
+    C_M_AXI_ADDR_WIDTH 	: integer 		:= 32;
+    C_M_AXI_DATA_WIDTH 	: integer 		:= 32;
+    C_FAMILY : string := "virtex6";
+    C_MST_AWIDTH 	: integer 		:= 32;
+    C_MST_DWIDTH 	: integer 		:= 32
     );
     port (
-      ChipEnable 		: in std_logic;
-      OutputEnable 		: in std_logic;
-      WriteEnable 		: in std_logic;
+      rst             : in std_logic;
+      nChipEnable 		: in std_logic;
+      nOutputEnable 		: in std_logic;
+      nWriteEnable 		: in std_logic;
       Address 			: in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
       Data 			: inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
       MappedAddress 		: in std_logic_vector(C_M_AXI_ADDR_WIDTH - 1 downto 0);
@@ -426,8 +428,8 @@ end component;
 
 component axi_ttl_memory_bus_reg_top
     generic(
-  	C_MAPPED_ADDRESS        : std_logic_vector   	:= X"FFFFFFFF";
-  	C_USE_DYNAMIC_MAPPING	: std_logic  			:= '0';
+        C_MAPPED_ADDRESS        : std_logic_vector   	:= X"FFFFFFFF";
+        C_USE_DYNAMIC_MAPPING	: std_logic  			:= '0';
 		  
         C_S_AXI_DATA_WIDTH      : integer           := 32;
         C_S_AXI_ADDR_WIDTH      : integer           := 32;
@@ -632,37 +634,38 @@ begin -- architecture IMP
 
     Inst_AxiBusMaster: axi_ttl_memory_bus_master_top
     generic map(
-	C_ADDR_WIDTH        	=> C_ADDR_WIDTH,
-	C_DATA_WIDTH        	=> C_DATA_WIDTH,
-	C_MAPPED_ADDRESS        => C_MAPPED_ADDRESS,
-	C_USE_DYNAMIC_MAPPING	=> C_USE_DYNAMIC_MAPPING,
+        C_ADDR_WIDTH        	  => C_ADDR_WIDTH,
+        C_DATA_WIDTH        	  => C_DATA_WIDTH,
+        C_MAPPED_ADDRESS        => C_MAPPED_ADDRESS,
+        C_USE_DYNAMIC_MAPPING	  => C_USE_DYNAMIC_MAPPING,
         C_M_AXI_DATA_WIDTH      => C_M_AXI_DATA_WIDTH,
         C_M_AXI_ADDR_WIDTH      => C_M_AXI_ADDR_WIDTH,
         C_FAMILY                => C_FAMILY,
-		  C_MST_AWIDTH            => 32,
+        C_MST_AWIDTH            => 32,
         C_MST_DWIDTH            => 32)
     port map(
-  	ChipEnable		=> ChipEnable,
-  	OutputEnable		=> OutputEnable,
-  	WriteEnable		=> WriteEnable,
-  	Address			=> Address,
-  	Data			=> Data,
+        rst             => rst,
+        nChipEnable		  => nChipEnable,
+        nOutputEnable		=> nOutputEnable,
+        nWriteEnable		=> nWriteEnable,
+        Address			=> Address,
+        Data			=> Data,
         MappedAddress           => MappedAddress,
-			IP2INTC_Irpt           => IP2INTC_Irpt,
+        IP2INTC_Irpt           => IP2INTC_Irpt,
 			
         M_AXI_ACLK              => M_AXI_ACLK,
         M_AXI_ARESETN           => M_AXI_ARESETN,
 		  
         M_AXI_AWADDR            => M_AXI_AWADDR,
         M_AXI_AWVALID           => M_AXI_AWVALID,
-		  M_AXI_AWREADY           => M_AXI_AWREADY,
+        M_AXI_AWREADY           => M_AXI_AWREADY,
 		  
         M_AXI_WDATA             => M_AXI_WDATA,
         M_AXI_WSTRB             => M_AXI_WSTRB,
         M_AXI_WVALID            => M_AXI_WVALID,
-		  M_AXI_WREADY            => M_AXI_WREADY,
+        M_AXI_WREADY            => M_AXI_WREADY,
 		  
-		  M_AXI_BRESP             => M_AXI_BRESP,
+        M_AXI_BRESP             => M_AXI_BRESP,
         M_AXI_BVALID            => M_AXI_BVALID,
         M_AXI_BREADY            => M_AXI_BREADY,
 		  
@@ -670,7 +673,7 @@ begin -- architecture IMP
         M_AXI_ARVALID           => M_AXI_ARVALID,
         M_AXI_ARREADY           => M_AXI_ARREADY,
 		  
-		  M_AXI_RREADY            => M_AXI_RREADY,
+        M_AXI_RREADY            => M_AXI_RREADY,
         M_AXI_RDATA             => M_AXI_RDATA,
         M_AXI_RRESP             => M_AXI_RRESP,
         M_AXI_RVALID            => M_AXI_RVALID);
@@ -681,8 +684,8 @@ begin -- architecture IMP
     
     Inst_AxiSoftReg: axi_ttl_memory_bus_reg_top
     generic map(
-	C_MAPPED_ADDRESS        => C_MAPPED_ADDRESS,
-	C_USE_DYNAMIC_MAPPING	=> C_USE_DYNAMIC_MAPPING,
+        C_MAPPED_ADDRESS        => C_MAPPED_ADDRESS,
+        C_USE_DYNAMIC_MAPPING	=> C_USE_DYNAMIC_MAPPING,
         C_S_AXI_DATA_WIDTH      => C_S_AXI_DATA_WIDTH,
         C_S_AXI_ADDR_WIDTH      => C_S_AXI_ADDR_WIDTH,
         C_S_AXI_MIN_SIZE        => x"000001FF",
@@ -694,8 +697,8 @@ begin -- architecture IMP
         C_SLV_AWIDTH            => 32,
         C_SLV_DWIDTH            => 32)
     port map(
-  	Control		  	=> control,
-  	Status			=> status,
+        Control		  	=> control,
+        Status			=> status,
         MappedAddress           => mapped_address,
 
         S_AXI_ACLK              => S_AXI_ACLK,

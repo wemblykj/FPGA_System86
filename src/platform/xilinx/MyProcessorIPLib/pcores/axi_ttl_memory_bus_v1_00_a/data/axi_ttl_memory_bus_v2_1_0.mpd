@@ -75,9 +75,9 @@ PARAMETER C_S_AXI_PROTOCOL = AXI4LITE, DT = STRING, BUS = S_AXI, TYPE = NON_HDL,
 ## Ports
 
 # TTL Memory bus
-PORT ChipEnable = ChipEnable, DIR = I, BUS = S_RAM:S_ROM, PERMIT = BASE_USER
-PORT OutputEnable = OutputEnable, DIR = I, BUS = S_RAM:S_ROM, PERMIT = BASE_USER
-PORT WriteEnable = WriteEnable, DIR = I, BUS = S_RAM, PERMIT = BASE_USER, ISVALID = (C_READONLY == 0)
+PORT nChipEnable = nChipEnable, DIR = I, BUS = S_RAM:S_ROM, PERMIT = BASE_USER
+PORT nOutputEnable = nOutputEnable, DIR = I, BUS = S_RAM:S_ROM, PERMIT = BASE_USER
+PORT nWriteEnable = nWriteEnable, DIR = I, BUS = S_RAM, PERMIT = BASE_USER, ISVALID = (C_READONLY == 0)
 PORT Address = Addr, DIR = I, VEC = [(C_ADDR_WIDTH-1):0], BUS = S_RAM:S_ROM, PERMIT = BASE_USER
 #PORT data = Data, DIR = O, VEC = [(C_DATA_WIDTH-1):0], BUS = S_ROM, PERMIT = BASE_USER, ISVALID = (C_READONLY == 1)
 PORT Data = Data, DIR = IO, THREE_STATE = FALSE, VEC = [(C_DATA_WIDTH-1):0], BUS = S_RAM:S_ROM, PERMIT = BASE_USER #, ISVALID = (C_READONLY == 0)

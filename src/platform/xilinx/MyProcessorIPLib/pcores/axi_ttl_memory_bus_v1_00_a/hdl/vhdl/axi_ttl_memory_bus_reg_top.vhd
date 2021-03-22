@@ -52,8 +52,8 @@ entity axi_ttl_memory_bus_reg_top is
     port
     (
         Control      		 		 	   : out std_logic_vector(31 downto 0);
-		  Status       					   : in std_logic_vector(31 downto 0);
-		  MappedAddress  		 			   : out std_logic_vector(31 downto 0);
+        Status       					   : in std_logic_vector(31 downto 0);
+        MappedAddress  		 			 : out std_logic_vector(31 downto 0);
 		  
         S_AXI_ACLK                     : in  std_logic;
         S_AXI_ARESETN                  : in  std_logic;
@@ -146,8 +146,8 @@ component axi_ttl_memory_bus_reg
 	  );
     port(
         Control      		 	  : out std_logic_vector(31 downto 0);
-		  Status       		 	  : in std_logic_vector(31 downto 0);
-		  MappedAddress  		 	  : out std_logic_vector(31 downto 0);
+        Status       		 	  : in std_logic_vector(31 downto 0);
+        MappedAddress  		 	  : out std_logic_vector(31 downto 0);
 		  
         Bus2IP_Clk              : in  std_logic;
         Bus2IP_Resetn           : in  std_logic;
@@ -226,8 +226,9 @@ begin
         C_SLV_DWIDTH            => USER_SLV_DWIDTH)
     port map(
         Control                 => Control,
-		  Status                  => Status,
-		  MappedAddress           => MappedAddress,
+        Status                  => Status,
+        MappedAddress           => MappedAddress,
+        
         Bus2IP_Clk              => ipif_Bus2IP_Clk,
         Bus2IP_Resetn           => ipif_Bus2IP_Resetn,
         Bus2IP_Data             => ipif_Bus2IP_Data,

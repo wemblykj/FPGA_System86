@@ -19,7 +19,6 @@
 #include "xil_printf.h"
 
 #include "platform.h"
-
 #include "elf.h"	///< ELF image definitions
 #include "vt.h"		///< vector table definition
 
@@ -115,16 +114,16 @@
 /*
  * Base address of the ELF image in the SPI flash
  */
-//#define ELF_IMAGE_BASEADDR		0x00FF0000
-#define ELF_IMAGE_BASEADDR			0x00000000
+#define ELF_IMAGE_BASEADDR		0x00FF0000
+//#define ELF_IMAGE_BASEADDR			0x00000000
 #define BASE_VECTORS 				XPAR_MICROBLAZE_BASE_VECTORS
 
 // pretty sure the XSpi is byte based so I'm thinking the Adept address is not be
 /*
  * Enable debug for the ELF loader
  */
-#define DEBUG_ELF_HEADER
-#define DEBUG_ELF_PROG_HEADER
+//#define DEBUG_ELF_HEADER
+//#define DEBUG_ELF_PROG_HEADER
 
 /**************************** Type Definitions *******************************/
 
@@ -197,6 +196,8 @@ typedef int (*EntryPoint) (void);
 
 /************************** Function Prototypes ******************************/
 
+static int Initialise();
+
 static ReadCommandAttr SpiFlashReadMode(XSpi *SpiPtr);
 static Result SpiFlashReadRaw(XSpi *SpiPtr, /*u8* WriteBuffer, u8* ReadBuffer,*/ u32 BufferSize);
 static Result SpiFlashRead(XSpi *SpiPtr, u32 Addr, u8* Dest, u32 Size);
@@ -256,15 +257,62 @@ u8 ReadBuffer[READ_WRITE_EXTRA_BYTES + 4 + MAX_BLOCKSIZE];
 ******************************************************************************/
 int main(void)
 {
-	XSpi_Config *ConfigPtr;	/* Pointer to Configuration data */
-
-	int ret;
+	int Status;
 	Result res;
 
 	init_platform();
 
+
 	xil_printf("Spi Numonyx flash Quad SPI bootloader\r\n");
-	xil_printf("%s - %d\r\n", __DATE__, __TIME__);
+	xil_printf("%s - %s\r\n", __DATE__, __TIME__);
+
+	Status = Initialise();
+	if (Status != XST_SUCCESS) {
+		xil_printf("E_%08x\r\n", Status);
+		return XST_FAILURE;
+	}
+
+
+	EntryPoint ep = (EntryPoint)0;
+	VectorTable vt = {};
+
+	res = SpiFlashReadElf(&Spi, ELF_IMAGE_BASEADDR, &ep, &vt);
+	if(res != S_Success) {
+		xil_printf("E_%08x\r\n", res);
+		return XST_FAILURE;
+	}
+
+	/*
+	 * Read the data from the Page using Quad Output Fast Read command.
+	 *
+	 * unable to configure COMMAND_QUAD_READ hardware, possibly due to HDMI resource
+	 * requirements conflicting with the QSPI flash's IO2 and IO3 - DUAL seems to work though
+	 */
+	// disable memory caches whilst transferring image to DDR
+	disable_caches();
+
+	// Must [should?] disable interrupts before updating the vector table
+	ResetInterruptSystem(&Spi);
+
+	// Copy over the vector table for the new image
+	*((VectorTable*)BASE_VECTORS) = vt;
+
+	//xil_printf("\r\nCalling entry point at 0x%08x.\r\n", (void*)ep);
+
+	cleanup_platform();
+
+	// Call entry point (in most cases would appear to be a call to the reset vector)
+	ep();
+
+	// Never reached
+	return XST_SUCCESS;
+}
+
+static int Initialise()
+{
+	XSpi_Config *ConfigPtr;	/* Pointer to Configuration data */
+
+	int ret;
 
 	/*
 	 * Initialize the SPI driver so that it's ready to use,
@@ -335,58 +383,6 @@ int main(void)
 		return XST_FAILURE;
 	}
 
-	EntryPoint ep = (EntryPoint)0;
-	VectorTable vt = {};
-
-	res = SpiFlashReadElf(&Spi, ELF_IMAGE_BASEADDR, &ep, &vt);
-	if(res != S_Success) {
-		xil_printf("E_%08x\r\n", res);
-		return XST_FAILURE;
-	}
-
-	/*
-	 * Read the data from the Page using Quad Output Fast Read command.
-	 *
-	 * unable to configure COMMAND_QUAD_READ hardware, possibly due to HDMI resource
-	 * requirements conflicting with the QSPI flash's IO2 and IO3 - DUAL seems to work though
-	 */
-	// disable memory caches whilst transferring image to DDR
-	disable_caches();
-
-	// Must [should?] disable interrupts before updating the vector table
-	ResetInterruptSystem(&Spi);
-
-	/*for (i = BASE_VECTORS; i < sizeof(vt); ++i) {
-			if ((i %16) == 0)
-				xil_printf("\r\n0x%x:", i);
-			xil_printf(" 0x%x", *(u8*)i);
-	}*/
-	// Copy over the vector table for the new image
-	*((VectorTable*)BASE_VECTORS) = vt;
-	//memcpy(BASE_VECTORS, &vt, sizeof(VectorTable));
-
-
-	/*for (i = BASE_VECTORS; i < sizeof(vt); ++i) {
-		if ((i %16) == 0)
-			xil_printf("\r\n0x%x:", i);
-		xil_printf(" 0x%x", *(u8*)i);
-	}*/
-
-	/*if (memcmp(BASE_VECTORS, &vt, sizeof(VectorTable)) != 0) {
-		xil_printf("E_%08x\r\n", E_VectorTableValidation);
-		return XST_FAILURE;
-	}*/
-
-	xil_printf("\r\nCalling entry point at 0x%08x.\r\n", (void*)ep);
-
-	cleanup_platform();
-
-	// Call entry point (in most cases would appear to be a call to the reset vector)
-	ep();
-
-	xil_printf("elf returned");
-
-	// Never reached
 	return XST_SUCCESS;
 }
 
@@ -436,7 +432,7 @@ static Result SpiFlashReadElf(XSpi *SpiPtr, u32 Location, EntryPoint* ep, Vector
 
 		if (ph.Type == PrgHdrType_Load) {
 #ifdef DEBUG_ELF_PROG_HEADER
-			xil_printf("Offset: %d\r\n", Location + ph.Offset);
+			xil_printf("Offset: %d (0x%08x)\r\n", ph.Offset, Location + ph.Offset);
 			xil_printf("FileSize: %d\r\n", ph.FileSize);
 			xil_printf("MemSize: %d\r\n", ph.MemSize);
 			xil_printf("PhysAddr: 0x%08x\r\n", ph.PhysAddr);

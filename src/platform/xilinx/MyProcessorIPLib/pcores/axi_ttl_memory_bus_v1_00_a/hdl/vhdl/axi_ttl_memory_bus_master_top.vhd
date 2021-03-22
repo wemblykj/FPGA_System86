@@ -42,10 +42,10 @@ library axi_ttl_memory_bus_v1_00_a;
 entity axi_ttl_memory_bus_master_top is
     generic
     (
-	C_ADDR_WIDTH        		: integer     		:= 16;
-	C_DATA_WIDTH        		: integer     		:= 8;
-	C_MAPPED_ADDRESS        	: std_logic_vector     	:= X"FFFFFFFF";
-	C_USE_DYNAMIC_MAPPING	  	: std_logic  		:= '0';
+      C_ADDR_WIDTH        		: integer     		:= 16;
+      C_DATA_WIDTH        		: integer     		:= 8;
+      C_MAPPED_ADDRESS        	: std_logic_vector     	:= X"FFFFFFFF";
+      C_USE_DYNAMIC_MAPPING	  	: std_logic  		:= '0';
 		  
         C_M_AXI_DATA_WIDTH             : integer              	:= 32;
         C_M_AXI_ADDR_WIDTH             : integer              	:= 32;
@@ -60,25 +60,26 @@ entity axi_ttl_memory_bus_master_top is
     );
     port
     (
-      	ChipEnable 			: in std_logic;
-      	OutputEnable 			: in std_logic;
-      	WriteEnable 			: in std_logic;
-      	Address 			: in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
-      	Data 				: inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
-      	MappedAddress 			: in std_logic_vector(C_M_AXI_ADDR_WIDTH - 1 downto 0);
-			IP2INTC_Irpt            : out std_logic;
+        rst               : in std_logic;
+      	nChipEnable 			: in std_logic;
+      	nOutputEnable 		: in std_logic;
+      	nWriteEnable 			: in std_logic;
+      	Address 			    : in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
+      	Data 				      : inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
+      	MappedAddress 		: in std_logic_vector(C_M_AXI_ADDR_WIDTH - 1 downto 0);
+        IP2INTC_Irpt      : out std_logic;
 			
         M_AXI_ACLK                     : in  std_logic;
         M_AXI_ARESETN                  : in  std_logic;
 		  
         M_AXI_AWADDR                   : out  std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
         M_AXI_AWVALID                  : out  std_logic;
-		  M_AXI_AWREADY                  : in std_logic;
+        M_AXI_AWREADY                  : in std_logic;
 		  
         M_AXI_WDATA                    : out  std_logic_vector(C_M_AXI_DATA_WIDTH-1 downto 0);
         M_AXI_WSTRB                    : out  std_logic_vector((C_M_AXI_DATA_WIDTH/8)-1 downto 0);
         M_AXI_WVALID                   : out  std_logic;
-		  M_AXI_WREADY                   : in std_logic;
+        M_AXI_WREADY                   : in std_logic;
 		  
         M_AXI_BRESP                    : in std_logic_vector(1 downto 0);
         M_AXI_BVALID                   : in std_logic;
@@ -179,19 +180,20 @@ component axi_ttl_memory_bus_master
 	C_MST_DWIDTH 		: integer 			:= 32
 	  );
     port(
-      	ChipEnable 		: in std_logic;
-      	OutputEnable 		: in std_logic;
-      	WriteEnable 		: in std_logic;
-      	Address 		: in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
-      	Data 			: inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
-      	MappedAddress 		: in std_logic_vector(C_MST_AWIDTH - 1 downto 0);
+        rst             : in std_logic;
+      	nChipEnable 		: in std_logic;
+      	nOutputEnable 	: in std_logic;
+      	nWriteEnable 		: in std_logic;
+      	Address 		    : in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
+      	Data 			      : inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
+      	MappedAddress 	: in std_logic_vector(C_MST_AWIDTH - 1 downto 0);
 			
 			-----------------------------------------------------------------------------
     -- IP Master Request/Qualifers
     -----------------------------------------------------------------------------
     ip2bus_mstwr_req           : out  std_logic;                                           -- IPIC
-    ip2bus_mst_addr            : out  std_logic_vector(C_M_AXI_LITE_ADDR_WIDTH-1 downto 0);    -- IPIC
-    ip2bus_mst_be              : out  std_logic_vector((C_M_AXI_LITE_DATA_WIDTH/8)-1 downto 0);-- IPIC     
+    ip2bus_mst_addr            : out  std_logic_vector(C_MST_AWIDTH-1 downto 0);    -- IPIC
+    ip2bus_mst_be              : out  std_logic_vector((C_MST_DWIDTH/8)-1 downto 0);-- IPIC     
     ip2bus_mst_lock            : out  std_logic;                                           -- IPIC
     ip2bus_mst_reset           : out  std_logic;                                           -- IPIC
                                                                                           -- IPIC
@@ -208,13 +210,14 @@ component axi_ttl_memory_bus_master
     -----------------------------------------------------------------------------
     -- IPIC Read data                                                                     
     -----------------------------------------------------------------------------
-    bus2ip_mstrd_d             : in std_logic_vector(C_M_AXI_LITE_DATA_WIDTH-1 downto 0);-- IPIC
+    ip2bus_mstrd_req           : in  std_logic;                                           -- IPIC
+    bus2ip_mstrd_d             : in std_logic_vector(C_MST_DWIDTH-1 downto 0);-- IPIC
     bus2ip_mstrd_src_rdy_n     : in std_logic;                                           -- IPIC
                                                                                           -- IPIC
     -----------------------------------------------------------------------------
     -- IPIC Write data                                                                    
     -----------------------------------------------------------------------------
-    ip2bus_mstwr_d             : out  std_logic_vector(C_M_AXI_LITE_DATA_WIDTH-1 downto 0);-- IPIC
+    ip2bus_mstwr_d             : out  std_logic_vector(C_MST_DWIDTH-1 downto 0);-- IPIC
     bus2ip_mstwr_dst_rdy_n     : in  std_logic);                                          -- IPIC
 end component;
 
@@ -304,12 +307,13 @@ begin
         C_MST_AWIDTH            => C_MST_AWIDTH,
         C_MST_DWIDTH            => C_MST_DWIDTH)
     port map(
-        ChipEnable              => ChipEnable,
-        OutputEnable            => OutputEnable,
-        WriteEnable             => WriteEnable,
-		  Address                 => Address,
-		  Data	                => Data,
-		  MappedAddress           => MappedAddress,
+        rst                     => rst,
+        nChipEnable             => nChipEnable,
+        nOutputEnable           => nOutputEnable,
+        nWriteEnable            => nWriteEnable,
+        Address                 => Address,
+        Data	                  => Data,
+        MappedAddress           => MappedAddress,
 
       ip2bus_mstrd_req => ip2bus_mstrd_req,
       ip2bus_mstwr_req => ip2bus_mstwr_req,

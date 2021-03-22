@@ -41,6 +41,9 @@
 
 /************************** Function Prototypes ******************************/
 
+int Initialise();
+int InitialiseHardware();
+
 void ButtonsIsr(void *InstancePtr);
 
 int SetupInterruptSystem();
@@ -81,10 +84,52 @@ int main()
 
 	init_platform();
 
+	xil_printf("System 86 Hub\r\n");
+	xil_printf("%s - %s\r\n", __DATE__, __TIME__);
+
+	Status = Initialise();
+	if (Status != XST_SUCCESS) {
+		xil_printf("E_%08x", Status);
+		return XST_FAILURE;
+	}
+
+	XGpio_DiscreteWrite(&LedsGpio, LEDS_CHANNEL, 0x0000);
+
+	/*
+	 * Loop forever while the button changes are handled by the interrupt
+	 * level processing
+	 */
+	while (1) {
+	}
+
+	cleanup_platform();
+
+	return XST_SUCCESS;
+}
+
+int Initialise() {
+	int Status;
+
+	Status = InitialiseHardware();
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	Status = InitialiseMemoryBusses();
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	return XST_SUCCESS;
+}
+int InitialiseHardware()
+{
+	int Status;
+
 	Status = XGpio_Initialize(&LedsGpio, LEDS_DEVICE_ID);
-		if (Status != XST_SUCCESS) {
-			return XST_FAILURE;
-		}
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
 
 	/*
 	 * Setup direction register so the switch is an input and the LED is
@@ -133,8 +178,6 @@ int main()
 	 */
 	XGpio_SetDataDirection(&ButtonsGpio, BUTTONS_CHANNEL, 0xFFFF);
 
-	InitialiseMemoryBusses();
-
 	/*
 	 * Setup the interrupts such that interrupt processing can occur. If
 	 * an error occurs then exit
@@ -144,20 +187,8 @@ int main()
 		return XST_FAILURE;
 	}
 
-	XGpio_DiscreteWrite(&LedsGpio, LEDS_CHANNEL, 0x0000);
-
-	/*
-	 * Loop forever while the button changes are handled by the interrupt
-	 * level processing
-	 */
-	while (1) {
-	}
-
-	cleanup_platform();
-
 	return XST_SUCCESS;
 }
-
 /****************************************************************************/
 /**
 * This function sets up the interrupt system for the example.  The processing
