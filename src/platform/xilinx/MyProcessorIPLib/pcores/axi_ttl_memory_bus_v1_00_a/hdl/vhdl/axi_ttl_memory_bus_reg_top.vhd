@@ -55,10 +55,15 @@ entity axi_ttl_memory_bus_reg_top is
         Status       					   : in std_logic_vector(C_SLV_DWIDTH downto 0);
         MappedAddress  		 			 : out std_logic_vector(C_SLV_DWIDTH downto 0);
 		
-			BusWrite			: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-			BusRead 			: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-			IntrEnable		: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-			IntrStatus		: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        BusAddressRead 			: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        BusAddressWrite			: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        
+        BusDataRead 			: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        BusDataWrite			: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        
+        IntrEnable		: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        IntrStatus		: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        IntrAck		    : out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
 		
         S_AXI_ACLK                     : in  std_logic;
         S_AXI_ARESETN                  : in  std_logic;
@@ -104,7 +109,7 @@ constant IPIF_ARD_ADDR_RANGE_ARRAY      : SLV64_ARRAY_TYPE     :=
     ZERO_ADDR_PAD & USER_SLV_BASEADDR,  -- user logic slave space base address
     ZERO_ADDR_PAD & USER_SLV_HIGHADDR   -- user logic slave space high address
   );
-constant USER_SLV_NUM_REG               : integer              := 3;
+constant USER_SLV_NUM_REG               : integer              := 5;
 constant USER_NUM_REG                   : integer              := USER_SLV_NUM_REG;
 constant TOTAL_IPIF_CE                  : integer              := USER_NUM_REG;
 constant IPIF_ARD_NUM_CE_ARRAY          : INTEGER_ARRAY_TYPE   := 
@@ -154,11 +159,16 @@ component axi_ttl_memory_bus_reg
         Status       		 	  : in std_logic_vector(31 downto 0);
         MappedAddress  		 	  : out std_logic_vector(31 downto 0);
 		  
-		  BusRead 			: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-		  BusWrite			: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-			IntrEnable		: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-			IntrStatus		: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-			
+        BusAddressRead 			: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        BusAddressWrite			: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        
+        BusDataRead 			: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        BusDataWrite			: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        
+        IntrEnable		: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        IntrStatus		: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        IntrAck		    : out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        
         Bus2IP_Clk              : in  std_logic;
         Bus2IP_Resetn           : in  std_logic;
         Bus2IP_Data             : in  std_logic_vector(C_SLV_DWIDTH-1 downto 0);
@@ -239,10 +249,15 @@ begin
         Status                  => Status,
         MappedAddress           => MappedAddress,
 
-			BusRead				=> busRead,
-			BusWrite				=> busWrite,
-			IntrEnable				=> intrEnable,
-			IntrStatus				=> intrStatus,
+        BusAddressRead				  => BusAddressRead,
+        BusAddressWrite				  => BusAddressWrite,
+        
+        BusDataRead				      => BusDataRead,
+        BusDataWrite				    => BusDataWrite,
+        
+        IntrEnable				      => IntrEnable,
+        IntrStatus				      => IntrStatus,
+        IntrAck				          => IntrAck,
 			
         Bus2IP_Clk              => ipif_Bus2IP_Clk,
         Bus2IP_Resetn           => ipif_Bus2IP_Resetn,
