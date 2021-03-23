@@ -271,7 +271,6 @@ entity axi_ttl_memory_bus is
     C_HIGHADDR                    : std_logic_vector := X"00000000"
   );
   port (
-    rst               : in std_logic;
     -- ROM ports
     nChipEnable : in std_logic;
     nOutputEnable : in std_logic;
@@ -390,15 +389,20 @@ component axi_ttl_memory_bus_master_top
     C_MST_DWIDTH 	: integer 		:= 32
     );
     port (
-      rst             : in std_logic;
       nChipEnable 		: in std_logic;
       nOutputEnable 		: in std_logic;
       nWriteEnable 		: in std_logic;
-      Address 			: in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
-      Data 			: inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
+      Address 				: in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
+      Data 					: inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
       MappedAddress 		: in std_logic_vector(C_M_AXI_ADDR_WIDTH - 1 downto 0);
-		IP2INTC_Irpt            : out std_logic;
+		Interrupt         : out std_logic;
 
+		BusReadReg 			: out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+		BusWriteReg			: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+		IntrEnableReg 		: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+		IntrStatusReg		: out std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+			
+		
       M_AXI_ACLK              	: in  std_logic;
       M_AXI_ARESETN           	: in  std_logic;
 		
@@ -442,10 +446,15 @@ component axi_ttl_memory_bus_reg_top
         C_SLV_AWIDTH            : integer           := 32;
         C_SLV_DWIDTH            : integer           := 32);
     port(
-        Control    		: out std_logic_vector(31 downto 0);
-        Status       		: in std_logic_vector(31 downto 0);
-        MappedAddress  		: out std_logic_vector(31 downto 0);
+        Control    				  : out std_logic_vector(C_SLV_DWIDTH-1 downto 0);
+        Status       			  : in std_logic_vector(C_SLV_DWIDTH-1 downto 0);
+        MappedAddress  			  : out std_logic_vector(C_SLV_DWIDTH-1 downto 0);
 		  
+		  BusRead 			: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+		  BusWrite			: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+		  IntrEnable	   : out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+		  IntrStatus	   : in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+		
         S_AXI_ACLK              : in  std_logic;
         S_AXI_ARESETN           : in  std_logic;
         S_AXI_AWADDR            : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
@@ -614,13 +623,22 @@ constant bo2na      :  bo2na_type := (false => 0, true => 1);
   -- Signal and Type Declarations
   -------------------------------------------------------------------------------
 
-  -- Memory bus
-  signal control : std_logic_vector(31 downto 0);
-  signal status : std_logic_vector(31 downto 0);
+  -- Memory bus control
+  signal controlReg : std_logic_vector(31 downto 0);
+  signal statusReg : std_logic_vector(31 downto 0);
+  
+  -- Memory bus state
+  signal busReadReg : std_logic_vector(31 downto 0);
+  signal busWriteReg : std_logic_vector(31 downto 0);
+  
+  -- Interrupt
+  signal intrEnableReg : std_logic_vector(31 downto 0);
+  signal intrStatusReg : std_logic_vector(31 downto 0);
   
   -- Mapping
   signal mapped_address : std_logic_vector(31 downto 0);
 
+	
 
   -------------------------------------------------------------------------------
   -- Architecture
@@ -644,15 +662,21 @@ begin -- architecture IMP
         C_MST_AWIDTH            => 32,
         C_MST_DWIDTH            => 32)
     port map(
-        rst             => rst,
-        nChipEnable		  => nChipEnable,
-        nOutputEnable		=> nOutputEnable,
-        nWriteEnable		=> nWriteEnable,
-        Address			=> Address,
-        Data			=> Data,
+        nChipEnable		  		=> nChipEnable,
+        nOutputEnable			=> nOutputEnable,
+        nWriteEnable				=> nWriteEnable,
+        Address					=> Address,
+        Data						=> Data,
         MappedAddress           => MappedAddress,
-        IP2INTC_Irpt           => IP2INTC_Irpt,
+        Interrupt           	=> IP2INTC_Irpt,
 			
+			ControlReg				=> controlReg,
+			StatusReg				=> statusReg,
+		  BusReadReg				=> busReadReg,
+		  BusWriteReg				=> busWriteReg,
+		  IntrEnableReg				=> intrEnableReg,
+		  IntStatusReg				=> intrStatusReg,
+		  
         M_AXI_ACLK              => M_AXI_ACLK,
         M_AXI_ARESETN           => M_AXI_ARESETN,
 		  
@@ -697,10 +721,15 @@ begin -- architecture IMP
         C_SLV_AWIDTH            => 32,
         C_SLV_DWIDTH            => 32)
     port map(
-        Control		  	=> control,
-        Status			=> status,
+        Control		  	=> controlReg,
+        Status			=> statusReg,
         MappedAddress           => mapped_address,
 
+			BusRead				=> busReadReg,
+			BusWrite				=> busWriteReg,
+			IntrEnable				=> intrEnableReg,
+			IntrStatus				=> intrStatusReg,
+			
         S_AXI_ACLK              => S_AXI_ACLK,
         S_AXI_ARESETN           => S_AXI_ARESETN,
         S_AXI_AWADDR            => S_AXI_AWADDR,

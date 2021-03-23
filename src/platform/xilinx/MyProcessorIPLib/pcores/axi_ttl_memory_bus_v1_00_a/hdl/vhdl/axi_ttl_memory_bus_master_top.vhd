@@ -26,8 +26,6 @@ library proc_common_v3_00_a;
 use proc_common_v3_00_a.proc_common_pkg.all;
 use proc_common_v3_00_a.ipif_pkg.all;
 
-library interrupt_control_v2_01_a; 
-
 -------------------------------------------------------------------------------
 -- axi_master_lite_v2_00_a library is used for axi4 component declarations
 -------------------------------------------------------------------------------
@@ -60,14 +58,18 @@ entity axi_ttl_memory_bus_master_top is
     );
     port
     (
-        rst               : in std_logic;
-      	nChipEnable 			: in std_logic;
+        nChipEnable 			: in std_logic;
       	nOutputEnable 		: in std_logic;
       	nWriteEnable 			: in std_logic;
       	Address 			    : in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
       	Data 				      : inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
       	MappedAddress 		: in std_logic_vector(C_M_AXI_ADDR_WIDTH - 1 downto 0);
-        IP2INTC_Irpt      : out std_logic;
+        Interrupt      : out std_logic;
+			
+			BusReadReg 			: out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+			BusWriteReg			: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+			IntrEnableReg 		: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+			IntrStatusReg		: out std_logic_vector(C_MST_DWIDTH - 1 downto 0);
 			
         M_AXI_ACLK                     : in  std_logic;
         M_AXI_ARESETN                  : in  std_logic;
@@ -133,9 +135,6 @@ architecture Behavioral of axi_ttl_memory_bus_master_top is
 -- Signal Declarations
 ------------------------------------------------------------------------
 
-  -- Interrupts
-  signal ip2bus_intrevent     : std_logic_vector(0 to 1);
-
   -- AXI Lite Master
   -----------------------------------------------------------------------------
   -- IP Master Request/Qualifers
@@ -180,7 +179,7 @@ component axi_ttl_memory_bus_master
 	C_MST_DWIDTH 		: integer 			:= 32
 	  );
     port(
-        rst             : in std_logic;
+			rst_n             : in std_logic;
       	nChipEnable 		: in std_logic;
       	nOutputEnable 	: in std_logic;
       	nWriteEnable 		: in std_logic;
@@ -188,6 +187,13 @@ component axi_ttl_memory_bus_master
       	Data 			      : inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
       	MappedAddress 	: in std_logic_vector(C_MST_AWIDTH - 1 downto 0);
 			
+			Interrupt   : out std_logic;
+
+			BusReadReg 			: out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+			BusWriteReg			: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+			IntrEnableReg 		: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+			IntrStatusReg		: out std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+		   
 			-----------------------------------------------------------------------------
     -- IP Master Request/Qualifers
     -----------------------------------------------------------------------------
@@ -307,14 +313,22 @@ begin
         C_MST_AWIDTH            => C_MST_AWIDTH,
         C_MST_DWIDTH            => C_MST_DWIDTH)
     port map(
-        rst                     => rst,
+        rst_n                   => M_AXI_ARESETN,
         nChipEnable             => nChipEnable,
         nOutputEnable           => nOutputEnable,
         nWriteEnable            => nWriteEnable,
         Address                 => Address,
         Data	                  => Data,
         MappedAddress           => MappedAddress,
+		  
+		  Interrupt						=> Interrupt,
 
+			BusReadReg				=> BusReadReg,
+			BusWriteReg				=> BusWriteReg,
+			
+			IntrEnableReg			=> IntrEnableReg,
+			IntrStatusReg			=> IntrStatusReg,
+			
       ip2bus_mstrd_req => ip2bus_mstrd_req,
       ip2bus_mstwr_req => ip2bus_mstwr_req,
       ip2bus_mst_addr => ip2bus_mst_addr,

@@ -35,10 +35,15 @@ entity axi_ttl_memory_bus_reg is
         C_SLV_DWIDTH        	  : integer   						  := 32
 		);
     port(
-        Control      		 : out std_logic_vector(31 downto 0);
-        Status       		 : in std_logic_vector(31 downto 0);
-        MappedAddress  		 : out std_logic_vector(31 downto 0);
+        Control      		 : out std_logic_vector(C_SLV_DWIDTH downto 0);
+        Status       		 : in std_logic_vector(C_SLV_DWIDTH downto 0);
+        MappedAddress  		 : out std_logic_vector(C_SLV_DWIDTH downto 0);
 		  
+		  BusWrite			: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+			BusRead 			: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+			IntrEnable		: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+			IntrStatus		: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+			
         Bus2IP_Clk          : in  std_logic;
         Bus2IP_Resetn       : in  std_logic;
         Bus2IP_Data         : in  std_logic_vector(C_SLV_DWIDTH-1 downto 0);
@@ -57,9 +62,11 @@ architecture Behavioral of axi_ttl_memory_bus_reg is
 -- Signal Declarations
 ------------------------------------------------------------------------
 
-signal control_i		  		 	 : std_logic_vector(31 downto 0);
-signal status_i		  		 	 : std_logic_vector(31 downto 0);
-signal mapped_address_i  		 : std_logic_vector(31 downto 0);
+signal control_i		  		 	 : std_logic_vector(C_SLV_DWIDTH downto 0);
+signal status_i		  		 	 : std_logic_vector(C_SLV_DWIDTH downto 0);
+signal mapped_address_i  		 : std_logic_vector(C_SLV_DWIDTH downto 0);
+signal bus_write_i  		 : std_logic_vector(C_SLV_DWIDTH downto 0);
+signal intr_enable_i  		 : std_logic_vector(C_SLV_DWIDTH downto 0);
 
 signal slv_reg_write_sel    : std_logic_vector(2 downto 0);
 signal slv_reg_read_sel     : std_logic_vector(2 downto 0);
@@ -80,7 +87,8 @@ begin
 	 
 	 Control           <= control_i;
 	 MappedAddress     <= mapped_address_i;
-
+	 BusWrite     <= bus_write_i;
+	 IntrEnable    <= intr_enable_i;
 ------------------------------------------------------------------------
 -- Implement slave model software accessible registers
 ------------------------------------------------------------------------

@@ -3,13 +3,18 @@ module axi_ttl_memory_bus_master #(
         parameter C_DATA_WIDTH = 8,
         parameter C_MST_AWIDTH = 32,
         parameter C_MST_DWIDTH = 32)
-       (input wire rst,
+       (input wire rst_n,
         input wire 				nChipEnable,
         input wire 				nOutputEnable,
         input wire 				nWriteEnable,
         input wire [C_ADDR_WIDTH-1:0] 	 	Address,
         inout wire [C_DATA_WIDTH-1:0] 	 	Data,
         input wire [C_MST_AWIDTH-1:0] 	MappedAddress,
+		  output wire Interrupt,
+		  output wire [C_MST_DWIDTH-1:0] 	BusReadReg,
+		  input wire [C_MST_DWIDTH-1:0] 	BusWriteReg,
+		  input wire [C_MST_DWIDTH-1:0] 	IntrEnableReg,
+		  output wire [C_MST_DWIDTH-1:0] 	IntrStatusReg,
     output wire ip2bus_mstrd_req,
     output wire ip2bus_mstwr_req,
     output wire [C_MST_AWIDTH-1:0] ip2bus_mst_addr,
@@ -60,8 +65,8 @@ reg [C_MST_DWIDTH-1:0] mstData;
 reg readRequest;
 reg writeRequest;
 
-always @(state_next, rst) begin
-	if (rst) begin
+always @(state_next, rst_n) begin
+	if (!rst_n) begin
 		state_reg <= Reset;
 	end else begin
 		state_reg <= state_next;
@@ -141,30 +146,27 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
       if (!nChipEnable)
         state_next <= MstReadReq;
       else
-				state_next <= Idle;
+		  state_next <= Idle;
         
-		MstReadReq:
-			if (!nChipEnable) begin
-        if (!bus2ip_mstwr_dst_rdy_n) begin
-          readRequest <= 1;
-          state_next <= MstReadResp;
-        end
-			end else
-				state_next <= Idle;
+	 MstReadReq:
+	   if (!bus2ip_mstwr_dst_rdy_n) begin
+        readRequest <= 1;
+        state_next <= MstReadResp;
+      end
         
     MstReadResp:
-			if (!nChipEnable) begin
-        if (bus2ip_mst_cmdack) begin
-          readRequest <= 0;
-          
-          // Store read data in bus data register
-          // TODO: byte strobing 
-          busData <= bus2ip_mstrd_d;
-          
-          state_next <= ReadIntrReq;
-        end
-			end else
-				state_next <= Idle;
+		if (bus2ip_mst_cmdack) begin			// request has been put on AXI bus
+			// TODO: Handle errors
+			if (bus2ip_mst_cmplt) begin			// request has completed
+			 readRequest <= 0;
+			 
+			 // Store read data in bus data register
+			 // TODO: byte strobing 
+			 busData <= bus2ip_mstrd_d;
+			 
+			 state_next <= ReadIntrReq;
+			end
+		end
         
     ReadIntrReq:
       begin
@@ -214,23 +216,20 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
       end
         
     MstWriteReq:
-			if (!nChipEnable) begin
-        if (!bus2ip_mstwr_dst_rdy_n) begin
+      if (!bus2ip_mstwr_dst_rdy_n) begin
           writeRequest <= 1;
           state_next <= MstWriteResp;
-        end
-			end else
-				state_next <= Idle;
+      end
         
     MstWriteResp:
-      if (!nChipEnable) begin
-        if (bus2ip_mst_cmdack) begin
-          writeRequest <= 0;
-          state_next <= BusWriteResp;
-        end
-			end else
-				state_next <= Idle;
-        
+	   if (bus2ip_mst_cmdack) begin		// request has been put on AXI bus
+		  // TODO: Handle errors
+		  if (bus2ip_mst_cmplt) begin		// request has completed
+			 writeRequest <= 0;
+			 state_next <= BusWriteResp;
+		  end
+		end
+		   
     BusWriteResp:
       begin
         // update the read data with the data just written
@@ -241,7 +240,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
 	endcase
 end
 	
-  assign ip2bus_mst_reset = rst;
+  //assign ip2bus_mst_reset = rst;
   assign ip2bus_mst_addr = mstAddress;
   assign ip2bus_mstwr_req = writeRequest;
   assign ip2bus_mstwr_d = mstData;
