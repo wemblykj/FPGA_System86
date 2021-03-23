@@ -75,6 +75,9 @@ signal bus_addr_write_i     : std_logic_vector(C_SLV_DWIDTH downto 0);
 signal intr_enable_i  		  : std_logic_vector(C_SLV_DWIDTH downto 0);
 signal intr_ack_i  		      : std_logic_vector(C_SLV_DWIDTH downto 0);
 
+signal bus_data_write_next  : std_logic_vector(C_SLV_DWIDTH downto 0);
+signal bus_addr_write_next  : std_logic_vector(C_SLV_DWIDTH downto 0);
+
 signal slv_reg_write_sel    : std_logic_vector(2 downto 0);
 signal slv_reg_read_sel     : std_logic_vector(2 downto 0);
 signal slv_ip2bus_data      : std_logic_vector(C_SLV_DWIDTH-1 downto 0);
@@ -95,26 +98,28 @@ begin
 	 Control            <= control_i;
 	 MappedAddress      <= mapped_address_i;
 	 BusAddressWrite    <= bus_addr_write_i;
-   BusDataWrite       <= bus_date_write_i;
+   BusDataWrite       <= bus_data_write_i;
 	 IntrEnable         <= intr_enable_i;
    IntrAck            <= intr_ack_i;
    
    -- not entirely sure whether this will work
    SLAVE_REG_ADDRESS_PROC: process(BusAddressRead, bus_addr_write_next) is
    begin
-    if (BusAddressRead != bus_addr_write_i) 
-      bus_addr_write_i <= BusAddressRead
-    else if (bus_data_write_next != bus_addr_write_i) 
-      bus_addr_write_i <= bus_addr_write_next
+    if (BusAddressRead != bus_addr_write_i) then
+      bus_addr_write_i <= BusAddressRead;
+    else if (bus_data_write_next != bus_addr_write_i) then
+      bus_addr_write_i <= bus_addr_write_next;
+    end if;
    end
    
    -- not entirely sure whether this will work
    SLAVE_REG_DATA_PROC: process(BusDataRead, bus_data_write_next) is
    begin
-    if (BusDataRead != bus_data_write_i) 
+    if (BusDataRead != bus_data_write_i) then
       bus_data_write_i <= BusDataRead
-    else if (bus_data_write_next != bus_addr_write_i) 
+    else if (bus_data_write_next != bus_addr_write_i) then
       bus_data_write_i <= bus_data_write_next
+    end if;
    end
    
 ------------------------------------------------------------------------
