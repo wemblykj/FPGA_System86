@@ -51,9 +51,9 @@ entity axi_ttl_memory_bus_reg_top is
     );
     port
     (
-        Control      		 		 	   : out std_logic_vector(C_SLV_DWIDTH downto 0);
-        Status       					   : in std_logic_vector(C_SLV_DWIDTH downto 0);
-        MappedAddress  		 			 : out std_logic_vector(C_SLV_DWIDTH downto 0);
+        Control      		 		 	   : out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        Status       					   : in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
+        MappedAddress  		 			 : out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
 		
         BusAddressRead 			: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
         BusAddressWrite			: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
@@ -109,7 +109,7 @@ constant IPIF_ARD_ADDR_RANGE_ARRAY      : SLV64_ARRAY_TYPE     :=
     ZERO_ADDR_PAD & USER_SLV_BASEADDR,  -- user logic slave space base address
     ZERO_ADDR_PAD & USER_SLV_HIGHADDR   -- user logic slave space high address
   );
-constant USER_SLV_NUM_REG               : integer              := 5;
+constant USER_SLV_NUM_REG               : integer              := 8;
 constant USER_NUM_REG                   : integer              := USER_SLV_NUM_REG;
 constant TOTAL_IPIF_CE                  : integer              := USER_NUM_REG;
 constant IPIF_ARD_NUM_CE_ARRAY          : INTEGER_ARRAY_TYPE   := 
@@ -152,7 +152,8 @@ component axi_ttl_memory_bus_reg
     generic(
 		  C_MAPPED_ADDRESS        : std_logic_vector   			  := X"FFFFFFFF";
 		  C_USE_DYNAMIC_MAPPING	  : std_logic  					  := '0';
-		  C_SLV_DWIDTH            : integer   						  := 32
+		  C_SLV_DWIDTH            : integer   						  := 32;
+		  C_USER_NUM_REG				: integer						  := 8
 	  );
     port(
         Control      		 	  : out std_logic_vector(31 downto 0);
@@ -173,8 +174,8 @@ component axi_ttl_memory_bus_reg
         Bus2IP_Resetn           : in  std_logic;
         Bus2IP_Data             : in  std_logic_vector(C_SLV_DWIDTH-1 downto 0);
         Bus2IP_BE               : in  std_logic_vector(C_SLV_DWIDTH/8-1 downto 0);
-        Bus2IP_RdCE             : in  std_logic_vector(2 downto 0);
-        Bus2IP_WrCE             : in  std_logic_vector(2 downto 0);
+        Bus2IP_RdCE             : in  std_logic_vector(C_USER_NUM_REG-1 downto 0);
+        Bus2IP_WrCE             : in  std_logic_vector(C_USER_NUM_REG-1 downto 0);
         IP2Bus_Data             : out std_logic_vector(C_SLV_DWIDTH-1 downto 0);
         IP2Bus_RdAck            : out std_logic;
         IP2Bus_WrAck            : out std_logic;
@@ -243,7 +244,8 @@ begin
 ------------------------------------------------------------------------
     Inst_AxiHDMIReg: axi_ttl_memory_bus_reg
     generic map(
-        C_SLV_DWIDTH            => USER_SLV_DWIDTH)
+        C_SLV_DWIDTH            => USER_SLV_DWIDTH,
+		  C_USER_NUM_REG			  => USER_NUM_REG)
     port map(
         Control                 => Control,
         Status                  => Status,

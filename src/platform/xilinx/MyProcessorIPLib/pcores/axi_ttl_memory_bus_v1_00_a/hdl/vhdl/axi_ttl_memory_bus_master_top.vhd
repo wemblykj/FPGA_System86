@@ -197,18 +197,18 @@ component axi_ttl_memory_bus_master
 			
 			Interrupt         : out std_logic;
 
-      ControlReg			  : in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
-      StatusReg 			  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+			ControlReg			  : in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+			StatusReg 			  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);
       
 			BusAddressReadReg 			  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-      BusAddressWriteReg 			: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+			BusAddressWriteReg 			: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
       
-      BusDataReadReg 			  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-      BusDataWriteReg 			: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+			BusDataReadReg 			  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+			BusDataWriteReg 			: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
 			
-      IntrEnableReg 		: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+			IntrEnableReg 		: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
 			IntrStatusReg		  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);
-      IntrAckReg		    : in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+			IntrAckReg		    : in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
 		   
 			-----------------------------------------------------------------------------
     -- IP Master Request/Qualifers

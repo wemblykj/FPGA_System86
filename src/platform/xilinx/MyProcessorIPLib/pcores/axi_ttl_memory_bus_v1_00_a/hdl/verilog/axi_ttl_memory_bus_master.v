@@ -8,20 +8,23 @@ module axi_ttl_memory_bus_master #(
         input wire 				nOutputEnable,
         input wire 				nWriteEnable,
         
-        input wire [C_ADDR_WIDTH-1:0] 	 	Address,
-        inout wire [C_DATA_WIDTH-1:0] 	 	Data,
+        input wire [C_ADDR_WIDTH-1:0] 	Address,
+        inout wire [C_DATA_WIDTH-1:0] 	Data,
         input wire [C_MST_AWIDTH-1:0] 	MappedAddress,
         
 		  output wire Interrupt,
       
-      output wire [C_MST_DWIDTH-1:0] 	BusAddressReadReg,
+		  input wire [C_MST_DWIDTH-1:0] 	ControlReg,
+		  output wire [C_MST_DWIDTH-1:0] StatusReg,
+		  
+		  output wire [C_MST_DWIDTH-1:0] BusAddressReadReg,
 		  input wire [C_MST_DWIDTH-1:0] 	BusAddressWriteReg,
       
-		  output wire [C_MST_DWIDTH-1:0] 	BusDataReadReg,
+		  output wire [C_MST_DWIDTH-1:0] BusDataReadReg,
 		  input wire [C_MST_DWIDTH-1:0] 	BusDataWriteReg,
       
 		  input wire [C_MST_DWIDTH-1:0] 	IntrEnableReg,
-		  output wire [C_MST_DWIDTH-1:0] 	IntrStatusReg,
+		  output wire [C_MST_DWIDTH-1:0] IntrStatusReg,
       input wire [C_MST_DWIDTH-1:0] 	IntrAckReg,
       
     output wire ip2bus_mstrd_req,
