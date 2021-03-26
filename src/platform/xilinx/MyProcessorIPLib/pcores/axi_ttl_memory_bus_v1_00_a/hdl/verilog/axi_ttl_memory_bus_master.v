@@ -141,7 +141,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
         // TODO: Await address interrupt acknowledge
         if ((IntrAckReg & IntrEnableMask_Address) == 0) begin
           // not sure if this if going to work without some thought
-          busAddress <= BusAddressWriteReg;
+          busAddress <= BusAddressWriteReg[C_ADDR_WIDTH-1:0];
         
           // TODO: Clear interrupt status
           intrStatus <= IntrStatusReg & ~IntrEnableMask_Address;
@@ -194,7 +194,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
 			 
 			 // Store read data in bus data register
 			 // TODO: byte strobing 
-			 busData <= bus2ip_mstrd_d;
+			 busData <= bus2ip_mstrd_d[C_DATA_WIDTH-1:0];
 			 
         if (IntrEnableReg & IntrEnableMask_Read)
           state_next <= ReadIntrReq;
@@ -219,7 +219,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
         // TODO: wait on read req interrupt acknowledge
         if ((IntrAckReg & IntrEnableMask_Read) == 0) begin
           // not sure if this if going to work without some thought
-          busData <= BusDataWriteReg;
+          busData <= BusDataWriteReg[C_DATA_WIDTH-1:0];
           
           // TODO: Clear interrupt status
           intrStatus <= IntrStatusReg & ~IntrEnableMask_Read;
@@ -242,7 +242,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
         
         // Put data to write in bus data register
         // TODO: byte strobing
-        busData <= Data;
+        busData <= Data[C_DATA_WIDTH-1:0];
         
         if (IntrEnableReg & IntrEnableMask_Write)
           state_next <= WriteIntrReq;
@@ -268,7 +268,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
         // TODO: wait on write req interrupt acknowledge
         if (IntrAckReg & IntrEnableMask_Write) begin
           // not sure if this if going to work without some thought
-          busData <= BusDataWriteReg;
+          busData <= BusDataWriteReg[C_DATA_WIDTH-1:0];
         
           // TODO: Clear write interrupt status
           intrStatus <= IntrStatusReg & ~IntrEnableMask_Write;
@@ -296,7 +296,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
       begin
         // update the read data with the data just written
         readData <= busData;
-				state_next <= Idle;
+		  state_next <= Idle;
       end
         
 	endcase
@@ -307,12 +307,12 @@ end
   assign ip2bus_mstwr_req = writeRequest;
   assign ip2bus_mstwr_d = mstData;
   
-  assign BusAddressReadReg = busAddress;
-  assign BusDataReadReg = busData;
+  assign BusAddressReadReg = { {(C_MST_DWIDTH-C_ADDR_WIDTH){1'b0}}, busAddress };
+  assign BusDataReadReg = { {(C_MST_DWIDTH-C_DATA_WIDTH){1'b0}}, busData };
   
   assign IntrStatusReg = intrStatus;
   
-  assign Data = nWriteEnable ? (nOutputEnable ? {C_DATA_WIDTH{1'bx}} : readData) : {C_DATA_WIDTH{1'bz}};
+  //assign Data = nWriteEnable ? (nOutputEnable ? {C_DATA_WIDTH{1'bx}} : readData) : {C_DATA_WIDTH{1'bz}};
   
 endmodule
 

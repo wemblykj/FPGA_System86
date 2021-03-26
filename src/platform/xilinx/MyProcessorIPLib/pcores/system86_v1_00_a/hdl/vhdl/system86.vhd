@@ -361,6 +361,11 @@ signal CLK_48M_tmp		: std_logic;
 --signal tpg_hblank			: std_logic;
 --signal tpg_vblank			: std_logic;
 --
+component timing_subsystem
+port(
+);
+end component;
+
 --component timing_subsystem
 --port(
 --	-- simulation control

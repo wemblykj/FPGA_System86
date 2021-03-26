@@ -664,7 +664,7 @@ constant bo2na      :  bo2na_type := (false => 0, true => 1);
   signal intrAckReg : std_logic_vector(31 downto 0);
   
   -- Mapping
-  signal mapped_address : std_logic_vector(31 downto 0);
+  signal mappedAddressReg : std_logic_vector(31 downto 0);
 
 	
 
@@ -755,9 +755,9 @@ begin -- architecture IMP
         C_SLV_AWIDTH            => 32,
         C_SLV_DWIDTH            => 32)
     port map(
-        Control		  	          => controlReg,
-        Status			            => statusReg,
-        MappedAddress           => mapped_address,
+        Control		  	        => controlReg,
+        Status			           => statusReg,
+        MappedAddress           => mappedAddressReg,
 
         BusAddressRead			    => busAddressReadReg,
         BusAddressWrite			    => busAddressWriteReg,
