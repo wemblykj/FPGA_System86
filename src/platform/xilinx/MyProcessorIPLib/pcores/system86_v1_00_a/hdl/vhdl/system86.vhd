@@ -118,7 +118,7 @@ entity system86 is
 		--
 		
 		-- simulation control
-		--rst 					: in std_logic;					-- hard reset the simulation
+		rst_n 					: in std_logic;					-- hard reset the simulation
 		--enable 				: in std_logic := 1;				-- enable the simulation
 
 		-- simulation video
@@ -145,10 +145,10 @@ entity system86 is
 		--
 		
 		-- System 86 native video (albeit 4-bit digital equivalent before resister ladder conversion)
---		conn_j2_sync		: out    std_logic;
---		conn_j2_red			: out    std_logic_vector(3 downto 0);
---		conn_j2_green		: out    std_logic_vector(3 downto 0);
---		conn_j2_blue		: out    std_logic_vector(3 downto 0);
+		conn_j2_sync		: out    std_logic;
+		conn_j2_red			: out    std_logic_vector(3 downto 0);
+		conn_j2_green		: out    std_logic_vector(3 downto 0);
+		conn_j2_blue		: out    std_logic_vector(3 downto 0);
 --		
 --		-- J4 connector to sub PCB (34 pin)
 --		conn_j4_reset		: out    std_logic;				-- pin 18 - system reset
@@ -310,7 +310,7 @@ architecture IMP of system86 is
 --
 
 -- timing subsystem outputs
-signal CLK_48M_tmp		: std_logic;
+--signal CLK_48M_tmp		: std_logic;
 --signal CLK_24M		: std_logic;
 --signal CLK_12M		: std_logic;
 --signal CLK_6M		: std_logic;
@@ -361,113 +361,103 @@ signal CLK_48M_tmp		: std_logic;
 --signal tpg_hblank			: std_logic;
 --signal tpg_vblank			: std_logic;
 --
-component timing_subsystem
-port(
-);
-end component;
 
---component timing_subsystem
---port(
---	-- simulation control
---	rst 		: in std_logic := '0';
---	enable 		: in std_logic := '1';
---	
---	-- input clocks
--- CLK_48M 		: in std_logic;
---	
---	-- soft generated clocks
---	CLK_24M		: out std_logic;
---	CLK_12M		: out std_logic;
---	CLK_6M 		: out std_logic;
---	CLK_6MD 		: out std_logic;
---	
---	-- video synchronisation
---	nVSYNC			: out std_logic;
---	nHSYNC			: out std_logic;
---	nHBLANK		: out std_logic;	-- used for simulation only
---	nVBLANK		: out std_logic;
---	nVRESET		: out std_logic;
---	nHRESET		: out std_logic;
---	BLANKING		: out std_logic;
---	nCOMPSYNC		: out std_logic;
---	
---	-- video clocks
---	CLK_8V	: out std_logic;
---	CLK_4V	: out std_logic;
---	CLK_1V	: out std_logic;
---	CLK_4H	: out std_logic;
---	CLK_2H	: out std_logic;
---	CLK_1H	: out std_logic;
---	CLK_S2H	: out std_logic;
---	CLK_S1H	: out std_logic
---);
---end component;
---
---component videogen_subsystem
---port(
---	-- simulation control
---	rst 			: in std_logic := '0';
---	enable 			: in std_logic := '1';
---	
---	-- input clocks
---	CLK_6MD 			: in std_logic;
---	nCLR				: in std_logic := '1';
---	D					: in std_logic_vector(7 downto 0) := "00000000";
---	BANK				: in std_logic;
---	
---	prom_3r_ce		: out std_logic;
---	prom_3r_oe		: out std_logic;
---	prom_3r_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	prom_3r_data	: in  std_logic_vector(7 downto 0) := "00000000";
+component system86
+port(
+	-- simulation control
+	rst_n 				: in std_logic := '0';		// master reset
+	
+	-- simulation outputs
+	
+	vid_clk				: out    std_logic;
+	vid_data				: out    std_logic_vector(11 downto 0);		-- 12-bit RGB data
+	vid_hsync_n			: out    std_logic;
+	vid_vsync_n			: out    std_logic;
+	vid_hblank_n		: out    std_logic;
+	vid_vblank_n		: out    std_logic;
+		
+	--
+	-- System 86 board inputs
+	-- 
+	
+	CLK_48M 				: in std_logic;		
+
+	--
+	-- System 86 board outputs
+	--
+	
+	conn_j2_sync		: out    std_logic;									-- composite sync
+	conn_j2_red			: out    std_logic_vector(3 downto 0);			-- 4-bit red component
+	conn_j2_green		: out    std_logic_vector(3 downto 0);			-- 4-bit green component
+	conn_j2_blue		: out    std_logic_vector(3 downto 0);			-- 4-bit blue component
+	
+	--
+	-- System 86 CPU busses
+	--
+	
+	-- TODO: support for externally defined 6809 CPU IP or physical chip
+	
+	--
+	-- System 86 PROM busses
+	--
+	
+	prom_3r_ce		: out std_logic;
+	prom_3r_oe		: out std_logic;
+	prom_3r_addr	: out std_logic_vector(8 downto 0) := "000000000";
+	prom_3r_data	: in  std_logic_vector(7 downto 0) := "00000000";
 --	
 --	prom_3s_ce		: out std_logic;
 --	prom_3s_oe		: out std_logic;
 --	prom_3s_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	prom_3s_data  : in  std_logic_vector(3 downto 0) := "0000";
+--	prom_3s_data  	: in  std_logic_vector(3 downto 0) := "0000";
 --	
 --	prom_4v_ce		: out std_logic;
 --	prom_4v_oe		: out std_logic;
 --	prom_4v_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	prom_4v_data  : in  std_logic_vector(3 downto 0) := "0000";
+--	prom_4v_data  	: in  std_logic_vector(3 downto 0) := "0000";
 --	
 --	prom_5v_ce		: out std_logic;
 --	prom_5v_oe		: out std_logic;
 --	prom_5v_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	prom_5v_data  : in  std_logic_vector(3 downto 0) := "0000";
+--	prom_5v_data  	: in  std_logic_vector(3 downto 0) := "0000";
 --	
 --	prom_6u_ce		: out std_logic;
 --	prom_6u_oe		: out std_logic;
 --	prom_6u_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	prom_6u_data  : in  std_logic_vector(3 downto 0) := "0000";
+--	prom_6u_data  	: in  std_logic_vector(3 downto 0) := "0000";
 --	
 --	prom_7s_ce		: out std_logic;
 --	prom_7s_oe		: out std_logic;
 --	prom_7s_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	prom_7s_data  : in  std_logic_vector(3 downto 0) := "0000";
---	
+--	prom_7s_data  	: in  std_logic_vector(3 downto 0) := "0000";
+
+	--
+	-- System 86 static RAM busses
+	--
 --	sram_3f_ce		: out std_logic;
 --	sram_3f_oe		: out std_logic;
 --	sram_3f_we		: out std_logic;
 --	sram_3f_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	sram_3f_data  : in  std_logic_vector(3 downto 0) := "0000";
+--	sram_3f_data  	: in  std_logic_vector(3 downto 0) := "0000";
+	
 --	
 --	sram_4n_ce		: out std_logic;
 --	sram_4n_oe		: out std_logic;
 --	sram_4n_we		: out std_logic;
 --	sram_4n_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	sram_4n_data  : in  std_logic_vector(3 downto 0) := "0000";
+--	sram_4n_data  	: in  std_logic_vector(3 downto 0) := "0000";
 --
 --	sram_4r_ce		: out std_logic;
 --	sram_4r_oe		: out std_logic;
 --	sram_4r_we		: out std_logic;
 --	sram_4r_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	sram_4r_data  : in  std_logic_vector(3 downto 0) := "0000";
+--	sram_4r_data  	: in  std_logic_vector(3 downto 0) := "0000";
 --
 --	sram_7n_ce		: out std_logic;
 --	sram_7n_oe		: out std_logic;
 --	sram_7n_we		: out std_logic;
 --	sram_7n_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	sram_7n_data  : in  std_logic_vector(3 downto 0) := "0000";
+--	sram_7n_data  	: in  std_logic_vector(3 downto 0) := "0000";
 --
 --	sram_10m_ce		: out std_logic;
 --	sram_10m_oe		: out std_logic;
@@ -479,319 +469,25 @@ end component;
 --	RED				: out std_logic_vector(3 downto 0);
 --	GREEN				: out std_logic_vector(3 downto 0);
 --	BLUE				: out std_logic_vector(3 downto 0)
---);
---end component;
---
-----component Blanking_To_Count
-----generic(
-----	ACTIVE_COLS  		: integer := 640;
-----   ACTIVE_ROWS  		: integer := 480
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_HSync : in std_logic;
-----   i_VSync : in std_logic;
-----	i_HBlank : in std_logic;
-----   i_VBlank : in std_logic;
-----	o_Locked : out std_logic;
-----   o_HSync : out std_logic;
-----   o_VSync : out std_logic;
-----	o_HBlank : out std_logic;
-----   o_VBlank : out std_logic;
-----	o_Active : out std_logic;
-----   o_Col_Count  : out std_logic_vector(9 downto 0);
-----   o_Row_Count  : out std_logic_vector(9 downto 0)
-----);
-----end component;
-----
-----component Test_Pattern_Gen
-----generic(
-----	COMPONENT_DEPTH 		: integer := 3;
-----   TOTAL_COLS  		: integer := 384;
-----   TOTAL_ROWS   		: integer := 264;
-----   ACTIVE_COLS  		: integer := 288;
-----   ACTIVE_ROWS  		: integer := 224;
-----	USE_BLANKING  		: integer := 1;
-----	SYNC_PULSE_HORZ  	: integer := 32;
-----	SYNC_PULSE_VERT  	: integer := 8;
-----	FRONT_PORCH_HORZ  : integer := 32;
-----	BACK_PORCH_HORZ   : integer := 32;
-----	FRONT_PORCH_VERT  : integer := 8;
-----	BACK_PORCH_VERT   : integer := 24
-----	
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_Pattern : in std_logic_vector(3 downto 0);
-----	SYNC				: out std_logic;
-----	RED				: out std_logic_vector(3 downto 0);
-----	GREEN				: out std_logic_vector(3 downto 0);
-----	BLUE				: out std_logic_vector(3 downto 0)
-----);
-----end component;
---
-----component Blanking_To_Count
-----generic(
-----	ACTIVE_COLS  		: integer := 640;
-----   ACTIVE_ROWS  		: integer := 480
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_HSync : in std_logic;
-----   i_VSync : in std_logic;
-----	i_HBlank : in std_logic;
-----   i_VBlank : in std_logic;
-----	o_Locked : out std_logic;
-----   o_HSync : out std_logic;
-----   o_VSync : out std_logic;
-----	o_HBlank : out std_logic;
-----   o_VBlank : out std_logic;
-----	o_Active : out std_logic;
-----   o_Col_Count  : out std_logic_vector(9 downto 0);
-----   o_Row_Count  : out std_logic_vector(9 downto 0)
-----);
-----end component;
-----
-----component Test_Pattern_Gen
-----generic(
-----	COMPONENT_DEPTH 		: integer := 3;
-----   TOTAL_COLS  		: integer := 384;
-----   TOTAL_ROWS   		: integer := 264;
-----   ACTIVE_COLS  		: integer := 288;
-----   ACTIVE_ROWS  		: integer := 224;
-----	USE_BLANKING  		: integer := 1;
-----	SYNC_PULSE_HORZ  	: integer := 32;
-----	SYNC_PULSE_VERT  	: integer := 8;
-----	FRONT_PORCH_HORZ  : integer := 32;
-----	BACK_PORCH_HORZ   : integer := 32;
-----	FRONT_PORCH_VERT  : integer := 8;
-----	BACK_PORCH_VERT   : integer := 24
-----	
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_Pattern : in std_logic_vector(3 downto 0);
-----	SYNC				: out std_logic;
-----	RED				: out std_logic_vector(3 downto 0);
-----	GREEN				: out std_logic_vector(3 downto 0);
-----	BLUE				: out std_logic_vector(3 downto 0)
-----);
-----end component;
-----
-----component Blanking_To_Count
-----generic(
-----	ACTIVE_COLS  		: integer := 640;
-----   ACTIVE_ROWS  		: integer := 480
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_HSync : in std_logic;
-----   i_VSync : in std_logic;
-----	i_HBlank : in std_logic;
-----   i_VBlank : in std_logic;
-----	o_Locked : out std_logic;
-----   o_HSync : out std_logic;
-----   o_VSync : out std_logic;
-----	o_HBlank : out std_logic;
-----   o_VBlank : out std_logic;
-----	o_Active : out std_logic;
-----   o_Col_Count  : out std_logic_vector(9 downto 0);
-----   o_Row_Count  : out std_logic_vector(9 downto 0)
-----);
-----end component;
-----
-----component Test_Pattern_Gen
-----generic(
-----	COMPONENT_DEPTH 		: integer := 3;
-----   TOTAL_COLS  		: integer := 384;
-----   TOTAL_ROWS   		: integer := 264;
-----   ACTIVE_COLS  		: integer := 288;
-----   ACTIVE_ROWS  		: integer := 224;
-----	USE_BLANKING  		: integer := 1;
-----	SYNC_PULSE_HORZ  	: integer := 32;
-----	SYNC_PULSE_VERT  	: integer := 8;
-----	FRONT_PORCH_HORZ  : integer := 32;
-----	BACK_PORCH_HORZ   : integer := 32;
-----	FRONT_PORCH_VERT  : integer := 8;
-----	BACK_PORCH_VERT   : integer := 24
-----	
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_Pattern : in std_logic_vector(3 downto 0);
-----	SYNC				: out std_logic;
-----	RED				: out std_logic_vector(3 downto 0);
-----	GREEN				: out std_logic_vector(3 downto 0);
-----	BLUE				: out std_logic_vector(3 downto 0)
-----);
-----end component;
-----
-----component Blanking_To_Count
-----generic(
-----	ACTIVE_COLS  		: integer := 640;
-----   ACTIVE_ROWS  		: integer := 480
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_HSync : in std_logic;
-----   i_VSync : in std_logic;
-----	i_HBlank : in std_logic;
-----   i_VBlank : in std_logic;
-----	o_Locked : out std_logic;
-----   o_HSync : out std_logic;
-----   o_VSync : out std_logic;
-----	o_HBlank : out std_logic;
-----   o_VBlank : out std_logic;
-----	o_Active : out std_logic;
-----   o_Col_Count  : out std_logic_vector(9 downto 0);
-----   o_Row_Count  : out std_logic_vector(9 downto 0)
-----);
-----end component;
-----
-----component Test_Pattern_Gen
-----generic(
-----	COMPONENT_DEPTH 		: integer := 3;
-----   TOTAL_COLS  		: integer := 384;
-----   TOTAL_ROWS   		: integer := 264;
-----   ACTIVE_COLS  		: integer := 288;
-----   ACTIVE_ROWS  		: integer := 224;
-----	USE_BLANKING  		: integer := 1;
-----	SYNC_PULSE_HORZ  	: integer := 32;
-----	SYNC_PULSE_VERT  	: integer := 8;
-----	FRONT_PORCH_HORZ  : integer := 32;
-----	BACK_PORCH_HORZ   : integer := 32;
-----	FRONT_PORCH_VERT  : integer := 8;
-----	BACK_PORCH_VERT   : integer := 24
-----	
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_Pattern : in std_logic_vector(3 downto 0);
-----	SYNC				: out std_logic;
-----	RED				: out std_logic_vector(3 downto 0);
-----	GREEN				: out std_logic_vector(3 downto 0);
-----	BLUE				: out std_logic_vector(3 downto 0)
-----);
-----end component;
-----
-----component Blanking_To_Count
-----generic(
-----	ACTIVE_COLS  		: integer := 640;
-----   ACTIVE_ROWS  		: integer := 480
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_HSync : in std_logic;
-----   i_VSync : in std_logic;
-----	i_HBlank : in std_logic;
-----   i_VBlank : in std_logic;
-----	o_Locked : out std_logic;
-----   o_HSync : out std_logic;
-----   o_VSync : out std_logic;
-----	o_HBlank : out std_logic;
-----   o_VBlank : out std_logic;
-----	o_Active : out std_logic;
-----   o_Col_Count  : out std_logic_vector(9 downto 0);
-----   o_Row_Count  : out std_logic_vector(9 downto 0)
-----);
-----end component;
-----
-----component Test_Pattern_Gen
-----generic(
-----	COMPONENT_DEPTH 		: integer := 3;
-----   TOTAL_COLS  		: integer := 384;
-----   TOTAL_ROWS   		: integer := 264;
-----   ACTIVE_COLS  		: integer := 288;
-----   ACTIVE_ROWS  		: integer := 224;
-----	USE_BLANKING  		: integer := 1;
-----	SYNC_PULSE_HORZ  	: integer := 32;
-----	SYNC_PULSE_VERT  	: integer := 8;
-----	FRONT_PORCH_HORZ  : integer := 32;
-----	BACK_PORCH_HORZ   : integer := 32;
-----	FRONT_PORCH_VERT  : integer := 8;
-----	BACK_PORCH_VERT   : integer := 24
-----	
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_Pattern : in std_logic_vector(3 downto 0);
-----	SYNC				: out std_logic;
-----	RED				: out std_logic_vector(3 downto 0);
-----	GREEN				: out std_logic_vector(3 downto 0);
-----	BLUE				: out std_logic_vector(3 downto 0)
-----);
-----end component;
-----
-----component Blanking_To_Count
-----generic(
-----	ACTIVE_COLS  		: integer := 640;
-----   ACTIVE_ROWS  		: integer := 480
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_HSync : in std_logic;
-----   i_VSync : in std_logic;
-----	i_HBlank : in std_logic;
-----   i_VBlank : in std_logic;
-----	o_Locked : out std_logic;
-----   o_HSync : out std_logic;
-----   o_VSync : out std_logic;
-----	o_HBlank : out std_logic;
-----   o_VBlank : out std_logic;
-----	o_Active : out std_logic;
-----   o_Col_Count  : out std_logic_vector(9 downto 0);
-----   o_Row_Count  : out std_logic_vector(9 downto 0)
-----);
-----end component;
-----
-----component Test_Pattern_Gen
-----generic(
-----	COMPONENT_DEPTH 		: integer := 3;
-----   TOTAL_COLS  		: integer := 384;
-----   TOTAL_ROWS   		: integer := 264;
-----   ACTIVE_COLS  		: integer := 288;
-----   ACTIVE_ROWS  		: integer := 224;
-----	USE_BLANKING  		: integer := 1;
-----	SYNC_PULSE_HORZ  	: integer := 32;
-----	SYNC_PULSE_VERT  	: integer := 8;
-----	FRONT_PORCH_HORZ  : integer := 32;
-----	BACK_PORCH_HORZ   : integer := 32;
-----	FRONT_PORCH_VERT  : integer := 8;
-----	BACK_PORCH_VERT   : integer := 24
-----	
-----);
-----port (
-----	i_Clk : in std_logic;
-----	i_Rst : in std_logic;
-----   i_Pattern : in std_logic_vector(3 downto 0);
-----   i_HSync : in std_logic;
-----   i_VSync : in std_logic;
-----   o_HSync : out std_logic;
-----   o_VSync : out std_logic;
-----	o_HBlank : out std_logic;
-----   o_VBlank : out std_logic;
-----   o_Red_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
-----   o_Grn_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0);
-----   o_Blu_Video  : out std_logic_vector(COMPONENT_DEPTH-1 downto 0)
-----);
-----end component;
---
+);
+end component;
+
 -------------------------------------------------------------------------------
 -- Architecture
 -------------------------------------------------------------------------------
 
 begin -- architecture IMP
+
+	Inst_System86: system86
+	port map
+	(
+		rst_n 			=> rst_n,
+		CLK_48M			=> CLK_48M,
+		CLK_48M			=> SYNC,
+		conn_j2_red		=> RED,
+		conn_j2_green	=> GREEN,
+		conn_j2_blue	=> BLUE
+	);
 
 ----
 ----	timing_subsys: timing_subsystem
@@ -904,13 +600,13 @@ begin -- architecture IMP
 ----		o_Blu_Video		=> tpg_blue(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4)
 ----	);
 ----	
-process(CLK_48M)
-begin
-	if falling_edge(CLK_48M) then
-		CLK_48M_tmp <= CLK_48M; 
-		prom_3r_ce <= CLK_48M_tmp;
-	end if;
-end process;
+--process(CLK_48M)
+--begin
+--	if falling_edge(CLK_48M) then
+--		CLK_48M_tmp <= CLK_48M; 
+--		prom_3r_ce <= CLK_48M_tmp;
+--	end if;
+--end process;
 ----	process(CLK_6M)
 ----	begin
 ----		if falling_edge(CLK_6M) then
@@ -966,10 +662,6 @@ end process;
 ----	-- assign connection outputs
 ----	--
 ----	
-----	-- video
-----	conn_j2_sync <= SYNC;
-----	conn_j2_red <= RED;
-----	conn_j2_green <= GREEN;
-----	conn_j2_blue <= BLUE;
+
 	
 end imp;

@@ -40,7 +40,6 @@
 
 module system86
 	#(
-		parameter VIDEO_COMPONENT_DEPTH = 8,
 		parameter LAYER_DISABLE_MASK = 0,
 		parameter BACKGROUND_LAYER_AUTOSCROLL = 0,
 		parameter BACKGROUND_LAYER_PRIORITY = 0,
@@ -51,7 +50,6 @@ module system86
 	(
 		// == Simulation inputs
 		input wire rst_n,				// master reset
-		input wire clk,				// System 86 master clock @ 49.125 MHz
 		
 		// == Simulation outputs
 		output wire vid_clk,
@@ -59,9 +57,9 @@ module system86
 		output wire vid_vsync_n,
 		output wire vid_hblank_n,
 		output wire vid_vblank_n,
-		output wire [VIDEO_COMPONENT_DEPTH-1:0] vid_red,
-		output wire [VIDEO_COMPONENT_DEPTH-1:0] vid_green,
-		output wire [VIDEO_COMPONENT_DEPTH-1:0] vid_blue,
+
+		// System 86 hardware timing
+		input wire CLK_48M,				// System 86 master clock @ 49.125 MHz
 
 		// == Native 4 bit RGB output and composite sync signals ==
 		output wire [3:0] conn_j2_red,
@@ -469,9 +467,7 @@ module system86
 
 	// simulation outputs
 	assign vid_clk = CLK_6M;
-	assign vid_red[VIDEO_COMPONENT_DEPTH-1:VIDEO_COMPONENT_DEPTH-4] = RED;
-	assign vid_green[VIDEO_COMPONENT_DEPTH-1:VIDEO_COMPONENT_DEPTH-4] = GREEN;
-	assign vid_blue[VIDEO_COMPONENT_DEPTH-1:VIDEO_COMPONENT_DEPTH-4] = BLUE;
+	assign vid_data = { BLUE, GREEN, RED };
 	assign vid_hsync_n = nHSYNC;
 	assign vid_vsync_n = nVSYNC;
 	assign vid_hblank_n = nHBLANK;
