@@ -3,11 +3,13 @@ XmpVersion: 14.7
 VerMgmt: 14.7
 IntStyle: default
 Flow: ise
-ModuleSearchPath: /home/paul/development/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/axi_ttl_memory_bus_v1_00_a/../../../
 ModuleSearchPath: /opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
 ModuleSearchPath: C:/Development/FPGA/Digilent/Atlys_AXI_BSB_Support/lib
 ModuleSearchPath: C:/Xilinx/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
+ModuleSearchPath: /home/paul/development/FPGA_System86/src/platform/xilinx
 ModuleSearchPath: C:/Development/FPGA/FPGA_System86/src/platform/xilinx
+ModuleSearchPath: C:/Users/paulw/Development/Arcade/FPGA_System86/src/lib
+ModuleSearchPath: C:/Development/FPGA/FPGA_System86/src/lib
 MHS File: atlys_host.mhs
 Architecture: spartan6
 Device: xc6slx45
@@ -46,5 +48,5 @@ DCacheAddr: MCB_DDR2,C_S3_AXI_BASEADDR
 DCacheAddr: MCB_DDR2,C_S4_AXI_BASEADDR
 DCacheAddr: MCB_DDR2,C_S5_AXI_BASEADDR
 Processor: microblaze_0
-ElfImp: SDK/Workspace/bootloader/Debug/bootloader.elf
+ElfImp: 
 ElfSim: 

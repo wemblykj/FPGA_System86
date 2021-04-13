@@ -3,4 +3,4 @@
 // It will align the Row/Col counters to the output blank signals.
 // Useful for any module that needs to keep track of which Row/Col position we
 // are on in the active portion of a frame
-`include "../../../../../../../lib/system86/rtl/system86.v"
+`include "../../../../../../system86/rtl/system86.v"
