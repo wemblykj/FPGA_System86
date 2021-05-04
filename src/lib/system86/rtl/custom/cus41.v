@@ -118,7 +118,7 @@ module cus41
 	end
 	
 	// CPU clock - 90 degrees out of phase from 2H? (http://www.ukvac.com/forum/topic362440&OB=DESC.html)
-	always @(negedge CLK_6M or rst_n) begin
+	always @(negedge CLK_6M or negedge rst_n) begin
 		/* based on interpretation of 74LS161 circuit from www.ukvac.com.
 		 * N.B. to be out of sync by 90 as described required my CUS27 implmentation to be tweaked to update its counter on falling edge of 6M 
 		 * (rather than the positive edge), this would lead me to believe that the CUS27 is now [more] correct.
@@ -133,15 +133,15 @@ module cus41
 	
 	// watchdog reset and int ack
 	// http://www.ukvac.com/forum/topic362440&OB=DESC.html
-	always @(negedge nVBLA or rst_n) begin
+	always @(negedge nVBLA or negedge rst_n) begin
 		if (!rst_n || main_watchdog_clear || main_watchdog_counter === 'b1010) begin
 			main_watchdog_counter <= 0;
+      nMINT <= 1;
 		end else begin
 			main_watchdog_counter <= main_watchdog_counter + 1;
-		end
-		
-		nMINT <= ~main_int_ack;
+      nMINT <= ~main_int_ack;
 		//nSINT <= ~sound_int_ack;
+		end
 	end
 	
 endmodule

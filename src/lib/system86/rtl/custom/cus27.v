@@ -63,7 +63,7 @@ module cus27
 	
 	reg [2:0] master_counter = 0;
 
-	always @(posedge CLK_48M or rst_n) begin
+	always @(posedge CLK_48M or negedge rst_n) begin
 		if (!rst_n)
 			master_counter <= 0;
 		else
@@ -101,7 +101,7 @@ module cus27
 	// it would appear that the counter is clocked on the falling edge of 6M
 	// this would make sense as CUS27 is wired up with 6M output as a feedback into the chip's 6M input
 	// which would only be stable in reality if the input was dealt with out of phase from the orinal output
-	always @(negedge CLK_6M_IN or rst_n) begin
+	always @(negedge CLK_6M_IN or negedge rst_n) begin
 		if (!rst_n) begin
 			horizontal_counter <= 1;	// need to start at one otherwise we end up counting 385 pixels!
 		end else begin
@@ -167,16 +167,14 @@ module cus27
 		end
 	end
 		
-	always @(negedge nHSYNC or rst_n) begin	
+	always @(negedge nHSYNC or negedge rst_n) begin	
 		if (!rst_n) begin
 			vertical_counter <= 1;	// need to start at one otherwise we end up counting 265 lines!
 		end else begin
 			if (vertical_counter[8:3] === 6'b100001)	// ~264
-				vertical_counter = 1;	// need to start at one otherwise we end up counting 265 lines!
+				vertical_counter <= 1;	// need to start at one otherwise we end up counting 265 lines!
 			else
-				vertical_counter = vertical_counter + 1;
-			
-			
+				vertical_counter <= vertical_counter + 1;
 		end
 	end
 	

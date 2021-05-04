@@ -96,7 +96,7 @@ module sprite_subsystem(
 	assign sram_11k_we_n = cus35_9m_rwe_n;
 	assign sram_11k_oe_n = cus35_9m_roe_n;
 	assign sram_11k_addr = { 1'b0, A[11:1] };
-	assign sram_11k_data = cus35_9m_b0;
+	assign sram_11k_data = ~RnW ? cus35_9m_b0 : 8'bz;
 	
 	assign cus35_9m_b0 = RnW ? sram_11k_data : 8'bz;
 	

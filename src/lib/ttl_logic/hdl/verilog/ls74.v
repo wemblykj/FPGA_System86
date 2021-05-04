@@ -34,43 +34,44 @@ module ls74(
         output reg nQ2
     );
 
-	always @(posedge CLK1 or nPRE1 or nCLR1) begin
+  reg Q1_next;
+  reg Q2_next;
+  
+  always @(posedge CLK1) begin 
+      Q1_next <= D1;
+      Q2_next <= D2;
+  end
+  
+	always @(nPRE1 or nCLR1 or Q1_next) begin
 		if (nPRE1 && nCLR1) begin
-			Q1 <= D1;
-			nQ1 <= ~D1;
-		/*else if (!nPRE1 && nCLR1) begin
+			Q1 <= Q1_next;
+			nQ1 <= ~Q1_next;
+    end else if (!nPRE1 && !nCLR1) begin
+			Q1 <= 1;
+			nQ1 <= 1;
+		end else if (!nPRE1 && nCLR1) begin
 			Q1 <= 1;
 			nQ1 <= 0;
 		end else if (nPRE1 && !nCLR1) begin
 			Q1 <= 0;
 			nQ1 <= 1;
-		end else if (!nPRE1 && !nCLR1) begin
-			Q1 <= 1;
-			nQ1 <= 1;*/
-		end else begin
-			Q1 <= ~nPRE1;
-			nQ1 <= nPRE1 || !nCLR1;
-		end
-			
+		end	
 	end
 	
-	always @(posedge CLK2 or nPRE2 or nCLR2) begin
+	always @(nPRE2 or nCLR2 or Q1_next) begin
 		if (nPRE2 && nCLR2) begin
-			Q2 <= D2;
-			nQ2 <= ~D2;
-		/*end else if (!nPRE2 && nCLR2) begin
+			Q2 <= Q2_next;
+			nQ2 <= ~Q2_next;
+    end else if (!nPRE2 && !nCLR2) begin
+			Q2 <= 1;
+			nQ2 <= 1;
+		end else if (!nPRE1 && nCLR2) begin
 			Q2 <= 1;
 			nQ2 <= 0;
 		end else if (nPRE2 && !nCLR2) begin
 			Q2 <= 0;
 			nQ2 <= 1;
-		end else if (!nPRE2 && !nCLR2) begin
-			Q2 <= 1;
-			nQ2 <= 1;*/
-		end else begin
-			Q2 <= ~nPRE2;
-			nQ2 <= nPRE2 || !nCLR2;
-		end			
+		end	
 	end
 	
 endmodule

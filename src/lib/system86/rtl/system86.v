@@ -100,7 +100,6 @@ module system86
 	
 	// == global signals ==
 	//wire RESET;
-	wire CLK_48M;
 	wire CLK_6M;
 	wire CLK_1H;
 	wire CLK_S1H;
@@ -451,8 +450,6 @@ module system86
 	
 	
 	// == assign external connections
-	
-	assign CLK_48M = clk;
 	
 	assign conn_j2_red = RED;
 	assign conn_j2_green = GREEN;

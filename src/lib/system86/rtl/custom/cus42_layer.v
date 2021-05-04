@@ -72,7 +72,7 @@ module cus42_layer
 	reg nHSYNC_last = 0;
 	reg nVSYNC_last = 0;
 	
-	always @(posedge CLK_6M or rst_n) begin
+	always @(posedge CLK_6M) begin
 		if (!rst_n) begin
 			hScrollCounter <= 0;
 			vScrollCounter <= 0;
@@ -100,7 +100,7 @@ module cus42_layer
 	end
 
 	// Handle CPU control requests
-	always @(nLATCH or rst_n) begin
+	always @(negedge nLATCH or negedge rst_n) begin
 		if (!rst_n) begin
 			hScrollOffset <= 0;
 			vScrollOffset <= 0;
@@ -112,7 +112,7 @@ module cus42_layer
 			else if (CA[1:0] == 2'b01) begin
 				// tilemap 0/1 X scroll + priority
 				// set 9th bit
-				hScrollOffset[8] = CD[0];
+				hScrollOffset[8] <= CD[0];
 			end else if (CA[1:0] == 2'b10)
 				// tilemap 0/1 Y scroll
 				// set all 8 bits

@@ -148,7 +148,7 @@ module cus47
 	// CPU clock - 90 degrees out of phase from 2H is inferred from knowledge of CUS41 and the fact that the input clock is 180 degrees
 	// out of phase to the clock of CUS41
 	// http://www.ukvac.com/forum/topic362440&OB=DESC.html
-	always @(negedge CLK_6M or rst_n) begin
+	always @(negedge CLK_6M) begin
 		if (!rst_n || !CLK_2H) begin
 			cpu_clock_counter <= 0;
 		end else begin
@@ -158,14 +158,13 @@ module cus47
 	
 	// watchdog reset and int ack
 	// http://www.ukvac.com/forum/topic362440&OB=DESC.html
-	always @(posedge nVBLK or rst_n) begin
+	always @(posedge nVBLK or negedge rst_n) begin
 		if (!rst_n || watchdog_clear || watchdog_counter === 'b1010) begin
 			watchdog_counter <= 'b0000;
 		end else begin
 			watchdog_counter <= watchdog_counter + 1;
+      nIRQ <= ~int_ack;
 		end
-		
-		nIRQ <= ~int_ack;
 	end
 	
 	/*always @(*) begin
