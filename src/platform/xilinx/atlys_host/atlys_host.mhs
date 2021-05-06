@@ -71,7 +71,6 @@
  PORT axi_hdmi_0_TMDS_TX_0_P_pin = axi_hdmi_0_TMDS_TX_0_P, DIR = O
  PORT axi_hdmi_0_TMDS_TX_0_N_pin = axi_hdmi_0_TMDS_TX_0_N, DIR = O
  PORT system86_0_vid_clk_pin = system86_0_vid_clk, DIR = O, SIGIS = CLK
- PORT system86_0_vid_red_pin = system86_0_vid_red, DIR = O, VEC = [3:0]
  PORT QSPI_FLASH_IO2 = QSPI_FLASH_IO2, DIR = IO
  PORT QSPI_FLASH_IO3 = QSPI_FLASH_IO3, DIR = IO
 
@@ -83,7 +82,6 @@ BEGIN system86
  BUS_INTERFACE SRAM_3F = system86_0_SRAM_3F
  BUS_INTERFACE EPROM_3R = system86_0_EPROM_3R
  PORT vid_clk = system86_0_vid_clk
- PORT vid_red = system86_0_vid_red
 END
 
 BEGIN proc_sys_reset

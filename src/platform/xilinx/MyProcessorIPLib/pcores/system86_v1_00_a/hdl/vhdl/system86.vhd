@@ -93,21 +93,20 @@ entity system86 is
 
 		--  -- System Parameter		
 		C_USE_HARDWARE_CLOCKS		: integer 	:= 0;
-		C_VIDEO_COMPONENT_DEPTH		: integer	:= 8;
+		C_VIDEO_COMPONENT_DEPTH		: integer	:= 4;
 		
---		C_EPROM_M27512_ADDR_WIDTH 	: integer	:= 16;
---		C_EPROM_M27512_DATA_WIDTH 	: integer	:= 8;
---		C_EPROM_M27256_ADDR_WIDTH 	: integer	:= 15;
---		C_EPROM_M27256_DATA_WIDTH 	: integer	:= 8;
---		C_EPROM_MB7138_ADDR_WIDTH 	: integer	:= 11;
---		C_EPROM_MB7138_DATA_WIDTH 	: integer	:= 8;
+		C_EPROM_M27512_ADDR_WIDTH 	: integer	:= 16;
+		C_EPROM_M27512_DATA_WIDTH 	: integer	:= 8;
+		C_EPROM_M27256_ADDR_WIDTH 	: integer	:= 15;
+		C_EPROM_M27256_DATA_WIDTH 	: integer	:= 8;
+		C_EPROM_MB7138_ADDR_WIDTH 	: integer	:= 11;
+		C_EPROM_MB7138_DATA_WIDTH 	: integer	:= 8;
 		C_EPROM_MB7124_ADDR_WIDTH 	: integer	:= 9;
 		C_EPROM_MB7124_DATA_WIDTH 	: integer	:= 8;
---		C_EPROM_MB7116_ADDR_WIDTH 	: integer	:= 9;
---		C_EPROM_MB7116_DATA_WIDTH 	: integer	:= 4;
---		C_EPROM_MB7112_ADDR_WIDTH 	: integer	:= 4;
---		C_EPROM_MB7112_DATA_WIDTH 	: integer	:= 8;
---		
+		C_EPROM_MB7116_ADDR_WIDTH 	: integer	:= 9;
+		C_EPROM_MB7116_DATA_WIDTH 	: integer	:= 4;
+		C_EPROM_MB7112_ADDR_WIDTH 	: integer	:= 5;
+		C_EPROM_MB7112_DATA_WIDTH 	: integer	:= 8;
 		C_SRAM_CY6462_ADDR_WIDTH 	: integer	:= 13;
 		C_SRAM_CY6462_DATA_WIDTH 	: integer	:= 8
 	);
@@ -118,37 +117,37 @@ entity system86 is
 		--
 		
 		-- simulation control
-		rst_n 					: in std_logic;					-- hard reset the simulation
+		rst_n 					: in std_logic := '1';			-- hard reset the simulation
 		--enable 				: in std_logic := 1;				-- enable the simulation
 
 		-- simulation video
-		vid_clk				: out    std_logic;
-		vid_data				: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
-		vid_red				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		vid_green			: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		vid_blue				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		vid_csync			: out    std_logic;
-		vid_hsync			: out    std_logic;
-		vid_vsync			: out    std_logic;
-		vid_hblank			: out    std_logic;
-		vid_vblank			: out    std_logic;
+		vid_clk					: out    std_logic;
+		--vid_data				: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
+		--vid_red				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		--vid_green				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		--vid_blue				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		--vid_csync				: out    std_logic;
+		vid_hsync_n				: out    std_logic;
+		vid_vsync_n				: out    std_logic;
+		vid_hblank_n			: out    std_logic;
+		vid_vblank_n			: out    std_logic;
 		
 		-- simulation generated  system clock
-		CLK_48M				: in	std_logic;					-- 49.152 MHz system clock
+		CLK_48M					: in	std_logic;					-- 49.152 MHz system clock
 		
 		--CLK_24M_ext			: in	std_logic;					-- 49.152 MHz system clock
 		--CLK_12M_ext			: in	std_logic;					-- 49.152 MHz system clock
-		--CLK_6M_ext				: in	std_logic;					-- 49.152 MHz system clock
+		--CLK_6M_ext			: in	std_logic;					-- 49.152 MHz system clock
 		
 		--
 		-- System 86 external connectors
 		--
 		
 		-- System 86 native video (albeit 4-bit digital equivalent before resister ladder conversion)
-		conn_j2_sync		: out    std_logic;
-		conn_j2_red			: out    std_logic_vector(3 downto 0);
-		conn_j2_green		: out    std_logic_vector(3 downto 0);
-		conn_j2_blue		: out    std_logic_vector(3 downto 0);
+		conn_j2_sync			: out    std_logic;
+		conn_j2_red				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		conn_j2_green			: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		conn_j2_blue			: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
 --		
 --		-- J4 connector to sub PCB (34 pin)
 --		conn_j4_reset		: out    std_logic;				-- pin 18 - system reset
@@ -177,93 +176,100 @@ entity system86 is
 		-- (imagine the board has been socketed and the chips are simply external modules with independent busses!)
 		--
 		
-		prom_3r_ce	: out std_logic;
-		prom_3r_oe	: out std_logic;
-		prom_3r_addr	: out std_logic_vector(C_EPROM_MB7124_ADDR_WIDTH-1 downto 0) := "000000000";
-		--prom_3r_data_T	: out std_logic;
-		prom_3r_data	: in  std_logic_vector(C_EPROM_MB7124_DATA_WIDTH-1 downto 0) := "00000000";
-		--prom_3r_data_O	: out  std_logic_vector(C_EPROM_MB7124_DATA_WIDTH-1 downto 0) := "00000000";
+		prom_3r_ce			: out std_logic;
+		prom_3r_oe			: out std_logic;
+		prom_3r_addr		: out std_logic_vector(C_EPROM_MB7124_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_3r_data		: in  std_logic_vector(C_EPROM_MB7124_DATA_WIDTH-1 downto 0) := "00000000";
 		
---		prom_3s_ce		: out std_logic;
---		prom_3s_oe		: out std_logic;
---		prom_3s_addr	: out std_logic_vector(C_EPROM_MB7116_ADDR_WIDTH-1 downto 0) := "000000000";
---		prom_3s_data  	: in  std_logic_vector(C_EPROM_MB7116_DATA_WIDTH-1 downto 0) := "0000";
---		
---		prom_4v_ce		: out std_logic;
---		prom_4v_oe		: out std_logic;
---		prom_4v_addr	: out std_logic_vector(C_EPROM_MB7138_ADDR_WIDTH-1 downto 0) := "000000000";
---		prom_4v_data  	: in  std_logic_vector(C_EPROM_MB7138_DATA_WIDTH-1 downto 0) := "00000000";
---		
---		prom_5v_ce		: out std_logic;
---		prom_5v_oe		: out std_logic;
---		prom_5v_addr	: out std_logic_vector(C_EPROM_MB7138_ADDR_WIDTH-1 downto 0) := "000000000";
---		prom_5v_data  	: in  std_logic_vector(C_EPROM_MB7138_DATA_WIDTH-1 downto 0) := "00000000";
---		
---		prom_6u_ce		: out std_logic;
---		prom_6u_oe		: out std_logic;
---		prom_6u_addr	: out std_logic_vector(C_EPROM_MB7112_ADDR_WIDTH-1 downto 0) := "000000000";
---		prom_6u_data  	: in  std_logic_vector(C_EPROM_MB7112_DATA_WIDTH-1 downto 0) := "00000000";
---		
---		prom_7s_ce		: out std_logic;
---		prom_7s_oe		: out std_logic;
---		prom_7s_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
---		prom_7s_data  	: in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
---		
---		prom_9c_ce		: out std_logic;
---		prom_9c_oe		: out std_logic;
---		prom_9c_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
---		prom_9c_data  	: in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
---		
---		prom_9d_ce		: out std_logic;
---		prom_9d_oe		: out std_logic;
---		prom_9d_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
---		prom_9d_data  	: in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
---		
---		prom_12c_ce		: out std_logic;
---		prom_12c_oe		: out std_logic;
---		prom_12c_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
---		prom_12c_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
---		
---		prom_12d_ce		: out std_logic;
---		prom_12d_oe		: out std_logic;
---		prom_12d_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
---		prom_12d_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
---		
+		prom_3s_ce			: out std_logic;
+		prom_3s_oe			: out std_logic;
+		prom_3s_addr		: out std_logic_vector(C_EPROM_MB7116_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_3s_data  		: in  std_logic_vector(C_EPROM_MB7116_DATA_WIDTH-1 downto 0) := "0000";
+		
+		prom_4v_ce		: out std_logic;
+		prom_4v_oe		: out std_logic;
+		prom_4v_addr	: out std_logic_vector(C_EPROM_MB7138_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_4v_data  	: in  std_logic_vector(C_EPROM_MB7138_DATA_WIDTH-1 downto 0) := "00000000";
+		
+		prom_5v_ce		: out std_logic;
+		prom_5v_oe		: out std_logic;
+		prom_5v_addr	: out std_logic_vector(C_EPROM_MB7138_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_5v_data  	: in  std_logic_vector(C_EPROM_MB7138_DATA_WIDTH-1 downto 0) := "00000000";
+		
+		prom_6u_ce		: out std_logic;
+		prom_6u_oe		: out std_logic;
+		prom_6u_addr	: out std_logic_vector(C_EPROM_MB7112_ADDR_WIDTH-1 downto 0) := "00000";
+		prom_6u_data  	: in  std_logic_vector(C_EPROM_MB7112_DATA_WIDTH-1 downto 0) := "00000000";
+		
+		eprom_4r_ce		: out std_logic;
+		eprom_4r_oe		: out std_logic;
+		eprom_4r_addr	: out std_logic_vector(C_EPROM_M27512_ADDR_WIDTH-1 downto 0) := "000000000";
+		eprom_4r_data  : in  std_logic_vector(C_EPROM_M27512_DATA_WIDTH-1 downto 0) := "00000000";
+
+		eprom_4s_ce		: out std_logic;
+		eprom_4s_oe		: out std_logic;
+		eprom_4s_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+		eprom_4s_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+		
+		eprom_7r_ce		: out std_logic;
+		eprom_7r_oe		: out std_logic;
+		eprom_7r_addr	: out std_logic_vector(C_EPROM_M27512_ADDR_WIDTH-1 downto 0) := "000000000";
+		eprom_7r_data  : in  std_logic_vector(C_EPROM_M27512_DATA_WIDTH-1 downto 0) := "00000000";
+		
+		eprom_7s_ce		: out std_logic;
+		eprom_7s_oe		: out std_logic;
+		eprom_7s_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+		eprom_7s_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+		
+		eprom_9c_ce		: out std_logic;
+		eprom_9c_oe		: out std_logic;
+		eprom_9c_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+		eprom_9c_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+		
+		eprom_9d_ce		: out std_logic;
+		eprom_9d_oe		: out std_logic;
+		eprom_9d_addr	:out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+		eprom_9d_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+		
+		eprom_12c_ce	: out std_logic;
+		eprom_12c_oe	: out std_logic;
+		eprom_12c_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+		eprom_12c_data : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+		
+		eprom_12d_ce	: out std_logic;
+		eprom_12d_oe	: out std_logic;
+		eprom_12d_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+		eprom_12d_data : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+		
 		sram_3f_ce		: out std_logic;
 		sram_3f_oe		: out std_logic;
 		sram_3f_we		: out std_logic;
 		sram_3f_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
-		sram_3f_data   : inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000"
---		
---		sram_4n_ce		: out std_logic;
---		sram_4n_oe		: out std_logic;
---		sram_4n_we		: out std_logic;
---		sram_4n_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "000000000";
---		sram_4n_data  	: in  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
---
---		sram_4r_ce		: out std_logic;
---		sram_4r_oe		: out std_logic;
---		sram_4r_we		: out std_logic;
---		sram_4r_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "000000000";
---		sram_4r_data  	: in  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
---
---		sram_7n_ce		: out std_logic;
---		sram_7n_oe		: out std_logic;
---		sram_7n_we		: out std_logic;
---		sram_7n_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "000000000";
---		sram_7n_data  	: in  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
---
---		sram_10m_ce		: out std_logic;
---		sram_10m_oe		: out std_logic;
---		sram_10m_we		: out std_logic;
---		sram_10m_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "000000000";
---		sram_10m_data  : in  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000"
+		sram_3f_data   : inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
+		
+		sram_4n_ce		: out std_logic;
+		sram_4n_oe		: out std_logic;
+		sram_4n_we		: out std_logic;
+		sram_4n_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
+		sram_4n_data  	: inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
 
-		--sram_11k_ce		: out std_logic;
-		--sram_11k_oe		: out std_logic;
-		--sram_11k_we		: out std_logic;
-		--sram_11k_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "000000000";
-		--sram_11k_data  : in  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "0000";		
+		sram_7n_ce		: out std_logic;
+		sram_7n_oe		: out std_logic;
+		sram_7n_we		: out std_logic;
+		sram_7n_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
+		sram_7n_data  	: inout  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
+
+		sram_10m_ce		: out std_logic;
+		sram_10m_oe		: out std_logic;
+		sram_10m_we		: out std_logic;
+		sram_10m_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
+		sram_10m_data  : inout  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
+
+		sram_11k_ce		: out std_logic;
+		sram_11k_oe		: out std_logic;
+		sram_11k_we		: out std_logic;
+		sram_11k_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
+		sram_11k_data  : inout  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000"		
 	);
 
 -------------------------------------------------------------------------------
@@ -279,11 +285,11 @@ entity system86 is
   attribute IP_GROUP             	: string ;
   attribute IP_GROUP of system86 	: entity is "LOGICORE";
   attribute SIGIS : string; 
---attribute SIGIS of rst : signal is "Rst"; 
+
+  attribute SIGIS of rst_n : signal is "Rst"; 
 
   attribute SIGIS of CLK_48M : signal is "Clk"; 
-
---attribute SIGIS of CLK_6M : signal is "Clk"; 
+  attribute SIGIS of vid_clk : signal is "Clk"; 
 
 end entity system86;
 
@@ -316,61 +322,18 @@ architecture IMP of system86 is
 --signal CLK_6M		: std_logic;
 --signal CLK_6MD		: std_logic;
 --
---signal nHSYNC		: std_logic;
---signal nVSYNC		: std_logic;
---signal nVBLANK		: std_logic;
---signal nHBLANK		: std_logic;	-- used for simulation only
---signal BLANKING	: std_logic;
---signal nHRESET		: std_logic;
---signal nVRESET		: std_logic;
---signal SYNC			: std_logic;
---signal RED			: std_logic_vector(3 downto 0);
---signal GREEN		: std_logic_vector(3 downto 0);
---signal BLUE			: std_logic_vector(3 downto 0);
---
---signal CLK_8V		: std_logic;
---signal CLK_4V		: std_logic;
---signal CLK_1V		: std_logic;
---signal CLK_4H		: std_logic;
---signal CLK_2H		: std_logic;
---signal CLK_1H		: std_logic;
---signal CLK_S2H		: std_logic;
---signal CLK_S1H		: std_logic;
---
---signal dot_lsb_acc	: std_logic_vector(15 downto 0) := "0000000000000000";
---signal dot_msb_acc	: std_logic_vector(15 downto 0) := "0000000000000000";
---signal DOT			: std_logic_vector(7 downto 0) := "00000000";
---signal BANK			: std_logic := '0';
---
-----
----- internal signals
-----
---
---signal vid_active			: std_logic;
---signal vid_active_col	: std_logic_vector(9 downto 0);
---signal vid_active_row	: std_logic_vector(9 downto 0);
---signal vidgen_pattern	: std_logic_vector(3 downto 0) := "0001";
---
---signal tpg_pattern		: std_logic_vector(3 downto 0) := "0000"; --"0101";	-- 0110 black recangle with white border
-----signal tpg_pattern		: std_logic_vector(3 downto 0) := "0101";	-- 0110 black recangle with white border
---signal tpg_red				: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
---signal tpg_green			: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
---signal tpg_blue			: std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
---signal tpg_hsync			: std_logic;
---signal tpg_vsync			: std_logic;
---signal tpg_hblank			: std_logic;
---signal tpg_vblank			: std_logic;
+
 --
 
 component system86
 port(
 	-- simulation control
-	rst_n 				: in std_logic := '0';		// master reset
+	rst_n 				: in std_logic;		-- master reset
 	
 	-- simulation outputs
 	
 	vid_clk				: out    std_logic;
-	vid_data				: out    std_logic_vector(11 downto 0);		-- 12-bit RGB data
+	--vid_data				: out    std_logic_vector(11 downto 0);		-- 12-bit RGB data
 	vid_hsync_n			: out    std_logic;
 	vid_vsync_n			: out    std_logic;
 	vid_hblank_n		: out    std_logic;
@@ -387,9 +350,9 @@ port(
 	--
 	
 	conn_j2_sync		: out    std_logic;									-- composite sync
-	conn_j2_red			: out    std_logic_vector(3 downto 0);			-- 4-bit red component
-	conn_j2_green		: out    std_logic_vector(3 downto 0);			-- 4-bit green component
-	conn_j2_blue		: out    std_logic_vector(3 downto 0);			-- 4-bit blue component
+	conn_j2_red			: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);			-- 4-bit red component
+	conn_j2_green		: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);			-- 4-bit green component
+	conn_j2_blue		: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);			-- 4-bit blue component
 	
 	--
 	-- System 86 CPU busses
@@ -403,72 +366,102 @@ port(
 	
 	prom_3r_ce		: out std_logic;
 	prom_3r_oe		: out std_logic;
-	prom_3r_addr	: out std_logic_vector(8 downto 0) := "000000000";
-	prom_3r_data	: in  std_logic_vector(7 downto 0) := "00000000";
+	prom_3r_addr	: out std_logic_vector(C_EPROM_MB7124_ADDR_WIDTH-1 downto 0) := "000000000";
+	prom_3r_data	: in  std_logic_vector(C_EPROM_MB7124_DATA_WIDTH-1 downto 0) := "00000000";
 --	
---	prom_3s_ce		: out std_logic;
---	prom_3s_oe		: out std_logic;
---	prom_3s_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	prom_3s_data  	: in  std_logic_vector(3 downto 0) := "0000";
+	prom_3s_ce		: out std_logic;
+	prom_3s_oe		: out std_logic;
+	prom_3s_addr	: out std_logic_vector(C_EPROM_MB7116_ADDR_WIDTH-1 downto 0) := "000000000";
+	prom_3s_data  	: in  std_logic_vector(C_EPROM_MB7116_DATA_WIDTH-1 downto 0) := "0000";
 --	
---	prom_4v_ce		: out std_logic;
---	prom_4v_oe		: out std_logic;
---	prom_4v_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	prom_4v_data  	: in  std_logic_vector(3 downto 0) := "0000";
+	prom_4v_ce		: out std_logic;
+	prom_4v_oe		: out std_logic;
+	prom_4v_addr	: out std_logic_vector(C_EPROM_MB7138_ADDR_WIDTH-1 downto 0) := "000000000";
+	prom_4v_data  	: in  std_logic_vector(C_EPROM_MB7138_DATA_WIDTH-1 downto 0) := "0000";
 --	
---	prom_5v_ce		: out std_logic;
---	prom_5v_oe		: out std_logic;
---	prom_5v_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	prom_5v_data  	: in  std_logic_vector(3 downto 0) := "0000";
+	prom_5v_ce		: out std_logic;
+	prom_5v_oe		: out std_logic;
+	prom_5v_addr	: out std_logic_vector(C_EPROM_MB7138_ADDR_WIDTH-1 downto 0) := "000000000";
+	prom_5v_data  	: in  std_logic_vector(C_EPROM_MB7138_DATA_WIDTH-1 downto 0) := "0000";
 --	
---	prom_6u_ce		: out std_logic;
---	prom_6u_oe		: out std_logic;
---	prom_6u_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	prom_6u_data  	: in  std_logic_vector(3 downto 0) := "0000";
+	prom_6u_ce		: out std_logic;
+	prom_6u_oe		: out std_logic;
+	prom_6u_addr	: out std_logic_vector(C_EPROM_MB7112_ADDR_WIDTH-1 downto 0) := "00000";
+	prom_6u_data  	: in  std_logic_vector(C_EPROM_MB7112_DATA_WIDTH-1 downto 0) := "00000000";
 --	
---	prom_7s_ce		: out std_logic;
---	prom_7s_oe		: out std_logic;
---	prom_7s_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	prom_7s_data  	: in  std_logic_vector(3 downto 0) := "0000";
+	eprom_4r_ce		: out std_logic;
+	eprom_4r_oe		: out std_logic;
+	eprom_4r_addr	: out std_logic_vector(C_EPROM_M27512_ADDR_WIDTH-1 downto 0) := "000000000";
+	eprom_4r_data  : in  std_logic_vector(C_EPROM_M27512_DATA_WIDTH-1 downto 0) := "0000";
 
+	eprom_4s_ce		: out std_logic;
+	eprom_4s_oe		: out std_logic;
+	eprom_4s_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+	eprom_4s_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+	
+	eprom_7r_ce		: out std_logic;
+	eprom_7r_oe		: out std_logic;
+	eprom_7r_addr	: out std_logic_vector(C_EPROM_M27512_ADDR_WIDTH-1 downto 0) := "000000000";
+	eprom_7r_data  : in  std_logic_vector(C_EPROM_M27512_DATA_WIDTH-1 downto 0) := "0000";
+
+	eprom_7s_ce		: out std_logic;
+	eprom_7s_oe		: out std_logic;
+	eprom_7s_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+	eprom_7s_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+
+	eprom_9c_ce		: out std_logic;
+	eprom_9c_oe		: out std_logic;
+	eprom_9c_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+	eprom_9c_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+	
+	eprom_9d_ce		: out std_logic;
+	eprom_9d_oe		: out std_logic;
+	eprom_9d_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+	eprom_9d_data  : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+	
+	eprom_12c_ce	: out std_logic;
+	eprom_12c_oe	: out std_logic;
+	eprom_12c_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+	eprom_12c_data : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+	
+	eprom_12d_ce	: out std_logic;
+	eprom_12d_oe	: out std_logic;
+	eprom_12d_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
+	eprom_12d_data : in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+	
 	--
 	-- System 86 static RAM busses
 	--
---	sram_3f_ce		: out std_logic;
---	sram_3f_oe		: out std_logic;
---	sram_3f_we		: out std_logic;
---	sram_3f_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	sram_3f_data  	: in  std_logic_vector(3 downto 0) := "0000";
+	sram_3f_ce		: out std_logic;
+	sram_3f_oe		: out std_logic;
+	sram_3f_we		: out std_logic;
+	sram_3f_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
+	sram_3f_data  	: inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
 	
 --	
---	sram_4n_ce		: out std_logic;
---	sram_4n_oe		: out std_logic;
---	sram_4n_we		: out std_logic;
---	sram_4n_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	sram_4n_data  	: in  std_logic_vector(3 downto 0) := "0000";
+	sram_4n_ce		: out std_logic;
+	sram_4n_oe		: out std_logic;
+	sram_4n_we		: out std_logic;
+	sram_4n_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
+	sram_4n_data  	: inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
 --
---	sram_4r_ce		: out std_logic;
---	sram_4r_oe		: out std_logic;
---	sram_4r_we		: out std_logic;
---	sram_4r_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	sram_4r_data  	: in  std_logic_vector(3 downto 0) := "0000";
+	sram_7n_ce		: out std_logic;
+	sram_7n_oe		: out std_logic;
+	sram_7n_we		: out std_logic;
+	sram_7n_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
+	sram_7n_data  	: inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
 --
---	sram_7n_ce		: out std_logic;
---	sram_7n_oe		: out std_logic;
---	sram_7n_we		: out std_logic;
---	sram_7n_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	sram_7n_data  	: in  std_logic_vector(3 downto 0) := "0000";
+	sram_10m_ce		: out std_logic;
+	sram_10m_oe		: out std_logic;
+	sram_10m_we		: out std_logic;
+	sram_10m_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
+	sram_10m_data  : inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
 --
---	sram_10m_ce		: out std_logic;
---	sram_10m_oe		: out std_logic;
---	sram_10m_we		: out std_logic;
---	sram_10m_addr	: out std_logic_vector(8 downto 0) := "000000000";
---	sram_10m_data  : in  std_logic_vector(3 downto 0) := "0000";
---
---	SYNC				: out std_logic;
---	RED				: out std_logic_vector(3 downto 0);
---	GREEN				: out std_logic_vector(3 downto 0);
---	BLUE				: out std_logic_vector(3 downto 0)
+	sram_11k_ce		: out std_logic;
+	sram_11k_oe		: out std_logic;
+	sram_11k_we		: out std_logic;
+	sram_11k_addr	: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
+	sram_11k_data  : inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000"
 );
 end component;
 
@@ -478,190 +471,94 @@ end component;
 
 begin -- architecture IMP
 
-	Inst_System86: system86
+	Inst_System86: system86_v1_00_a.system86
 	port map
 	(
 		rst_n 			=> rst_n,
 		CLK_48M			=> CLK_48M,
-		CLK_48M			=> SYNC,
-		conn_j2_red		=> RED,
-		conn_j2_green	=> GREEN,
-		conn_j2_blue	=> BLUE
+		vid_clk			=> vid_clk,
+		--vid_data			=> vid_data,
+		vid_hsync_n		=> vid_hsync_n,
+		vid_vsync_n		=> vid_vsync_n,
+		vid_hblank_n	=> vid_hblank_n,
+		vid_vblank_n	=> vid_vblank_n,
+		conn_j2_sync	=> conn_j2_sync,
+		conn_j2_red		=> conn_j2_red,
+		conn_j2_green	=> conn_j2_green,
+		conn_j2_blue	=> conn_j2_blue,
+		prom_3r_ce		=> prom_3r_ce,
+		prom_3r_oe		=> prom_3r_oe,
+		prom_3r_addr	=> prom_3r_addr,
+		prom_3r_data	=> prom_3r_data,
+		prom_3s_ce		=> prom_3s_ce,
+		prom_3s_oe		=> prom_3s_oe,
+		prom_3s_addr	=> prom_3s_addr,
+		prom_3s_data	=> prom_3s_data,
+		prom_4v_ce		=> prom_4v_ce,
+		prom_4v_oe		=> prom_4v_oe,
+		prom_4v_addr	=> prom_4v_addr,
+		prom_4v_data	=> prom_4v_data,
+		prom_5v_ce		=> prom_5v_ce,
+		prom_5v_oe		=> prom_5v_oe,
+		prom_5v_addr	=> prom_5v_addr,
+		prom_5v_data	=> prom_5v_data,
+		prom_6u_ce		=> prom_6u_ce,
+		prom_6u_oe		=> prom_6u_oe,
+		prom_6u_addr	=> prom_6u_addr,
+		prom_6u_data	=> prom_6u_data,
+		eprom_4r_ce		=> eprom_4r_ce,
+		eprom_4r_oe		=> eprom_4r_oe,
+		eprom_4r_addr	=> eprom_4r_addr,
+		eprom_4r_data	=> eprom_4r_data,
+		eprom_7r_ce		=> eprom_7r_ce,
+		eprom_7r_oe		=> eprom_7r_oe,
+		eprom_7r_addr	=> eprom_7r_addr,
+		eprom_7r_data	=> eprom_7r_data,
+		eprom_7s_ce		=> eprom_7s_ce,
+		eprom_7s_oe		=> eprom_7s_oe,
+		eprom_7s_addr	=> eprom_7s_addr,
+		eprom_7s_data	=> eprom_7s_data,
+		eprom_9c_ce		=> eprom_9c_ce,
+		eprom_9c_oe		=> eprom_9c_oe,
+		eprom_9c_addr	=> eprom_9c_addr,
+		eprom_9c_data	=> eprom_9c_data,
+		eprom_9d_ce		=> eprom_9d_ce,
+		eprom_9d_oe		=> eprom_9d_oe,
+		eprom_9d_addr	=> eprom_9d_addr,
+		eprom_9d_data	=> eprom_9d_data,
+		eprom_12c_ce	=> eprom_12c_ce,
+		eprom_12c_oe	=> eprom_12c_oe,
+		eprom_12c_addr	=> eprom_12c_addr,
+		eprom_12c_data	=> eprom_12c_data,
+		eprom_12d_ce	=> eprom_12d_ce,
+		eprom_12d_oe	=> eprom_12d_oe,
+		eprom_12d_addr	=> eprom_12d_addr,
+		eprom_12d_data	=> eprom_12d_data,
+		sram_3f_ce		=> sram_3f_ce,
+		sram_3f_oe		=> sram_3f_oe,
+		sram_3f_we		=> sram_3f_we,
+		sram_3f_addr	=> sram_3f_addr,
+		sram_3f_data	=> sram_3f_data,
+		sram_4n_ce		=> sram_4n_ce,
+		sram_4n_oe		=> sram_4n_oe,
+		sram_4n_we		=> sram_4n_we,
+		sram_4n_addr	=> sram_4n_addr,
+		sram_4n_data	=> sram_4n_data,
+		sram_7n_ce		=> sram_7n_ce,
+		sram_7n_oe		=> sram_7n_oe,
+		sram_7n_we		=> sram_7n_we,
+		sram_7n_addr	=> sram_7n_addr,
+		sram_7n_data	=> sram_7n_data,
+		sram_10m_ce		=> sram_10m_ce,
+		sram_10m_oe		=> sram_10m_oe,
+		sram_10m_we		=> sram_10m_we,
+		sram_10m_addr	=> sram_10m_addr,
+		sram_10m_data	=> sram_10m_data,
+		sram_11k_ce		=> sram_11k_ce,
+		sram_11k_oe		=> sram_11k_oe,
+		sram_11k_we		=> sram_11k_we,
+		sram_11k_addr	=> sram_11k_addr,
+		sram_11k_data	=> sram_11k_data
 	);
-
-----
-----	timing_subsys: timing_subsystem
-----   port map
-----	(
-----		-- simulation control
-----		rst			=> rst,
-----		enable		=> enable,
-----		
-----		-- input clocks
-----		CLK_48M		=> CLK_48M,
-----		
-----		-- soft generated clocks
-----		CLK_24M		=> CLK_24M,
-----		CLK_12M		=> CLK_12M,
-----		CLK_6M		=> CLK_6M,
-----		CLK_6MD		=> CLK_6MD,
-----		
-----		-- video synchronisation
-----		nHSYNC 		=> nHSYNC,
-----		nVSYNC 		=> nVSYNC,
-----		nHBLANK		=> nHBLANK,	-- artistic licence - brought out for simulation
-----		nVBLANK		=> nVBLANK,
-----		BLANKING		=> BLANKING,
-----		nHRESET 		=> nHRESET,
-----		nVRESET 		=> nVRESET,
-----		
-----		-- video timings
-----		CLK_8V	=> CLK_8V,
-----		CLK_4V	=> CLK_4V,
-----		CLK_1V	=> CLK_1V,
-----		CLK_4H	=> CLK_4H,
-----		CLK_2H	=> CLK_2H,
-----		CLK_1H	=> CLK_1H,
-----		CLK_S2H	=> CLK_S2H,
-----		CLK_S1H	=> CLK_S1H
-----	);
-----	
-----	videogen_subsys: videogen_subsystem
-----   port map
-----	(
-----		-- simulation reset
-----		reset			=> reset,
-----		enable		=> enable,
-----		
-----		-- input clocks
-----		CLK_6MD		=> CLK_6MD,
-----		nCLR			=> '1',
-----		D				=> DOT,
-----		BANK			=> BANK,
-----		RED			=> RED,
-----		GREEN			=> GREEN,
-----		BLUE			=> BLUE,
-----		
-----		prom_3r_ce		=> prom_3r_ce,
-----		prom_3r_addr 	=> prom_3r_addr,
-----		prom_3r_data 	=> prom_3r_data,
-----		
-----		prom_3s_ce		=> prom_3s_ce,
-----		prom_3s_addr 	=> prom_3s_addr,
-----		prom_3s_data 	=> prom_3s_data
-----	);
-----	
-----	--
-----	-- Testing
-----	--
-----	
-----	InstBlankingToCount: Blanking_To_Count
-----	generic map
-----	(
-----		ACTIVE_COLS  		=> 288,
-----		ACTIVE_ROWS  		=> 224
-----	)
-----	port map
-----	(
-----		i_Clk 			=> CLK_6M,
-----		i_Rst				=> reset,
-----		i_HSync 			=> nHSYNC,
-----		i_VSync 			=> nVSYNC,
-----		i_HBlank 		=> nHBLANK,
-----		i_VBlank 		=> nVBLANK,
-----		o_Active			=> vid_active,
-----		o_Col_Count		=> vid_active_col,
-----		o_Row_Count		=> vid_active_row
-----	);
-----	
-----	Inst_Test_Pattern_Gen: Test_Pattern_Gen
-----	generic map
-----	(
-----		COMPONENT_DEPTH 	=> 4,
-----		USE_BLANKING		=> 1,
-----		TOTAL_COLS  		=> 384,
-----		TOTAL_ROWS   		=> 288,
-----		ACTIVE_COLS  		=> 288,
-----		ACTIVE_ROWS  		=> 224
-----	)
-----	port map
-----	(
-----		i_Clk 			=> CLK_6M,
-----		i_Rst				=> reset,
-----		i_Pattern 		=> tpg_pattern,
-----		i_HSync 			=> nHSYNC,
-----		i_VSync 			=> nVSYNC,
-----		o_HSync 			=> tpg_hsync,
-----		o_VSync 			=> tpg_vsync,
-----		o_HBlank			=> tpg_hblank,
-----		o_VBlank			=> tpg_vblank,
-----		o_Red_Video  	=> tpg_red(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
-----		o_Grn_Video  	=> tpg_green(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4),
-----		o_Blu_Video		=> tpg_blue(C_VIDEO_COMPONENT_DEPTH-1 downto C_VIDEO_COMPONENT_DEPTH-4)
-----	);
-----	
---process(CLK_48M)
---begin
---	if falling_edge(CLK_48M) then
---		CLK_48M_tmp <= CLK_48M; 
---		prom_3r_ce <= CLK_48M_tmp;
---	end if;
---end process;
-----	process(CLK_6M)
-----	begin
-----		if falling_edge(CLK_6M) then
-----			if vidgen_pattern /= "0000" then
-----				if vid_active_row(8 downto 0) = "001110000" then
-----					BANK <= '1';
-----				elsif vid_active_row(8 downto 0) = "000000000" then
-----					BANK <= '0';
-----				end if;			
-----				
-----				if vid_active /= '0' then
-----					DOT <= dot_msb_acc(15 downto 13) & dot_lsb_acc(15 downto 11);
-----					
-----					if (vid_active_col = 287) then
-----						dot_lsb_acc <= "0000000000000000";
-----						dot_msb_acc <= dot_msb_acc + 590;
-----					else
-----						dot_lsb_acc <= dot_lsb_acc + 228;
-----					end if;
-----					
-----					if (vid_active_row = 111 or vid_active_row = 223) then
-----						dot_lsb_acc <= "0000000000000000";
-----						dot_msb_acc <= "0000000000000000";
-----					end if;
-----				else
-----					DOT <= "00000000";
-----				end if;
-----			end if;
-----		elsif rising_edge(CLK_6M) then
-----			if tpg_pattern /= "0000" then
-----				vid_hsync 	<= tpg_hsync;
-----				vid_vsync 	<= tpg_vsync;
-----				vid_hblank 	<= tpg_hblank;
-----				vid_vblank 	<= tpg_vblank;
-----				vid_red 		<= tpg_red;
-----				vid_green 	<= tpg_green;
-----				vid_blue 	<= tpg_blue;
-----			else
-----				vid_hsync 	<= nHSYNC;
-----				vid_vsync 	<= nVSYNC;
-----				vid_hblank 	<= nHBLANK;
-----				vid_vblank 	<= nVBLANK;
-----				vid_red 		<= RED;
-----				vid_green 	<= GREEN;
-----				vid_blue 	<= BLUE;				
-----			end if;
-----		end if;
-----		
-----		vid_clk <= CLK_6M;
-----	end process;
-----	
-----	--
-----	-- assign connection outputs
-----	--
-----	
-
 	
 end imp;

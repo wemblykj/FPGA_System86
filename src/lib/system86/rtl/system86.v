@@ -53,6 +53,7 @@ module system86
 		
 		// == Simulation outputs
 		output wire vid_clk,
+		output wire [11:0] vid_data,
 		output wire vid_hsync_n,
 		output wire vid_vsync_n,
 		output wire vid_hblank_n,
@@ -62,11 +63,11 @@ module system86
 		input wire CLK_48M,				// System 86 master clock @ 49.125 MHz
 
 		// == Native 4 bit RGB output and composite sync signals ==
+		output wire conn_j2_sync,
 		output wire [3:0] conn_j2_red,
 		output wire [3:0] conn_j2_green,
 		output wire [3:0] conn_j2_blue,
-		output wire conn_j2_sync,
-		
+
 		// == External boards connectors
 		inout wire [1:20] conn_j5,			// 20 pin
 		inout wire [1:40] conn_j34p,		// 40 pin
