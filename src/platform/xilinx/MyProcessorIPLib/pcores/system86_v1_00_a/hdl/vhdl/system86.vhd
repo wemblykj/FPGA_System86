@@ -328,7 +328,11 @@ architecture IMP of system86 is
 component system86
 port(
 	-- simulation control
+<<<<<<< HEAD
 	rst_n 				: in std_logic;		-- master reset
+=======
+	rst_n 				: in std_logic := '0';		-- master reset
+>>>>>>> b20839c108c500f32717e3cdf434e8c1aabb1f36
 	
 	-- simulation outputs
 	

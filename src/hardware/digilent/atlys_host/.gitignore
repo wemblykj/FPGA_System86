@@ -1,0 +1,5 @@
+etc/
+hdl/
+implementation/
+pcores/
+synthesis/
