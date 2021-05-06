@@ -59,6 +59,8 @@ use ieee.std_logic_unsigned.all;
 
 library system86_v1_00_a;  
 
+library xsystem86_v1_00_a;
+
 -------------------------------------------------------------------------------------
 --
 --
@@ -328,11 +330,7 @@ architecture IMP of system86 is
 component system86
 port(
 	-- simulation control
-<<<<<<< HEAD
-	rst_n 				: in std_logic;		-- master reset
-=======
 	rst_n 				: in std_logic := '0';		-- master reset
->>>>>>> b20839c108c500f32717e3cdf434e8c1aabb1f36
 	
 	-- simulation outputs
 	
@@ -475,7 +473,7 @@ end component;
 
 begin -- architecture IMP
 
-	Inst_System86: system86_v1_00_a.system86
+	Inst_System86: entity xsystem86_v1_00_a.system86
 	port map
 	(
 		rst_n 			=> rst_n,
