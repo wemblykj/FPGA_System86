@@ -60,7 +60,7 @@ module system86
 		output wire vid_vblank_n,
 
 		// System 86 hardware timing
-		input wire CLK_48M,				// System 86 master clock @ 49.125 MHz
+		input wire clk_48m,				// System 86 master clock @ 49.125 MHz
 
 		// == Native 4 bit RGB output and composite sync signals ==
 		output wire conn_j2_sync,
@@ -170,7 +170,7 @@ module system86
 		timing_subsystem(
 			.rst_n(rst_n),
 			
-			.CLK_48M(CLK_48M),
+			.CLK_48M(clk_48m),
 			.CLK_6M(CLK_6M),
 			.CLK_6MD(CLK_6MD),	// secondary driver? in phase with 6M
 			.nVSYNC(nVSYNC),
@@ -459,7 +459,7 @@ module system86
 	
 	// diagnostics I/O (driven as documented)
 	assign conn_j5[16] = CLK_6M;
-	assign conn_j5[7] = CLK_48M;	
+	assign conn_j5[7] = clk_48m;	
 	assign conn_j5[12] = nHRESET;
 	assign conn_j5[11] = nVRESET;
 
