@@ -59,8 +59,6 @@ use ieee.std_logic_unsigned.all;
 
 library system86_v1_00_a;  
 
-library xsystem86_v1_00_a;
-
 -------------------------------------------------------------------------------------
 --
 --
@@ -135,7 +133,7 @@ entity system86 is
 		vid_vblank_n			: out    std_logic;
 		
 		-- simulation generated  system clock
-		CLK_48M					: in	std_logic;					-- 49.152 MHz system clock
+		clk_48m					: in	std_logic;					-- 49.152 MHz system clock
 		
 		--CLK_24M_ext			: in	std_logic;					-- 49.152 MHz system clock
 		--CLK_12M_ext			: in	std_logic;					-- 49.152 MHz system clock
@@ -327,7 +325,7 @@ architecture IMP of system86 is
 
 --
 
-component system86
+component xsystem86
 port(
 	-- simulation control
 	rst_n 				: in std_logic := '0';		-- master reset
@@ -345,7 +343,7 @@ port(
 	-- System 86 board inputs
 	-- 
 	
-	CLK_48M 				: in std_logic;		
+	clk_48m 				: in std_logic;		
 
 	--
 	-- System 86 board outputs
@@ -473,21 +471,23 @@ end component;
 
 begin -- architecture IMP
 
-	Inst_System86: entity xsystem86_v1_00_a.system86
+	Inst_System86: xsystem86
 	port map
 	(
 		rst_n 			=> rst_n,
-		CLK_48M			=> CLK_48M,
+		clk_48m			=> clk_48m,
 		vid_clk			=> vid_clk,
 		--vid_data			=> vid_data,
 		vid_hsync_n		=> vid_hsync_n,
 		vid_vsync_n		=> vid_vsync_n,
 		vid_hblank_n	=> vid_hblank_n,
 		vid_vblank_n	=> vid_vblank_n,
+		
 		conn_j2_sync	=> conn_j2_sync,
 		conn_j2_red		=> conn_j2_red,
 		conn_j2_green	=> conn_j2_green,
 		conn_j2_blue	=> conn_j2_blue,
+		
 		prom_3r_ce		=> prom_3r_ce,
 		prom_3r_oe		=> prom_3r_oe,
 		prom_3r_addr	=> prom_3r_addr,
@@ -512,6 +512,10 @@ begin -- architecture IMP
 		eprom_4r_oe		=> eprom_4r_oe,
 		eprom_4r_addr	=> eprom_4r_addr,
 		eprom_4r_data	=> eprom_4r_data,
+		eprom_4s_ce		=> eprom_4s_ce,
+		eprom_4s_oe		=> eprom_4s_oe,
+		eprom_4s_addr	=> eprom_4s_addr,
+		eprom_4s_data	=> eprom_4s_data,
 		eprom_7r_ce		=> eprom_7r_ce,
 		eprom_7r_oe		=> eprom_7r_oe,
 		eprom_7r_addr	=> eprom_7r_addr,
