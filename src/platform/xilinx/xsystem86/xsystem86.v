@@ -22,6 +22,8 @@
 
 //`include "system86/system86.vh"
 
+`include "mc6809_cpu/mc6809.vh"
+
 `include "ttl_mem/mb7112.vh"
 `include "ttl_mem/mb7116.vh"
 `include "ttl_mem/mb7124.vh"
@@ -71,6 +73,10 @@ module xsystem86
 		// == External boards connectors
 		inout wire [1:20] conn_j5,			// 20 pin
 		inout wire [1:40] conn_j34p,		// 40 pin
+		
+		// == Pluggable CPUs
+		`MC6809_OUTPUT_DEFS(E, mcpu_11a),		// 6809 - master cpu
+		`MC6809_OUTPUT_DEFS(E, scpu_9a),			// 6809 - sub cpu
 		
 		// == Pluggable proms
 		
@@ -125,6 +131,9 @@ module xsystem86
 			
 			.conn_j5(conn_j5),
 			.conn_j34p(conn_j34p),
+			
+			`MC6809_CONNECTION_DEFS(mcpu_11a),
+			`MC6809_CONNECTION_DEFS(scpu_9a),
 			
 			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
 			`PROM_CONNECTION_DEFS(prom_3s, prom_3s),

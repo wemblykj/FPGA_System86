@@ -54,36 +54,36 @@ module cpu_subsystem
       
         // == hardware abstraction - cpu ==
 			
-		// Main CPU signals
-		input wire mcpu_11a_we_n,
-		input wire mcpu_11a_bs,
-		input wire mcpu_11a_ba,
-		input wire mcpu_11a_avma,
-		input wire mcpu_11a_busy,
-		input wire mcpu_11a_lic,
-		inout wire [15:0] mcpu_11a_a,
-		inout wire [7:0] mcpu_11a_d,
-		output wire mcpu_11a_e,
-		output wire mcpu_11a_q,
-		output wire mcpu_11a_irq_n,
-		output wire mcpu_11a_reset_n,
-	
-		// Sub CPU signals 
-		input wire scpu_9a_we_n,
-		input wire scpu_9a_bs,
-		input wire scpu_9a_ba,
-		input wire scpu_9a_avma,
-		input wire scpu_9a_busy,
-		input wire scpu_9a_lic,	
-		inout wire [15:0] scpu_9a_a,
-		inout wire [7:0] scpu_9a_d,
-		output wire scpu_9a_e,
-		output wire scpu_9a_q,
-		output wire scpu_9a_irq_n,
-		output wire scpu_9a_reset_n,
+			// Main CPU signals
+			input wire mcpu_11a_we_n,
+			input wire mcpu_11a_bs,
+			input wire mcpu_11a_ba,
+			input wire mcpu_11a_avma,
+			input wire mcpu_11a_busy,
+			input wire mcpu_11a_lic,
+			inout wire [15:0] mcpu_11a_a,
+			inout wire [7:0] mcpu_11a_d,
+			output wire mcpu_11a_e,
+			output wire mcpu_11a_q,
+			output wire mcpu_11a_irq_n,
+			output wire mcpu_11a_reset_n,
+		
+			// Sub CPU signals 
+			input wire scpu_9a_we_n,
+			input wire scpu_9a_bs,
+			input wire scpu_9a_ba,
+			input wire scpu_9a_avma,
+			input wire scpu_9a_busy,
+			input wire scpu_9a_lic,	
+			inout wire [15:0] scpu_9a_a,
+			inout wire [7:0] scpu_9a_d,
+			output wire scpu_9a_e,
+			output wire scpu_9a_q,
+			output wire scpu_9a_irq_n,
+			output wire scpu_9a_reset_n,
 
-        // == hardware abstraction - memory buses ==
-        
+		  // == hardware abstraction - memory buses ==
+		  
 		  `EPROM_OUTPUT_DEFS(M27256, eprom_9c),
 		  `EPROM_OUTPUT_DEFS(M27256, eprom_9d),
 		  `EPROM_OUTPUT_DEFS(M27256, eprom_12c),
