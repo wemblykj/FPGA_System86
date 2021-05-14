@@ -132,8 +132,8 @@ module xsystem86
 			.conn_j5(conn_j5),
 			.conn_j34p(conn_j34p),
 			
-			`MC6809_CONNECTION_DEFS(mcpu_11a),
-			`MC6809_CONNECTION_DEFS(scpu_9a),
+			`MC6809_CONNECTION_DEFS(mcpu_11a, mcpu_11a),
+			`MC6809_CONNECTION_DEFS(scpu_9a, scpu_9a),
 			
 			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
 			`PROM_CONNECTION_DEFS(prom_3s, prom_3s),

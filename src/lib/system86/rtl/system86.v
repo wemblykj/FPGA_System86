@@ -22,6 +22,8 @@
 
 `include "system86/system86.vh"
 
+`include "mc6809_cpu/mc6809.vh"
+
 `include "ttl_mem/mb7112.vh"
 `include "ttl_mem/mb7116.vh"
 `include "ttl_mem/mb7124.vh"
@@ -71,6 +73,11 @@ module system86
 		// == External boards connectors
 		inout wire [1:20] conn_j5,			// 20 pin
 		inout wire [1:40] conn_j34p,		// 40 pin
+		
+		// == Pluggable CPUs
+		
+		`MC6809_OUTPUT_DEFS(E, mcpu_11a),		// 6809 - master cpu
+		`MC6809_OUTPUT_DEFS(E, scpu_9a),			// 6809 - sub cpu
 		
 		// == Pluggable proms
 		
@@ -136,34 +143,6 @@ module system86
 	wire [7:0] MD;					// master CPU data bus to backcolor latch
 	wire [2:0] SPR = 3'b0;			// CUS43 tile generator to sprite enable logic
 	wire [7:0] DOT;			// multiplexed tilemap color index and sprite color index
-	
-	// Main CPU
-	wire mcpu_11a_e;
-	wire mcpu_11a_q;
-	wire [7:0] mcpu_11a_d;
-	wire [15:0] mcpu_11a_a;
-	wire mcpu_11a_we_n;
-	wire mcpu_11a_bs;
-	wire mcpu_11a_ba;
-	wire mcpu_11a_avma;
-	wire mcpu_11a_busy;
-	wire mcpu_11a_lic;	
-	wire mcpu_11a_irq_n;
-	wire mcpu_11a_reset_n;
-	
-	// Sub CPU signals
-	wire scpu_9a_e;
-	wire scpu_9a_q;
-	wire [7:0] scpu_9a_d;
-	wire [15:0] scpu_9a_a;
-	wire scpu_9a_we_n;
-	wire scpu_9a_bs;
-	wire scpu_9a_ba;
-	wire scpu_9a_avma;
-	wire scpu_9a_busy;
-	wire scpu_9a_lic;
-	wire scpu_9a_irq_n;
-	wire scpu_9a_reset_n;
 	 
 	// == Timing subsystem ==
 	timing_subsystem
@@ -307,35 +286,8 @@ module system86
 			.nBACKCOLOR(nBACKCOLOR),
 			.MD(MD),
 			
-			// == hardware abstraction - cpu ==
-			
-		
-			// CPU 2 - sub CPU
-			.mcpu_11a_a(mcpu_11a_a),
-			.mcpu_11a_we_n(mcpu_11a_we_n),
-			.mcpu_11a_bs(mcpu_11a_bs),
-			.mcpu_11a_ba(mcpu_11a_ba),
-			.mcpu_11a_avma(mcpu_11a_avma),
-			.mcpu_11a_busy(mcpu_11a_busy),
-			.mcpu_11a_lic(mcpu_11a_lic),
-			.mcpu_11a_d(mcpu_11a_d),
-			.mcpu_11a_e(mcpu_11a_e),
-			.mcpu_11a_q(mcpu_11a_q),
-			.mcpu_11a_irq_n(mcpu_11a_irq_n),
-			.mcpu_11a_reset_n(mcpu_11a_reset_n),
-
-			.scpu_9a_a(scpu_9a_a),
-			.scpu_9a_we_n(scpu_9a_we_n),
-			.scpu_9a_bs(scpu_9a_bs),
-			.scpu_9a_ba(scpu_9a_ba),
-			.scpu_9a_avma(scpu_9a_avma),
-			.scpu_9a_busy(scpu_9a_busy),
-			.scpu_9a_lic(scpu_9a_lic),
-			.scpu_9a_d(scpu_9a_d),
-			.scpu_9a_e(scpu_9a_e),
-			.scpu_9a_q(scpu_9a_q),
-			.scpu_9a_irq_n(scpu_9a_irq_n),
-			.scpu_9a_reset_n(scpu_9a_reset_n),
+			`MC6809_CONNECTION_DEFS(mcpu_11a, mcpu_11a),
+			`MC6809_CONNECTION_DEFS(scpu_9a, scpu_9a),
 		  
 			// == hardware abstraction - memory buses ==
 			`EPROM_CONNECTION_DEFS(eprom_9c, eprom_9c),
@@ -377,8 +329,8 @@ module system86
 		)
 		scpu_9a
         (
-			.D(scpu_9a_d), 
-			.A(scpu_9a_a), 
+			.D(scpu_9a_data), 
+			.A(scpu_9a_addr), 
 			.RnW(scpu_9a_we_n), 
 			.E(scpu_9a_e), 
 			.Q(scpu_9a_q), 

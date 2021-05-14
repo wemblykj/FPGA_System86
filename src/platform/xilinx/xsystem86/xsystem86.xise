@@ -686,6 +686,7 @@
     <file xil_pn:name="../../../../roms/roms.vh" xil_pn:type="FILE_VERILOG"/>
     <file xil_pn:name="../../../lib/test_bench/assert.vh" xil_pn:type="FILE_VERILOG"/>
     <file xil_pn:name="../../../lib/system86/simulation/address_decode_defs.vh" xil_pn:type="FILE_VERILOG"/>
+    <file xil_pn:name="../../../lib/mc6809_cpu/mc6809.vh" xil_pn:type="FILE_VERILOG"/>
   </autoManagedFiles>
 
 </project>
