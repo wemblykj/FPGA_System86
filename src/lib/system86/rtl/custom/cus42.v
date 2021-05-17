@@ -47,6 +47,8 @@ module cus42
 		output wire HB2
 	);
 
+  wire sram_layer;
+  wire prom_layer;
 	assign sram_layer = ~CLK_2H;
 	assign prom_layer = CLK_2H;
 	
@@ -99,7 +101,7 @@ module cus42
 
 	// CPU/RAM multiplexing
 	assign nRWE = nRCS | RnW | write_done_request;
-	assign nROE = ~nRCS ? ~RnW : 0;
+	assign nROE = ~nRCS ? ~RnW : 1'b0;
 	
 	assign CD = (~nRCS & RnW) ? RD : 8'bz;
 	assign RD = (~nRCS & ~RnW) ? CD : 8'bz;

@@ -126,7 +126,7 @@ module cus41
 		if (!rst_n || !CLK_0) begin
 			cpu_clock_counter <= 0;
 		end else begin
-			cpu_clock_counter <= cpu_clock_counter + 1;
+			cpu_clock_counter <= cpu_clock_counter + 1'b1;
 		end
 		
 	end
@@ -138,7 +138,7 @@ module cus41
 			main_watchdog_counter <= 0;
       nMINT <= 1;
 		end else begin
-			main_watchdog_counter <= main_watchdog_counter + 1;
+			main_watchdog_counter <= main_watchdog_counter + 1'b1;
       nMINT <= ~main_int_ack;
 		//nSINT <= ~sound_int_ack;
 		end

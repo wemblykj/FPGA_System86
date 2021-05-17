@@ -65,7 +65,7 @@ module system86
 		input wire clk_48m,				// System 86 master clock @ 49.125 MHz
 
 		// == Native 4 bit RGB output and composite sync signals ==
-		output wire conn_j2_sync,
+		output wire conn_j2_sync_n,
 		output wire [3:0] conn_j2_red,
 		output wire [3:0] conn_j2_green,
 		output wire [3:0] conn_j2_blue,
@@ -131,10 +131,10 @@ module system86
 	wire nVBLANK;
  
 	wire BLANKING;
+  wire nCOMPSYNC;
 	wire nHRESET;
 	wire nVRESET;
 	
-	wire SYNC;
 	wire [3:0] RED;
 	wire [3:0] GREEN;
 	wire [3:0] BLUE;
@@ -150,6 +150,8 @@ module system86
 			.rst_n(rst_n),
 			
 			.CLK_48M(clk_48m),
+      //.CLK_24M(0),
+      //.CLK_12M(0),
 			.CLK_6M(CLK_6M),
 			.CLK_6MD(CLK_6MD),	// secondary driver? in phase with 6M
 			.nVSYNC(nVSYNC),
@@ -163,7 +165,7 @@ module system86
 			.CLK_S1H(CLK_S1H),	// secondary driver? in phase with 1H
 			.CLK_2H(CLK_2H),
 			.CLK_S2H(CLK_S2H),	// secondary driver? in phase with 2H
-			.CLK_4H(CLK_4H)
+			//.CLK_4H(CLK_4H)
 		);
 	
 	tilegen_subsystem
@@ -251,7 +253,6 @@ module system86
 			.D(DOT), 
 			.BANK(ls174_9v_q5), 
 			// output
-			.SYNC(SYNC),
 			.RED(RED), 
 			.GREEN(GREEN), 
 			.BLUE(BLUE),
@@ -304,20 +305,20 @@ module system86
 		)
 		mcpu_11a
         (
-			.D(mcpu_11a_d), 
-			.A(mcpu_11a_a), 
+			.D(mcpu_11a_data), 
+			.A(mcpu_11a_addr), 
 			.RnW(mcpu_11a_we_n), 
 			.E(mcpu_11a_e), 
 			.Q(mcpu_11a_q), 
 			.BS(mcpu_11a_bs), 
 			.BA(mcpu_11a_ba), 
-			.nIRQ(mcpu_11a_int_n), 
-			.nFIRQ(1'b1), 
-			.nNMI(1'b1), 
+			.nIRQ(mcpu_11a_irq_n), 
+			.nFIRQ(mcpu_11a_firq_n), 
+			.nNMI(mcpu_11a_nmi_n), 
 			.AVMA(mcpu_11a_avma), 
 			.BUSY(mcpu_11a_busy), 
 			.LIC(mcpu_11a_lic), 
-			.nHALT(1'b1), 
+			.nHALT(mcpu_11a_halt_n), 
 			.nRESET(mcpu_11a_reset_n)
 		);	
 		
@@ -337,64 +338,22 @@ module system86
 			.BS(scpu_9a_bs), 
 			.BA(scpu_9a_ba), 
 			.nIRQ(scpu_9a_irq_n), 
-			.nFIRQ(1'b1), 
-			.nNMI(1'b1), 
+			.nFIRQ(scpu_9a_firq_n), 
+			.nNMI(scpu_9a_nmi_n), 
 			.AVMA(scpu_9a_avma), 
 			.BUSY(scpu_9a_busy), 
 			.LIC(scpu_9a_lic), 
-			.nHALT(1'b1), 
+			.nHALT(scpu_9a_halt_n), 
 			.nRESET(scpu_9a_reset_n)
 		);	
 		
-	
-		
-	/*wire vid_active;
-	wire [9:0] vid_active_col;
-	wire [9:0] vid_active_row;
-	
-	reg [9:0] temp_active_col = 0;
-	reg [9:0] temp_active_row = 0;
-	
-	Blanking_To_Count
-		#(
-			.ACTIVE_COLS(288),
-			.ACTIVE_ROWS(224)
-		)
-		Blanking_To_Count
-		(
-			.i_Clk(CLK_6M),
-			.i_rst_n(rst_n),
-			.i_nHSync(nHSYNC),
-			.i_nVSync(nVSYNC),
-			.i_HBlank(~nHBLANK),
-			.i_VBlank(~nVBLANK),
-			.o_Active(vid_active),
-			.o_Col_Count(vid_active_col),
-			.o_Row_Count(vid_active_row)
-		);
-		
-	reg [15:0] dot_lsb_acc = 0;
-	reg [15:0] dot_msb_acc = 0;
-
 	always @(negedge CLK_6M) begin
-		if (vid_active_row[8:0] === 9'b001110000)
-			ls174_9v_q5 <= 1'b1;
-		else if (vid_active_row[8:0] === 9'b000000000)
-			ls174_9v_q5 <= 1'b0;
-			
-		if (vid_active_col === 0) begin
-			dot_lsb_acc <= 16'b0;
-			
-			if (vid_active_row === 112 || vid_active_row === 0)
-				dot_msb_acc <= 16'b0;
-			else
-				dot_msb_acc <= dot_msb_acc + 590;
-		end else begin
-			dot_lsb_acc <= dot_lsb_acc + 228;			
-		end
-	end
-	*/
-	
+    if (rst_n) begin
+      ls174_6v_q6  <= 1;
+      ls174_9v_q5  <= 0;
+    end
+  end
+		
 	//assign SPR = cus43_6n_pro;
 	//assign SCRWIN = ls85_7v_altb;	
 	
@@ -404,10 +363,10 @@ module system86
 	
 	// == assign external connections
 	
+  assign conn_j2_sync_n = nCOMPSYNC;
 	assign conn_j2_red = RED;
 	assign conn_j2_green = GREEN;
 	assign conn_j2_blue = BLUE;
-	assign conn_j2_sync_n = SYNC;
 	
 	// diagnostics I/O (driven as documented)
 	assign conn_j5[16] = CLK_6M;

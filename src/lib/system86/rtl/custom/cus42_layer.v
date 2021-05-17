@@ -83,16 +83,16 @@ module cus42_layer
 				if (nVSYNC && !nVSYNC_last)
 					vScrollCounter <= vScrollOffset;
 				else
-					vScrollCounter <= vScrollCounter + 1;
+					vScrollCounter <= vScrollCounter + 1'b1;
 			end else
-					hScrollCounter <= hScrollCounter + 1;
+					hScrollCounter <= hScrollCounter + 1'b1;
 		end
 		
 		nHSYNC_last <= nHSYNC;
 		nVSYNC_last <= nVSYNC;
 	end
 	
-	always @(SH[1:0]) begin
+	always @(SH[1:0] or RD) begin
 		if (SH[1:0] === 2'b01)
 			tile_index <= RD;
 		else if (SH[1:0] === 2'b11)
