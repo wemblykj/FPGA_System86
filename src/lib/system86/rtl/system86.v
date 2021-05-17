@@ -164,7 +164,7 @@ module system86
 			.CLK_1H(CLK_1H),
 			.CLK_S1H(CLK_S1H),	// secondary driver? in phase with 1H
 			.CLK_2H(CLK_2H),
-			.CLK_S2H(CLK_S2H),	// secondary driver? in phase with 2H
+			.CLK_S2H(CLK_S2H)	// secondary driver? in phase with 2H
 			//.CLK_4H(CLK_4H)
 		);
 	
