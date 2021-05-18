@@ -35,7 +35,7 @@ module videogen_subsystem
     input nCLR,
     input [7:0] D,
     input BANK,
-	 output wire SYNC,
+	  //output wire SYNC,
     output wire [3:0] RED,
     output wire [3:0] GREEN,
     output wire [3:0] BLUE,

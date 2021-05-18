@@ -670,6 +670,7 @@
     <!-- Do not hand-edit this section, as it will be overwritten when the    -->
     <!-- project is analyzed based on files automatically identified as       -->
     <!-- include files.                                                       -->
+    <file xil_pn:name="../../../lib/mc6809_cpu/mc6809.vh" xil_pn:type="FILE_VERILOG"/>
     <file xil_pn:name="../../../lib/ttl_mem/m27256.vh" xil_pn:type="FILE_VERILOG"/>
     <file xil_pn:name="../../../lib/ttl_mem/ttl_mem.vh" xil_pn:type="FILE_VERILOG"/>
     <file xil_pn:name="../../../lib/ttl_mem/cy6264.vh" xil_pn:type="FILE_VERILOG"/>
@@ -686,7 +687,6 @@
     <file xil_pn:name="../../../../roms/roms.vh" xil_pn:type="FILE_VERILOG"/>
     <file xil_pn:name="../../../lib/test_bench/assert.vh" xil_pn:type="FILE_VERILOG"/>
     <file xil_pn:name="../../../lib/system86/simulation/address_decode_defs.vh" xil_pn:type="FILE_VERILOG"/>
-    <file xil_pn:name="../../../lib/mc6809_cpu/mc6809.vh" xil_pn:type="FILE_VERILOG"/>
   </autoManagedFiles>
 
 </project>

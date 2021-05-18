@@ -65,7 +65,7 @@ module xsystem86
 		input wire clk_48m,				// System 86 master clock @ 49.125 MHz
 
 		// == Native 4 bit RGB output and composite sync signals ==
-		output wire conn_j2_sync,
+		output wire conn_j2_sync_n,
 		output wire [3:0] conn_j2_red,
 		output wire [3:0] conn_j2_green,
 		output wire [3:0] conn_j2_blue,
@@ -124,7 +124,7 @@ module xsystem86
 			.vid_hblank_n(vid_hblank_n),
 			.vid_vblank_n(vid_vblank_n),
 			
-			.conn_j2_sync(conn_j2_sync),
+			.conn_j2_sync_n(conn_j2_sync_n),
 			.conn_j2_red(conn_j2_red),
 			.conn_j2_green(conn_j2_green),
 			.conn_j2_blue(conn_j2_blue),

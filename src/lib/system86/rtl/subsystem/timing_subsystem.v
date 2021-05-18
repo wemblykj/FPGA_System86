@@ -25,7 +25,6 @@ module timing_subsystem
 )
 (
 	input wire rst_n,
-	input wire enable,
 	
 	input wire CLK_48M,
 	
@@ -93,11 +92,13 @@ module timing_subsystem
 			.nPRE1(1'b1),
 			.nCLR1(1'b1),
 			.D1(CLK_1H),
-			.Q1(CLK_n1H),
+      .Q1(CLK_n1H),
+      //.nQ1(1'b0),
 			.CLK2(CLK_4H),
 			.nPRE2(1'b1),
 			.nCLR2(nVBLANK),
 			.D2(nHBLANK),
+      //.Q2(1'b0),
 			.nQ2(BLANKING)
 		);
 

@@ -152,7 +152,7 @@ module cus47
 		if (!rst_n || !CLK_2H) begin
 			cpu_clock_counter <= 0;
 		end else begin
-			cpu_clock_counter <= cpu_clock_counter + 1;
+			cpu_clock_counter <= cpu_clock_counter + 1'b1;
 		end
 	end
 	
@@ -162,7 +162,7 @@ module cus47
 		if (!rst_n || watchdog_clear || watchdog_counter === 'b1010) begin
 			watchdog_counter <= 'b0000;
 		end else begin
-			watchdog_counter <= watchdog_counter + 1;
+			watchdog_counter <= watchdog_counter + 1'b1;
       nIRQ <= ~int_ack;
 		end
 	end

@@ -31,7 +31,6 @@ module mc68a09e
         input wire nNMI,
         input wire nHALT,
         input wire nRESET,
-        input wire DMABREQ,
         inout wire [15:0] A,
         inout wire [7:0] D,
         output wire RnW,

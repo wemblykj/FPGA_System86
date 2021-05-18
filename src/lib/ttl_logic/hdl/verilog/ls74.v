@@ -58,14 +58,14 @@ module ls74(
 		end	
 	end
 	
-	always @(nPRE2 or nCLR2 or Q1_next) begin
+	always @(nPRE2 or nCLR2 or Q2_next) begin
 		if (nPRE2 && nCLR2) begin
 			Q2 <= Q2_next;
 			nQ2 <= ~Q2_next;
     end else if (!nPRE2 && !nCLR2) begin
 			Q2 <= 1;
 			nQ2 <= 1;
-		end else if (!nPRE1 && nCLR2) begin
+		end else if (!nPRE2 && nCLR2) begin
 			Q2 <= 1;
 			nQ2 <= 0;
 		end else if (nPRE2 && !nCLR2) begin
