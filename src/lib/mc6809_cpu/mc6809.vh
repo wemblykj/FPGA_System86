@@ -34,17 +34,17 @@
 	wire ``name``_lic*/
 
 `define MC6809_E_WIRE_TEMPLATE(name, primary_direction, secondary_direction, delimiter) \
-	``secondary_direction ``name``_e`delimiter \
-	``secondary_direction ``name``_q`delimiter \
 	``primary_direction ``name``_avma`delimiter \
-	``primary_direction ``name``_lic
+	``primary_direction ``name``_lic`delimiter \
+	``secondary_direction ``name``_e`delimiter \
+	``secondary_direction ``name``_q
 
 `define MC6809_WIRE_TEMPLATE(type, name, primary_direction, secondary_direction, io_direction, delimiter) \
-	``secondary_direction ``name``_reset_n`delimiter \
 	``primary_direction ``name``_ce_n`delimiter \
 	``primary_direction ``name``_we_n`delimiter \
 	``primary_direction ``name``_bs`delimiter \
 	``primary_direction ``name``_ba`delimiter \
+	``secondary_direction ``name``_reset_n`delimiter \
 	``secondary_direction ``name``_irq_n`delimiter \
 	``secondary_direction ``name``_firq_n`delimiter \
 	``secondary_direction ``name``_nmi_n`delimiter \

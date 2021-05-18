@@ -76,8 +76,8 @@ module system86
 		
 		// == Pluggable CPUs
 		
-		`MC6809_OUTPUT_DEFS(E, mcpu_11a),		// 6809 - master cpu
-		`MC6809_OUTPUT_DEFS(E, scpu_9a),			// 6809 - sub cpu
+		//`MC6809_OUTPUT_DEFS(E, mcpu_11a),		// 6809 - master cpu
+		//`MC6809_OUTPUT_DEFS(E, scpu_9a),			// 6809 - sub cpu
 		
 		// == Pluggable proms
 		
