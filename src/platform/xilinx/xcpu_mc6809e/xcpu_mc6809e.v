@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module mc68a09e
+module xcpu_mc6809e
 	#(
 		parameter tDHW = 30,			// write data hold time
 		parameter tAH = 20			// address hold time
@@ -31,8 +31,8 @@ module mc68a09e
         input wire nNMI,
         input wire nHALT,
         input wire nRESET,
+        inout wire [15:0] A,
         inout wire [7:0] D,
-		  inout wire [15:0] A,
         output wire RnW,
         output wire BS,
         output wire BA,
@@ -40,33 +40,27 @@ module mc68a09e
         output wire BUSY,
         output wire LIC
     );
-
-	wire [15:0] AOut;
-	wire [7:0] DOut;
-	wire RnWOut;
 	
-	// not sure why but the cycle accurate mc6809e core is not maintaining datasheet timing, at least during simulation
-	assign #tDHW D = RnWOut ? 8'bZ : DOut;
-	assign #tAH A = BA ? 8'bZ : AOut;
-	assign #tAH RnW = RnWOut;
-	
-	
-	mc6809e mc6809e(
-		.D(D), 
-		.DOut(DOut), 
-		.ADDR(AOut), 
-		.RnW(RnWOut), 
-		.E(E), 
-		.Q(Q), 
-		.BS(BS), 
-		.BA(BA), 
-		.nIRQ( nIRQ), 
-		.nFIRQ(nFIRQ), 
-		.nNMI(nNMI), 
-		.AVMA(AVMA), 
-		.BUSY(BUSY), 
-		.LIC(LIC), 
-		.nHALT(nHALT), 
-		.nRESET(nRESET));
+	mc68a09e 
+		#(
+			.tDHW(tDHW),
+			.tAH(tAH)
+		)
+		mc68a09e(
+			.D(D), 
+			.A(A), 
+			.RnW(RnW), 
+			.E(E), 
+			.Q(Q), 
+			.BS(BS), 
+			.BA(BA), 
+			.nIRQ( nIRQ), 
+			.nFIRQ(nFIRQ), 
+			.nNMI(nNMI), 
+			.AVMA(AVMA), 
+			.BUSY(BUSY), 
+			.LIC(LIC), 
+			.nHALT(nHALT), 
+			.nRESET(nRESET));
 
 endmodule
