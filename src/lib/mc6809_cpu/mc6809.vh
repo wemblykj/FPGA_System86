@@ -40,7 +40,6 @@
 	``secondary_direction ``name``_q
 
 `define MC6809_WIRE_TEMPLATE(type, name, primary_direction, secondary_direction, io_direction, delimiter) \
-	``primary_direction ``name``_ce_n`delimiter \
 	``primary_direction ``name``_we_n`delimiter \
 	``primary_direction ``name``_bs`delimiter \
 	``primary_direction ``name``_ba`delimiter \
@@ -64,7 +63,8 @@
 
 `define MC6809_CONNECTION_DEFS(port, signal) \
 	.``port``_reset_n(``signal``_reset_n),\
-	.``port``_ce_n(``signal``_ce_n),\
+	.``port``_e_n(``signal``_e_n),\
+	.``port``_q_n(``signal``_q_n),\
 	.``port``_we_n(``signal``_we_n),\
 	.``port``_bs(``signal``_bs),\
 	.``port``_ba(``signal``_ba),\
