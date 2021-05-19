@@ -1,0 +1,13 @@
+##############################################################################
+## Filename:          /home/administrator/Development/test_rig/pcores/cpu_mc6809_v1_00_a/data/cpu_mc6809_v2_1_0.pao
+## Description:       Peripheral Analysis Order
+## Date:              Wed Mar 20 13:15:10 2019 (by Create and Import Peripheral Wizard)
+##############################################################################
+
+## Helper Libraries
+lib proc_common_v3_00_a all
+lib axi_lite_ipif_v1_01_a all 
+lib axi_master_lite_v2_00_a all 
+
+## MC6809 Core 
+lib cpu_mc6809_v1_00_a cpu_mc6809 vhdl
