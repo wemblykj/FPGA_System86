@@ -14,5 +14,5 @@
 
 C_FAMILY FILES
 ################################################################################
-#spartan6       xcpu_mc6809.ngc
-spartan6        xcpu_mc6809.ngd
+#spartan6       xcpu_mc6809e.ngc
+spartan6        xcpu_mc6809e.ngd
