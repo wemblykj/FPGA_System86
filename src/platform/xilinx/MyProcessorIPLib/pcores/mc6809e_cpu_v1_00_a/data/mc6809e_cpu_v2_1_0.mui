@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE doc SYSTEM "../../ipdialog.dtd" [
+	<!ENTITY C_ADDR_WIDTH '
+	<widget id="C_ADDR_WIDTH">
+		<key>C_ADDR_WIDTH</key>
+		<label>Address Width</label>
+		<tip>The width of the TTL memory address bus</tip>
+	</widget>
+	'>
+	<!ENTITY C_DATA_WIDTH '
+	<widget id="C_DATA_WIDTH">
+		<key>C_DATA_WIDTH</key>
+		<label>Data Width</label>
+		<tip>The width of the TTL memory data bus</tip>
+	</widget>
+	'>
+	<!ENTITY C_VARIANT '
+	<widget id="C_VARIANT">
+		<key>C_VARIANT</key>
+		<label>MC6809 variant</label>
+		<tip>The specific MC6809 variant to use use</tip>
+	</widget>
+	'>
+	<!ENTITY C_FAMILY '
+	<widget id="C_FAMILY">
+		<key>C_FAMILY</key>
+		<label>Target FPGA Architecture</label>
+		<tip></tip>
+	</widget>
+	'>
+	<!ENTITY C_INSTANCE '
+	<widget id="C_INSTANCE">
+		<key>C_INSTANCE</key>
+		<label>IP Instance Name</label>
+		<tip></tip>
+	</widget>
+	'>
+]>
+
+<doc>
+	<view id="Config">
+		<display>Config</display>
+		<group id="ROM">
+			<display>CPU Attributes</display>	
+			<item>&C_VARIANT;</item>					
+			<item>&C_ADDR_WIDTH;</item>
+			<item>&C_DATA_WIDTH;</item>		
+		</group>
+	</view>
+	<view id="System">
+        	<display>System</display>
+		<group id="Hidden">
+			<display>Hidden</display>
+			<item>&C_FAMILY;</item>
+			<item>&C_INSTANCE;</item>
+		</group>
+	</view>
+</doc>

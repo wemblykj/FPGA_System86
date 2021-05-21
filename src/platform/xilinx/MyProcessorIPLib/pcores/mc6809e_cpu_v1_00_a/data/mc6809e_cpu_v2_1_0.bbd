@@ -1,11 +1,11 @@
 ##############################################################################
-## Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores/cpu_mc6809_v1_00_a/data/cpu_mc6809_v2_1_0.pao
+## Filename:          C:\Users\Wembly\Development\System86\src\hardware\xilinx\MyProcessorIPLib\pcores/mc6809e_cpu_v1_00_a/data/mc6809e_cpu_v2_1_0.pao
 ## Description:       Peripheral Analysis Order
 ## Date:              Sun Mar 17 10:55:45 2019 (by Create and Import Peripheral Wizard)
 ##############################################################################
 ###############################################################################
 ##
-## cpu_mc6809.bbd
+## mc6809e_cpu.bbd
 ##
 ## Black Box Definition
 ##
