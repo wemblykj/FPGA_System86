@@ -76,8 +76,8 @@ module system86
 		
 		// == Pluggable CPUs
 		
-		//`MC6809_OUTPUT_DEFS(E, mcpu_11a),		// 6809 - master cpu
-		//`MC6809_OUTPUT_DEFS(E, scpu_9a),			// 6809 - sub cpu
+		`MC6809_INPUT_DEFS(E, mcpu_11a),		// 6809 - master cpu
+		`MC6809_INPUT_DEFS(E, scpu_9a),			// 6809 - sub cpu
 		
 		// == Pluggable proms
 		
@@ -298,6 +298,7 @@ module system86
 			);
 	
 	// Main CPU
+	/*
 	mc68a09e 
 		#(
 			.tDHW(0),
@@ -346,6 +347,7 @@ module system86
 			.nHALT(scpu_9a_halt_n), 
 			.nRESET(scpu_9a_reset_n)
 		);	
+		*/
 		
 	always @(negedge CLK_6M) begin
     if (rst_n) begin

@@ -97,8 +97,8 @@ entity mc6809e_cpu is
   generic (
     -- ROM generics
     C_VARIANT : std_logic := '0';
-    C_ADDR_WIDTH : integer range 4 to 16 := 16;
-    C_DATA_WIDTH : integer range 4 to 8 := 8;
+    C_ADDR_WIDTH : integer := 16;
+    C_DATA_WIDTH : integer := 8;
 
     --Family Generics
     C_XLNX_REF_BOARD : string := "NONE";
@@ -108,12 +108,21 @@ entity mc6809e_cpu is
   port (
     -- MC6809 common
     nReset : in std_logic;
+    nHalt : in std_logic;
+    nIrq : in std_logic;
+    nFirq : in std_logic;
+    nNmi : in std_logic;
     nWriteEnable : out std_logic;
     Address : out std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
     Data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0);
+    BS : out std_logic;
+    BA : out std_logic;
     -- MC6809E
     E : in std_logic;
-    Q : in std_logic
+    Q : in std_logic;
+    Avma : out std_logic;
+    Busy : out std_logic;
+    Lic : out std_logic
   );
 
   -------------------------------------------------------------------------------
@@ -153,9 +162,18 @@ component xcpu_mc6809e
       E		 		: in std_logic;
       Q		 		: in std_logic;
       nRESET	 		: in std_logic;
+      nHALT	 		: in std_logic;
+      nIRQ	 		: in std_logic;
+      nFIRQ	 		: in std_logic;
+      nNMI	 		: in std_logic;
       RnW	 		: out std_logic;
       A 			: out std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
-      D 			: inout std_logic_vector(C_DATA_WIDTH - 1 downto 0)
+      D 			: inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
+      BS	 		: out std_logic;
+      BA	 		: out std_logic;
+      AVMA	 		: out std_logic;
+      BUSY	 		: out std_logic;
+      LIC	 		: out std_logic
     );
 end component;
 
@@ -186,7 +204,7 @@ begin -- architecture IMP
 -- Instantiate the iMC6809E
 ------------------------------------------------------------------------
 
-    Inst_MC6809E: xmc6809e_cpuE
+    Inst_MC6809E: xcpu_mc6809e
     generic map(
         C_ADDR_WIDTH       	=> C_ADDR_WIDTH,
         C_DATA_WIDTH        	=> C_DATA_WIDTH,
@@ -195,9 +213,18 @@ begin -- architecture IMP
         E			=> E,
         Q			=> Q,
         nRESET			=> nReset,
+        nHALT			=> nHalt,
+        nIRQ			=> nIrq,
+        nFIRQ			=> nFirq,
+        nNMI			=> nNmi,
         RnW			=> nWriteEnable,
         A			=> Address,
-        D			=> Data);
+        D			=> Data,
+        BS			=> BS,
+        BA			=> BA,
+        AVMA			=> Avma,
+        BUSY			=> Busy,
+        LIC			=> Lic);
 	 
 ------------------------------------------------------------------------
     

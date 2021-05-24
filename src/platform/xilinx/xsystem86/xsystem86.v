@@ -75,8 +75,8 @@ module xsystem86
 		inout wire [1:40] conn_j34p,		// 40 pin
 		
 		// == Pluggable CPUs
-		//`MC6809_OUTPUT_DEFS(E, mcpu_11a),		// 6809 - master cpu
-		//`MC6809_OUTPUT_DEFS(E, scpu_9a),			// 6809 - sub cpu
+		`MC6809_INPUT_DEFS(E, mcpu_11a),		// 6809 - master cpu
+		`MC6809_INPUT_DEFS(E, scpu_9a),			// 6809 - sub cpu
 		
 		// == Pluggable proms
 		
@@ -118,7 +118,7 @@ module xsystem86
 			.rst_n(rst_n),
 			
 			.vid_clk(vid_clk),
-			.vid_data(0),
+			//.vid_data(0),
 			.vid_hsync_n(vid_hsync_n),
 			.vid_vsync_n(vid_vsync_n),
 			.vid_hblank_n(vid_hblank_n),
@@ -132,8 +132,8 @@ module xsystem86
 			.conn_j5(conn_j5),
 			.conn_j34p(conn_j34p),
 			
-			//`MC6809_CONNECTION_DEFS(mcpu_11a, mcpu_11a),
-			//`MC6809_CONNECTION_DEFS(scpu_9a, scpu_9a),
+			`MC6809_CONNECTION_DEFS(mcpu_11a, mcpu_11a),
+			`MC6809_CONNECTION_DEFS(scpu_9a, scpu_9a),
 			
 			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
 			`PROM_CONNECTION_DEFS(prom_3s, prom_3s),

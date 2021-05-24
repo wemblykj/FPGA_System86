@@ -31,10 +31,12 @@
 	wire ``name``_e;\
 	wire ``name``_q;\
 	wire ``name``_avma;\
+	wire ``name``_busy;\
 	wire ``name``_lic*/
 
 `define MC6809_E_WIRE_TEMPLATE(name, primary_direction, secondary_direction, delimiter) \
 	``primary_direction ``name``_avma`delimiter \
+	``primary_direction ``name``_busy`delimiter \
 	``primary_direction ``name``_lic`delimiter \
 	``secondary_direction ``name``_e`delimiter \
 	``secondary_direction ``name``_q
@@ -63,15 +65,18 @@
 
 `define MC6809_CONNECTION_DEFS(port, signal) \
 	.``port``_reset_n(``signal``_reset_n),\
-	.``port``_e_n(``signal``_e_n),\
-	.``port``_q_n(``signal``_q_n),\
+	.``port``_e(``signal``_e),\
+	.``port``_q(``signal``_q),\
 	.``port``_we_n(``signal``_we_n),\
-	.``port``_bs(``signal``_bs),\
-	.``port``_ba(``signal``_ba),\
 	.``port``_irq_n(``signal``_irq_n),\
 	.``port``_firq_n(``signal``_firq_n),\
 	.``port``_nmi_n(``signal``_nmi_n),\
 	.``port``_halt_n(``signal``_halt_n),\
 	.``port``_addr(``signal``_addr),\
-	.``port``_data(``signal``_data)
+	.``port``_data(``signal``_data),\
+	.``port``_bs(``signal``_bs),\
+	.``port``_ba(``signal``_ba),\
+	.``port``_avma(``signal``_avma),\
+	.``port``_busy(``signal``_busy),\
+	.``port``_lic(``signal``_lic)
 	

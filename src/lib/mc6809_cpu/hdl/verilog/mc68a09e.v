@@ -32,7 +32,7 @@ module mc68a09e
         input wire nHALT,
         input wire nRESET,
         inout wire [7:0] D,
-		  inout wire [15:0] A,
+	output wire [15:0] A,
         output wire RnW,
         output wire BS,
         output wire BA,
