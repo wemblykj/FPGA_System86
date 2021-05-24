@@ -31,7 +31,7 @@ module xcpu_mc6809e
         input wire nNMI,
         input wire nHALT,
         input wire nRESET,
-        inout wire [15:0] A,
+        output wire [15:0] A,
         inout wire [7:0] D,
         output wire RnW,
         output wire BS,
