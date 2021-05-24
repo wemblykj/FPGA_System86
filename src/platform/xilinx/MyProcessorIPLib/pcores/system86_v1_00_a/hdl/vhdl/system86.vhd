@@ -176,19 +176,37 @@ entity system86 is
 		-- (imagine the board has been socketed and the chips are simply external modules with independent busses!)
 		--
 		
+		mcpu_9a_addr		: in std_logic_vector(15 downto 0);
+		mcpu_9a_data		: inout std_logic_vector(7 downto 0);
+		mcpu_9a_we_n		: in std_logic;
 		mcpu_9a_e		: out std_logic;
 		mcpu_9a_q		: out std_logic;
-		mcpu_9a_rst_n		: out std_logic;
-		mcpu_9a_we		: in std_logic;
-		mcpu_9a_a		: in std_logic_vector(15 downto 0);
-		mcpu_9a_d		: inout std_logic_vector(7 downto 0);
+		mcpu_9a_irq_n		: out std_logic;
+		mcpu_9a_firq_n		: out std_logic;
+		mcpu_9a_nmi_n		: out std_logic;
+		mcpu_9a_reset_n		: out std_logic;
+		mcpu_9a_halt_n		: out std_logic;
+		mcpu_9a_bs		: in std_logic;
+		mcpu_9a_ba		: in std_logic;
+		mcpu_9a_avma		: in std_logic;
+		mcpu_9a_busy		: in std_logic;
+		mcpu_9a_lic		: in std_logic;
 		
+		scpu_11a_addr		: in std_logic_vector(15 downto 0);
+		scpu_11a_data		: inout std_logic_vector(7 downto 0);
+		scpu_11a_we_n		: in std_logic;
 		scpu_11a_e		: out std_logic;
 		scpu_11a_q		: out std_logic;
-		scpu_11a_rst_n		: out std_logic;
-		scpu_11a_we		: in std_logic;
-		scpu_11a_a		: in std_logic_vector(15 downto 0);
-		scpu_11a_d		: inout std_logic_vector(7 downto 0);
+		scpu_11a_irq_n		: out std_logic;
+		scpu_11a_firq_n		: out std_logic;
+		scpu_11a_nmi_n		: out std_logic;
+		scpu_11a_reset_n	: out std_logic;
+		scpu_11a_halt_n		: out std_logic;
+		scpu_11a_bs		: in std_logic;
+		scpu_11a_ba		: in std_logic;
+		scpu_11a_avma		: in std_logic;
+		scpu_11a_busy		: in std_logic;
+		scpu_11a_lic		: in std_logic;
 
 		prom_3r_ce		: out std_logic;
 		prom_3r_oe		: out std_logic;

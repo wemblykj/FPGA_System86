@@ -118,18 +118,36 @@ PORT conn_j2_blue = BLUE, DIR = O, VEC = [C_VIDEO_COMPONENT_DEPTH-1:0], BUS=CONN
 # MC6809E busses
 PORT mcpu_9a_e = E, DIR = O, BUS = S_MCPU_9A, PERMIT = BASE_USER
 PORT mcpu_9a_q = Q, DIR = O, BUS = S_MCPU_9A, PERMIT = BASE_USER
-PORT mcpu_9a_rst_n = nReset, DIR = O, BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_reset_n = nReset, DIR = O, BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_halt_n = nHalt, DIR = O, BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_irq_n = nIrq, DIR = O, BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_firq_n = nFirq, DIR = O, BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_nmi_n = nNmi, DIR = O, BUS = S_MCPU_9A, PERMIT = BASE_USER
 PORT mcpu_9a_we_n = nWriteEnable, DIR = I, BUS = S_MCPU_9A, PERMIT = BASE_USER
-PORT mcpu_9a_a = Address, DIR = I, VEC = [15:0], BUS = S_MCPU_9A, PERMIT = BASE_USER
-PORT mcpu_9a_d = Data, DIR = IO, THREE_STATE = FALSE, VEC = [7:0], BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_addr = Address, DIR = I, VEC = [15:0], BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_data = Data, DIR = IO, THREE_STATE = FALSE, VEC = [7:0], BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_bs = Bs, DIR = I, BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_ba = Ba, DIR = I, BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_avma = Avma, DIR = I, BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_busy = Busy, DIR = I, BUS = S_MCPU_9A, PERMIT = BASE_USER
+PORT mcpu_9a_lic = Lic, DIR = I, BUS = S_MCPU_9A, PERMIT = BASE_USER
 
 # MC6809E busses
 PORT scpu_11a_e = E, DIR = O, BUS = S_SCPU_11A, PERMIT = BASE_USER
 PORT scpu_11a_q = Q, DIR = O, BUS = S_SCPU_11A, PERMIT = BASE_USER
-PORT scpu_11a_rst_n = nReset, DIR = O, BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_reset_n = nReset, DIR = O, BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_halt_n = nHalt, DIR = O, BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_irq_n = nIrq, DIR = O, BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_firq_n = nFirq, DIR = O, BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_nmi_n = nNmi, DIR = O, BUS = S_SCPU_11A, PERMIT = BASE_USER
 PORT scpu_11a_we_n = nWriteEnable, DIR = I, BUS = S_SCPU_11A, PERMIT = BASE_USER
-PORT scpu_11a_a = Address, DIR = I, VEC = [15:0], BUS = S_SCPU_11A, PERMIT = BASE_USER
-PORT scpu_11a_d = Data, DIR = IO, THREE_STATE = FALSE, VEC = [7:0], BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_addr = Address, DIR = I, VEC = [15:0], BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_data = Data, DIR = IO, THREE_STATE = FALSE, VEC = [7:0], BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_bs = Bs, DIR = I, BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_ba = Ba, DIR = I, BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_avma = Avma, DIR = I, BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_busy = Busy, DIR = I, BUS = S_SCPU_11A, PERMIT = BASE_USER
+PORT scpu_11a_lic = Lic, DIR = I, BUS = S_SCPU_11A, PERMIT = BASE_USER
 
 # EPROM 3R
 PORT prom_3r_ce = ChipEnable, DIR = O, BUS = EPROM_3R
