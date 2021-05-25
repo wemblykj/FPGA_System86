@@ -122,11 +122,10 @@ entity system86 is
 
 		-- simulation video
 		vid_clk					: out    std_logic;
-		--vid_data				: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
-		--vid_red				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		--vid_green				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		--vid_blue				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
-		--vid_csync				: out    std_logic;
+		vid_data					: out    std_logic_vector((3*C_VIDEO_COMPONENT_DEPTH)-1 downto 0);
+		vid_red					: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_green				: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
+		vid_blue					: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);
 		vid_hsync_n				: out    std_logic;
 		vid_vsync_n				: out    std_logic;
 		vid_hblank_n			: out    std_logic;
@@ -365,11 +364,14 @@ port(
 	-- simulation outputs
 	
 	vid_clk				: out    std_logic;
-	--vid_data				: out    std_logic_vector(11 downto 0);		-- 12-bit RGB data
+	vid_data			: out    std_logic_vector(11 downto 0);		-- 12-bit RGB data
 	vid_hsync_n			: out    std_logic;
 	vid_vsync_n			: out    std_logic;
-	vid_hblank_n		: out    std_logic;
-	vid_vblank_n		: out    std_logic;
+	vid_hblank_n			: out    std_logic;
+	vid_vblank_n			: out    std_logic;
+	vid_red				: out    std_logic_vector(3 downto 0);
+	vid_green			: out    std_logic_vector(3 downto 0);
+	vid_blue			: out    std_logic_vector(3 downto 0);
 		
 	--
 	-- System 86 board inputs
@@ -382,7 +384,7 @@ port(
 	--
 	
 	conn_j2_sync		: out    std_logic;									-- composite sync
-	conn_j2_red			: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);			-- 4-bit red component
+	conn_j2_red		: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);			-- 4-bit red component
 	conn_j2_green		: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);			-- 4-bit green component
 	conn_j2_blue		: out    std_logic_vector(C_VIDEO_COMPONENT_DEPTH-1 downto 0);			-- 4-bit blue component
 	
@@ -544,6 +546,9 @@ begin -- architecture IMP
 		vid_vsync_n		=> vid_vsync_n,
 		vid_hblank_n	=> vid_hblank_n,
 		vid_vblank_n	=> vid_vblank_n,
+		vid_red		=> vid_red,
+		vid_green	=> vid_green,
+		vid_blue	=> vid_blue,
 		
 		conn_j2_sync	=> conn_j2_sync,
 		conn_j2_red		=> conn_j2_red,

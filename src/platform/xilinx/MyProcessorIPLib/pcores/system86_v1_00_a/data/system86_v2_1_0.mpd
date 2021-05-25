@@ -9,19 +9,22 @@ BEGIN system86
 ## Peripheral Options
 OPTION IPTYPE = PERIPHERAL
 OPTION IMP_NETLIST = TRUE
-OPTION HDL = VHDL
+OPTION HDL = MIXED
 OPTION DESC = Wembly's Namco System86 Replication
 OPTION LONG_DESC = A generic FPGA implementation of the Namco System86 arcade board
 OPTION IP_GROUP = WemblyKJ:Arcade
 OPTION USAGE_LEVEL = BASE_USER
 
 IO_INTERFACE IO_IF = VIDEO_OUT, IO_TYPE = video, ISVALID = (C_VIDEO_OUT_TYPE==0)
+IO_INTERFACE IO_IF = CONN_J2, IO_TYPE = conn_j2
+IO_INTERFACE IO_IF = CONN_J4, IO_TYPE = conn_j4
+IO_INTERFACE IO_IF = CONN_J5, IO_TYPE = conn_j5
 
 ## Bus Interfaces
 BUS_INTERFACE BUS = S_MCPU_9A, BUS_STD = mc6809e, BUS_TYPE = TARGET
 BUS_INTERFACE BUS = S_SCPU_11A, BUS_STD = mc6809e, BUS_TYPE = TARGET
 
-BUS_INTERFACE BUS=CONN_J2, BUS_STD=conn_j2, BUS_TYPE = INITIATOR
+#BUS_INTERFACE BUS=CONN_J2, BUS_STD=conn_j2, BUS_TYPE = INITIATOR
 #BUS_INTERFACE BUS=CONN_J4, BUS_STD=conn_j4, BUS_TYPE = TARGET
 #BUS_INTERFACE BUS=CONN_J5, BUS_STD=conn_j5, BUS_TYPE = INITIATOR
 
@@ -82,10 +85,9 @@ PORT CLK_48M = "", DIR = I, SIGIS = CLK
 
 # Component video IF
 PORT vid_clk = "", DIR = O, SIGIS = CLK, IO_IF = VIDEO_OUT, IO_IS = VideoClock, ISVALID = (C_VIDEO_OUT_TYPE==0)
-#PORT vid_red = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = RedComponent, ISVALID = (C_VIDEO_OUT_TYPE == 0)
-#PORT vid_green = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = GreenComponent, ISVALID = (C_VIDEO_OUT_TYPE == 0)
-#PORT vid_blue = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = BlueComponent, ISVALID = (C_VIDEO_OUT_TYPE == 0)
-#PORT vid_csync = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = CompositeSync, ISVALID = (C_VIDEO_OUT_TYPE == 0 && C_VIDEO_SYNC_TYPE == 0)
+PORT vid_red = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = RedComponent, ISVALID = (C_VIDEO_OUT_TYPE == 0)
+PORT vid_green = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = GreenComponent, ISVALID = (C_VIDEO_OUT_TYPE == 0)
+PORT vid_blue = "", DIR = O, VEC = [(C_VIDEO_COMPONENT_DEPTH-1):0], IO_IF = VIDEO_OUT, IO_IS = BlueComponent, ISVALID = (C_VIDEO_OUT_TYPE == 0)
 PORT vid_hsync_n = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = HorizontalSync, ISVALID = (C_VIDEO_OUT_TYPE == 0)
 PORT vid_vsync_n = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = VerticalSync, ISVALID = (C_VIDEO_OUT_TYPE == 0)
 PORT vid_hblank_n = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = HorizontalBlank, ISVALID = (C_VIDEO_OUT_TYPE == 0)
@@ -101,10 +103,10 @@ PORT vid_vblank_n = "", DIR = O, IO_IF = VIDEO_OUT, IO_IS = VerticalBlank, ISVAL
 #PORT vid_vsync = VerticalSync, DIR = O, BUS=VIDEO_OUT, ISVALID = (C_VIDEO_OUT_TYPE == 1)
 
 # J2
-PORT conn_j2_sync = SYNC, DIR = O, BUS=CONN_J2
-PORT conn_j2_red = RED, DIR = O, VEC = [C_VIDEO_COMPONENT_DEPTH-1:0], BUS=CONN_J2
-PORT conn_j2_green = GREEN, DIR = O, VEC = [C_VIDEO_COMPONENT_DEPTH-1:0], BUS=CONN_J2
-PORT conn_j2_blue = BLUE, DIR = O, VEC = [C_VIDEO_COMPONENT_DEPTH-1:0], BUS=CONN_J2
+PORT conn_j2_sync = "", DIR = O, IO_IF = CONN_J2, IO_IS = SYNC
+PORT conn_j2_red = "", DIR = O, VEC = [C_VIDEO_COMPONENT_DEPTH-1:0], IO_IF = CONN_J2, IO_IS = RED
+PORT conn_j2_green = "", DIR = O, VEC = [C_VIDEO_COMPONENT_DEPTH-1:0], IO_IF = CONN_J2, IO_IS = GREEN
+PORT conn_j2_blue = "", DIR = O, VEC = [C_VIDEO_COMPONENT_DEPTH-1:0], IO_IF = CONN_J2, IO_IS = BLUE
 
 # J4
 #PORT conn_j4_reset = Reset, DIR = O, BUS=CONN_J4

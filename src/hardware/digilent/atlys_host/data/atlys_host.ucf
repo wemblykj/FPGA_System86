@@ -104,16 +104,38 @@ NET zio IOSTANDARD = "LVCMOS18_JEDEC";
 #
 
 # System86 VHDCIO mappings
-NET system86_0_vid_clk_pin  LOC = "U16"  |  IOSTANDARD = "LVCMOS33"; 	# Bank = 2,  Pin name = IO_L2P_CMPCLK,        	Sch name = EXP-IO1_P
-NET system86_0_vid_red_pin[0]  LOC = "U15"  |  IOSTANDARD = "LVCMOS33"; 	# Bank = 2,  Pin name = *IO_L5P,        		Sch name = EXP-IO2_P
-NET system86_0_vid_red_pin[1]  LOC = "U13"  |  IOSTANDARD = "LVCMOS33"; 	# Bank = 2,  Pin name = IO_L14P_D11,        	Sch name = EXP-IO3_P
-NET system86_0_vid_red_pin[2]  LOC = "M11"  |  IOSTANDARD = "LVCMOS33"; 	# Bank = 2,  Pin name = *IO_L15P,        		Sch name = EXP-IO4_P
-NET system86_0_vid_red_pin[3]  LOC = "R11"  |  IOSTANDARD = "LVCMOS33"; 	# Bank = 2,  Pin name = IO_L16P,        		Sch name = EXP-IO5_P
-#NET "GreenComponent<1>"  LOC = "T12"; # Bank = 2,  Pin name = *IO_L19P,        		Sch name = EXP-IO6_P
-#NET "GreenComponent<2>"  LOC = "N10"; # Bank = 2,  Pin name = *IO_L20P,        		Sch name = EXP-IO7_P
-#NET "BlueComponent<0>"  LOC = "M10"; # Bank = 2,  Pin name = *IO_L22P,        		Sch name = EXP-IO8_P
-#NET "BlueComponent<1>"  LOC = "U11"; # Bank = 2,  Pin name = IO_L23P,        		Sch name = EXP-IO9_P
-#NET "BlueComponent<2>"  LOC = "R10"; # Bank = 2,  Pin name = IO_L29P_GCLK3,        	Sch name = EXP-IO10_P
+NET "system86_0_vid_clk_pin"  LOC = "U16"; # Bank = 2,  Pin name = IO_L2P_CMPCLK,        	Sch name = EXP-IO1_P
+NET "system86_0_vid_hsync_n_pin"  LOC = "U15"; # Bank = 2,  Pin name = *IO_L5P,        		Sch name = EXP-IO2_P
+NET "system86_0_vid_vsync_n_pin"  LOC = "U13"; # Bank = 2,  Pin name = IO_L14P_D11,        	Sch name = EXP-IO3_P
+NET "system86_0_vid_hblank_n_pin"  LOC = "M11"; # Bank = 2,  Pin name = *IO_L15P,        		Sch name = EXP-IO4_P
+NET "system86_0_vid_vblank_n_pin"  LOC = "R11"; # Bank = 2,  Pin name = IO_L16P,        		Sch name = EXP-IO5_P
+NET "system86_0_vid_red_pin<0>"  LOC = "T12"; # Bank = 2,  Pin name = *IO_L19P,        		Sch name = EXP-IO6_P
+NET "system86_0_vid_red_pin<1>"  LOC = "N10"; # Bank = 2,  Pin name = *IO_L20P,        		Sch name = EXP-IO7_P
+NET "system86_0_vid_red_pin<2>"  LOC = "M10"; # Bank = 2,  Pin name = *IO_L22P,        		Sch name = EXP-IO8_P
+NET "system86_0_vid_red_pin<3>"  LOC = "U11"; # Bank = 2,  Pin name = IO_L23P,        		Sch name = EXP-IO9_P
+NET "system86_0_vid_green_pin<0>"  LOC = "R10"; # Bank = 2,  Pin name = IO_L29P_GCLK3,        	Sch name = EXP-IO10_P
+NET "system86_0_vid_green_pin<1>" LOC = "U10"; # Bank = 2,  Pin name = IO_L30P_GCLK1_D13,      Sch name = EXP-IO11_P
+NET "system86_0_vid_green_pin<2>" LOC = "R8";  # Bank = 2,  Pin name = IO_L31P_GCLK31_D14,     Sch name = EXP-IO12_P
+NET "system86_0_vid_green_pin<3>" LOC = "M8";  # Bank = 2,  Pin name = *IO_L40P,        		Sch name = EXP-IO13_P
+NET "system86_0_vid_blue_pin<0>" LOC = "U8";  # Bank = 2,  Pin name = IO_L41P,        		Sch name = EXP-IO14_P
+NET "system86_0_vid_blue_pin<1>" LOC = "U7";  # Bank = 2,  Pin name = IO_L43P,        		Sch name = EXP-IO15_P
+NET "system86_0_vid_blue_pin<2>" LOC = "N7";  # Bank = 2,  Pin name = *IO_L44P,        		Sch name = EXP-IO16_P
+NET "system86_0_vid_blue_pin<3>" LOC = "T6";  # Bank = 2,  Pin name = IO_L45P,        		Sch name = EXP-IO17_P
+
+
+#NET "system86_0_conn_j2_sync_pin"  LOC = "U15"; # Bank = 2,  Pin name = *IO_L5P,        		Sch name = EXP-IO2_P
+#NET "system86_0_conn_j2_red_pin<0>"  LOC = "T12"; # Bank = 2,  Pin name = *IO_L19P,        		Sch name = EXP-IO6_P
+#NET "system86_0_conn_j2_red_pin<1>"  LOC = "N10"; # Bank = 2,  Pin name = *IO_L20P,        		Sch name = EXP-IO7_P
+#NET "system86_0_conn_j2_red_pin<2>"  LOC = "M10"; # Bank = 2,  Pin name = *IO_L22P,        		Sch name = EXP-IO8_P
+#NET "system86_0_conn_j2_red_pin<3>"  LOC = "U11"; # Bank = 2,  Pin name = IO_L23P,        		Sch name = EXP-IO9_P
+#NET "system86_0_conn_j2_green_pin<0>"  LOC = "R10"; # Bank = 2,  Pin name = IO_L29P_GCLK3,        	Sch name = EXP-IO10_P
+#NET "system86_0_conn_j2_green_pin<1>" LOC = "U10"; # Bank = 2,  Pin name = IO_L30P_GCLK1_D13,      Sch name = EXP-IO11_P
+#NET "system86_0_conn_j2_green_pin<2>" LOC = "R8";  # Bank = 2,  Pin name = IO_L31P_GCLK31_D14,     Sch name = EXP-IO12_P
+#NET "system86_0_conn_j2_green_pin<3>" LOC = "M8";  # Bank = 2,  Pin name = *IO_L40P,        		Sch name = EXP-IO13_P
+#NET "system86_0_conn_j2_blue_pin<0>" LOC = "U8";  # Bank = 2,  Pin name = IO_L41P,        		Sch name = EXP-IO14_P
+#NET "system86_0_conn_j2_blue_pin<1>" LOC = "U7";  # Bank = 2,  Pin name = IO_L43P,        		Sch name = EXP-IO15_P
+#NET "system86_0_conn_j2_blue_pin<2>" LOC = "N7";  # Bank = 2,  Pin name = *IO_L44P,        		Sch name = EXP-IO16_P
+#NET "system86_0_conn_j2_blue_pin<3>" LOC = "T6";  # Bank = 2,  Pin name = IO_L45P,        		Sch name = EXP-IO17_P
 
 NET "GCLK" TNM_NET = sys_clk_pin;
 TIMESPEC TS_sys_clk_pin = PERIOD sys_clk_pin 100000 kHz;

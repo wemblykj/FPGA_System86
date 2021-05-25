@@ -73,6 +73,13 @@
  PORT system86_0_vid_clk_pin = system86_0_vid_clk, DIR = O, SIGIS = CLK
  PORT QSPI_FLASH_IO2 = QSPI_FLASH_IO2, DIR = IO
  PORT QSPI_FLASH_IO3 = QSPI_FLASH_IO3, DIR = IO
+ PORT system86_0_vid_hsync_n_pin = system86_0_vid_hsync_n, DIR = O
+ PORT system86_0_vid_vsync_n_pin = system86_0_vid_vsync_n, DIR = O
+ PORT system86_0_vid_hblank_n_pin = system86_0_vid_hblank_n, DIR = O
+ PORT system86_0_vid_vblank_n_pin = system86_0_vid_vblank_n, DIR = O
+ PORT system86_0_vid_red_pin = system86_0_vid_red, DIR = O, VEC = [3:0]
+ PORT system86_0_vid_green_pin = system86_0_vid_green, DIR = O, VEC = [3:0]
+ PORT system86_0_vid_blue_pin = system86_0_vid_blue, DIR = O, VEC = [3:0]
 
 
 BEGIN system86
@@ -84,6 +91,13 @@ BEGIN system86
  BUS_INTERFACE S_MCPU_9A = mc6809e_mcpu_9a_M_CPU
  BUS_INTERFACE S_SCPU_11A = mc6809e_scpu_11a_M_CPU
  PORT vid_clk = system86_0_vid_clk
+ PORT vid_hsync_n = system86_0_vid_hsync_n
+ PORT vid_vsync_n = system86_0_vid_vsync_n
+ PORT vid_hblank_n = system86_0_vid_hblank_n
+ PORT vid_vblank_n = system86_0_vid_vblank_n
+ PORT vid_red = system86_0_vid_red
+ PORT vid_green = system86_0_vid_green
+ PORT vid_blue = system86_0_vid_blue
 END
 
 BEGIN proc_sys_reset

@@ -60,12 +60,15 @@ module system86
 		output wire vid_vsync_n,
 		output wire vid_hblank_n,
 		output wire vid_vblank_n,
+		output wire vid_red,
+		output wire vid_green,
+		output wire vid_blue,
 
 		// System 86 hardware timing
 		input wire clk_48m,				// System 86 master clock @ 49.125 MHz
 
 		// == Native 4 bit RGB output and composite sync signals ==
-		output wire conn_j2_sync_n,
+		output wire conn_j2_sync,
 		output wire [3:0] conn_j2_red,
 		output wire [3:0] conn_j2_green,
 		output wire [3:0] conn_j2_blue,
@@ -365,7 +368,7 @@ module system86
 	
 	// == assign external connections
 	
-  assign conn_j2_sync_n = nCOMPSYNC;
+  	assign conn_j2_sync = nCOMPSYNC;
 	assign conn_j2_red = RED;
 	assign conn_j2_green = GREEN;
 	assign conn_j2_blue = BLUE;
@@ -379,6 +382,9 @@ module system86
 	// simulation outputs
 	assign vid_clk = CLK_6M;
 	assign vid_data = { BLUE, GREEN, RED };
+	assign vid_red = RED;
+	assign vid_green = GREEN;
+	assign vid_blue = BLUE;
 	assign vid_hsync_n = nHSYNC;
 	assign vid_vsync_n = nVSYNC;
 	assign vid_hblank_n = nHBLANK;
