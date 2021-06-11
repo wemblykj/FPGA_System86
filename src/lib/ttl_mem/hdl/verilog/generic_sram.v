@@ -50,8 +50,7 @@ module GENERIC_SRAM
         input wire nOE,	 
         input wire nWE,
         input wire [ADDR_WIDTH-1:0] A,
-        inout wire [DATA_WIDTH-1:0] D,
-		  output wire data_valid
+        inout wire [DATA_WIDTH-1:0] D
     );
 	
 	reg [DATA_WIDTH-1:0] mem [0:(2**ADDR_WIDTH)-1];

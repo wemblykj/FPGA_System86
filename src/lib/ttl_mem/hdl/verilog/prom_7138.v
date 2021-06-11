@@ -28,8 +28,7 @@ module prom_mb7138
     (
         input wire nE,
         input wire [10:0] A,
-        output wire [7:0] Q,
-		  output wire data_valid
+        output wire [7:0] Q
     );
 	
 	supply1 VCC;
@@ -38,8 +37,7 @@ module prom_mb7138
 		.nE(nE),
 		.nG(1'b0),
 		.A(A),
-		.Q(Q),
-		.data_valid(data_valid)
+		.Q(Q)
 	);
 	
 endmodule

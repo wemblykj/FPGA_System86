@@ -56,9 +56,9 @@ module xsystem86
 		// == Simulation outputs
 		output wire vid_clk,
 		output wire [11:0] vid_data,
-		output wire vid_red,
-		output wire vid_green,
-		output wire vid_blue,
+		output wire [3:0] vid_red,
+		output wire [3:0] vid_green,
+		output wire [3:0] vid_blue,
 		output wire vid_hsync_n,
 		output wire vid_vsync_n,
 		output wire vid_hblank_n,
@@ -86,6 +86,7 @@ module xsystem86
 		`PROM_OUTPUT_DEFS(MB7124, prom_3r),			// 7124 - 20 pin DIP/DIL
 		`PROM_OUTPUT_DEFS(MB7116, prom_3s), 		// 7116 - 16 pin DIP/DIL		
 		`PROM_OUTPUT_DEFS(MB7138, prom_4v),			// 7138
+		`PROM_OUTPUT_DEFS(MB7138, prom_5v),			// 7138
 		`PROM_OUTPUT_DEFS(MB7112, prom_6u),			// 7112
 		
 		// PROG
@@ -101,6 +102,7 @@ module xsystem86
 		`EPROM_OUTPUT_DEFS(M27256, eprom_4s),
 		
 		// SRAM
+		`SRAM_OUTPUT_DEFS(CY6264, sram_3f),
 		`SRAM_OUTPUT_DEFS(CY6264, sram_4n),
 		`SRAM_OUTPUT_DEFS(CY6264, sram_7n),
 		`SRAM_OUTPUT_DEFS(CY6264, sram_10m),

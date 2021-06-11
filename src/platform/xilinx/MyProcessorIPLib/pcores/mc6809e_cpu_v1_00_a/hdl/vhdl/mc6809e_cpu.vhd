@@ -107,22 +107,22 @@ entity mc6809e_cpu is
   );
   port (
     -- MC6809 common
-    nReset : in std_logic;
-    nHalt : in std_logic;
-    nIrq : in std_logic;
-    nFirq : in std_logic;
-    nNmi : in std_logic;
-    nWriteEnable : out std_logic;
-    Address : out std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
-    Data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0);
-    BS : out std_logic;
-    BA : out std_logic;
+    nReset 			: in std_logic;
+    nHalt 			: in std_logic;
+    nIrq 			: in std_logic;
+    nFirq 			: in std_logic;
+    nNmi 			: in std_logic;
+    nWriteEnable 	: out std_logic;
+    Address 		: out std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
+    Data 			: inout std_logic_vector((C_DATA_WIDTH - 1) downto 0);
+    BS 				: out std_logic;
+    BA		 		: out std_logic;
     -- MC6809E
-    E : in std_logic;
-    Q : in std_logic;
-    Avma : out std_logic;
-    Busy : out std_logic;
-    Lic : out std_logic
+    E 				: in std_logic;
+    Q 				: in std_logic;
+    Avma 			: out std_logic;
+    Busy 			: out std_logic;
+    Lic 				: out std_logic
   );
 
   -------------------------------------------------------------------------------
@@ -154,23 +154,22 @@ architecture IMP of mc6809e_cpu is
 
 component xcpu_mc6809e
     generic (
-    C_ADDR_WIDTH 		: integer 		:= 16;
-    C_DATA_WIDTH 		: integer 		:= 8;
-    C_FAMILY 			: string := "virtex6"
+    	tDHW 			: integer 		:= 30;
+		tAH	 		: integer 		:= 20
     );
     port (
       E		 		: in std_logic;
       Q		 		: in std_logic;
-      nRESET	 		: in std_logic;
-      nHALT	 		: in std_logic;
       nIRQ	 		: in std_logic;
       nFIRQ	 		: in std_logic;
       nNMI	 		: in std_logic;
+      nRESET	 	: in std_logic;
+      nHALT	 		: in std_logic;
+      A 				: out std_logic_vector(15 downto 0);
+      D 				: inout std_logic_vector(7 downto 0);
       RnW	 		: out std_logic;
-      A 			: out std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
-      D 			: inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
-      BS	 		: out std_logic;
-      BA	 		: out std_logic;
+      BS	 			: out std_logic;
+      BA	 			: out std_logic;
       AVMA	 		: out std_logic;
       BUSY	 		: out std_logic;
       LIC	 		: out std_logic
@@ -205,26 +204,22 @@ begin -- architecture IMP
 ------------------------------------------------------------------------
 
     Inst_MC6809E: xcpu_mc6809e
-    generic map(
-        C_ADDR_WIDTH       	=> C_ADDR_WIDTH,
-        C_DATA_WIDTH        	=> C_DATA_WIDTH,
-        C_FAMILY                => C_FAMILY)
     port map(
-        E			=> E,
-        Q			=> Q,
-        nRESET			=> nReset,
-        nHALT			=> nHalt,
+        E				=> E,
+        Q				=> Q,
         nIRQ			=> nIrq,
         nFIRQ			=> nFirq,
         nNMI			=> nNmi,
-        RnW			=> nWriteEnable,
-        A			=> Address,
-        D			=> Data,
-        BS			=> BS,
-        BA			=> BA,
+        nRESET			=> nReset,
+        nHALT			=> nHalt,
+        A				=> Address,
+        D				=> Data,
+        RnW				=> nWriteEnable,
+        BS				=> BS,
+        BA				=> BA,
         AVMA			=> Avma,
         BUSY			=> Busy,
-        LIC			=> Lic);
+        LIC				=> Lic);
 	 
 ------------------------------------------------------------------------
     

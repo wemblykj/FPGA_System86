@@ -106,7 +106,9 @@ module xsystem86
 		`SRAM_OUTPUT_DEFS(CY6264, sram_10m),
 		`SRAM_OUTPUT_DEFS(M58725, sram_11k)
 	);
-	
+
+// synthesis translate_off
+
 	system86 
 		#(
 			.LAYER_DISABLE_MASK(LAYER_DISABLE_MASK),
@@ -164,4 +166,6 @@ module xsystem86
 			`SRAM_CONNECTION_DEFS(sram_11k, sram_11k)
 		);
 		
+// synthesis translate_on
+
 endmodule

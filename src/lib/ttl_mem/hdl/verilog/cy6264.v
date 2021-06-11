@@ -48,8 +48,7 @@ module sram_cy6264
         input wire nOE,
         input wire nWE,
         input wire [12:0] A,
-        inout wire [7:0] D,
-		  output wire data_valid
+        inout wire [7:0] D
     );
 	
 	GENERIC_SRAM #(
@@ -72,8 +71,7 @@ module sram_cy6264
 			.nOE(nOE), 
 			.nWE(nWE),
 			.A(A),
-			.D(D),
-			.data_valid(data_valid)
+			.D(D)
 		);
 	
 endmodule

@@ -35,8 +35,7 @@ module GENERIC_PROM
         input wire nE,
         input wire nG,
         input wire [ADDR_WIDTH-1:0] A,
-        output wire [DATA_WIDTH-1:0] Q,
-		  output wire data_valid
+        output wire [DATA_WIDTH-1:0] Q
     );
  
     reg [DATA_WIDTH-1:0] mem [0:(2**ADDR_WIDTH)-1];
@@ -103,6 +102,5 @@ module GENERIC_PROM
     end
 	 
 	 assign Q = CE && OE ? DOut : {(DATA_WIDTH){1'bZ}};
-	 assign data_valid = CE && OE ? DValid : 0;
     
 endmodule
