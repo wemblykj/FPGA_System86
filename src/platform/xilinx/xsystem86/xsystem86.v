@@ -41,14 +41,14 @@
 //`include "roms/rthunder.vh"
 
 module xsystem86
-	#(
+	/*#(
 		parameter LAYER_DISABLE_MASK = 0,
 		parameter BACKGROUND_LAYER_AUTOSCROLL = 0,
 		parameter BACKGROUND_LAYER_PRIORITY = 0,
 		parameter FOREGROUND_LAYER_PRIORITY = 0,
 		parameter TEXT_LAYER_PRIORITY = 0,
 		parameter UNKNOWN_LAYER_PRIORITY = 0
-	)
+	)*/
 	(
 		// == Simulation inputs
 		input wire rst_n,				// master reset
@@ -109,6 +109,21 @@ module xsystem86
 		`SRAM_OUTPUT_DEFS(M58725, sram_11k)
 	);
 	
+	localparam LAYER_DISABLE_MASK = 0;
+	localparam BACKGROUND_LAYER_AUTOSCROLL = 0;
+	localparam BACKGROUND_LAYER_PRIORITY = 0;
+	localparam FOREGROUND_LAYER_PRIORITY = 0;
+	localparam TEXT_LAYER_PRIORITY = 0;
+	localparam UNKNOWN_LAYER_PRIORITY = 0;
+		
+	/*reg out_n;
+	
+	always @(negedge rst_n) begin 
+		out_n <= rst_n;
+	end
+	
+	assign out_rst_n = out_n;*/
+	
 	system86 
 		#(
 			.LAYER_DISABLE_MASK(LAYER_DISABLE_MASK),
@@ -121,7 +136,6 @@ module xsystem86
 		system86 (
 			.clk_48m(clk_48m), 
 			.rst_n(rst_n),
-			
 			.vid_clk(vid_clk),
 			.vid_data(vid_data),
 			.vid_red(vid_red),

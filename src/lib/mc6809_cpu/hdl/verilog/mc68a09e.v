@@ -19,10 +19,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module mc68a09e
-	#(
-		parameter tDHW = 30,			// write data hold time
-		parameter tAH = 20			// address hold time
-	)
 	(
         input wire E,
         input wire Q,
@@ -32,7 +28,7 @@ module mc68a09e
         input wire nHALT,
         input wire nRESET,
         inout wire [7:0] D,
-	output wire [15:0] A,
+        output wire [15:0] A,
         output wire RnW,
         output wire BS,
         output wire BA,
@@ -45,6 +41,9 @@ module mc68a09e
 	wire [7:0] DOut;
 	wire RnWOut;
 	
+	localparam tDHW = 30;			// write data hold time
+	localparam tAH = 20;			// address hold time
+		
 	// not sure why but the cycle accurate mc6809e core is not maintaining datasheet timing, at least during simulation
 	assign #tDHW D = RnWOut ? 8'bZ : DOut;
 	assign #tAH A = BA ? 8'bZ : AOut;

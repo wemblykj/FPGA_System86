@@ -73,7 +73,7 @@ use proc_common_v3_00_a.ipif_pkg.calc_num_ce;
 -------------------------------------------------------------------------------
 
 library mc6809e_cpu_v1_00_a;
-
+use mc6809e_cpu_v1_00_a.all;
 
 -------------------------------------------------------------------------------
 --                     Defination of Generics :                              --
@@ -152,11 +152,7 @@ end entity mc6809e_cpu;
 
 architecture IMP of mc6809e_cpu is
 
-component xcpu_mc6809e
-    generic (
-    	tDHW 			: integer 		:= 30;
-		tAH	 		: integer 		:= 20
-    );
+component mc68a09e
     port (
       E		 		: in std_logic;
       Q		 		: in std_logic;
@@ -174,7 +170,7 @@ component xcpu_mc6809e
       BUSY	 		: out std_logic;
       LIC	 		: out std_logic
     );
-end component;
+end component mc68a09e;
 
 -------------------------------------------------------------------------------
 -- 
@@ -203,7 +199,7 @@ begin -- architecture IMP
 -- Instantiate the iMC6809E
 ------------------------------------------------------------------------
 
-    Inst_MC6809E: xcpu_mc6809e
+    Inst_MC6809E: mc68a09e
     port map(
         E				=> E,
         Q				=> Q,
@@ -223,4 +219,4 @@ begin -- architecture IMP
 	 
 ------------------------------------------------------------------------
     
-end imp;
+end IMP;

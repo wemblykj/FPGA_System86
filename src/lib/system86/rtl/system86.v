@@ -171,7 +171,7 @@ module system86
 			//.CLK_4H(CLK_4H)
 		);
 	
-	tilegen_subsystem
+	/*tilegen_subsystem
 		#(
 			.LAYER_DISABLE_MASK(LAYER_DISABLE_MASK),
 			.BACKGROUND_LAYER_AUTOSCROLL(BACKGROUND_LAYER_AUTOSCROLL),
@@ -216,12 +216,12 @@ module system86
 			`EPROM_CONNECTION_DEFS(eprom_7s, eprom_7s),
 			`SRAM_CONNECTION_DEFS(sram_4n, sram_4n),
 			`SRAM_CONNECTION_DEFS(sram_7n, sram_7n)
-		);
+		);*/
 	
 	reg ls174_9v_q5 = 1'b0;	// videogen_bank
 	reg ls174_6v_q6 = 1'b1;	// videogen_clear
 	
-	sprite_subsystem
+	/*sprite_subsystem
 		sprite_subsystem
 		(
 			.rst_n(rst_n),
@@ -245,7 +245,7 @@ module system86
 			//`EPROM_CONNECTION_DEFS(eprom_7s, eprom_7s),
 			`SRAM_CONNECTION_DEFS(sram_10m, sram_10m),
 			`SRAM_CONNECTION_DEFS(sram_11k, sram_11k)
-		);
+		);*/
 		
 	videogen_subsystem
 		videogen_subsystem(
@@ -299,59 +299,7 @@ module system86
 			`EPROM_CONNECTION_DEFS(eprom_12c, eprom_12c),
 			`EPROM_CONNECTION_DEFS(eprom_12d, eprom_12d)
 			);
-	
-	// Main CPU
-	/*
-	mc68a09e 
-		#(
-			.tDHW(0),
-			.tAH(0)
-		)
-		mcpu_11a
-        (
-			.D(mcpu_11a_data), 
-			.A(mcpu_11a_addr), 
-			.RnW(mcpu_11a_we_n), 
-			.E(mcpu_11a_e), 
-			.Q(mcpu_11a_q), 
-			.BS(mcpu_11a_bs), 
-			.BA(mcpu_11a_ba), 
-			.nIRQ(mcpu_11a_irq_n), 
-			.nFIRQ(mcpu_11a_firq_n), 
-			.nNMI(mcpu_11a_nmi_n), 
-			.AVMA(mcpu_11a_avma), 
-			.BUSY(mcpu_11a_busy), 
-			.LIC(mcpu_11a_lic), 
-			.nHALT(mcpu_11a_halt_n), 
-			.nRESET(mcpu_11a_reset_n)
-		);	
-		
-	// Sub CPU
-	mc68a09e 
-		#(
-			.tDHW(0),
-			.tAH(0)
-		)
-		scpu_9a
-        (
-			.D(scpu_9a_data), 
-			.A(scpu_9a_addr), 
-			.RnW(scpu_9a_we_n), 
-			.E(scpu_9a_e), 
-			.Q(scpu_9a_q), 
-			.BS(scpu_9a_bs), 
-			.BA(scpu_9a_ba), 
-			.nIRQ(scpu_9a_irq_n), 
-			.nFIRQ(scpu_9a_firq_n), 
-			.nNMI(scpu_9a_nmi_n), 
-			.AVMA(scpu_9a_avma), 
-			.BUSY(scpu_9a_busy), 
-			.LIC(scpu_9a_lic), 
-			.nHALT(scpu_9a_halt_n), 
-			.nRESET(scpu_9a_reset_n)
-		);	
-		*/
-		
+			
 	always @(negedge CLK_6M) begin
     if (rst_n) begin
       ls174_6v_q6  <= 1;
