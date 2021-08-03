@@ -1,0 +1,8 @@
+##############################################################################
+## Filename:          /export/home/john/shit1_13.2/edk/system/pcores/try_import_v1_00_a/data/try_import_v2_1_0.pao
+## Description:       Peripheral Analysis Order
+## Date:              Thu Oct 27 20:59:02 2011 (by Create and Import Peripheral Wizard)
+##############################################################################
+
+lib proc_common_v3_00_a  all 
+lib try_import_v1_00_a clock_control vhdl
