@@ -88,6 +88,27 @@
 		<tip></tip>
 	</widget>
 	'>
+    <!ENTITY C_M_AXI_PROTOCOL '
+	<widget id="C_M_AXI_PROTOCOL">
+		<key>C_M_AXI_PROTOCOL</key>
+		<label>AXI4 Master Protocol</label>
+		<tip></tip>
+        </widget>
+	'>
+    <!ENTITY C_M_AXI_SUPPORTS_READ '
+	<widget id="C_M_AXI_SUPPORTS_READ">
+		<key>C_M_AXI_SUPPORTS_READ</key>
+		<label>AXI4 Master Supports Read</label>
+		<tip></tip>
+        </widget>
+	'>
+    <!ENTITY C_M_AXI_SUPPORTS_WRITE '
+	<widget id="C_M_AXI_SUPPORTS_WRITE">
+		<key>C_M_AXI_SUPPORTS_WRITE</key>
+		<label>AXI4 Master Supports Write</label>
+		<tip></tip>
+        </widget>
+	'>
 	<!ENTITY C_S_AXI_DATA_WIDTH '
 	<widget id="C_S_AXI_DATA_WIDTH">
 		<key>C_S_AXI_DATA_WIDTH</key>
@@ -108,6 +129,20 @@
 	<widget id="C_S_AXI_PROTOCOL">
 		<key>C_S_AXI_PROTOCOL</key>
 		<label>AXI4-Lite Slave Protocol</label>
+		<tip></tip>
+        </widget>
+	'>
+    <!ENTITY C_S_AXI_SUPPORTS_READ '
+	<widget id="C_S_AXI_SUPPORTS_READ">
+		<key>C_S_AXI_SUPPORTS_READ</key>
+		<label>AXI4-Lite Supports Read</label>
+		<tip></tip>
+        </widget>
+	'>
+    <!ENTITY C_S_AXI_SUPPORTS_WRITE '
+	<widget id="C_S_AXI_SUPPORTS_WRITE">
+		<key>C_S_AXI_SUPPORTS_WRITE</key>
+		<label>AXI4-Lite Supports Write</label>
 		<tip></tip>
         </widget>
 	'>
@@ -138,13 +173,21 @@
 			<item>&C_BASEADDR;</item>
 			<item>&C_HIGHADDR;</item>
 		</group>
-		<group id="AXI">
-			<display>AXI</display>			
+		<group id="AXI Master">
+			<display>AXI Master</display>			
 			<item>&C_M_AXI_DATA_WIDTH;</item>
 			<item>&C_M_AXI_ADDR_WIDTH;</item>
+			<item>&C_M_AXI_PROTOCOL;</item>
+            <item>&C_M_AXI_SUPPORTS_READ;</item>
+            <item>&C_M_AXI_SUPPORTS_WRITE;</item>
+		</group>
+        <group id="AXI-Lite Slave">
+			<display>AXI-Lite Slave</display>			
 			<item>&C_S_AXI_DATA_WIDTH;</item>
 			<item>&C_S_AXI_ADDR_WIDTH;</item>
 			<item>&C_S_AXI_PROTOCOL;</item>
+            <item>&C_S_AXI_SUPPORTS_READ;</item>
+            <item>&C_S_AXI_SUPPORTS_WRITE;</item>
 		</group>
 		<group id="Hidden">
 			<display>Hidden</display>
