@@ -98,6 +98,8 @@ BEGIN system86
  PORT vid_red = system86_0_vid_red
  PORT vid_green = system86_0_vid_green
  PORT vid_blue = system86_0_vid_blue
+ PORT CLK_48M = clock_generator_0_CLKOUT3
+ PORT rst_n = net_vcc
 END
 
 BEGIN proc_sys_reset
@@ -234,12 +236,14 @@ BEGIN clock_generator
  PARAMETER C_CLKOUT1_BUF = FALSE
  PARAMETER C_CLKOUT2_FREQ = 100000000
  PARAMETER C_CLKOUT2_GROUP = PLL0
+ PARAMETER C_CLKOUT3_FREQ = 49152000
  PORT LOCKED = proc_sys_reset_0_Dcm_locked
  PORT CLKOUT2 = clk_100_0000MHzPLL0
  PORT RST = RESET
  PORT CLKOUT0 = clk_600_0000MHzPLL0_nobuf
  PORT CLKOUT1 = clk_600_0000MHz180PLL0_nobuf
  PORT CLKIN = GCLK
+ PORT CLKOUT3 = clock_generator_0_CLKOUT3
 END
 
 BEGIN axi_vdma
