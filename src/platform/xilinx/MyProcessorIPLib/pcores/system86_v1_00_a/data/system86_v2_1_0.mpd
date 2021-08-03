@@ -77,13 +77,13 @@ PARAMETER C_SRAM_CY6462_DATA_WIDTH=8, DT=INTEGER, ASSIGNMENT=CONSTANT
 
 ## Peripheral ports
 # Global ports
-PORT CLK_48M = "", DIR = I, SIGIS = CLK
+PORT CLK_48M = "", DIR = I, SIGIS = CLK, CLK_FREQ = 49512000
 
 #PORT CLK_24M = "", DIR = I, SIGIS = CLK, ISVALID = (C_USE_HARDWARE_CLOCKS == 1)
 #PORT CLK_12M = "", DIR = I, SIGIS = CLK, ISVALID = (C_USE_HARDWARE_CLOCKS == 1)
 #PORT CLK_6M = "", DIR = I, SIGIS = CLK, ISVALID = (C_USE_HARDWARE_CLOCKS == 1)
 
-PORT rst_n = "", DIR = I, SIGIS=RST
+PORT rst_n = "", DIR = I, SIGIS=RST,  INITIALVAL=VCC
 
 # Component video IF
 PORT vid_clk = "", DIR = O, SIGIS = CLK, IO_IF = VIDEO_OUT, IO_IS = VideoClock, ISVALID = (C_VIDEO_OUT_TYPE==0)
@@ -130,11 +130,11 @@ PORT mcpu_11a_nmi_n = nNmi, DIR = O, BUS = S_MCPU_11A, PERMIT = BASE_USER
 PORT mcpu_11a_we_n = nWriteEnable, DIR = I, BUS = S_MCPU_11A, PERMIT = BASE_USER
 PORT mcpu_11a_addr = Address, DIR = I, VEC = [15:0], BUS = S_MCPU_11A, PERMIT = BASE_USER
 PORT mcpu_11a_data = Data, DIR = IO, THREE_STATE = FALSE, VEC = [7:0], BUS = S_MCPU_11A, PERMIT = BASE_USER
-PORT mcpu_11a_bs = Bs, DIR = I, BUS = S_MCPU_11A, PERMIT = BASE_USER
-PORT mcpu_11a_ba = Ba, DIR = I, BUS = S_MCPU_11A, PERMIT = BASE_USER
-PORT mcpu_11a_avma = Avma, DIR = I, BUS = S_MCPU_11A, PERMIT = BASE_USER
-PORT mcpu_11a_busy = Busy, DIR = I, BUS = S_MCPU_11A, PERMIT = BASE_USER
-PORT mcpu_11a_lic = Lic, DIR = I, BUS = S_MCPU_11A, PERMIT = BASE_USER
+PORT mcpu_11a_bs = Bs, DIR = I, BUS = S_MCPU_11A, PERMIT = BASE_USER, INITIALVAL=GND
+PORT mcpu_11a_ba = Ba, DIR = I, BUS = S_MCPU_11A, PERMIT = BASE_USER, INITIALVAL=GND
+PORT mcpu_11a_avma = Avma, DIR = I, BUS = S_MCPU_11A, PERMIT = BASE_USER, INITIALVAL=GND
+PORT mcpu_11a_busy = Busy, DIR = I, BUS = S_MCPU_11A, PERMIT = BASE_USER, INITIALVAL=GND
+PORT mcpu_11a_lic = Lic, DIR = I, BUS = S_MCPU_11A, PERMIT = BASE_USER, INITIALVAL=GND
 
 # MC6809E busses
 PORT scpu_9a_e = E, DIR = O, BUS = S_SCPU_9A, PERMIT = BASE_USER
@@ -147,14 +147,14 @@ PORT scpu_9a_nmi_n = nNmi, DIR = O, BUS = S_SCPU_9A, PERMIT = BASE_USER
 PORT scpu_9a_we_n = nWriteEnable, DIR = I, BUS = S_SCPU_9A, PERMIT = BASE_USER
 PORT scpu_9a_addr = Address, DIR = I, VEC = [15:0], BUS = S_SCPU_9A, PERMIT = BASE_USER
 PORT scpu_9a_data = Data, DIR = IO, THREE_STATE = FALSE, VEC = [7:0], BUS = S_SCPU_9A, PERMIT = BASE_USER
-PORT scpu_9a_bs = Bs, DIR = I, BUS = S_SCPU_9A, PERMIT = BASE_USER
-PORT scpu_9a_ba = Ba, DIR = I, BUS = S_SCPU_9A, PERMIT = BASE_USER
-PORT scpu_9a_avma = Avma, DIR = I, BUS = S_SCPU_9A, PERMIT = BASE_USER
-PORT scpu_9a_busy = Busy, DIR = I, BUS = S_SCPU_9A, PERMIT = BASE_USER
-PORT scpu_9a_lic = Lic, DIR = I, BUS = S_SCPU_9A, PERMIT = BASE_USER
+PORT scpu_9a_bs = Bs, DIR = I, BUS = S_SCPU_9A, PERMIT = BASE_USER, INITIALVAL=GND
+PORT scpu_9a_ba = Ba, DIR = I, BUS = S_SCPU_9A, PERMIT = BASE_USER, INITIALVAL=GND
+PORT scpu_9a_avma = Avma, DIR = I, BUS = S_SCPU_9A, PERMIT = BASE_USER, INITIALVAL=GND
+PORT scpu_9a_busy = Busy, DIR = I, BUS = S_SCPU_9A, PERMIT = BASE_USER, INITIALVAL=GND
+PORT scpu_9a_lic = Lic, DIR = I, BUS = S_SCPU_9A, PERMIT = BASE_USER, INITIALVAL=GND
 
 # EPROM 3R
-PORT prom_3r_ce_n = nChipEnable, DIR = O, BUS = EPROM_3R
+PORT prom_3r_ce_n = nChipEnable, DIR = O, BUS = EPROM_3R, INITIALVAL=VCC
 PORT prom_3r_addr = Addr, DIR = O, VEC = [(C_EPROM_MB7124_ADDR_WIDTH-1):0], BUS = EPROM_3R
 PORT prom_3r_data = Data, DIR = I, VEC = [(C_EPROM_MB7124_DATA_WIDTH-1):0], BUS = EPROM_3R
 # EPROM 3S
@@ -194,29 +194,29 @@ PORT prom_3r_data = Data, DIR = I, VEC = [(C_EPROM_MB7124_DATA_WIDTH-1):0], BUS 
 #PORT eprom_7s_addr = Addr, DIR = O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_7S
 #PORT eprom_7s_data = Data, DIR = I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_7S
 # EPROM 9C
-PORT eprom_9c_ce_n = nChipEnable, DIR = O, BUS = EPROM_9C
-PORT eprom_9c_oe_n = nOutputEnable, DIR = O, BUS = EPROM_9C
+PORT eprom_9c_ce_n = nChipEnable, DIR = O, BUS = EPROM_9C, INITIALVAL=VCC
+PORT eprom_9c_oe_n = nOutputEnable, DIR = O, BUS = EPROM_9C, INITIALVAL=VCC
 PORT eprom_9c_addr = Addr, DIR = O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_9C
 PORT eprom_9c_data = Data, DIR = I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_9C
 # EPROM 9D
-PORT eprom_9d_ce_n = nChipEnable, DIR = O, BUS = EPROM_9D
-PORT eprom_9d_oe_n = nOutputEnable, DIR = O, BUS = EPROM_9D
+PORT eprom_9d_ce_n = nChipEnable, DIR = O, BUS = EPROM_9D, INITIALVAL=VCC
+PORT eprom_9d_oe_n = nOutputEnable, DIR = O, BUS = EPROM_9D, INITIALVAL=VCC
 PORT eprom_9d_addr = Addr, DIR = O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_9D
 PORT eprom_9d_data = Data, DIR = I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_9D
 # EPROM 12C
-PORT eprom_12c_ce_n = nChipEnable, DIR = O, BUS = EPROM_12C
-PORT eprom_12c_oe_n = nOutputEnable, DIR = O, BUS = EPROM_12C
+PORT eprom_12c_ce_n = nChipEnable, DIR = O, BUS = EPROM_12C, INITIALVAL=VCC
+PORT eprom_12c_oe_n = nOutputEnable, DIR = O, BUS = EPROM_12C, INITIALVAL=VCC
 PORT eprom_12c_addr = Addr, DIR = O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_12C
 PORT eprom_12c_data = Data, DIR = I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_12C
 # EPROM 12D
-PORT eprom_12d_ce_n = nChipEnable, DIR = O, BUS = EPROM_12D
-PORT eprom_12d_oe_n = nOutputEnable, DIR = O, BUS = EPROM_12D
+PORT eprom_12d_ce_n = nChipEnable, DIR = O, BUS = EPROM_12D, INITIALVAL=VCC
+PORT eprom_12d_oe_n = nOutputEnable, DIR = O, BUS = EPROM_12D, INITIALVAL=VCC
 PORT eprom_12d_addr = Addr, DIR = O, VEC = [(C_EPROM_M27256_ADDR_WIDTH-1):0], BUS = EPROM_12D
 PORT eprom_12d_data = Data, DIR = I, VEC = [(C_EPROM_M27256_DATA_WIDTH-1):0], BUS = EPROM_12D
 # SRAM 3F
-PORT sram_3f_ce_n = nChipEnable, DIR = O, BUS = SRAM_3F
-PORT sram_3f_oe_n = nOutputEnable, DIR = O, BUS = SRAM_3F
-PORT sram_3f_we_n = nWriteEnable, DIR = O, BUS = SRAM_3F
+PORT sram_3f_ce_n = nChipEnable, DIR = O, BUS = SRAM_3F, INITIALVAL=VCC
+PORT sram_3f_oe_n = nOutputEnable, DIR = O, BUS = SRAM_3F, INITIALVAL=VCC
+PORT sram_3f_we_n = nWriteEnable, DIR = O, BUS = SRAM_3F, INITIALVAL=VCC
 PORT sram_3f_addr = Addr, DIR = O, VEC = [(C_SRAM_CY6462_ADDR_WIDTH-1):0], BUS = SRAM_3F
 PORT sram_3f_data = Data, DIR = IO, THREE_STATE = FALSE, VEC = [(C_SRAM_CY6462_DATA_WIDTH-1):0], BUS = SRAM_3F
 # SRAM 4N
