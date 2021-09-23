@@ -270,7 +270,7 @@ entity system86 is
 		
 		sram_3f_ce_n		: out std_logic;
 		sram_3f_oe_n		: out std_logic;
-		sram_3f_we			: out std_logic;
+		sram_3f_we_n		: out std_logic;
 		sram_3f_addr		: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
 		sram_3f_data   	: inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000"
 		
