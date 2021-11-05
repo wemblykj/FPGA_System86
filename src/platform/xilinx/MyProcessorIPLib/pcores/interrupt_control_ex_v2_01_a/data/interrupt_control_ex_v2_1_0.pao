@@ -1,0 +1,14 @@
+# Peripheral Analyze Order (.pao) file for the
+# IPIF Interrupt Control version v2_01_a
+# Ex: expanded to allow internal access to enable and ack registers
+#
+# ----- Proc Common Library Files --------------
+lib interrupt_control_v2_01_a all  
+
+#
+#----- Interrupt Control Library Files ---------
+lib interrupt_control_ex_v2_01_a  interrupt_control_ex.vhd vhdl
+#
+# --- End of list ------------------------------
+#nosort
+

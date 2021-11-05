@@ -6,12 +6,12 @@
 
 ## Helper Libraries
 lib proc_common_v3_00_a all
+lib interrupt_control_ex_v2_01_a all  
 lib axi_lite_ipif_v1_01_a all 
 lib axi_master_lite_v2_00_a all 
 
 ## AXI ROM Core 
-lib axi_ttl_memory_bus_v1_00_a axi_ttl_memory_bus vhdl
-lib axi_ttl_memory_bus_v1_00_a axi_ttl_memory_bus_master_top vhdl
-lib axi_ttl_memory_bus_v1_00_a axi_ttl_memory_bus_reg_top vhdl
-lib axi_ttl_memory_bus_v1_00_a axi_ttl_memory_bus_reg vhdl
-lib axi_ttl_memory_bus_v1_00_a axi_ttl_memory_bus_master verilog
+lib axi_ttl_memory_bus_v1_00_a axi_ttl_memory_bus_master.v verilog
+lib axi_ttl_memory_bus_v1_00_a axi_ttl_memory_bus_reg.vhd vhdl
+lib axi_ttl_memory_bus_v1_00_a axi_ttl_memory_bus_core.vhd vhdl
+lib axi_ttl_memory_bus_v1_00_a axi_ttl_memory_bus.vhd vhdl

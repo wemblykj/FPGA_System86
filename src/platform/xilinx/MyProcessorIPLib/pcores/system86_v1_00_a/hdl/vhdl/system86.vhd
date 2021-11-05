@@ -270,31 +270,31 @@ entity system86 is
 		
 		sram_3f_ce_n		: out std_logic;
 		sram_3f_oe_n		: out std_logic;
-		sram_3f_we			: out std_logic;
+		sram_3f_we_n		: out std_logic;
 		sram_3f_addr		: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
 		sram_3f_data   	: inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000"
 		
 --		sram_4n_ce_n		: out std_logic;
 --		sram_4n_oe_n		: out std_logic;
---		sram_4n_we			: out std_logic;
+--		sram_4n_we_n		: out std_logic;
 --		sram_4n_addr		: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
 --		sram_4n_data  		: inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
 --		
 --		sram_7n_ce_n		: out std_logic;
 --		sram_7n_oe_n		: out std_logic;
---		sram_7n_we			: out std_logic;
+--		sram_7n_we_n		: out std_logic;
 --		sram_7n_addr		: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
 --		sram_7n_data  		: inout  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
 --		
 --		sram_10m_ce_n		: out std_logic;
 --		sram_10m_oe_n		: out std_logic;
---		sram_10m_we			: out std_logic;
+--		sram_10m_we_n		: out std_logic;
 --		sram_10m_addr		: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
 --		sram_10m_data  	: inout  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
 --		
 --		sram_11k_ce_n		: out std_logic;
 --		sram_11k_oe_n		: out std_logic;
---		sram_11k_we			: out std_logic;
+--		sram_11k_we_n		: out std_logic;
 --		sram_11k_addr		: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
 --		sram_11k_data  	: inout  std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000"
 	);
@@ -501,14 +501,14 @@ port(
 	eprom_12d_ce_n	: out std_logic;
 	eprom_12d_oe_n	: out std_logic;
 	eprom_12d_addr	: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
-    eprom_12d_data 	: in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000"
+   eprom_12d_data 	: in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000"
 	
 --	--
 --	-- System 86 static RAM busses
 --	--
 --	sram_3f_ce_n		: out std_logic;
 --	sram_3f_oe_n		: out std_logic;
---	sram_3f_we		: out std_logic;
+--	sram_3f_we_n		: out std_logic;
 --	sram_3f_addr		: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
 --	sram_3f_data  		: inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000";
 --	
@@ -658,7 +658,7 @@ Inst_System86 : xsystem86
 --		
 --		sram_3f_ce_n		=> sram_3f_ce_n,
 --		sram_3f_oe_n		=> sram_3f_oe_n,
---		sram_3f_we		=> sram_3f_we,
+--		sram_3f_we_n		=> sram_3f_we,
 --		sram_3f_addr	=> sram_3f_addr,
 --		sram_3f_data	=> sram_3f_data,
 --		
