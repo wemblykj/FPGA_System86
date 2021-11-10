@@ -26,35 +26,43 @@ extern "C" {
  * Register offsets for this device.
  * @{
  */
-#define XTTLMEMBUS_CR_OFFSET			0x00   /**< Control register */
-#define XTTLMEMBUS_SR_OFFSET			0x04   /**< Status register */
-#define XTTLMEMBUS_BUS_OFFSET			0x08   /**< Bus register */
+#define XTTLMEMBUS_CR_OFFSET				0x00   /**< Control register */
+#define XTTLMEMBUS_SR_OFFSET				0x00   /**< Status register */
+#define XTTLMEMBUS_BASEADDRESS_OFFSET		0x04   /**< Base address for AXI bus mapping */
+#define XTTLMEMBUS_BUS_OFFSET				0x08   /**< Bus register */
 #define XTTLMEMBUS_LINE_FAULT_VALUE_OFFSET	0x0C   /**< Line fault simulation value register */
 #define XTTLMEMBUS_LINE_FAULT_ENABLE_OFFSET	0x10   /**< Line fault simulation enable register */
-#define XTTLMEMBUS_BASEADDRESS_OFFSET		0x14   /**< Base address for AXI bus mapping */
 
 
-#define XTTLMEMBUS_GIE_OFFSET			0x11C  /**< Global interrupt enable register */
-#define XTTLMEMBUS_ISR_OFFSET			0x120  /**< Interrupt status register */
-#define XTTLMEMBUS_IER_OFFSET			0x128  /**< Interrupt enable register */
+#define XTTLMEMBUS_GIE_OFFSET				0x11C  /**< Global interrupt enable register */
+#define XTTLMEMBUS_ISR_OFFSET				0x120  /**< Interrupt status register */
+#define XTTLMEMBUS_IER_OFFSET				0x128  /**< Interrupt enable register */
 
 
 /** @name Bitmasks of XTTLMEMBUS_CR_OFFSET register
  * @{
  */
-#define XTTLMEMBUS_CR_ENABLE_MASK		0x00000010  /**< Enable memory bus */
-#define XTTLMEMBUS_CR_DYNAMIC_CTRL_MASK     	0x00000020  /**< Dynamic mapping control, if supported by hardware */
+#define XTTLMEMBUS_CR_ENABLE_MASK			0x00000010  /**< Enable memory bus */
+#define XTTLMEMBUS_CR_DYNAMIC_CTRL_MASK     0x00000020  /**< Dynamic mapping control, if supported by hardware */
 /*@}*/
 
 /** @name Bitmasks of XTTLMEMBUS_SR_OFFSET register
  * This register reports capabilities and errors
  * @{
  */
-#define XTTLMEMBUS_SR_RUNNING_MASK		0x00000010 	/**< Memory bus is running */
-#define XTTLMEMBUS_SR_ERR_ALL_MASK      	0x00000F00  	/**< All errors */
-#define XTTLMEMBUS_SR_ERR_ALL_LSB		9		/**< Least significant bit of error flags */
+#define XTTLMEMBUS_SR_RUNNING_MASK			0x00000010 	/**< Memory bus is running */
+#define XTTLMEMBUS_SR_ERR_ALL_MASK      	0x00000F00  /**< All errors */
+#define XTTLMEMBUS_SR_ERR_ALL_LSB			9			/**< Least significant bit of error flags */
 /*@}*/
 
+/** @name Bitmasks of XTTLMEMBUS_BUS_OFFSET register
+ * @{
+ */
+#define XTTLMEMBUS_BUS_CONTROL_MASK			0x00000007  /**< Control signals */
+#define XTTLMEMBUS_BUS_CHIP_ENABLE			0x00000001  /**< Chip enable signal */
+#define XTTLMEMBUS_BUS_OUTPUT_ENABLE		0x00000002  /**< Output enable signal */
+#define XTTLMEMBUS_BUS_WRITE_ENABLE			0x00000004  /**< Write enable signal */
+/*@}*/
 
 /** @name Interrupt Status and Enable Register bitmaps and masks
  *
@@ -62,10 +70,10 @@ extern "C" {
  * registers.
  * @{
  */
-#define XTTLMEMBUS_IR_MASK		0x7 /**< Mask of all bits */
-#define XTTLMEMBUS_IR_ADDR_MASK		0x1 /**< Mask for the address interrupt */
-#define XTTLMEMBUS_IR_READ_MASK		0x2 /**< Mask for the read interrupt */
-#define XTTLMEMBUS_IR_WRITE_MASK	0x4 /**< Mask for the write interrupt */
+#define XTTLMEMBUS_IR_MASK					0x7 /**< Mask of all bits */
+#define XTTLMEMBUS_IR_ADDR_MASK				0x1 /**< Mask for the address interrupt */
+#define XTTLMEMBUS_IR_READ_MASK				0x2 /**< Mask for the read interrupt */
+#define XTTLMEMBUS_IR_WRITE_MASK			0x4 /**< Mask for the write interrupt */
 /*@}*/
 
 

@@ -258,12 +258,13 @@ library axi_ttl_memory_bus_v1_00_a;
 entity axi_ttl_memory_bus is
   generic (
     -- ROM generics
+	 C_CTRL_WIDTH : integer range 2 to 3 := 3;
     C_ADDR_WIDTH : integer range 4 to 16 := 16;
     C_DATA_WIDTH : integer range 4 to 8 := 8;
 
     -- Mapping generics
     C_MAPPED_ADDRESS : std_logic_vector := X"FFFFFFFF";
-    C_USE_DYNAMIC_MAPPING : std_logic := '0';
+    C_USE_DYNAMIC_MAPPING : integer range 0 to 1      	    := 0;
 
 	 -- Interrupts
 	 C_INTERRUPT_PRESENT    : integer range 0 to 1      	    := 0;
@@ -392,104 +393,52 @@ end entity axi_ttl_memory_bus;
 
 architecture IMP of axi_ttl_memory_bus is
 
--- component axi_ttl_memory_bus_reg
-    -- generic(
-		  -- C_MAPPED_ADDRESS        : std_logic_vector   			  := X"FFFFFFFF";
-		  -- C_USE_DYNAMIC_MAPPING	  : std_logic  					  := '0';
-		  -- C_SLV_DWIDTH            : integer   						  := 32;
-		  -- C_IP_NUM_REG				: integer						  := 8
-	  -- );
-    -- port(
-        -- Control      		 	  : out std_logic_vector(31 downto 0);
-        -- Status       		 	  : in std_logic_vector(31 downto 0);
-        -- MappedAddress  		 	  : out std_logic_vector(31 downto 0);
-		  
-        -- BusAddressRead 			: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-        -- BusAddressWrite			: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-        
-        -- BusDataRead 			: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-        -- BusDataWrite			: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-        
-        -- IntrEnable		: out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-        -- IntrStatus		: in std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-        -- IntrAck		    : out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
-        
-        -- Bus2IP_Clk              : in  std_logic;
-        -- Bus2IP_Resetn           : in  std_logic;
-        -- Bus2IP_Data             : in  std_logic_vector(C_SLV_DWIDTH-1 downto 0);
-        -- Bus2IP_BE               : in  std_logic_vector(C_SLV_DWIDTH/8-1 downto 0);
-        -- Bus2IP_RdCE             : in  std_logic_vector(C_IP_NUM_REG-1 downto 0);
-        -- Bus2IP_WrCE             : in  std_logic_vector(C_IP_NUM_REG-1 downto 0);
-        -- IP2Bus_Data             : out std_logic_vector(C_SLV_DWIDTH-1 downto 0);
-        -- IP2Bus_RdAck            : out std_logic;
-        -- IP2Bus_WrAck            : out std_logic;
-        -- IP2Bus_Error            : out std_logic);
--- end component;
-
--- component axi_ttl_memory_bus_core
-    -- generic (
-    -- C_ADDR_WIDTH 		: integer 		:= 16;
-    -- C_DATA_WIDTH 		: integer 		:= 8;
-  	-- C_MAPPED_ADDRESS        : std_logic_vector   	:= X"FFFFFFFF";
-    -- C_USE_DYNAMIC_MAPPING : std_logic := '0';
-    -- C_M_AXI_ADDR_WIDTH 	: integer 		:= 32;
-    -- C_M_AXI_DATA_WIDTH 	: integer 		:= 32;
-    -- C_FAMILY : string := "virtex6";
-    -- C_MST_AWIDTH 	: integer 		:= 32;
-    -- C_MST_DWIDTH 	: integer 		:= 32
-    -- );
-    -- port (
-      -- nChipEnable 		: in std_logic;
-      -- nOutputEnable 		: in std_logic;
-      -- nWriteEnable 		: in std_logic;
-      -- Address 				: in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
-      -- Data 					  : inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
-      -- MappedAddress 	: in std_logic_vector(C_MST_AWIDTH - 1 downto 0);
-      -- Interrupt       : out std_logic;
-
-      -- ControlReg			: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
-      -- StatusReg 			: out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-		
-      -- BusAddressReadReg 		  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-      -- BusAddressWriteReg 		: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-      
-      -- BusDataReadReg 		  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-      -- BusDataWriteReg 		: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-    
-      -- IntrEnableReg 	: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-      -- IntrStatusReg		: out std_logic_vector(C_MST_DWIDTH - 1 downto 0);
-      -- IntrAckReg		  : in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
-		
-      -- M_AXI_ACLK              	: in  std_logic;
-      -- M_AXI_ARESETN           	: in  std_logic;
-		
-      -- M_AXI_AWADDR 		: out std_logic_vector(C_M_AXI_ADDR_WIDTH - 1 downto 0);
-      -- M_AXI_AWVALID 		: out std_logic;
-      -- M_AXI_AWREADY 		: in std_logic;
-		
-      -- M_AXI_WDATA 		: out std_logic_vector(C_M_AXI_DATA_WIDTH - 1 downto 0);
-      -- M_AXI_WSTRB : out std_logic_vector ((C_M_AXI_DATA_WIDTH/8) - 1 downto 0);
-      -- M_AXI_WVALID 		: out std_logic;
-      -- M_AXI_WREADY 		: in std_logic;
-		
-      -- M_AXI_BRESP             	: in std_logic_vector(1 downto 0);
-      -- M_AXI_BVALID            	: in std_logic;
-      -- M_AXI_BREADY            	: out std_logic;
-		
-      -- M_AXI_ARADDR 		: out std_logic_vector(C_M_AXI_ADDR_WIDTH - 1 downto 0);
-      -- M_AXI_ARVALID 		: out std_logic;
-      -- M_AXI_ARREADY 		: in std_logic;
-		
-      -- M_AXI_RDATA 		: in std_logic_vector(C_M_AXI_DATA_WIDTH - 1 downto 0);
-      -- M_AXI_RRESP : in std_logic_vector(1 downto 0);
-      -- M_AXI_RVALID 		: in std_logic;
-      -- M_AXI_RREADY 		: out std_logic
-    -- );
--- end component;
-
 -------------------------------------------------------------------------------
--- 
+-- constant added for webtalk information
 -------------------------------------------------------------------------------
+function chr(sl: std_logic) return character is
+    variable c: character;
+    begin
+      case sl is
+         when '0' => c:= '0';
+         when '1' => c:= '1';
+         when 'Z' => c:= 'Z';
+         when 'U' => c:= 'U';
+         when 'X' => c:= 'X';
+         when 'W' => c:= 'W';
+         when 'L' => c:= 'L';
+         when 'H' => c:= 'H';
+         when '-' => c:= '-';
+      end case;
+    return c;
+   end chr;
+
+function str(slv: std_logic_vector) return string is
+     variable result : string (1 to slv'length);
+     variable r : integer;
+   begin
+     r := 1;
+     for i in slv'range loop
+        result(r) := chr(slv(i));
+        r := r + 1;
+     end loop;
+     return result;
+   end str;
+
+  constant C_CORE_GENERATION_INFO : string := C_INSTANCE & ",axi_ttl_memory_bus,{"
+    & "C_FAMILY = "              &  C_FAMILY
+    & ",C_INSTANCE = "           &  C_INSTANCE
+    & ",C_S_AXI_DATA_WIDTH = "   & integer'image(C_S_AXI_DATA_WIDTH)
+	 & ",C_CTRL_WIDTH = "         & integer'image(C_CTRL_WIDTH)
+    & ",C_ADDR_WIDTH = "         & integer'image(C_ADDR_WIDTH)
+    & ",C_DATA_WIDTH = "         & integer'image(C_DATA_WIDTH)
+	 & ",C_MAPPED_ADDRESS = "     & str(C_MAPPED_ADDRESS)
+    & ",C_USE_DYNAMIC_MAPPING = "         & integer'image(C_USE_DYNAMIC_MAPPING)
+    & ",C_INTERRUPT_PRESENT = "  & integer'image(C_INTERRUPT_PRESENT)
+    & "}";
+
+  attribute CORE_GENERATION_INFO : string;
+  attribute CORE_GENERATION_INFO of imp : architecture is C_CORE_GENERATION_INFO;
 
 type     bo2na_type is array (boolean) of natural; -- boolean to 
 							--natural conversion
@@ -640,15 +589,16 @@ constant DPHASE_TIMEOUT : integer := 0;
 signal controlReg : std_logic_vector(31 downto 0);
 signal statusReg : std_logic_vector(31 downto 0);
 
+-- Bus control lines state
+signal busControlReadReg : std_logic_vector(C_CTRL_WIDTH-1 downto 0);
 -- Address bus state
-signal busAddressReadReg : std_logic_vector(31 downto 0);
+signal busAddressReadReg : std_logic_vector(C_ADDR_WIDTH-1 downto 0);
 -- Address bus update
-signal busAddressWriteReg : std_logic_vector(31 downto 0);
-
+signal busAddressWriteReg : std_logic_vector(C_ADDR_WIDTH-1 downto 0);
 -- Data bus state
-signal busDataReadReg : std_logic_vector(31 downto 0);
+signal busDataReadReg : std_logic_vector(C_DATA_WIDTH-1 downto 0);
 -- Data bus update
-signal busDataWriteReg : std_logic_vector(31 downto 0);
+signal busDataWriteReg : std_logic_vector(C_DATA_WIDTH-1 downto 0);
 
 -- Interrupt
 --signal addrReqIntrEvent     : std_logic;
@@ -946,27 +896,31 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
 ------------------------------------------------------------------------
     Inst_AxiHDMIReg: entity axi_ttl_memory_bus_v1_00_a.axi_ttl_memory_bus_reg
     generic map(
+	     C_CTRL_WIDTH            => C_CTRL_WIDTH,
+        C_ADDR_WIDTH            => C_ADDR_WIDTH,
+        C_DATA_WIDTH            => C_DATA_WIDTH,
         C_SLV_DWIDTH            => C_S_AXI_DATA_WIDTH,
-		C_MAPPED_ADDRESS		=> C_MAPPED_ADDRESS,
-		C_USE_DYNAMIC_MAPPING   => C_USE_DYNAMIC_MAPPING,
-		C_USER_NUM_REG          => IP_NUM_REG)
+        C_MAPPED_ADDRESS        => C_MAPPED_ADDRESS,
+        C_USE_DYNAMIC_MAPPING   => C_USE_DYNAMIC_MAPPING)
     port map(
         Control                 => controlReg,
         Status                  => statusReg,
         MappedAddress           => mappedAddressReg,
 
-        BusAddressRead				  => busAddressReadReg,
-        BusAddressWrite				  => busAddressWriteReg,
+        BusControlRead          => busControlReadReg,
+
+        BusAddressRead          => busAddressReadReg,
+        BusAddressWrite	        => busAddressWriteReg,
         
-        BusDataRead				      => busDataReadReg,
-        BusDataWrite				    => busDataWriteReg,
+        BusDataRead				  => busDataReadReg,
+        BusDataWrite				  => busDataWriteReg,
         
         Bus2IP_Clk              => bus2ip_clk,
         Bus2IP_Resetn           => bus2ip_resetn,
 		  Bus2IP_Data             => bus2ip_data,
         Bus2IP_BE               => bus2ip_be,
-        Bus2IP_RdCE             => bus2ip_rdce,
-        Bus2IP_WrCE             => bus2ip_wrce,
+        Bus2IP_RdCE             => bus2ip_rdce(0 to IP_NUM_REG-1),
+        Bus2IP_WrCE             => bus2ip_wrce(0 to IP_NUM_REG-1),
         IP2Bus_Data             => ip2bus_data,
         IP2Bus_RdAck            => ip2bus_rdack,
         IP2Bus_WrAck            => ip2bus_wrack,
@@ -978,6 +932,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
 
     Inst_AxiBusCore: entity axi_ttl_memory_bus_v1_00_a.axi_ttl_memory_bus_core
     generic map(
+	     C_CTRL_WIDTH            => C_CTRL_WIDTH,
         C_ADDR_WIDTH        	  => C_ADDR_WIDTH,
         C_DATA_WIDTH        	  => C_DATA_WIDTH,
         C_MAPPED_ADDRESS          => C_MAPPED_ADDRESS,
@@ -991,31 +946,33 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
     port map(
         nChipEnable		  		  => nChipEnable,
         nOutputEnable			  => nOutputEnable,
-        nWriteEnable			  => nWriteEnable,
+        nWriteEnable			     => nWriteEnable,
         Address					  => Address,
-        Data					  => Data,
-        MappedAddress             => mappedAddressReg,
+        Data					     => Data,
+        MappedAddress           => mappedAddressReg,
         	
         ControlReg				  => controlReg,
-        StatusReg				  => statusReg,
+        StatusReg				     => statusReg,
         
+		  BusControlReadReg		  => busControlReadReg,
+		  
         BusAddressReadReg		  => busAddressReadReg,
         BusAddressWriteReg		  => busAddressWriteReg,
 								  
         BusDataReadReg			  => busDataReadReg,
         BusDataWriteReg			  => busDataWriteReg,
         
-		AddrReqIntr               => ip2bus_intrevent(0),
-		AddrReqIntrStatus         => intr2ip_status(0),
-		AddrReqIntrEnable         => intr2ip_enable(0),
+			AddrReqIntr               => ip2bus_intrevent(0),
+			AddrReqIntrStatus         => intr2ip_status(0),
+			AddrReqIntrEnable         => intr2ip_enable(0),
 		
         DataReadReqIntr              => ip2bus_intrevent(1),
-		DataReadReqIntrStatus        => intr2ip_status(1),
-		DataReadReqIntrEnable        => intr2ip_enable(1),
+			DataReadReqIntrStatus        => intr2ip_status(1),
+			DataReadReqIntrEnable        => intr2ip_enable(1),
 		
         DataWriteReqIntr             => ip2bus_intrevent(2),
         DataWriteReqIntrStatus       => intr2ip_status(2),  
-		DataWriteReqIntrEnable       => intr2ip_enable(2),
+			DataWriteReqIntrEnable       => intr2ip_enable(2),
         
         M_AXI_ACLK                => M_AXI_ACLK,
         M_AXI_ARESETN             => M_AXI_ARESETN,

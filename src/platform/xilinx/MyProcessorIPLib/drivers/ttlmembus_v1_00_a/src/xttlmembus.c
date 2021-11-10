@@ -80,8 +80,8 @@ int XTtlMemBus_CfgInitialize(XTtlMemBus * InstancePtr, XTtlMemBus_Config * Confi
 	 */
 
 	int lsb = 0;
-	int ctrlWidth = InstancePtr->CtrlBusAttr.Width;
-	InstancePtr->CtrlBusAttr.Width = (Config->ReadOnly == TRUE) ? 3 : 2;
+	const int ctrlWidth = 3; // control signals (WE, OE, CE)
+	InstancePtr->CtrlBusAttr.Width = ctrlWidth;
 	InstancePtr->CtrlBusAttr.Mask = ((2^ctrlWidth) - 1) << lsb;
 	InstancePtr->CtrlBusAttr.Lsb = lsb;
 	

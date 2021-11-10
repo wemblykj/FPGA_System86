@@ -1,4 +1,5 @@
 module axi_ttl_memory_bus_master #(
+		  parameter C_CTRL_WIDTH = 3,
         parameter C_ADDR_WIDTH = 16,
         parameter C_DATA_WIDTH = 8,
         parameter C_MST_AWIDTH = 32,
@@ -15,11 +16,13 @@ module axi_ttl_memory_bus_master #(
 		input wire [C_MST_DWIDTH-1:0] 	ControlReg,
 		output wire [C_MST_DWIDTH-1:0] 	StatusReg,
 
-		output wire [C_MST_DWIDTH-1:0] 	BusAddressReadReg,
-		input wire [C_MST_DWIDTH-1:0] 	BusAddressWriteReg,
+	   output wire [C_CTRL_WIDTH-1:0] 	BusControlReadReg,
 
-		output wire [C_MST_DWIDTH-1:0] 	BusDataReadReg,
-		input wire [C_MST_DWIDTH-1:0] 	BusDataWriteReg,
+		output wire [C_ADDR_WIDTH-1:0] 	BusAddressReadReg,
+		input wire [C_ADDR_WIDTH-1:0] 	BusAddressWriteReg,
+
+		output wire [C_DATA_WIDTH-1:0] 	BusDataReadReg,
+		input wire [C_DATA_WIDTH-1:0] 	BusDataWriteReg,
 
 		output reg AddrReqIntr,
 		input wire AddrReqIntrStatus,
@@ -77,6 +80,7 @@ localparam
 
 reg[4:0] state_reg, state_next;
 
+reg [C_CTRL_WIDTH-1:0] busControl;
 reg [C_ADDR_WIDTH-1:0] busAddress;
 reg [C_DATA_WIDTH-1:0] busData;
 reg [C_DATA_WIDTH-1:0] readData;
@@ -104,20 +108,25 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
       begin
         writeRequest <= 0;
         readRequest <= 0;
+		  busControl <= 0;
         busAddress <= 0;
         busData <= 0;
         
         // Assume that we should process the pending address once we come out of reset
         if (!nChipEnable)
             state_next <= BusAddressReq;
-          else 
-            state_next <= Idle;
+        else
+				state_next <= Idle;
       end
       
 		Idle:
-      if (!nChipEnable)
-				if (busAddress !== Address)
-					state_next <= BusAddressReq;
+      if (!nChipEnable) begin
+		  busControl <= { {(C_CTRL_WIDTH-1){1'b0}}, 1};
+		  if (busAddress !== Address) begin
+			 state_next <= BusAddressReq;
+		  end
+		end else
+		  busControl <= 0;
 					
     BusAddressReq: 
       begin
@@ -185,9 +194,10 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
         state_next <= Idle;
 				
     BusReadReq:
-      if (!nChipEnable)
+      if (!nChipEnable) begin
+		  busControl[1] <= 1;
         state_next <= MstReadReq;
-      else
+      end else
 		state_next <= Idle;
         
     MstReadReq:
@@ -253,6 +263,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
     
     BusWriteReq:
       if (!nChipEnable) begin
+		  busControl[2] <= 1;
 				// TODO: wait on pending interrupts
         
         // Put data to write in bus data register
@@ -328,8 +339,9 @@ end
   assign ip2bus_mstwr_req = writeRequest;
   assign ip2bus_mstwr_d = mstData;
   
-  assign BusAddressReadReg = { {(C_MST_DWIDTH-C_ADDR_WIDTH){1'b0}}, busAddress };
-  assign BusDataReadReg = { {(C_MST_DWIDTH-C_DATA_WIDTH){1'b0}}, busData };
+  assign BusControlReadReg = busControl;
+  assign BusAddressReadReg = busAddress;
+  assign BusDataReadReg = busData;
   
   assign IntrStatusReg = intrStatus;
   
