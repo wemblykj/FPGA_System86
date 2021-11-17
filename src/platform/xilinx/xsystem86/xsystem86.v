@@ -116,13 +116,11 @@ module xsystem86
 	localparam TEXT_LAYER_PRIORITY = 0;
 	localparam UNKNOWN_LAYER_PRIORITY = 0;
 		
-	/*reg out_n;
+	reg sync_rst_n;
 	
-	always @(negedge rst_n) begin 
-		out_n <= rst_n;
+	always @(negedge clk_48m) begin 
+		sync_rst_n <= rst_n;
 	end
-	
-	assign out_rst_n = out_n;*/
 	
 	system86 
 		#(
@@ -135,7 +133,7 @@ module xsystem86
 		)
 		system86 (
 			.clk_48m(clk_48m), 
-			.rst_n(rst_n),
+			.rst_n(sync_rst_n),
 			.vid_clk(vid_clk),
 			.vid_data(vid_data),
 			.vid_red(vid_red),

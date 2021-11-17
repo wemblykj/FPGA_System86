@@ -304,7 +304,7 @@ entity system86 is
 -------------------------------------------------------------------------------
 
   attribute MAX_FANOUT                    : string;
-  attribute MAX_FANOUT   of CLK_48M       : signal is "10000";
+  attribute MAX_FANOUT   of clk_48m       : signal is "10000";
   
 -------------------------------------------------------------------------------
 -- Attributes for MPD file
@@ -315,7 +315,7 @@ entity system86 is
 
   attribute SIGIS of rst_n : signal is "Rst"; 
 
-  attribute SIGIS of CLK_48M : signal is "Clk"; 
+  attribute SIGIS of clk_48m : signal is "Clk"; 
   attribute SIGIS of vid_clk : signal is "Clk"; 
 
 end entity system86;

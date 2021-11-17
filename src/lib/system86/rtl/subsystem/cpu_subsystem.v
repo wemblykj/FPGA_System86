@@ -276,27 +276,27 @@ module cpu_subsystem
     
     assign eprom_12c_addr = mcpu_11a_addr[14:0];
     assign eprom_12c_ce_n = cus41_8a_mrom_n;
-	assign eprom_12c_oe_n = ls00_8d_2y_n;
+	 assign eprom_12c_oe_n = ls00_8d_2y_n;
     
     assign eprom_12d_addr = mcpu_11a_addr[14:0];
     assign eprom_12d_ce_n = cus41_8a_mcs4_n;
-	assign eprom_12d_oe_n = ls00_8d_2y_n;
+	 assign eprom_12d_oe_n = ls00_8d_2y_n;
     
     // Assign ROM data buses to main CPU bus if enabled
-	assign mcpu_11a_data = ls00_8d_3y_n ? eprom_12d_data : 8'bz;
+	 assign mcpu_11a_data = mcpu_11a_we_n ? (ls00_8d_3y_n ? eprom_12d_data : 8'bz) : 8'bz;
     			 
     // Sub CPU to program ROMs 9C and 9D
     
     assign eprom_9c_addr = scpu_9a_addr[14:0];
     assign eprom_9c_ce_n = cus47_10C_mpmg_n;
-	assign eprom_9c_oe_n = CLK_2H;
+	 assign eprom_9c_oe_n = CLK_2H;
     
     assign eprom_9d_addr = scpu_9a_addr[14:0];
     assign eprom_9d_ce_n = cus47_10C_spmg_n;
-	assign eprom_9d_oe_n = CLK_2H;
+	 assign eprom_9d_oe_n = CLK_2H;
     
     // Assign ROM data buses to sub CPU bus if enabled
-	assign scpu_9a_data = cus47_10c_bufen_n ? eprom_9c_data : 8'bz;
+	assign scpu_9a_data = scpu_9a_we_n ? (cus47_10c_bufen_n ? eprom_9c_data : 8'bz) : 8'bz;
     
 	// == Global outputs ==
 	

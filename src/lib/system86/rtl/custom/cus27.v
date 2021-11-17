@@ -52,8 +52,8 @@ module cus27
 	output reg CLK_S1H
 );
 
-	reg [8:0] horizontal_counter = 0;
-	reg [8:0] vertical_counter = 0;
+	reg [8:0] horizontal_counter;
+	reg [8:0] vertical_counter;
 	
 	
 	//reg nHSYNCON = 0;
@@ -61,7 +61,7 @@ module cus27
 	reg VRESETH = 0;	// vreset from horizonatal
 	reg VRESET = 0;	// vreset from vertical
 	
-	reg [2:0] master_counter = 0;
+	reg [2:0] master_counter;
 
 	always @(posedge CLK_48M or negedge rst_n) begin
 		if (!rst_n)

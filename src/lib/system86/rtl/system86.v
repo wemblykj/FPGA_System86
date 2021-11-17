@@ -60,9 +60,9 @@ module system86
 		output wire vid_vsync_n,
 		output wire vid_hblank_n,
 		output wire vid_vblank_n,
-		output wire vid_red,
-		output wire vid_green,
-		output wire vid_blue,
+		output wire [3:0] vid_red,
+		output wire [3:0] vid_green,
+		output wire [3:0] vid_blue,
 
 		// System 86 hardware timing
 		input wire clk_48m,				// System 86 master clock @ 49.125 MHz
@@ -134,7 +134,7 @@ module system86
 	wire nVBLANK;
  
 	wire BLANKING;
-  wire nCOMPSYNC;
+   wire nCOMPSYNC;
 	wire nHRESET;
 	wire nVRESET;
 	

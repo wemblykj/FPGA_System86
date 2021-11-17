@@ -62,11 +62,6 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_arith.all;
 use ieee.std_logic_unsigned.all;
 
-library proc_common_v3_00_a;
-use proc_common_v3_00_a.ipif_pkg.SLV64_ARRAY_TYPE;
-use proc_common_v3_00_a.ipif_pkg.INTEGER_ARRAY_TYPE;
-use proc_common_v3_00_a.ipif_pkg.calc_num_ce;
-
 
 -------------------------------------------------------------------------------
 -- mc6809e_cpu_v1_00_a library is used for mc6809e_cpu component declarations
@@ -96,13 +91,13 @@ use mc6809e_cpu_v1_00_a.all;
 entity mc6809e_cpu is
   generic (
     -- ROM generics
-    C_VARIANT : std_logic := '0';
+    -- C_VARIANT : std_logic := '0';
     C_ADDR_WIDTH : integer := 16;
     C_DATA_WIDTH : integer := 8;
 
     --Family Generics
     C_XLNX_REF_BOARD : string := "NONE";
-    C_FAMILY : string := "virtex6";
+    C_FAMILY : string := "spartan6";
     C_INSTANCE : string := "mc6809e_cpu_inst"
   );
   port (
@@ -170,7 +165,7 @@ component mc68a09e
       BUSY	 		: out std_logic;
       LIC	 		: out std_logic
     );
-end component mc68a09e;
+end component;
 
 -------------------------------------------------------------------------------
 -- 
@@ -199,23 +194,23 @@ begin -- architecture IMP
 -- Instantiate the iMC6809E
 ------------------------------------------------------------------------
 
-    Inst_MC6809E: mc68a09e
-    port map(
-        E				=> E,
-        Q				=> Q,
-        nIRQ			=> nIrq,
-        nFIRQ			=> nFirq,
-        nNMI			=> nNmi,
-        nRESET			=> nReset,
-        nHALT			=> nHalt,
-        A				=> Address,
-        D				=> Data,
-        RnW				=> nWriteEnable,
-        BS				=> BS,
-        BA				=> BA,
-        AVMA			=> Avma,
-        BUSY			=> Busy,
-        LIC				=> Lic);
+    Inst_MC6809E : mc68a09e
+		port map(
+			E				=> E,
+			Q				=> Q,
+			nIRQ			=> nIrq,
+			nFIRQ			=> nFirq,
+			nNMI			=> nNmi,
+			nRESET			=> nReset,
+			nHALT			=> nHalt,
+			A				=> Address,
+			D				=> Data,
+			RnW				=> nWriteEnable,
+			BS				=> BS,
+			BA				=> BA,
+			AVMA			=> Avma,
+			BUSY			=> Busy,
+			LIC				=> Lic);
 	 
 ------------------------------------------------------------------------
     
