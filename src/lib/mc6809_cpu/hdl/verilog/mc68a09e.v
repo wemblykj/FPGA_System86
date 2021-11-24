@@ -54,7 +54,7 @@ module mc68a09e
 	mc6809e mc6809e(
 		.D(D), 
 		.DOut(DOut), 
-		.ADDR(AOut), 
+		.ADDR(A), 
 		.RnW(RnW), 
 		.E(E), 
 		.Q(Q), 

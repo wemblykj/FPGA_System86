@@ -29,9 +29,9 @@ module cus27
 	input wire CLK_6M_IN,
 	
 	// generated clocks
-   output wire CLK_24M,
-   output wire CLK_12M,
-   output wire CLK_6M,
+   output reg CLK_24M,
+   output reg CLK_12M,
+   output reg CLK_6M,
 	
 	// video synchronisation
 	output reg nVSYNC,
@@ -42,14 +42,14 @@ module cus27
 	output reg nHRESET,
 	
 	// video timing signals
-	output reg CLK_8V,
-	output reg CLK_4V,
-	output reg CLK_1V,
-	output reg CLK_4H,
-	output reg CLK_2H,
-	output reg CLK_1H,
-	output reg CLK_S2H,
-	output reg CLK_S1H
+	output wire CLK_8V,
+	output wire CLK_4V,
+	output wire CLK_1V,
+	output wire CLK_4H,
+	output wire CLK_2H,
+	output wire CLK_1H,
+	output wire CLK_S2H,
+	output wire CLK_S1H
 );
 
 	reg [8:0] horizontal_counter;
@@ -73,9 +73,14 @@ module cus27
 		//CLK_S2H <= CLK_2H;	// is this in phase?
 	end
 
-	assign CLK_24M = master_counter[0];
-	assign CLK_12M = master_counter[1];
-	assign CLK_6M = master_counter[2];	
+	always @(master_counter) begin
+		CLK_24M <= master_counter[0];
+		CLK_12M <= master_counter[1];
+		CLK_6M <= master_counter[2];	
+	end
+	//assign CLK_24M = master_counter[0];
+	//assign CLK_12M = master_counter[1];
+	//assign CLK_6M = master_counter[2];	
 
 	always @(VRESETH or VRESET) begin
 		nVRESET <= ~(VRESETH && VRESET); 
@@ -96,32 +101,37 @@ module cus27
 		end
 	end
 	
-	always @(horizontal_counter or rst_n) begin
-		if (!rst_n) begin
+	always @(horizontal_counter/* or rst_n*/) begin
+		/*if (!rst_n) begin
 			nHSYNC <= 1'b1;
 			nHBLANK <= 1'b1;
 			nHRESET <= 1'b1;
 			VRESETH <= 1'b0;
 			
-			CLK_1H <= 1'b0;
-			CLK_S1H <= 1'b0;
-			CLK_2H <= 1'b0;
-			CLK_S2H <= 1'b0;
-			CLK_4H <= 1'b0;
-		end else begin
+			//CLK_1H <= 1'b0;
+			//CLK_S1H <= 1'b0;
+			//CLK_2H <= 1'b0;
+			//CLK_S2H <= 1'b0;
+			//CLK_4H <= 1'b0;
+		end else */begin
 			if (horizontal_counter[8:0] !== 9'b100110000) begin // ~304
-        nHSYNC <= 1'b0;
-        VRESETH <= 1;        
+				nHSYNC <= 1'b0;
+				VRESETH <= 1;        
 			end else if (horizontal_counter[8:3] === 6'b101010) begin // ~336
 				nHSYNC <= 1'b1;	
-        VRESETH <= 0;
-      end
+				VRESETH <= 0;
+			end else begin
+				nHSYNC <= nHSYNC;	
+				VRESETH <= VRESETH;
+			end
 				
 			// hblank
 			if (horizontal_counter[8:3] !== 6'b100010)
 				nHBLANK <= 1'b0;	// ~272
 			else if (horizontal_counter[8:3] === 6'b101110) 
 				nHBLANK <= 1'b1;	// ~368
+			else
+				nHBLANK <= nHBLANK;
 				
 			// nHRESET
 			if (horizontal_counter[8:0] === 9'b000001111) // ~15
@@ -129,14 +139,20 @@ module cus27
 			else
 				nHRESET <= 1'b0;
 
-			CLK_1H <= horizontal_counter[0];	// 3.0 Mhz
-			CLK_S1H <= horizontal_counter[0];	// is this in phase?
-			CLK_2H <= horizontal_counter[1];	// 1.5 Mhz
-			CLK_S2H <= horizontal_counter[1];	// is this in phase?
-			CLK_4H <= horizontal_counter[2];	// 0.75 Mhz		
+			//CLK_1H <= horizontal_counter[0];	// 3.0 Mhz
+			//CLK_S1H <= horizontal_counter[0];	// is this in phase?
+			//CLK_2H <= horizontal_counter[1];	// 1.5 Mhz
+			//CLK_S2H <= horizontal_counter[1];	// is this in phase?
+			//CLK_4H <= horizontal_counter[2];	// 0.75 Mhz		
 		end
 	end
 		
+	assign CLK_1H = horizontal_counter[0];	// 3.0 Mhz
+	assign CLK_S1H = horizontal_counter[0];	// is this in phase?
+	assign CLK_2H = horizontal_counter[1];	// 1.5 Mhz
+	assign CLK_S2H = horizontal_counter[1];	// is this in phase?
+	assign CLK_4H = horizontal_counter[2];	
+	
 	always @(negedge nHSYNC or negedge rst_n) begin	
 		if (!rst_n) begin
 			vertical_counter <= 1;	// need to start at one otherwise we end up counting 265 lines!
@@ -148,37 +164,43 @@ module cus27
 		end
 	end
 	
-	always @(vertical_counter or rst_n) begin
-		if (!rst_n) begin
+	always @(vertical_counter/* or rst_n*/) begin
+		/* (!rst_n) begin
 			nVSYNC <= 1'b1;
 			nVBLANK <= 1'b1;
 			VRESET <= 1'b0;
 			
-			CLK_1V <= 1'b0;
-			CLK_4V <= 1'b0;
-			CLK_8V <= 1'b0;
-		end else begin
+			//CLK_1V <= 1'b0;
+			//CLK_4V <= 1'b0;
+			//CLK_8V <= 1'b0;
+		end else*/ begin
 			// nVSYNC
 			if (vertical_counter[8:3] === 6'b011111) //	~248
 				nVSYNC <= 1'b0;
-			
-			if (vertical_counter[8:3] === 6'b000000) // ~336	
+			else if (vertical_counter[8:3] === 6'b000000) // ~336	
 				nVSYNC <= 1'b1;	
+			else
+				nVSYNC <= nVSYNC;	
 			
 			// vblank
 			if (vertical_counter[8:3] === 6'b011110) //	~240
 				nVBLANK <= 1'b0;
-			
-			if (vertical_counter[8:3] === 6'b000010) // ~16	
+			else if (vertical_counter[8:3] === 6'b000010) // ~16	
 				nVBLANK <= 1'b1;
+			else
+				nVBLANK <= nVBLANK;
 		
 			// nVRESET when back to start of line 0
 			VRESET <= (vertical_counter[8:0] === 9'b000000000) ? 1'b1 : 1'b0;
 					
-			CLK_1V <= vertical_counter[0];
-			CLK_4V <= vertical_counter[3];
-			CLK_8V <= vertical_counter[7];
+			//CLK_1V <= vertical_counter[0];
+			//CLK_4V <= vertical_counter[3];
+			//CLK_8V <= vertical_counter[7];
 		end
 	end	
+	
+	assign CLK_1V = vertical_counter[0];
+	assign CLK_4V = vertical_counter[3];
+	assign CLK_8V = vertical_counter[7];
 endmodule
 

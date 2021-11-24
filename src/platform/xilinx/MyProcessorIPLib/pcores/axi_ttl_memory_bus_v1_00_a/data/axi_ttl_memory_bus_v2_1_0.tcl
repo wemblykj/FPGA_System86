@@ -29,3 +29,18 @@ proc iplevel_update_supports_write { param_handle } {
     return 1
   }
 }
+
+proc iplevel_update_control_bus_size { param_handle } {
+  set mhsinst [xget_hw_parent_handle $param_handle]
+  set memtype [xget_hw_parameter_value $mhsinst "C_MEM_TYPE"]
+  if { $memtype == 1 } {
+	set romtype [xget_hw_parameter_value $mhsinst "C_ROM_TYPE"]
+	if { $romtype == 1 } {
+		return 2
+	} else {
+		return 1
+	}
+  } else {
+    return 3
+  }
+}

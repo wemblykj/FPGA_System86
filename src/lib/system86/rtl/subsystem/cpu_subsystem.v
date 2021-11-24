@@ -298,6 +298,13 @@ module cpu_subsystem
     // Assign ROM data buses to sub CPU bus if enabled
 	assign scpu_9a_data = scpu_9a_we_n ? (cus47_10c_bufen_n ? eprom_9c_data : 8'bz) : 8'bz;
     
+	assign mcpu_11a_nmi_n = 0;
+	assign mcpu_11a_firq_n = 0;
+	assign mcpu_11a_halt_n = 0;
+	assign scpu_9a_nmi_n = 0;
+	assign scpu_9a_firq_n = 0;
+	assign scpu_9a_halt_n = 0;
+	
 	// == Global outputs ==
 	
 	assign nRESET = cus47_10c_res_n & cus41_8a_mreset_n;

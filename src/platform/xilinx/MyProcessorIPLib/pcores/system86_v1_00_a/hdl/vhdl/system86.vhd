@@ -212,9 +212,9 @@ entity system86 is
 		prom_3r_addr		: out std_logic_vector(C_EPROM_MB7124_ADDR_WIDTH-1 downto 0) := "000000000";
 		prom_3r_data		: in  std_logic_vector(C_EPROM_MB7124_DATA_WIDTH-1 downto 0) := "00000000";
 --		
---		prom_3s_ce_n		: out std_logic;
---		prom_3s_addr		: out std_logic_vector(C_EPROM_MB7116_ADDR_WIDTH-1 downto 0) := "000000000";
---		prom_3s_data  		: in  std_logic_vector(C_EPROM_MB7116_DATA_WIDTH-1 downto 0) := "0000";
+		prom_3s_ce_n		: out std_logic;
+		prom_3s_addr		: out std_logic_vector(C_EPROM_MB7116_ADDR_WIDTH-1 downto 0) := "000000000";
+		prom_3s_data  		: in  std_logic_vector(C_EPROM_MB7116_DATA_WIDTH-1 downto 0) := "0000";
 --		
 --		prom_4v_ce_n		: out std_logic;
 --		prom_4v_addr		: out std_logic_vector(C_EPROM_MB7138_ADDR_WIDTH-1 downto 0) := "000000000";
@@ -266,13 +266,13 @@ entity system86 is
 		eprom_12d_ce_n		: out std_logic;
 		eprom_12d_oe_n		: out std_logic;
 		eprom_12d_addr		: out std_logic_vector(C_EPROM_M27256_ADDR_WIDTH-1 downto 0) := "000000000";
-		eprom_12d_data 	: in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000";
+		eprom_12d_data 	: in  std_logic_vector(C_EPROM_M27256_DATA_WIDTH-1 downto 0) := "00000000"
 		
-		sram_3f_ce_n		: out std_logic;
-		sram_3f_oe_n		: out std_logic;
-		sram_3f_we_n		: out std_logic;
-		sram_3f_addr		: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
-		sram_3f_data   	: inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000"
+--		sram_3f_ce_n		: out std_logic;
+--		sram_3f_oe_n		: out std_logic;
+--		sram_3f_we_n		: out std_logic;
+--		sram_3f_addr		: out std_logic_vector(C_SRAM_CY6462_ADDR_WIDTH-1 downto 0) := "0000000000000";
+--		sram_3f_data   	: inout std_logic_vector(C_SRAM_CY6462_DATA_WIDTH-1 downto 0) := "00000000"
 		
 --		sram_4n_ce_n		: out std_logic;
 --		sram_4n_oe_n		: out std_logic;
@@ -305,6 +305,7 @@ entity system86 is
 
   attribute MAX_FANOUT                    : string;
   attribute MAX_FANOUT   of clk_48m       : signal is "10000";
+  attribute MAX_FANOUT   of vid_clk       : signal is "10000";
   
 -------------------------------------------------------------------------------
 -- Attributes for MPD file
@@ -443,13 +444,13 @@ port(
 	-- System 86 PROM busses
 	--
 	
---	prom_3r_ce_n		: out std_logic;
---	prom_3r_addr	: out std_logic_vector(C_EPROM_MB7124_ADDR_WIDTH-1 downto 0) := "000000000";
---	prom_3r_data	: in  std_logic_vector(C_EPROM_MB7124_DATA_WIDTH-1 downto 0) := "00000000";
+	prom_3r_ce_n		: out std_logic;
+	prom_3r_addr	: out std_logic_vector(C_EPROM_MB7124_ADDR_WIDTH-1 downto 0) := "000000000";
+	prom_3r_data	: in  std_logic_vector(C_EPROM_MB7124_DATA_WIDTH-1 downto 0) := "00000000";
 --	
---	prom_3s_ce_n		: out std_logic;
---	prom_3s_addr	: out std_logic_vector(C_EPROM_MB7116_ADDR_WIDTH-1 downto 0) := "000000000";
---	prom_3s_data  	: in  std_logic_vector(C_EPROM_MB7116_DATA_WIDTH-1 downto 0) := "0000";
+	prom_3s_ce_n		: out std_logic;
+	prom_3s_addr	: out std_logic_vector(C_EPROM_MB7116_ADDR_WIDTH-1 downto 0) := "000000000";
+	prom_3s_data  	: in  std_logic_vector(C_EPROM_MB7116_DATA_WIDTH-1 downto 0) := "0000";
 --	
 --	prom_4v_ce_n		: out std_logic;
 --	prom_4v_addr	: out std_logic_vector(C_EPROM_MB7138_ADDR_WIDTH-1 downto 0) := "000000000";
@@ -596,13 +597,13 @@ Inst_System86 : xsystem86
 		scpu_9a_busy		=> scpu_9a_busy,
 		scpu_9a_lic			=> scpu_9a_lic,
 
---		prom_3r_ce_n		=> prom_3r_ce_n,
---		prom_3r_addr	=> prom_3r_addr,
---		prom_3r_data	=> prom_3r_data,
+		prom_3r_ce_n		=> prom_3r_ce_n,
+		prom_3r_addr	=> prom_3r_addr,
+		prom_3r_data	=> prom_3r_data,
 --		
---		prom_3s_ce_n		=> prom_3s_ce_n,
---		prom_3s_addr	=> prom_3s_addr,
---		prom_3s_data	=> prom_3s_data,
+		prom_3s_ce_n		=> prom_3s_ce_n,
+		prom_3s_addr	=> prom_3s_addr,
+		prom_3s_data	=> prom_3s_data,
 --		
 --		prom_4v_ce_n		=> prom_4v_ce_n,
 --		prom_4v_addr	=> prom_4v_addr,
