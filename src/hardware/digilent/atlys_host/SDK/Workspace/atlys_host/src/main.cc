@@ -39,17 +39,45 @@
 #define BUTTONS_CHANNEL		1
 #define LEDS_CHANNEL		1
 
+#define MEMBUS_ADDR_IR		XTTLMEMBUS_IR_ADDR_MASK
+#define MEMBUS_READ_IR		XTTLMEMBUS_IR_ADDR_MASK
+#define MEMBUS_WRITE_IR		XTTLMEMBUS_IR_READ_MASK
+#define MEMBUS_ALL_IR		MEMBUS_ADDR_IR | MEMBUS_READ_IR | MEMBUS_WRITE_IR
+
+/****/
+
+typedef enum MemBusEventType
+{
+	MemBusEventType_Addr,
+	MemBusEventType_Read,
+	MemBusEventType_Write,
+} MemBusEventType;
+
+
+typedef struct MemBusEvent
+{
+	u32 BaseAddress;
+	MemBusEventType Type;
+	u32 BusData;
+} MemBusEvent;
+
 /************************** Function Prototypes ******************************/
 
 int Initialise();
 int InitialiseHardware();
 
 void ButtonsIsr(void *InstancePtr);
+void MemBusIsr(void *InstancePtr);
 
 int SetupInterruptSystem();
 
 int InitialiseMemoryBus(XTtlMemBus *MemBus, u16 DeviceId);
 int InitialiseMemoryBusses();
+
+int GetMemBusEventQueueSize();
+void PushMemBusEvent(const MemBusEvent& event);
+const MemBusEvent& PopMemBusEvent();
+bool TryPopMemBusEvent(MemBusEvent& event);
 
 /************************** Variable Definitions *****************************/
 
@@ -58,8 +86,15 @@ static XGpio LedsGpio; 		/* The Instance of the LEDs GPIO Driver */
 
 static XIntc Intc; /* The Instance of the Interrupt Controller Driver */
 
+static XTtlMemBus MemBus_Rom9C;
+static XTtlMemBus MemBus_Rom12C;
 static XTtlMemBus MemBus_Rom3R;
-static XTtlMemBus MemBus_Ram3F;
+static XTtlMemBus MemBus_Rom3S;
+
+const int MemBusEventQueueSize = 10;
+MemBusEvent MemBusEventQueue[MemBusEventQueueSize];
+volatile int MemBusEventQueueHead = 0;
+volatile int MemBusEventQueueTail = 0;
 
 /****************************************************************************/
 /**
@@ -221,9 +256,22 @@ int SetupInterruptSystem()
 	XIntc_Connect(IntcInstancePtr, BUTTONS_INTC_INTERRUPT_ID,
 		      (Xil_ExceptionHandler)ButtonsIsr, &ButtonsGpio);
 
+	XIntc_Connect(IntcInstancePtr, XPAR_AXI_ROM_9C_DEVICE_ID,
+			(Xil_ExceptionHandler)MemBusIsr, &MemBus_Rom9C);
+	XIntc_Connect(IntcInstancePtr, XPAR_AXI_ROM_12C_DEVICE_ID,
+			(Xil_ExceptionHandler)MemBusIsr, &MemBus_Rom12C);
+	XIntc_Connect(IntcInstancePtr, XPAR_AXI_ROM_3R_DEVICE_ID,
+			(Xil_ExceptionHandler)MemBusIsr, &MemBus_Rom3R);
+	XIntc_Connect(IntcInstancePtr, XPAR_AXI_ROM_3S_DEVICE_ID,
+			(Xil_ExceptionHandler)MemBusIsr, &MemBus_Rom3S);
+
 	/* Enable the interrupt vector at the interrupt controller */
 
 	XIntc_Enable(IntcInstancePtr, BUTTONS_INTC_INTERRUPT_ID);
+	XIntc_Enable(IntcInstancePtr, XPAR_AXI_ROM_9C_DEVICE_ID);
+	XIntc_Enable(IntcInstancePtr, XPAR_AXI_ROM_12C_DEVICE_ID);
+	XIntc_Enable(IntcInstancePtr, XPAR_AXI_ROM_3R_DEVICE_ID);
+	XIntc_Enable(IntcInstancePtr, XPAR_AXI_ROM_3S_DEVICE_ID);
 
 	/*
 	 * Start the interrupt controller such that interrupts are recognized
@@ -240,6 +288,20 @@ int SetupInterruptSystem()
 	 */
 	XGpio_InterruptEnable(&ButtonsGpio, BUTTONS_CHANNEL);
 	XGpio_InterruptGlobalEnable(&ButtonsGpio);
+
+	/*
+	 * Enable the various TtlMemBus interrupts so that memory access can be
+	 * detected and enable interrupts for the TtlMemBus device
+	 */
+	XTtlMemBus_InterruptEnable(&MemBus_Rom9C, MEMBUS_ALL_IR);
+	XTtlMemBus_InterruptGlobalEnable(&MemBus_Rom9C);
+	XTtlMemBus_InterruptEnable(&MemBus_Rom12C, MEMBUS_ALL_IR);
+	XTtlMemBus_InterruptGlobalEnable(&MemBus_Rom12C);
+	XTtlMemBus_InterruptEnable(&MemBus_Rom3R, MEMBUS_ALL_IR);
+	XTtlMemBus_InterruptGlobalEnable(&MemBus_Rom3R);
+	XTtlMemBus_InterruptEnable(&MemBus_Rom3S, MEMBUS_ALL_IR);
+	XTtlMemBus_InterruptGlobalEnable(&MemBus_Rom3S);
+
 
 	/*
 	 * Initialize the exception table and register the interrupt
@@ -354,6 +416,89 @@ void ButtonsIsr(void *InstancePtr)
 
 }
 
+/****************************************************************************/
+/**
+* This function is the Interrupt Service Routine for the GPIO device.  It
+* will be called by the processor whenever an interrupt is asserted by the
+* device.
+*
+* This function will detect the push button on the board has changed state
+* and then turn on or off the LED.
+*
+* @param	InstancePtr is the GPIO instance pointer to operate on.
+*		It is a void pointer to meet the interface of an interrupt
+*		processing function.
+*
+* @return	None.
+*
+* @note		None.
+*
+*****************************************************************************/
+void MemBusIsr(void *InstancePtr)
+{
+	XTtlMemBus *MemBusPtr = (XTtlMemBus *)InstancePtr;
+	//u32 Led;
+	//u32 LedState;
+	//u32 Buttons;
+	//u32 ButtonFound;
+	//u32 ButtonsChanged = 0;
+	//static u32 PreviousButtons;
+
+	//int status = XTtlMemBus_InterruptGetStatus(MemBusPtr);
+	//XTtlMemBus_DiscreteWrite(&LedsGpio, LEDS_CHANNEL, status);
+
+	/*
+	 * Disable the interrupt
+	 */
+	XTtlMemBus_InterruptDisable(MemBusPtr, XTTLMEMBUS_IR_MASK);
+
+	/* Keep track of the number of interrupts that occur */
+
+	//InterruptCount++;
+
+	/*
+	 * There should not be any other interrupts occurring other than the
+	 * the button changes
+	 */
+	u32 status = XTtlMemBus_InterruptGetStatus(MemBusPtr);
+	if ((status & XTTLMEMBUS_IR_MASK) ==
+			0) {
+		return;
+	}
+
+	MemBusEvent event = { MemBusPtr->BaseAddress };
+
+	if ((status & XTTLMEMBUS_IR_ADDR_MASK) == XTTLMEMBUS_IR_ADDR_MASK)
+	{
+		event.Type = MemBusEventType_Addr;
+		event.BusData = XTtlMemBus_GetBusAddress(MemBusPtr);
+	}
+
+	if ((status & XTTLMEMBUS_IR_READ_MASK) == XTTLMEMBUS_IR_READ_MASK)
+	{
+		event.Type = MemBusEventType_Read;
+		event.BusData = XTtlMemBus_GetBusData(MemBusPtr);
+	}
+
+	if ((status & XTTLMEMBUS_IR_WRITE_MASK) == XTTLMEMBUS_IR_WRITE_MASK)
+	{
+		event.Type = MemBusEventType_Write;
+		event.BusData = XTtlMemBus_GetBusData(MemBusPtr);
+	}
+
+	PushMemBusEvent(event);
+
+	/* Clear the interrupt such that it is no longer pending in the GPIO */
+
+	(void)XTtlMemBus_InterruptClear(MemBusPtr, XTTLMEMBUS_IR_MASK);
+
+	/*
+	 * Enable the interrupt
+	 */
+	XTtlMemBus_InterruptEnable(MemBusPtr, XTTLMEMBUS_IR_MASK);
+
+}
+
 int InitialiseMemoryBus(XTtlMemBus *MemBus, u16 DeviceId)
 {
 	int Status;
@@ -377,15 +522,55 @@ int InitialiseMemoryBusses()
 {
 	int Status;
 
+	Status = InitialiseMemoryBus(&MemBus_Rom9C, XPAR_AXI_ROM_9C_DEVICE_ID);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	Status = InitialiseMemoryBus(&MemBus_Rom12C, XPAR_AXI_ROM_12C_DEVICE_ID);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
 	Status = InitialiseMemoryBus(&MemBus_Rom3R, XPAR_AXI_ROM_3R_DEVICE_ID);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
-	Status = InitialiseMemoryBus(&MemBus_Ram3F, XPAR_AXI_RAM_3F_DEVICE_ID);
+	Status = InitialiseMemoryBus(&MemBus_Rom3S, XPAR_AXI_ROM_3S_DEVICE_ID);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
 	return XST_SUCCESS;
+}
+
+int GetMemBusEventQueueSize()
+{
+	return (MemBusEventQueueHead - MemBusEventQueueTail) % MemBusEventQueueSize;
+}
+
+void PushMemBusEvent(const MemBusEvent& event)
+{
+	MemBusEventQueue[MemBusEventQueueHead] = event;
+	MemBusEventQueueHead = (MemBusEventQueueHead + 1) % MemBusEventQueueSize;
+}
+
+const MemBusEvent& PopMemBusEvent()
+{
+	MemBusEvent& event = MemBusEventQueue[MemBusEventQueueTail];
+	MemBusEventQueueTail = (MemBusEventQueueTail + 1) % MemBusEventQueueSize;
+
+	return event;
+}
+
+bool TryPopMemBusEvent(MemBusEvent& event)
+{
+	if (GetMemBusEventQueueSize() > 0)
+	{
+		event = PopMemBusEvent();
+		return true;
+	}
+
+	return false;
 }
