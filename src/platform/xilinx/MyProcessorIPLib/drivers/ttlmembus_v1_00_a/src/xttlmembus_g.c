@@ -29,7 +29,7 @@
  * This table contains configuration information for each TTLMEMBUS device
  * in the system.
  */
-XTtlMemBus_Config XTtlMemBus_ConfigTable[] = {
+XTtlMemBus_Config XTtlMemBus_ConfigTable[XPAR_XTTLMEMBUS_NUM_INSTANCES] = {
 	{
 	 XPAR_TTLMEMBUS_0_DEVICE_ID,
 	 XPAR_TTLMEMBUS_0_BASEADDR,

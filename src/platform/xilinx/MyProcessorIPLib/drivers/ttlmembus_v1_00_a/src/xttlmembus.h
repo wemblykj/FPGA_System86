@@ -73,6 +73,14 @@ int XTtlMemBus_Initialize(XTtlMemBus *InstancePtr, u16 DeviceId);
 XTtlMemBus_Config *XTtlMemBus_LookupConfig(u16 DeviceId);
 
 /*
+ * DeviceId centric functions 
+ */
+XTtlMemBus *XTtlMemBus_GetInstance(u16 DeviceId);
+int XTtlMemBus_DeviceInitialize(u16 DeviceId);
+//void XTtlMemBus_RegisterHandler(u32 BaseAddress, int InterruptId,
+//			     Xil_InterruptHandler Handler, void *CallBackRef);
+
+/*
  * API Basic functions implemented in xgpio.c
  */
 int XTtlMemBus_CfgInitialize(XTtlMemBus *InstancePtr, XTtlMemBus_Config * Config,

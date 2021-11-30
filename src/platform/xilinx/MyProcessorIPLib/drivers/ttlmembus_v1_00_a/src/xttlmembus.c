@@ -15,15 +15,37 @@
 
 /**************************** Type Definitions ******************************/
 
+/*
+ * This typedef contains configuration information for the device.
+ */
+typedef struct TtlMemBusTag
+{
+    Xuint16 DeviceId;       /* ID to identify the XPci driver */
+    int Used;               /* Indicate whether this entry is used */
+    XTtlMemBus TtlMemBus;               /* XPci driver instance */
+} TtlMemBusInfo;
+
 /***************** Macros (Inline Functions) Definitions ********************/
 
 /************************** Variable Definitions ****************************/
 
+extern XTtlMemBus_Config XTtlMemBus_ConfigTable[];
+
+/*
+ * Each TtlMemBus device gets its own structure which helps the
+ * adapter keep track of all device-related information.
+ */
+static TtlMemBusInfo TtlMemBusDevice[XPAR_XTTLMEMBUS_NUM_INSTANCES];
 
 /************************** Function Prototypes *****************************/
 
-u16 RegisterToBus(XTtlMemBus_BusAttr *BusAttr, u32 RegValue);
-u32 BusToRegister(XTtlMemBus_BusAttr *BusAttr, u16 BusValue);
+/*
+ * Internal functions
+ */
+ 
+static u16 RegisterToBus(XTtlMemBus_BusAttr *BusAttr, u32 RegValue);
+static u32 BusToRegister(XTtlMemBus_BusAttr *BusAttr, u16 BusValue);
+static TtlMemBusInfo *LookupDevice(u16 DeviceId);
 
 /****************************************************************************/
 /**
@@ -767,6 +789,65 @@ void XTtlMemBus_DumpRegisters(XTtlMemBus *InstancePtr)
 	return;
 }
 
+/****************************************************************************/
+/**
+*
+* Get a pointer to the Xilinx device driver instance for the specified devie
+* ID. This pointer can be used to access the Xilinx PCI device driver API
+* (see xpci.h).
+*
+* @param DeviceId is the unique device ID of the PCI device being initialized.
+*
+* @return
+*
+* A pointer to the XPci driver instance data of the specified device, or XNULL
+* if no matching device is found. Note that the XPci driver is not guaranteed
+* to be initialized. The user must call XPciAdapter_Init() successfully before
+* calling this function to guarantee the driver is initialized.
+*
+* @note
+*
+* None.
+*
+*****************************************************************************/
+XTtlMemBus *XTtlMemBus_GetInstance(u16 DeviceId)
+{
+    TtlMemBusInfo * DeviceInfo;
+
+    DeviceInfo = LookupDriver((Xuint16)DeviceId);
+    if (DeviceInfo == NULL)
+    {
+        return XNULL;
+    }
+
+    return DeviceInfo->TtlMemBus;
+}
+
+int XTtlMemBus_DeviceInitialize(u16 DeviceId)
+{
+	TtlMemBusInfo * DeviceInfoPtr;
+	XStatus Result;
+
+    /*
+     * First get an AceInfo pointer for this device ID. If this device has
+     * been previously initialized, we should get the same pointer.
+     */
+    DeviceInfoPtr = LookupDevice(DeviceId);
+    if (DeviceInfoPtr == NULL)
+    {
+        /* No more room based on the number of ACE controllers in the system */
+        (void)errnoSet(ENODEV);
+        return ERROR;
+    }
+	
+	Result = XTtlMemBus_Initialize(DeviceInfoPtr->TtlMemBus, DeviceId);
+	if (Result != XST_SUCCESS) {
+		return Result;
+	}
+	
+	return XST_SUCCESS;
+}
+
 u16 RegisterToBus(XTtlMemBus_BusAttr *BusAttr, u32 RegValue)
 {
 	return (RegValue & BusAttr->Mask) >> BusAttr->Lsb;
@@ -775,4 +856,67 @@ u16 RegisterToBus(XTtlMemBus_BusAttr *BusAttr, u32 RegValue)
 u32 BusToRegister(XTtlMemBus_BusAttr *BusAttr, u16 BusValue)
 {
 	return (BusValue << BusAttr->Lsb) & BusAttr->Mask;
+}
+
+/*****************************************************************************/
+/**
+*
+* Look in the TtlMemBusDevice table for an existing device that matches the given
+* DeviceId, or an empty spot in the table if no match is found. This function
+* is used by every public function defined above that takes a DeviceId as
+* argument.
+*
+* @param DeviceId   The devide ID to search for in the TtlMemBusDevice table
+*
+* @return
+*
+* Returns a pointer to an existing TtlMemBusInfo element if a match is found, or
+* an unused TtlMemBusDevice element if no match is found. Returns NULL if no match
+* is found and the TtlMemBusDevice array is full (i.e., all elements have been used).
+*
+* NOTES:
+*
+* Assumes that this would never be called with a Device ID of zero!!!!!
+*
+******************************************************************************/
+static TtlMemBusInfo *LookupDevice(u16 DeviceId)
+{
+    int i;
+    TtlMemBusInfo * UnusedPtr = NULL;       /* first unused entry */
+
+    for (i=0; i < XPAR_XTTLMEMBUS_NUM_INSTANCES; i++)
+    {
+		if (TtlMemBusInfo[i].Used) 
+		{
+			if (DeviceId == TtlMemBusDevice[i].DeviceId)
+			{
+				/* Found a match */
+				return &TtlMemBusDevice[i];
+			}
+		}
+		else if (UnusedPtr == NULL)
+		{
+			/*
+			 * Keep track of the first entry in the table that is unused. We
+			 * base the unused on the number of partitions set for the device.
+			 */
+			UnusedPtr = TtlMemBusDevice[i];
+		}  
+    }
+
+    /*
+     * No match was found, so if there is an unused table entry, use it,
+     */
+    if (UnusedPtr != NULL)
+    {
+		UnusedPtr->DeviceId = DeviceId;
+		UnusedPtr->Used = 1;
+        return UnusedPtr;
+    }
+
+    /*
+     * All
+	 table entries are currently used, so return null
+     */
+    return NULL;
 }

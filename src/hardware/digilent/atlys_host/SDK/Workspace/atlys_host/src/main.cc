@@ -67,11 +67,19 @@ int Initialise();
 int InitialiseHardware();
 
 void ButtonsIsr(void *InstancePtr);
+
+int SetupGpioInterrupts(INTC *IntcInstancePtr);
+int EnableGpioInterrupts(INTC *IntcInstancePtr);
+
 void MemBusIsr(void *InstancePtr);
+
+int SetupMemBusInterrupt(INTC *IntcInstancePtr, u16 DeviceId);
+int SetupMemBusInterrupts(INTC *IntcInstancePtr);
+int EnableMemBusInterrupts(INTC *IntcInstancePtr);
 
 int SetupInterruptSystem();
 
-int InitialiseMemoryBus(XTtlMemBus *MemBus, u16 DeviceId);
+int InitialiseMemoryBus(u16 DeviceId);
 int InitialiseMemoryBusses();
 
 int GetMemBusEventQueueSize();
@@ -86,10 +94,10 @@ static XGpio LedsGpio; 		/* The Instance of the LEDs GPIO Driver */
 
 static XIntc Intc; /* The Instance of the Interrupt Controller Driver */
 
-static XTtlMemBus MemBus_Rom9C;
+/*static XTtlMemBus MemBus_Rom9C;
 static XTtlMemBus MemBus_Rom12C;
 static XTtlMemBus MemBus_Rom3R;
-static XTtlMemBus MemBus_Rom3S;
+static XTtlMemBus MemBus_Rom3S;*/
 
 const int MemBusEventQueueSize = 10;
 MemBusEvent MemBusEventQueue[MemBusEventQueueSize];
@@ -252,26 +260,15 @@ int SetupInterruptSystem()
 		return Result;
 	}
 
-	/* Hook up interrupt service routine */
-	XIntc_Connect(IntcInstancePtr, BUTTONS_INTC_INTERRUPT_ID,
-		      (Xil_ExceptionHandler)ButtonsIsr, &ButtonsGpio);
+	Result = SetupGpioInterrupts(IntcInstancePtr);
+	if (Result != XST_SUCCESS) {
+		return Result;
+	}
 
-	XIntc_Connect(IntcInstancePtr, XPAR_AXI_ROM_9C_DEVICE_ID,
-			(Xil_ExceptionHandler)MemBusIsr, &MemBus_Rom9C);
-	XIntc_Connect(IntcInstancePtr, XPAR_AXI_ROM_12C_DEVICE_ID,
-			(Xil_ExceptionHandler)MemBusIsr, &MemBus_Rom12C);
-	XIntc_Connect(IntcInstancePtr, XPAR_AXI_ROM_3R_DEVICE_ID,
-			(Xil_ExceptionHandler)MemBusIsr, &MemBus_Rom3R);
-	XIntc_Connect(IntcInstancePtr, XPAR_AXI_ROM_3S_DEVICE_ID,
-			(Xil_ExceptionHandler)MemBusIsr, &MemBus_Rom3S);
-
-	/* Enable the interrupt vector at the interrupt controller */
-
-	XIntc_Enable(IntcInstancePtr, BUTTONS_INTC_INTERRUPT_ID);
-	XIntc_Enable(IntcInstancePtr, XPAR_AXI_ROM_9C_DEVICE_ID);
-	XIntc_Enable(IntcInstancePtr, XPAR_AXI_ROM_12C_DEVICE_ID);
-	XIntc_Enable(IntcInstancePtr, XPAR_AXI_ROM_3R_DEVICE_ID);
-	XIntc_Enable(IntcInstancePtr, XPAR_AXI_ROM_3S_DEVICE_ID);
+	Result = SetupMemBusInterrupts(IntcInstancePtr);
+	if (Result != XST_SUCCESS) {
+		return Result;
+	}
 
 	/*
 	 * Start the interrupt controller such that interrupts are recognized
@@ -282,26 +279,15 @@ int SetupInterruptSystem()
 		return Result;
 	}
 
-	/*
-	 * Enable the GPIO channel interrupts so that push button can be
-	 * detected and enable interrupts for the GPIO device
-	 */
-	XGpio_InterruptEnable(&ButtonsGpio, BUTTONS_CHANNEL);
-	XGpio_InterruptGlobalEnable(&ButtonsGpio);
+	Result = EnableGpioInterrupts(IntcInstancePtr);
+	if (Result != XST_SUCCESS) {
+		return Result;
+	}
 
-	/*
-	 * Enable the various TtlMemBus interrupts so that memory access can be
-	 * detected and enable interrupts for the TtlMemBus device
-	 */
-	XTtlMemBus_InterruptEnable(&MemBus_Rom9C, MEMBUS_ALL_IR);
-	XTtlMemBus_InterruptGlobalEnable(&MemBus_Rom9C);
-	XTtlMemBus_InterruptEnable(&MemBus_Rom12C, MEMBUS_ALL_IR);
-	XTtlMemBus_InterruptGlobalEnable(&MemBus_Rom12C);
-	XTtlMemBus_InterruptEnable(&MemBus_Rom3R, MEMBUS_ALL_IR);
-	XTtlMemBus_InterruptGlobalEnable(&MemBus_Rom3R);
-	XTtlMemBus_InterruptEnable(&MemBus_Rom3S, MEMBUS_ALL_IR);
-	XTtlMemBus_InterruptGlobalEnable(&MemBus_Rom3S);
-
+	Result = EnableMemBusInterrupts(IntcInstancePtr);
+	if (Result != XST_SUCCESS) {
+		return Result;
+	}
 
 	/*
 	 * Initialize the exception table and register the interrupt
@@ -416,6 +402,43 @@ void ButtonsIsr(void *InstancePtr)
 
 }
 
+int SetupGpioInterrupts(INTC *IntcInstancePtr)
+{
+	Xil_AssertNonvoid(IntcInstancePtr != NULL);
+	Xil_AssertNonvoid(IntcInstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+
+	int Result;
+
+	/* Hook up interrupt service routine */
+	Result = XIntc_Connect(IntcInstancePtr, BUTTONS_INTC_INTERRUPT_ID,
+			  (Xil_ExceptionHandler)ButtonsIsr, &ButtonsGpio);
+	if (Result != XST_SUCCESS) {
+		return Result;
+	}
+
+	/* Enable the interrupt vector at the interrupt controller */
+
+	XIntc_Enable(IntcInstancePtr, BUTTONS_INTC_INTERRUPT_ID);
+
+	return XST_SUCCESS;
+}
+
+int EnableGpioInterrupts(INTC *IntcInstancePtr)
+{
+	Xil_AssertNonvoid(IntcInstancePtr != NULL);
+	Xil_AssertNonvoid(IntcInstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+	Xil_AssertNonvoid(IntcInstancePtr->IsStarted == XIL_COMPONENT_IS_STARTED);
+
+	/*
+	 * Enable the GPIO channel interrupts so that push button can be
+	 * detected and enable interrupts for the GPIO device
+	 */
+	XGpio_InterruptEnable(&ButtonsGpio, BUTTONS_CHANNEL);
+	XGpio_InterruptGlobalEnable(&ButtonsGpio);
+
+	return XST_SUCCESS;
+}
+
 /****************************************************************************/
 /**
 * This function is the Interrupt Service Routine for the GPIO device.  It
@@ -499,21 +522,98 @@ void MemBusIsr(void *InstancePtr)
 
 }
 
-int InitialiseMemoryBus(XTtlMemBus *MemBus, u16 DeviceId)
+int SetupMemBusInterrupt(INTC *IntcInstancePtr, u16 DeviceId)
+{
+	Xil_AssertNonvoid(IntcInstancePtr != NULL);
+	Xil_AssertNonvoid(IntcInstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+
+	XTtlMemBus * InstancePtr;
+
+	InstancePtr = XTtlMemBus_GetInstance(DeviceId);
+	if (InstancePtr == XNULL)
+		return XST_FAILURE;
+
+	XIntc_Connect(IntcInstancePtr, DeviceId,
+				(Xil_ExceptionHandler)MemBusIsr, &InstancePtr);
+
+	XIntc_Enable(IntcInstancePtr, DeviceId);
+
+	return XST_SUCCESS;
+}
+
+int SetupMemBusInterrupts(INTC *IntcInstancePtr)
+{
+	Xil_AssertNonvoid(IntcInstancePtr != NULL);
+	Xil_AssertNonvoid(IntcInstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+
+	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_9C_DEVICE_ID);
+	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_9D_DEVICE_ID);
+	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_12C_DEVICE_ID);
+	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_12D_DEVICE_ID);
+	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3R_DEVICE_ID);
+	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3S_DEVICE_ID);
+
+	return XST_SUCCESS;
+}
+
+int EnableMemBusInterrupt(INTC *IntcInstancePtr, u16 DeviceId)
+{
+	Xil_AssertNonvoid(IntcInstancePtr != NULL);
+	Xil_AssertNonvoid(IntcInstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+	Xil_AssertNonvoid(IntcInstancePtr->IsStarted == XIL_COMPONENT_IS_STARTED);
+
+	XTtlMemBus * InstancePtr;
+
+	InstancePtr = XTtlMemBus_GetInstance(DeviceId);
+	if (InstancePtr == XNULL)
+		return XST_FAILURE;
+
+	XTtlMemBus_InterruptEnable(InstancePtr, MEMBUS_ALL_IR);
+	XTtlMemBus_InterruptGlobalEnable(InstancePtr);
+
+	return XST_SUCCESS;
+}
+
+int EnableMemBusInterrupts(INTC *IntcInstancePtr)
+{
+	Xil_AssertNonvoid(IntcInstancePtr != NULL);
+	Xil_AssertNonvoid(IntcInstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+	Xil_AssertNonvoid(IntcInstancePtr->IsStarted == XIL_COMPONENT_IS_STARTED);
+
+	/*
+	 * Enable the various TtlMemBus interrupts so that memory access can be
+	 * detected and enable interrupts for the TtlMemBus device
+	 */
+	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_9C_DEVICE_ID);
+	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_9D_DEVICE_ID);
+	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_12C_DEVICE_ID);
+	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_12D_DEVICE_ID);
+	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3R_DEVICE_ID);
+	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3S_DEVICE_ID);
+
+	return XST_SUCCESS;
+}
+
+int InitialiseMemoryBus(u16 DeviceId)
 {
 	int Status;
+	XTtlMemBus * InstancePtr;
 
-	Status = XTtlMemBus_Initialize(MemBus, DeviceId);
+	Status = XTtlMemBus_DeviceInitialize(DeviceId);
 	if (Status != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
+
+	InstancePtr = XTtlMemBus_GetInstance(DeviceId);
+	if (InstancePtr == XNULL)
+		return XST_FAILURE;
 
 	/*
 	 * Perform a self-test on the IP.  This is a minimal test and only
 	 * verifies that there is not any bus error when reading the data
 	 * register
 	 */
-	XTtlMemBus_SelfTest(MemBus);
+	XTtlMemBus_SelfTest(InstancePtr);
 
 	return XST_SUCCESS;
 }
@@ -521,25 +621,14 @@ int InitialiseMemoryBus(XTtlMemBus *MemBus, u16 DeviceId)
 int InitialiseMemoryBusses()
 {
 	int Status;
+	int i;
+	extern XTtlMemBus_Config XTtlMemBus_ConfigTable[];
 
-	Status = InitialiseMemoryBus(&MemBus_Rom9C, XPAR_AXI_ROM_9C_DEVICE_ID);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
-
-	Status = InitialiseMemoryBus(&MemBus_Rom12C, XPAR_AXI_ROM_12C_DEVICE_ID);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
-
-	Status = InitialiseMemoryBus(&MemBus_Rom3R, XPAR_AXI_ROM_3R_DEVICE_ID);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
-
-	Status = InitialiseMemoryBus(&MemBus_Rom3S, XPAR_AXI_ROM_3S_DEVICE_ID);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
+	for (i = 0; i < XPAR_XTTLMEMBUS_NUM_INSTANCES; i++) {
+		Status = InitialiseMemoryBus(XTtlMemBus_ConfigTable[i].DeviceId);
+		if (Status != XST_SUCCESS) {
+			return XST_FAILURE;
+		}
 	}
 
 	return XST_SUCCESS;
