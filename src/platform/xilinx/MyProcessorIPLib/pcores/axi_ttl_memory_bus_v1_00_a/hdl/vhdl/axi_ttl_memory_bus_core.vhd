@@ -40,10 +40,11 @@ library axi_ttl_memory_bus_v1_00_a;
 entity axi_ttl_memory_bus_core is
     generic
     (
-	   C_CTRL_WIDTH : integer range 2 to 3 := 3;
-      C_ADDR_WIDTH : integer range 4 to 16 := 16;
-      C_DATA_WIDTH : integer range 4 to 8 := 8;
-      C_MAPPED_ADDRESS        	: std_logic_vector     	:= X"FFFFFFFF";
+	   C_CTRL_WIDTH 			: integer range 2 to 3 := 3;
+      C_ADDR_WIDTH 				: integer range 4 to 16 := 16;
+      C_DATA_WIDTH 				: integer range 4 to 8 := 8;
+      C_MAPPED_BASEADDR        	: std_logic_vector     	:= X"FFFFFFFF";
+	  C_MAPPED_SIZE 			: std_logic_vector := X"00000000";
       C_USE_DYNAMIC_MAPPING	  	: integer range 0 to 1  := 0;
 		C_INTERRUPT_PRESENT 		   : integer     		     	:= 0;
 		  

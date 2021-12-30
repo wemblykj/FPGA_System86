@@ -142,7 +142,11 @@ int main()
 	 * Loop forever while the button changes are handled by the interrupt
 	 * level processing
 	 */
+	MemBusEvent event;
 	while (1) {
+		if (TryPopMemBusEvent(event)) {
+			xil_printf("%08x: %s - %08x\r\n", event.BaseAddress, event.Type, event.BusData);
+		}
 	}
 
 	cleanup_platform();
@@ -165,6 +169,7 @@ int Initialise() {
 
 	return XST_SUCCESS;
 }
+
 int InitialiseHardware()
 {
 	int Status;
@@ -232,6 +237,7 @@ int InitialiseHardware()
 
 	return XST_SUCCESS;
 }
+
 /****************************************************************************/
 /**
 * This function sets up the interrupt system for the example.  The processing
@@ -547,11 +553,11 @@ int SetupMemBusInterrupts(INTC *IntcInstancePtr)
 	Xil_AssertNonvoid(IntcInstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 
 	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_9C_DEVICE_ID);
-	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_9D_DEVICE_ID);
+	//SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_9D_DEVICE_ID);
 	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_12C_DEVICE_ID);
-	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_12D_DEVICE_ID);
-	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3R_DEVICE_ID);
-	SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3S_DEVICE_ID);
+	//SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_12D_DEVICE_ID);
+	//SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3R_DEVICE_ID);
+	//SetupMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3S_DEVICE_ID);
 
 	return XST_SUCCESS;
 }
@@ -585,11 +591,11 @@ int EnableMemBusInterrupts(INTC *IntcInstancePtr)
 	 * detected and enable interrupts for the TtlMemBus device
 	 */
 	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_9C_DEVICE_ID);
-	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_9D_DEVICE_ID);
+	//EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_9D_DEVICE_ID);
 	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_12C_DEVICE_ID);
-	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_12D_DEVICE_ID);
-	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3R_DEVICE_ID);
-	EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3S_DEVICE_ID);
+	//EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_12D_DEVICE_ID);
+	//EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3R_DEVICE_ID);
+	//EnableMemBusInterrupt(IntcInstancePtr, XPAR_AXI_ROM_3S_DEVICE_ID);
 
 	return XST_SUCCESS;
 }

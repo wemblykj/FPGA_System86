@@ -69,8 +69,7 @@ void XTtlMemBus_InterruptGlobalDisable(XTtlMemBus * InstancePtr)
 	Xil_AssertVoid(InstancePtr != NULL);
 	Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 	Xil_AssertVoid(InstancePtr->InterruptPresent == TRUE);
-
-
+	
 	XTtlMemBus_WriteReg(InstancePtr->BaseAddress, XTTLMEMBUS_GIE_OFFSET, 0x0);
 
 }
@@ -108,7 +107,6 @@ void XTtlMemBus_InterruptEnable(XTtlMemBus * InstancePtr, u32 Mask)
 	Register = XTtlMemBus_ReadReg(InstancePtr->BaseAddress, XTTLMEMBUS_IER_OFFSET);
 	XTtlMemBus_WriteReg(InstancePtr->BaseAddress, XTTLMEMBUS_IER_OFFSET,
 			Register | Mask);
-
 }
 
 
@@ -143,7 +141,6 @@ void XTtlMemBus_InterruptDisable(XTtlMemBus * InstancePtr, u32 Mask)
 	Register = XTtlMemBus_ReadReg(InstancePtr->BaseAddress, XTTLMEMBUS_IER_OFFSET);
 	XTtlMemBus_WriteReg(InstancePtr->BaseAddress, XTTLMEMBUS_IER_OFFSET,
 			Register & (~Mask));
-
 }
 
 /****************************************************************************/
@@ -180,8 +177,6 @@ void XTtlMemBus_InterruptClear(XTtlMemBus * InstancePtr, u32 Mask)
 	Register = XTtlMemBus_ReadReg(InstancePtr->BaseAddress, XTTLMEMBUS_ISR_OFFSET);
 	XTtlMemBus_WriteReg(InstancePtr->BaseAddress, XTTLMEMBUS_ISR_OFFSET,
 			Register & Mask);
-
-
 }
 
 

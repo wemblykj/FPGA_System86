@@ -258,12 +258,13 @@ library axi_ttl_memory_bus_v1_00_a;
 entity axi_ttl_memory_bus is
   generic (
     -- ROM generics
-	 C_CTRL_WIDTH : integer range 2 to 3 := 3;
+	C_CTRL_WIDTH : integer range 1 to 3 := 3;
     C_ADDR_WIDTH : integer range 4 to 16 := 16;
     C_DATA_WIDTH : integer range 4 to 8 := 8;
 
     -- Mapping generics
-    C_MAPPED_ADDRESS : std_logic_vector := X"FFFFFFFF";
+    C_MAPPED_BASEADDR : std_logic_vector := X"FFFFFFFF";
+	C_MAPPED_SIZE : std_logic_vector := X"00000000";
     C_USE_DYNAMIC_MAPPING : integer range 0 to 1      	    := 0;
 
 	 -- Interrupts
@@ -432,7 +433,7 @@ function str(slv: std_logic_vector) return string is
 	 & ",C_CTRL_WIDTH = "         & integer'image(C_CTRL_WIDTH)
     & ",C_ADDR_WIDTH = "         & integer'image(C_ADDR_WIDTH)
     & ",C_DATA_WIDTH = "         & integer'image(C_DATA_WIDTH)
-	 & ",C_MAPPED_ADDRESS = "     & str(C_MAPPED_ADDRESS)
+	 & ",C_MAPPED_BASEADDR = "     & str(C_MAPPED_BASEADDR)
     & ",C_USE_DYNAMIC_MAPPING = "         & integer'image(C_USE_DYNAMIC_MAPPING)
     & ",C_INTERRUPT_PRESENT = "  & integer'image(C_INTERRUPT_PRESENT)
     & "}";
@@ -900,7 +901,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
         C_ADDR_WIDTH            => C_ADDR_WIDTH,
         C_DATA_WIDTH            => C_DATA_WIDTH,
         C_SLV_DWIDTH            => C_S_AXI_DATA_WIDTH,
-        C_MAPPED_ADDRESS        => C_MAPPED_ADDRESS,
+        C_MAPPED_BASEADDR        => C_MAPPED_BASEADDR,
         C_USE_DYNAMIC_MAPPING   => C_USE_DYNAMIC_MAPPING)
     port map(
         Control                 => controlReg,
@@ -935,7 +936,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
 	     C_CTRL_WIDTH            => C_CTRL_WIDTH,
         C_ADDR_WIDTH        	  => C_ADDR_WIDTH,
         C_DATA_WIDTH        	  => C_DATA_WIDTH,
-        C_MAPPED_ADDRESS          => C_MAPPED_ADDRESS,
+        C_MAPPED_BASEADDR          => C_MAPPED_BASEADDR,
         C_USE_DYNAMIC_MAPPING	  => C_USE_DYNAMIC_MAPPING,
 		  C_INTERRUPT_PRESENT 		=> C_INTERRUPT_PRESENT,
         C_M_AXI_DATA_WIDTH        => C_M_AXI_DATA_WIDTH,

@@ -113,21 +113,25 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
         busData <= 0;
         
         // Assume that we should process the pending address once we come out of reset
-        if (!nChipEnable)
+        //if (!nChipEnable)
             state_next <= BusAddressReq;
-        else
-				state_next <= Idle;
+        //else
+			//	state_next <= Idle;
       end
       
-		Idle:
-      if (!nChipEnable) begin
-		  busControl <= { {(C_CTRL_WIDTH-1){1'b0}}, 1};
-		  if (busAddress !== Address) begin
-			 state_next <= BusAddressReq;
-		  end
-		end else
-		  busControl <= 0;
-					
+	 Idle:
+		begin
+			if (ControlReg[0]) begin
+				if (!nChipEnable) begin
+					busControl <= { {(C_CTRL_WIDTH-1){1'b0}}, 1};
+					if (busAddress !== Address) begin
+						state_next <= BusAddressReq;
+					end
+				end else
+					busControl <= 0;
+			end
+			StatusReg[0] < ControlReg[0];
+		end			
     BusAddressReq: 
       begin
         busAddress <= Address;

@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE doc SYSTEM "../../ipdialog.dtd" [
+	<!ENTITY C_PRESET '
+	<widget id="C_PRESET">
+		<key>C_PRESET</key>
+		<label>TTL Preset</label>
+		<tip>Select a preset or configure manually</tip>
+	</widget>
+	'>
 	<!ENTITY C_CTRL_WIDTH '
 	<widget id="C_CTRL_WIDTH">
 		<key>C_CTRL_WIDTH</key>
@@ -42,12 +49,27 @@
 		<tip>PROM (/wo OE)or EPROM (/w OE)</tip>
 	</widget>
 	'>
-	<!ENTITY C_MAPPED_ADDRESS '
-	<widget id="C_MAPPED_ADDRESS">
-		<key>C_MAPPED_ADDRESS</key>
-		<label>Mapped Address</label>
+	<!ENTITY C_MAPPED_BASEADDR '
+	<widget id="C_MAPPED_BASEADDR">
+		<key>C_MAPPED_BASEADDR</key>
+		<label>Mapped Base Address</label>
 		<tip>The base address on the AXI4 bus
 			 to which TTL memory requests will be mapped</tip>
+	</widget>
+	'>
+	<!ENTITY C_MAPPED_HIGHADDR '
+	<widget id="C_MAPPED_HIGHADDR">
+		<key>C_MAPPED_HIGHADDR</key>
+		<label>Mapped High Address</label>
+		<tip>The high address on the AXI4 bus
+			 to which TTL memory requests will be mapped</tip>
+	</widget>
+	'>
+	<!ENTITY C_MAPPED_SIZE '
+	<widget id="C_MAPPED_SIZE">
+		<key>C_MAPPED_SIZE</key>
+		<label>Mapped Size</label>
+		<tip>The size of the mapped memory region</tip>
 	</widget>
 	'>
 	<!ENTITY C_USE_DYNAMIC_MAPPING '
@@ -174,7 +196,8 @@
 	<view id="Config">
 		<display>Config</display>
 		<group id="Characteristics">
-			<display>Characteristics</display>	
+			<display>Characteristics</display>
+			<item>&C_PRESET;</item>
 			<item>&C_CTRL_WIDTH;</item>
 			<item>&C_ADDR_WIDTH;</item>
 			<item>&C_DATA_WIDTH;</item>		
@@ -184,8 +207,10 @@
 		</group>
 		<group id="Mapping">
 			<display>AXI Memory Mapping</display>	
-			<item>&C_MAPPED_ADDRESS;</item>			
 			<item>&C_USE_DYNAMIC_MAPPING;</item>
+			<item>&C_MAPPED_BASEADDR;</item>
+			<item>&C_MAPPED_HIGHADDR;</item>
+			<item>&C_MAPPED_SIZE;</item>
 			<item>&C_INTERRUPT_PRESENT;</item>
 		</group>
 		
