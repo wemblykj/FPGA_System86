@@ -4,7 +4,7 @@
 -- 
 -- Create Date:    11:45:30 11/22/2011 
 -- Design Name: 
--- Module Name:    axi_ttl_memory_bus_reg_top - Behavioral 
+-- Module Name:    axi_ttl_memory_bus_core - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
