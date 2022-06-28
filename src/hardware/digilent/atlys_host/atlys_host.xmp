@@ -3,6 +3,8 @@ XmpVersion: 14.7
 VerMgmt: 14.7
 IntStyle: default
 Flow: ise
+ModuleSearchPath: C:/Users/paulw/Development/FPGA/Digilent/Atlys_AXI_BSB_Support/lib/Digilent/pcores/axi_hdmi_v1_00_a/../../../
+ModuleSearchPath: C:/Users/paulw/Development/FPGA/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/../../../
 ModuleSearchPath: /home/paul/development/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/axi_ttl_memory_bus_v1_00_a/../../../
 ModuleSearchPath: /opt/Digilent/Atlys_BSB_Support_v_3_7/Atlys_AXI_BSB_Support/lib
 ModuleSearchPath: C:/Development/FPGA/Digilent/Atlys_AXI_BSB_Support/lib

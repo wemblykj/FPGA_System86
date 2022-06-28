@@ -11,4 +11,3 @@ lib axi_master_lite_v2_00_a all
 
 ## MC6809 Core 
 lib mc6809e_cpu_v1_00_a mc6809e_cpu vhdl
-#lib mc6809e_cpu_v1_00_a xcpu_mc6809e verilog

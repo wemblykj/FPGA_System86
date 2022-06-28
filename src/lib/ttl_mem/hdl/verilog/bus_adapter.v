@@ -41,7 +41,7 @@ module bus_adapter
         inout wire [BUS_DATA_WIDTH-1:0] bus_data
     );
 
-	always @(posedge CLK1 or nPRE1 or nCLR1) begin
+	always @(posedge CLK1 or negedge nPRE1 or negedge nCLR1) begin
 		if (nPRE1 && nCLR1) begin
 			Q1 <= D1;
 			nQ1 <= ~D1;
@@ -61,7 +61,7 @@ module bus_adapter
 			
 	end
 	
-	always @(posedge CLK2 or nPRE2 or nCLR2) begin
+	always @(posedge CLK2 or negedge nPRE2 or negedge nCLR2) begin
 		if (nPRE2 && nCLR2) begin
 			Q2 <= D2;
 			nQ2 <= ~D2;

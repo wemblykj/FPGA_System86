@@ -85,28 +85,31 @@ module xsystem86
 		
 		`PROM_OUTPUT_DEFS(MB7124, prom_3r),			// 7124 - 20 pin DIP/DIL
 		`PROM_OUTPUT_DEFS(MB7116, prom_3s), 		// 7116 - 16 pin DIP/DIL		
-		`PROM_OUTPUT_DEFS(MB7138, prom_4v),			// 7138
+		/*`PROM_OUTPUT_DEFS(MB7138, prom_4v),			// 7138
 		`PROM_OUTPUT_DEFS(MB7138, prom_5v),			// 7138
 		`PROM_OUTPUT_DEFS(MB7112, prom_6u),			// 7112
+		*/
 		
 		// PROG
 		`EPROM_OUTPUT_DEFS(M27256, eprom_9c),
 		`EPROM_OUTPUT_DEFS(M27256, eprom_9d),
 		`EPROM_OUTPUT_DEFS(M27256, eprom_12c),
-		`EPROM_OUTPUT_DEFS(M27256, eprom_12d),
+		`EPROM_OUTPUT_DEFS(M27256, eprom_12d)
 		
 		// GFX
-		`EPROM_OUTPUT_DEFS(M27512, eprom_7r),
+		/*`EPROM_OUTPUT_DEFS(M27512, eprom_7r),
 		`EPROM_OUTPUT_DEFS(M27256, eprom_7s),
 		`EPROM_OUTPUT_DEFS(M27512, eprom_4r),
 		`EPROM_OUTPUT_DEFS(M27256, eprom_4s),
+		*/
 		
 		// SRAM
-		`SRAM_OUTPUT_DEFS(CY6264, sram_3f),
+		/*`SRAM_OUTPUT_DEFS(CY6264, sram_3f),
 		`SRAM_OUTPUT_DEFS(CY6264, sram_4n),
 		`SRAM_OUTPUT_DEFS(CY6264, sram_7n),
 		`SRAM_OUTPUT_DEFS(CY6264, sram_10m),
 		`SRAM_OUTPUT_DEFS(M58725, sram_11k)
+		*/
 	);
 	
 	localparam LAYER_DISABLE_MASK = 0;
@@ -116,13 +119,11 @@ module xsystem86
 	localparam TEXT_LAYER_PRIORITY = 0;
 	localparam UNKNOWN_LAYER_PRIORITY = 0;
 		
-	/*reg out_n;
+	reg sync_rst_n;
 	
-	always @(negedge rst_n) begin 
-		out_n <= rst_n;
+	always @(negedge clk_48m) begin 
+		sync_rst_n <= rst_n;
 	end
-	
-	assign out_rst_n = out_n;*/
 	
 	system86 
 		#(
@@ -135,7 +136,7 @@ module xsystem86
 		)
 		system86 (
 			.clk_48m(clk_48m), 
-			.rst_n(rst_n),
+			.rst_n(sync_rst_n),
 			.vid_clk(vid_clk),
 			.vid_data(vid_data),
 			.vid_red(vid_red),

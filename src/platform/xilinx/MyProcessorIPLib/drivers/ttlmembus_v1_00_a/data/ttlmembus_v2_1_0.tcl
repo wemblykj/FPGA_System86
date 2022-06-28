@@ -2,6 +2,8 @@
 #
 # (c) Copyright 2021 Paul Wightmore. All rights reserved.
 #
+# Driver stub based on GPIO driver
+#
 ##############################################################################
 #uses "xillib.tcl"
 

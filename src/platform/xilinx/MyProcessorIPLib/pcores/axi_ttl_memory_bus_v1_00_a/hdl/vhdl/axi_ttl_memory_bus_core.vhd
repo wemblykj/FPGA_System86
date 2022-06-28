@@ -37,13 +37,16 @@ library axi_ttl_memory_bus_v1_00_a;
 ------------------------------------------------------------------------
 -- Module Declaration
 ------------------------------------------------------------------------
-entity axi_ttl_memory_bus_master_top is
+entity axi_ttl_memory_bus_core is
     generic
     (
-      C_ADDR_WIDTH        		: integer     		:= 16;
-      C_DATA_WIDTH        		: integer     		:= 8;
-      C_MAPPED_ADDRESS        	: std_logic_vector     	:= X"FFFFFFFF";
-      C_USE_DYNAMIC_MAPPING	  	: std_logic  		:= '0';
+	   C_CTRL_WIDTH 			: integer range 2 to 3 := 3;
+      C_ADDR_WIDTH 				: integer range 4 to 16 := 16;
+      C_DATA_WIDTH 				: integer range 4 to 8 := 8;
+      C_MAPPED_BASEADDR        	: std_logic_vector     	:= X"FFFFFFFF";
+	  C_MAPPED_SIZE 			: std_logic_vector := X"00000000";
+      C_USE_DYNAMIC_MAPPING	  	: integer range 0 to 1  := 0;
+		C_INTERRUPT_PRESENT 		   : integer     		     	:= 0;
 		  
         C_M_AXI_DATA_WIDTH             : integer              	:= 32;
         C_M_AXI_ADDR_WIDTH             : integer              	:= 32;
@@ -56,28 +59,37 @@ entity axi_ttl_memory_bus_master_top is
         C_MST_AWIDTH                   : integer              := 32;
         C_MST_DWIDTH                   : integer              := 32
     );
-    port
+    port	
     (
-        nChipEnable 			: in std_logic;
-      	nOutputEnable 		: in std_logic;
+        nChipEnable 			   : in std_logic;
+      	nOutputEnable 		   : in std_logic;
       	nWriteEnable 			: in std_logic;
-      	Address 			    : in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
+      	Address 			      : in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
       	Data 				      : inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
-      	MappedAddress 		: in std_logic_vector(C_MST_AWIDTH - 1 downto 0);
-        Interrupt         : out std_logic;
-			
-        ControlReg			  : in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
-        StatusReg 			  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);	
+      	MappedAddress 		   : in std_logic_vector(C_MST_AWIDTH - 1 downto 0);
         
-        BusAddressReadReg 	: out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-        BusAddressWriteReg 	: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+        ControlReg			   : in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+        StatusReg 			   : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);	
         
-        BusDataReadReg 			: out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-        BusDataWriteReg 		: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+		  BusControlReadReg 	   : out std_logic_vector(C_CTRL_WIDTH - 1 downto 0);	
+		  
+        BusAddressReadReg 	   : out std_logic_vector(C_ADDR_WIDTH - 1 downto 0);			
+        BusAddressWriteReg 	: in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);			
         
-        IntrEnableReg 		: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-        IntrStatusReg		  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);
-        IntrAckReg		    : in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+        BusDataReadReg 			: out std_logic_vector(C_DATA_WIDTH - 1 downto 0);			
+        BusDataWriteReg 		: in std_logic_vector(C_DATA_WIDTH - 1 downto 0);			
+        
+        AddrReqIntr           : out std_logic;
+        AddrReqIntrStatus     : in std_logic;
+        AddrReqIntrEnable     : in std_logic;
+        
+        DataReadReqIntr         : out std_logic;
+        DataReadReqIntrStatus   : in std_logic;
+        DataReadReqIntrEnable   : in std_logic;
+         
+        DataWriteReqIntr         : out std_logic;
+        DataWriteReqIntrStatus   : in std_logic;
+        DataWriteReqIntrEnable   : in std_logic;
 			
         M_AXI_ACLK                     : in  std_logic;
         M_AXI_ARESETN                  : in  std_logic;
@@ -110,9 +122,9 @@ entity axi_ttl_memory_bus_master_top is
     attribute MAX_FANOUT of M_AXI_ARESETN : signal is "10000";
     attribute SIGIS of M_AXI_ACLK         : signal is "Clk";
     attribute SIGIS of M_AXI_ARESETN      : signal is "Rst";
-end axi_ttl_memory_bus_master_top;
+end axi_ttl_memory_bus_core;
 
-architecture Behavioral of axi_ttl_memory_bus_master_top is
+architecture Behavioral of axi_ttl_memory_bus_core is
 
 ------------------------------------------------------------------------
 -- Constant Declarations
@@ -181,35 +193,44 @@ architecture Behavioral of axi_ttl_memory_bus_master_top is
 
 component axi_ttl_memory_bus_master
     generic(
-	C_ADDR_WIDTH 		: integer 			:= 16;
-	C_DATA_WIDTH 		: integer 			:= 8;
-	C_MST_AWIDTH 		: integer 			:= 32;
-	C_MST_DWIDTH 		: integer 			:= 32
+      C_CTRL_WIDTH        : integer range 2 to 3   := 3;
+      C_ADDR_WIDTH        : integer range 4 to 16  := 16;
+      C_DATA_WIDTH        : integer range 4 to 8   := 8;
+	   C_MST_AWIDTH 		  : integer 			      := 32;
+	   C_MST_DWIDTH 		  : integer 			      := 32
 	  );
     port(
-			rst_n             : in std_logic;
-      	nChipEnable 		: in std_logic;
-      	nOutputEnable 	: in std_logic;
-      	nWriteEnable 		: in std_logic;
-      	Address 		    : in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
-      	Data 			      : inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
-      	MappedAddress 	: in std_logic_vector(C_MST_AWIDTH - 1 downto 0);
-			
-			Interrupt         : out std_logic;
+		rst_n               : in std_logic;
+      nChipEnable 		  : in std_logic;
+      nOutputEnable       : in std_logic;
+      nWriteEnable 		  : in std_logic;
+      Address 		        : in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
+      Data 			        : inout std_logic_vector(C_DATA_WIDTH - 1 downto 0);
+      MappedAddress 	     : in std_logic_vector(C_MST_AWIDTH - 1 downto 0);
 
-			ControlReg			  : in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
-			StatusReg 			  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+		ControlReg			  : in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+		StatusReg 			  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);
       
-			BusAddressReadReg 			  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-			BusAddressWriteReg 			: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-      
-			BusDataReadReg 			  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-			BusDataWriteReg 			: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
+		BusControlReadReg   : out std_logic_vector(C_CTRL_WIDTH - 1 downto 0);
+		  
+      BusAddressReadReg   : out std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
+      BusAddressWriteReg  : in std_logic_vector(C_ADDR_WIDTH - 1 downto 0);
+        
+      BusDataReadReg      : out std_logic_vector(C_DATA_WIDTH - 1 downto 0);
+      BusDataWriteReg     : in std_logic_vector(C_DATA_WIDTH - 1 downto 0);
 			
-			IntrEnableReg 		: in std_logic_vector(C_MST_DWIDTH - 1 downto 0);			
-			IntrStatusReg		  : out std_logic_vector(C_MST_DWIDTH - 1 downto 0);
-			IntrAckReg		    : in std_logic_vector(C_MST_DWIDTH - 1 downto 0);
+      AddrReqIntr         : out std_logic;
+      AddrReqIntrStatus   : in std_logic;
+      AddrReqIntrEnable   : in std_logic;
+      
+		DataReadReqIntr         : out std_logic;
+      DataReadReqIntrStatus   : in std_logic;
+      DataReadReqIntrEnable   : in std_logic;
 		   
+      DataWriteReqIntr         : out std_logic;
+      DataWriteReqIntrStatus   : in std_logic;
+      DataWriteReqIntrEnable   : in std_logic;
+      
 			-----------------------------------------------------------------------------
     -- IP Master Request/Qualifers
     -----------------------------------------------------------------------------
@@ -324,6 +345,7 @@ begin
 ------------------------------------------------------------------------
     Inst_AxiBusMasterImpl: axi_ttl_memory_bus_master
     generic map(
+	     C_CTRL_WIDTH            => C_CTRL_WIDTH,
         C_ADDR_WIDTH            => C_ADDR_WIDTH,
         C_DATA_WIDTH            => C_DATA_WIDTH,
         C_MST_AWIDTH            => C_MST_AWIDTH,
@@ -334,23 +356,31 @@ begin
         nOutputEnable           => nOutputEnable,
         nWriteEnable            => nWriteEnable,
         Address                 => Address,
-        Data	                  => Data,
+        Data	                 => Data,
         MappedAddress           => MappedAddress,
 		  
-        Interrupt						    => Interrupt,
-
         ControlReg              => ControlReg,
         StatusReg               => StatusReg,
         
-        BusAddressReadReg				=> BusAddressReadReg,
-        BusAddressWriteReg			=> BusAddressWriteReg,
+		  BusControlReadReg		  => BusControlReadReg,
+		  
+        BusAddressReadReg		  => BusAddressReadReg,
+        BusAddressWriteReg		  => BusAddressWriteReg,
         
         BusDataReadReg				  => BusDataReadReg,
         BusDataWriteReg				  => BusDataWriteReg,
 			
-        IntrEnableReg			      => IntrEnableReg,
-        IntrStatusReg			      => IntrStatusReg,
-        IntrAckReg			        => IntrAckReg,
+        AddrReqIntr               => AddrReqIntr,
+        AddrReqIntrStatus         => AddrReqIntrStatus,
+        AddrReqIntrEnable         => AddrReqIntrEnable,
+        
+        DataReadReqIntr           => DataReadReqIntr,    
+        DataReadReqIntrStatus     => DataReadReqIntrStatus,
+        DataReadReqIntrEnable     => DataReadReqIntrEnable,
+		
+        DataWriteReqIntr          => DataWriteReqIntr,
+        DataWriteReqIntrStatus    => DataWriteReqIntrStatus,
+        DataWriteReqIntrEnable    => DataWriteReqIntrEnable,
         
         ip2bus_mstrd_req => ip2bus_mstrd_req,
         ip2bus_mstwr_req => ip2bus_mstwr_req,

@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE doc SYSTEM "../../ipdialog.dtd" [
+	<!ENTITY C_PRESET '
+	<widget id="C_PRESET">
+		<key>C_PRESET</key>
+		<label>TTL Preset</label>
+		<tip>Select a preset or configure manually</tip>
+	</widget>
+	'>
+	<!ENTITY C_CTRL_WIDTH '
+	<widget id="C_CTRL_WIDTH">
+		<key>C_CTRL_WIDTH</key>
+		<label>Control Width</label>
+		<tip>The width of the TTL memory control bus</tip>
+	</widget>
+	'>
 	<!ENTITY C_ADDR_WIDTH '
 	<widget id="C_ADDR_WIDTH">
 		<key>C_ADDR_WIDTH</key>
@@ -14,19 +28,48 @@
 		<tip>The width of the TTL memory data bus</tip>
 	</widget>
 	'>
-	<!ENTITY C_READONLY '
-	<widget id="C_READONLY">
-		<key>C_READONLY</key>
-		<label>Readonly Memory (ROM)</label>
-		<tip>The TTL bus is read-only</tip>
+	<!ENTITY C_MEM_TYPE '
+	<widget id="C_MEM_TYPE">
+		<key>C_MEM_TYPE</key>
+		<label>The primary memory type</label>
+		<tip>Either RAM or ROM</tip>
 	</widget>
 	'>
-	<!ENTITY C_MAPPED_ADDRESS '
-	<widget id="C_MAPPED_ADDRESS">
-		<key>C_MAPPED_ADDRESS</key>
-		<label>Mapped Address</label>
+	<!ENTITY C_RAM_TYPE '
+	<widget id="C_RAM_TYPE">
+		<key>C_RAM_TYPE</key>
+		<label>The specific RAM type</label>
+		<tip>Currently only SRAM</tip>
+	</widget>
+	'>
+	<!ENTITY C_ROM_TYPE '
+	<widget id="C_ROM_TYPE">
+		<key>C_ROM_TYPE</key>
+		<label>The specific ROM type</label>
+		<tip>PROM (/wo OE)or EPROM (/w OE)</tip>
+	</widget>
+	'>
+	<!ENTITY C_MAPPED_BASEADDR '
+	<widget id="C_MAPPED_BASEADDR">
+		<key>C_MAPPED_BASEADDR</key>
+		<label>Mapped Base Address</label>
 		<tip>The base address on the AXI4 bus
 			 to which TTL memory requests will be mapped</tip>
+	</widget>
+	'>
+	<!ENTITY C_MAPPED_HIGHADDR '
+	<widget id="C_MAPPED_HIGHADDR">
+		<key>C_MAPPED_HIGHADDR</key>
+		<label>Mapped High Address</label>
+		<tip>The high address on the AXI4 bus
+			 to which TTL memory requests will be mapped</tip>
+	</widget>
+	'>
+	<!ENTITY C_MAPPED_SIZE '
+	<widget id="C_MAPPED_SIZE">
+		<key>C_MAPPED_SIZE</key>
+		<label>Mapped Size</label>
+		<tip>The size of the mapped memory region</tip>
 	</widget>
 	'>
 	<!ENTITY C_USE_DYNAMIC_MAPPING '
@@ -152,16 +195,22 @@
 <doc>
 	<view id="Config">
 		<display>Config</display>
-		<group id="ROM">
-			<display>ROM Attributes</display>	
+		<group id="Characteristics">
+			<display>Characteristics</display>
+			<item>&C_PRESET;</item>
+			<item>&C_CTRL_WIDTH;</item>
 			<item>&C_ADDR_WIDTH;</item>
 			<item>&C_DATA_WIDTH;</item>		
-			<item>&C_READONLY;</item>					
+			<item>&C_MEM_TYPE;</item>
+			<item>&C_RAM_TYPE;</item>
+			<item>&C_ROM_TYPE;</item>			
 		</group>
 		<group id="Mapping">
-			<display>ROM to AXI Memory Mapping</display>	
-			<item>&C_MAPPED_ADDRESS;</item>			
+			<display>AXI Memory Mapping</display>	
 			<item>&C_USE_DYNAMIC_MAPPING;</item>
+			<item>&C_MAPPED_BASEADDR;</item>
+			<item>&C_MAPPED_HIGHADDR;</item>
+			<item>&C_MAPPED_SIZE;</item>
 			<item>&C_INTERRUPT_PRESENT;</item>
 		</group>
 		
