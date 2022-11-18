@@ -289,16 +289,6 @@ entity axi_ttl_memory_bus is
     C_HIGHADDR                    : std_logic_vector := X"00000000"
   );
   port (
-    -- ROM ports
-    nChipEnable : in std_logic;
-    nOutputEnable : in std_logic;
-    nWriteEnable : in std_logic;
-    Address : in std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
-    Data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0);
-	 
-    -- Mapping
-    MappedAddress            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
-
 	 -- Interrupt---------------------------------------------------------------
     IP2INTC_Irpt            : out std_logic;
 	 
@@ -361,7 +351,17 @@ entity axi_ttl_memory_bus is
     downto 0);
     S_AXI_RRESP : out std_logic_vector(1 downto 0);
     S_AXI_RVALID : out std_logic;
-    S_AXI_RREADY : in std_logic
+    S_AXI_RREADY : in std_logic;
+	 
+	 -- ROM ports
+    nChipEnable : in std_logic;
+    nOutputEnable : in std_logic;
+    nWriteEnable : in std_logic;
+    Address : in std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
+    Data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0);
+	 
+    -- Mapping
+    MappedAddress            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0)
   );
 
   -------------------------------------------------------------------------------

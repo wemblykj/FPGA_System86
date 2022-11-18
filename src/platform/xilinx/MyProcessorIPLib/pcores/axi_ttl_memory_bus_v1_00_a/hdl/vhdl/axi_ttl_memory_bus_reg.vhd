@@ -30,14 +30,14 @@ use proc_common_v3_00_a.proc_common_pkg.all;
 ------------------------------------------------------------------------
 entity axi_ttl_memory_bus_reg is
     generic(
-	     C_CTRL_WIDTH : integer range 2 to 3 := 3;
+	     C_CTRL_WIDTH : integer range 1 to 3 := 3;
 	     C_ADDR_WIDTH : integer range 4 to 16 := 16;
         C_DATA_WIDTH : integer range 4 to 8 := 8;
-        C_MAPPED_BASEADDR        	: std_logic_vector   			  := X"FFFFFFFF";
-		C_MAPPED_SIZE        		: std_logic_vector   			  := X"00000000";
-        C_USE_DYNAMIC_MAPPING	  	: integer range 0 to 1        := 0;
+        C_MAPPED_BASEADDR        : std_logic_vector   		     := X"FFFFFFFF";
+		  C_MAPPED_SIZE        		: std_logic_vector   			  := X"00000000";
+        C_USE_DYNAMIC_MAPPING	  	: integer range 0 to 1          := 0;
         C_SLV_DWIDTH        	  	: integer   						  := 32;
-		C_USER_NUM_REG          	: integer   						  := 4
+		  C_USER_NUM_REG          	: integer   						  := 4
 		);
     port(
         Control      		 : out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);

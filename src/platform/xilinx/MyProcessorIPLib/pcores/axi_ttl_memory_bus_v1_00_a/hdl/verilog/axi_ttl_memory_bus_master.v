@@ -80,7 +80,9 @@ localparam
 
 reg[4:0] state_reg, state_next;
 
-reg [C_CTRL_WIDTH-1:0] busControl;
+reg [C_MST_DWIDTH-1:0] statusReg;
+
+reg [2:0] busControl;
 reg [C_ADDR_WIDTH-1:0] busAddress;
 reg [C_DATA_WIDTH-1:0] busData;
 reg [C_DATA_WIDTH-1:0] readData;
@@ -106,6 +108,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
 	case(state_reg)
     Reset:
       begin
+		  statusReg <= 0;
         writeRequest <= 0;
         readRequest <= 0;
 		  busControl <= 0;
@@ -130,7 +133,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
 				end else
 					busControl <= 0;
 			end
-			StatusReg[0] < ControlReg[0];
+			statusReg[0] <= ControlReg[0];
 		end			
     BusAddressReq: 
       begin
@@ -199,8 +202,8 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
 				
     BusReadReq:
       if (!nChipEnable) begin
-		  busControl[1] <= 1;
-        state_next <= MstReadReq;
+			busControl[1] <= 1;
+			state_next <= MstReadReq;
       end else
 		state_next <= Idle;
         
@@ -267,8 +270,9 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
     
     BusWriteReq:
       if (!nChipEnable) begin
-		  busControl[2] <= 1;
-				// TODO: wait on pending interrupts
+			busControl[2] <= 1;
+
+			// TODO: wait on pending interrupts
         
         // Put data to write in bus data register
         // TODO: byte strobing
@@ -343,7 +347,18 @@ end
   assign ip2bus_mstwr_req = writeRequest;
   assign ip2bus_mstwr_d = mstData;
   
-  assign BusControlReadReg = busControl;
+  assign StatusReg = statusReg;
+  
+generate
+	if (C_CTRL_WIDTH == 1)
+		assign BusControlReadReg = busControl[0];
+	else if (C_CTRL_WIDTH == 2) begin
+		assign BusControlReadReg = { busControl[1], busControl[0] }; 
+	end else if (C_CTRL_WIDTH == 3) begin
+		assign BusControlReadReg = { busControl[2], busControl[1], busControl[0] }; 
+	end
+endgenerate
+  
   assign BusAddressReadReg = busAddress;
   assign BusDataReadReg = busData;
   

@@ -10,6 +10,7 @@
 #include "xparameters.h"
 #include "xgpio.h"
 #include "xil_exception.h"
+#include "xil_assert.h"
 
 #include "xintc.h"
 

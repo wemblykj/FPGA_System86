@@ -40,7 +40,7 @@ library axi_ttl_memory_bus_v1_00_a;
 entity axi_ttl_memory_bus_core is
     generic
     (
-	   C_CTRL_WIDTH 			: integer range 2 to 3 := 3;
+	   C_CTRL_WIDTH 			: integer range 1 to 3 := 3;
       C_ADDR_WIDTH 				: integer range 4 to 16 := 16;
       C_DATA_WIDTH 				: integer range 4 to 8 := 8;
       C_MAPPED_BASEADDR        	: std_logic_vector     	:= X"FFFFFFFF";
@@ -193,7 +193,7 @@ architecture Behavioral of axi_ttl_memory_bus_core is
 
 component axi_ttl_memory_bus_master
     generic(
-      C_CTRL_WIDTH        : integer range 2 to 3   := 3;
+      C_CTRL_WIDTH        : integer range 1 to 3   := 3;
       C_ADDR_WIDTH        : integer range 4 to 16  := 16;
       C_DATA_WIDTH        : integer range 4 to 8   := 8;
 	   C_MST_AWIDTH 		  : integer 			      := 32;

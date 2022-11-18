@@ -55,7 +55,7 @@ module xsystem86
 		
 		// == Simulation outputs
 		output wire vid_clk,
-		output wire [11:0] vid_data,
+		//output wire [11:0] vid_data,
 		output wire [3:0] vid_red,
 		output wire [3:0] vid_green,
 		output wire [3:0] vid_blue,
@@ -74,18 +74,19 @@ module xsystem86
 		output wire [3:0] conn_j2_blue,
 
 		// == External boards connectors
-		inout wire [1:20] conn_j5,			// 20 pin
-		inout wire [1:40] conn_j34p,		// 40 pin
+		//inout wire [1:20] conn_j5,			// 20 pin
+		//inout wire [1:40] conn_j34p,		// 40 pin
 		
 		// == Pluggable CPUs
-		`MC6809_INPUT_DEFS(E, mcpu_11a),		// 6809 - master cpu
+		/*`MC6809_INPUT_DEFS(E, mcpu_11a),		// 6809 - master cpu
 		`MC6809_INPUT_DEFS(E, scpu_9a),			// 6809 - sub cpu
+		*/
 		
 		// == Pluggable proms
 		
-		`PROM_OUTPUT_DEFS(MB7124, prom_3r),			// 7124 - 20 pin DIP/DIL
+		/*`PROM_OUTPUT_DEFS(MB7124, prom_3r),			// 7124 - 20 pin DIP/DIL
 		`PROM_OUTPUT_DEFS(MB7116, prom_3s), 		// 7116 - 16 pin DIP/DIL		
-		/*`PROM_OUTPUT_DEFS(MB7138, prom_4v),			// 7138
+		`PROM_OUTPUT_DEFS(MB7138, prom_4v),			// 7138
 		`PROM_OUTPUT_DEFS(MB7138, prom_5v),			// 7138
 		`PROM_OUTPUT_DEFS(MB7112, prom_6u),			// 7112
 		*/
@@ -93,8 +94,9 @@ module xsystem86
 		// PROG
 		`EPROM_OUTPUT_DEFS(M27256, eprom_9c),
 		`EPROM_OUTPUT_DEFS(M27256, eprom_9d),
-		`EPROM_OUTPUT_DEFS(M27256, eprom_12c),
+		`EPROM_OUTPUT_DEFS(M27256, eprom_12c)/*,
 		`EPROM_OUTPUT_DEFS(M27256, eprom_12d)
+		*/
 		
 		// GFX
 		/*`EPROM_OUTPUT_DEFS(M27512, eprom_7r),
@@ -138,7 +140,7 @@ module xsystem86
 			.clk_48m(clk_48m), 
 			.rst_n(sync_rst_n),
 			.vid_clk(vid_clk),
-			.vid_data(vid_data),
+			//.vid_data(vid_data),
 			.vid_red(vid_red),
 			.vid_green(vid_green),
 			.vid_blue(vid_blue),
@@ -152,26 +154,29 @@ module xsystem86
 			.conn_j2_green(conn_j2_green),
 			.conn_j2_blue(conn_j2_blue),
 			
-			.conn_j5(conn_j5),
-			.conn_j34p(conn_j34p),
+			//.conn_j5(conn_j5),
+			//.conn_j34p(conn_j34p),
 			
-			`MC6809_CONNECTION_DEFS(mcpu_11a, mcpu_11a),
+			/*`MC6809_CONNECTION_DEFS(mcpu_11a, mcpu_11a),
 			`MC6809_CONNECTION_DEFS(scpu_9a, scpu_9a),
+			*/
 			
-			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
+			/*`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
 			`PROM_CONNECTION_DEFS(prom_3s, prom_3s),
 			
 			`PROM_CONNECTION_DEFS(prom_4v, prom_4v),
 			`PROM_CONNECTION_DEFS(prom_6u, prom_6u),
+			*/
 			
-			`EPROM_CONNECTION_DEFS(eprom_4r, eprom_4r),
+			/*`EPROM_CONNECTION_DEFS(eprom_4r, eprom_4r),
 			`EPROM_CONNECTION_DEFS(eprom_4s, eprom_4s),
 			`EPROM_CONNECTION_DEFS(eprom_7r, eprom_7r),
 			`EPROM_CONNECTION_DEFS(eprom_7s, eprom_7s),
+			*/
 			
 			`EPROM_CONNECTION_DEFS(eprom_9c, eprom_9c),
 			`EPROM_CONNECTION_DEFS(eprom_9d, eprom_9d),
-			`EPROM_CONNECTION_DEFS(eprom_12c, eprom_12c),
+			`EPROM_CONNECTION_DEFS(eprom_12c, eprom_12c)/*,
 			`EPROM_CONNECTION_DEFS(eprom_12d, eprom_12d),
 			
 			`SRAM_CONNECTION_DEFS(sram_4n, sram_4n),
@@ -179,6 +184,7 @@ module xsystem86
 			
 			`SRAM_CONNECTION_DEFS(sram_10m, sram_10m),
 			`SRAM_CONNECTION_DEFS(sram_11k, sram_11k)
+			*/
 		);
 		
 endmodule

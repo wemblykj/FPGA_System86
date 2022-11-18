@@ -403,7 +403,7 @@ u16 XTtlMemBus_ReadBus(XTtlMemBus *InstancePtr, u32 RegOffset, XTtlMemBus_BusAtt
 *****************************************************************************/
 void XTtlMemBus_SetBusAddress(XTtlMemBus *InstancePtr, u32 BusAddress)
 {
-	WriteBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, InstancePtr->AddrBusAttr, BusAddress);
+	XTtlMemBus_WriteBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, &InstancePtr->AddrBusAttr, BusAddress);
 }
 
 /****************************************************************************/
@@ -417,7 +417,7 @@ void XTtlMemBus_SetBusAddress(XTtlMemBus *InstancePtr, u32 BusAddress)
 *****************************************************************************/
 u32 XTtlMemBus_GetBusAddress(XTtlMemBus *InstancePtr)
 {
-	return ReadBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, InstancePtr->AddrBusAttr);
+	return XTtlMemBus_ReadBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, &InstancePtr->AddrBusAttr);
 }
 
 /****************************************************************************/
@@ -435,7 +435,7 @@ u32 XTtlMemBus_GetBusAddress(XTtlMemBus *InstancePtr)
 *****************************************************************************/
 void XTtlMemBus_SetBusData(XTtlMemBus *InstancePtr, u32 BusData)
 {
-	WriteBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, InstancePtr->DataBusAttr, BusData);
+	XTtlMemBus_WriteBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, &InstancePtr->DataBusAttr, BusData);
 }
 
 /****************************************************************************/
@@ -449,7 +449,7 @@ void XTtlMemBus_SetBusData(XTtlMemBus *InstancePtr, u32 BusData)
 *****************************************************************************/
 u32 XTtlMemBus_GetBusData(XTtlMemBus *InstancePtr)
 {
-	return ReadBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, InstancePtr->DataBusAttr);
+	return XTtlMemBus_ReadBus(InstancePtr, XTTLMEMBUS_BUS_OFFSET, &InstancePtr->DataBusAttr);
 }
 
 /****************************************************************************/
@@ -785,8 +785,6 @@ void XTtlMemBus_DumpRegisters(XTtlMemBus *InstancePtr)
 		XTtlMemBus_ReadReg(RegBase, XTTLMEMBUS_LINE_FAULT_ENABLE_OFFSET));
 	xil_printf("Base address: %x\r\n",
 		XTtlMemBus_ReadReg(RegBase, XTTLMEMBUS_BASEADDRESS_OFFSET));
-
-	return;
 }
 
 /****************************************************************************/
@@ -814,13 +812,13 @@ XTtlMemBus *XTtlMemBus_GetInstance(u16 DeviceId)
 {
     TtlMemBusInfo * DeviceInfo;
 
-    DeviceInfo = LookupDriver((Xuint16)DeviceId);
+    DeviceInfo = LookupDevice((Xuint16)DeviceId);
     if (DeviceInfo == NULL)
     {
         return XNULL;
     }
 
-    return DeviceInfo->TtlMemBus;
+    return &DeviceInfo->TtlMemBus;
 }
 
 int XTtlMemBus_DeviceInitialize(u16 DeviceId)
@@ -835,12 +833,10 @@ int XTtlMemBus_DeviceInitialize(u16 DeviceId)
     DeviceInfoPtr = LookupDevice(DeviceId);
     if (DeviceInfoPtr == NULL)
     {
-        /* No more room based on the number of ACE controllers in the system */
-        (void)errnoSet(ENODEV);
-        return ERROR;
+        return XST_DEVICE_NOT_FOUND;
     }
 	
-	Result = XTtlMemBus_Initialize(DeviceInfoPtr->TtlMemBus, DeviceId);
+	Result = XTtlMemBus_Initialize(&DeviceInfoPtr->TtlMemBus, DeviceId);
 	if (Result != XST_SUCCESS) {
 		return Result;
 	}
@@ -886,7 +882,7 @@ static TtlMemBusInfo *LookupDevice(u16 DeviceId)
 
     for (i=0; i < XPAR_XTTLMEMBUS_NUM_INSTANCES; i++)
     {
-		if (TtlMemBusInfo[i].Used) 
+		if (TtlMemBusDevice[i].Used) 
 		{
 			if (DeviceId == TtlMemBusDevice[i].DeviceId)
 			{
@@ -900,7 +896,7 @@ static TtlMemBusInfo *LookupDevice(u16 DeviceId)
 			 * Keep track of the first entry in the table that is unused. We
 			 * base the unused on the number of partitions set for the device.
 			 */
-			UnusedPtr = TtlMemBusDevice[i];
+			UnusedPtr = &TtlMemBusDevice[i];
 		}  
     }
 
