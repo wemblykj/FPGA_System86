@@ -49,6 +49,13 @@
 		<tip>PROM (/wo OE)or EPROM (/w OE)</tip>
 	</widget>
 	'>
+	<!ENTITY C_BUS_TYPE '
+	<widget id="C_BUS_TYPE">
+		<key>C_BUS_TYPE</key>
+		<label>The external interface type</label>
+		<tip>Either BUS or IO</tip>
+	</widget>
+	'>
 	<!ENTITY C_MAPPED_BASEADDR '
 	<widget id="C_MAPPED_BASEADDR">
 		<key>C_MAPPED_BASEADDR</key>
@@ -204,6 +211,10 @@
 			<item>&C_MEM_TYPE;</item>
 			<item>&C_RAM_TYPE;</item>
 			<item>&C_ROM_TYPE;</item>			
+		</group>
+		<group id="Interfacing">
+			<display>Interfacing</display>
+			<item>&C_BUS_TYPE;</item>
 		</group>
 		<group id="Mapping">
 			<display>AXI Memory Mapping</display>	

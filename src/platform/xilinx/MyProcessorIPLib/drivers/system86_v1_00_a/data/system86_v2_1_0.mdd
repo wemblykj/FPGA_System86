@@ -1,0 +1,19 @@
+##############################################################################
+#
+# (c) Copyright 2021 Paul Wightmore. All rights reserved.
+#
+##############################################################################
+
+OPTION psf_version = 2.1;
+
+BEGIN driver system86
+
+  OPTION supported_peripherals = (axi_system86);
+  OPTION driver_state = ACTIVE;
+  OPTION depends = (common_v1_00_a);
+  OPTION copyfiles = all;
+
+ BEGIN INTERFACE linux
+ END INTERFACE
+ 
+END driver

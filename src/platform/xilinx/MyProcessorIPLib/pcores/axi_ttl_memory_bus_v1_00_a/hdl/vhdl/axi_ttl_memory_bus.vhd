@@ -261,7 +261,9 @@ entity axi_ttl_memory_bus is
 	C_CTRL_WIDTH : integer range 1 to 3 := 3;
     C_ADDR_WIDTH : integer range 4 to 16 := 16;
     C_DATA_WIDTH : integer range 4 to 8 := 8;
-
+	
+	-- Interfacing
+	C_BUS_TYPE : integer range 0 to 1      	    := 0;
     -- Mapping generics
     C_MAPPED_BASEADDR : std_logic_vector := X"FFFFFFFF";
 	C_MAPPED_SIZE : std_logic_vector := X"00000000";
@@ -358,10 +360,13 @@ entity axi_ttl_memory_bus is
     nOutputEnable : in std_logic;
     nWriteEnable : in std_logic;
     Address : in std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
-    Data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0);
+	 DataIn : in std_logic_vector((C_DATA_WIDTH - 1) downto 0);
+	 DataOut : out std_logic_vector((C_DATA_WIDTH - 1) downto 0);
+    DataT : in std_logic  
+	 
+
 	 
     -- Mapping
-    MappedAddress            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0)
   );
 
   -------------------------------------------------------------------------------
@@ -601,6 +606,9 @@ signal busDataReadReg : std_logic_vector(C_DATA_WIDTH-1 downto 0);
 -- Data bus update
 signal busDataWriteReg : std_logic_vector(C_DATA_WIDTH-1 downto 0);
 
+-- Data interface
+signal data : std_logic_vector(C_DATA_WIDTH-1 downto 0);
+
 -- Interrupt
 --signal addrReqIntrEvent     : std_logic;
 --signal dataReadIntrEvent     : std_logic;
@@ -712,7 +720,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
         Bus2IP_WrCE    => bus2ip_wrce
        );
 
-
+	
 
     ip2bus_data_i   <= intr2bus_data or ip2bus_data;
     
@@ -931,6 +939,9 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
 -- Instantiate the AXI memory bus master
 ------------------------------------------------------------------------
 
+	 data    <= DataIn when DataT = '1' else (others => 'Z');
+	 DataOut <= data;
+
     Inst_AxiBusCore: entity axi_ttl_memory_bus_v1_00_a.axi_ttl_memory_bus_core
     generic map(
 	     C_CTRL_WIDTH            => C_CTRL_WIDTH,
@@ -949,7 +960,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
         nOutputEnable			  => nOutputEnable,
         nWriteEnable			     => nWriteEnable,
         Address					  => Address,
-        Data					     => Data,
+        Data					     => data,
         MappedAddress           => mappedAddressReg,
         	
         ControlReg				  => controlReg,
