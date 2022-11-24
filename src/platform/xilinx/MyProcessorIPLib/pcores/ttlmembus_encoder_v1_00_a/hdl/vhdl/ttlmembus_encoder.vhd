@@ -97,7 +97,7 @@ entity ttlmembus_encoder is
 	--Family Generics
 	C_XLNX_REF_BOARD : string := "NONE";
 	C_FAMILY : string := "virtex6";
-	C_INSTANCE : string := "ttlmembus_encoder_inst";
+	C_INSTANCE : string := "ttlmembus_encoder_inst"
   );
   port (
 	-- ROM ports

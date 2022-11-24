@@ -360,7 +360,7 @@ entity axi_ttl_memory_bus is
     nOutputEnable : in std_logic;
     nWriteEnable : in std_logic;
     Address : in std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
-    Data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0);
+    Data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0)
   );
 
   -------------------------------------------------------------------------------
@@ -599,9 +599,6 @@ signal busAddressWriteReg : std_logic_vector(C_ADDR_WIDTH-1 downto 0);
 signal busDataReadReg : std_logic_vector(C_DATA_WIDTH-1 downto 0);
 -- Data bus update
 signal busDataWriteReg : std_logic_vector(C_DATA_WIDTH-1 downto 0);
-
--- Data interface
-signal data : std_logic_vector(C_DATA_WIDTH-1 downto 0);
 
 -- Interrupt
 --signal addrReqIntrEvent     : std_logic;
