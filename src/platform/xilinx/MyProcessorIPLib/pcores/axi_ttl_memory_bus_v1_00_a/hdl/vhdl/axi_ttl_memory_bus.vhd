@@ -360,13 +360,7 @@ entity axi_ttl_memory_bus is
     nOutputEnable : in std_logic;
     nWriteEnable : in std_logic;
     Address : in std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
-	 DataIn : in std_logic_vector((C_DATA_WIDTH - 1) downto 0);
-	 DataOut : out std_logic_vector((C_DATA_WIDTH - 1) downto 0);
-    DataT : in std_logic  
-	 
-
-	 
-    -- Mapping
+    Data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0);
   );
 
   -------------------------------------------------------------------------------
@@ -926,7 +920,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
         
         Bus2IP_Clk              => bus2ip_clk,
         Bus2IP_Resetn           => bus2ip_resetn,
-		  Bus2IP_Data             => bus2ip_data,
+	  Bus2IP_Data             => bus2ip_data,
         Bus2IP_BE               => bus2ip_be,
         Bus2IP_RdCE             => bus2ip_rdce(0 to IP_NUM_REG-1),
         Bus2IP_WrCE             => bus2ip_wrce(0 to IP_NUM_REG-1),
@@ -938,9 +932,6 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
 ------------------------------------------------------------------------
 -- Instantiate the AXI memory bus master
 ------------------------------------------------------------------------
-
-	 data    <= DataIn when DataT = '1' else (others => 'Z');
-	 DataOut <= data;
 
     Inst_AxiBusCore: entity axi_ttl_memory_bus_v1_00_a.axi_ttl_memory_bus_core
     generic map(
@@ -960,7 +951,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
         nOutputEnable			  => nOutputEnable,
         nWriteEnable			     => nWriteEnable,
         Address					  => Address,
-        Data					     => data,
+        Data					     => Data,
         MappedAddress           => mappedAddressReg,
         	
         ControlReg				  => controlReg,

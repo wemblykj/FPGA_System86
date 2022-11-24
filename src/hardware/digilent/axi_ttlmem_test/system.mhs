@@ -38,7 +38,7 @@
  PORT DIP_Switches_CE_TRI_I = DIP_Switches_CE_TRI_I, DIR = I
  PORT Push_Buttons_OE_TRI_I = Push_Buttons_OE_TRI_I, DIR = I
  PORT Push_Buttons_WE_TRI_I = Push_Buttons_WE_TRI_I, DIR = I
- PORT LEDs_D_TRI_O = test_rom_DataOut_0, DIR = O, VEC = [0:3]
+ PORT LEDs_D_TRI_O = test_rom_encoder_0_D_O, DIR = O, VEC = [0:3]
 
 
 BEGIN proc_sys_reset
@@ -256,16 +256,24 @@ BEGIN axi_ttl_memory_bus
  PARAMETER C_INTERRUPT_PRESENT = 1
  PARAMETER C_BASEADDR = 0x7d600000
  PARAMETER C_HIGHADDR = 0x7d60ffff
- PARAMETER C_BUS_TYPE = 1
  BUS_INTERFACE M_AXI = axi4_0
  BUS_INTERFACE S_AXI = axi4lite_0
+ BUS_INTERFACE S_ROM = test_rom_encoder_0_M_ROM
  PORT S_AXI_ACLK = clk_100_0000MHzPLL0
  PORT M_AXI_ACLK = clk_100_0000MHzPLL0
  PORT IP2INTC_Irpt = test_rom_IP2INTC_Irpt
- PORT nCE = DIP_Switches_CE_TRI_I
+END
+
+BEGIN ttlmembus_encoder
+ PARAMETER INSTANCE = test_rom_encoder_0
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_ADDR_WIDTH = 4
+ PARAMETER C_DATA_WIDTH = 4
+ PARAMETER C_MEM_TYPE = 1
+ BUS_INTERFACE M_ROM = test_rom_encoder_0_M_ROM
  PORT A = DIP_Switches_A_TRI_I
  PORT D_I = DIP_Switches_D_TRI_I
- PORT D_T = Push_Buttons_WE_TRI_I
- PORT D_O = test_rom_DataOut_0
+ PORT D_O = test_rom_encoder_0_D_O
+ PORT nCE = DIP_Switches_CE_TRI_I
 END
 

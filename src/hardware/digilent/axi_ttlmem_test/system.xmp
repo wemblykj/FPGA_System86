@@ -3,6 +3,7 @@ XmpVersion: 14.7
 VerMgmt: 14.7
 IntStyle: default
 Flow: ise
+ModuleSearchPath: /home/paul/development/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/axi_ttl_memory_bus_v1_00_a/../../../
 ModuleSearchPath: /home/wembly/development/github/wemblykj/FPGA/FPGA_System86/src/platform/xilinx
 MHS File: system.mhs
 Architecture: spartan6
