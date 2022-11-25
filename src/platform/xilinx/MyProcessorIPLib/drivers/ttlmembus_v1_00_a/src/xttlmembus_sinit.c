@@ -66,7 +66,7 @@ XTtlMemBus_Config *XTtlMemBus_LookupConfig(u16 DeviceId)
 
 	int Index;
 
-	for (Index = 0; Index < XPAR_XGPIO_NUM_INSTANCES; Index++) {
+	for (Index = 0; Index < XPAR_XTTLMEMBUS_NUM_INSTANCES; Index++) {
 		if (XTtlMemBus_ConfigTable[Index].DeviceId == DeviceId) {
 			CfgPtr = &XTtlMemBus_ConfigTable[Index];
 			break;

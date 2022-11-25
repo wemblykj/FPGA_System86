@@ -31,13 +31,11 @@ proc gen_include_files {swproj mhsinst} {
     if {$swproj == 1} {
         set ttlmembus_intr [get_intr $mhsinst]
         
-		if { ${ttlmembus_intr} == 1 } {
+	if { ${ttlmembus_intr} == 1 } {
             set inc_file_lines {xbasic_types.h xttlmembus.h ttlmembus_header.h ttlmembus_intr_header.h}
         } else {
-            set inc_file_lines {xbasic_types.h xttlmembus.h gpio_header.h}
+            set inc_file_lines {xbasic_types.h xttlmembus.h ttlmembus_header.h}
         }
-        
-        
         
         return $inc_file_lines
     }
@@ -56,7 +54,6 @@ proc gen_src_files {swproj mhsinst} {
             set inc_file_lines {examples/xttlmembus_tapp_example.c data/ttlmembus_header.h}
         }
         return $inc_file_lines
-
     }
 }
 
@@ -89,8 +86,8 @@ proc gen_init_code {swproj mhsinst} {
         set ttlmembus_intr [get_intr $mhsinst]
         set ipname [xget_value $mhsinst "NAME"]
         
-        if { ${ttlmembus_intr} == 1 && ${all_inputs} == 1 } {
-            set decl "   static XTtlMemBus ${ipname}_XTtlMemBus;"
+        if { ${ttlmembus_intr} == 1 } {
+            set decl "   static XTtlMemBus ${ipname}_TtlMemBus;"
             set inc_file_lines $decl
             return $inc_file_lines
         } else {
@@ -108,10 +105,9 @@ proc gen_testfunc_call {swproj mhsinst} {
     set ipname [xget_value $mhsinst "NAME"]
     set deviceid [xget_name $mhsinst "DEVICE_ID"]
     set hasStdout [xhas_stdout $mhsinst]
-    set gpio_width [xget_value $mhsinst "PARAMETER" "C_GPIO_WIDTH"]
     set ttlmembus_intr [get_intr $mhsinst]
         
-    if { ${ttlmembus_intr} == 1 && ${all_inputs} == 1 } {
+    if { ${ttlmembus_intr} == 1 } {
         set mhsHandle [xget_hw_parent_handle $mhsinst]
         set retMhsInst [xget_intc $mhsHandle] 
         set intcname [xget_value $retMhsInst "NAME"]
@@ -120,29 +116,13 @@ proc gen_testfunc_call {swproj mhsinst} {
     set testfunc_call ""
     
     if {${hasStdout} == 0} {
-        
-        switch ${all_inputs} {
-            0       { 
-                append testfunc_call "
+        append testfunc_call "
 
    {
       int status;
       
       status = TtlMemBusExample(${deviceid});
    }"
-            }
-            1       { 
-                append testfunc_call "
-
-   {
-      int status;
-	 
-      u32 DataRead;
-      
-      status = GpioInputExample(${deviceid}, &DataRead);
-   }"
-            }
-            default { return "" }
         }
         
         
@@ -156,97 +136,60 @@ proc gen_testfunc_call {swproj mhsinst} {
     {
        int Status;
 	
-       u32 DataRead;
-   
-       Status = GpioIntrExample(&${intcvar}, &${ipname}_Gpio, \\
+       Status = TtlMemBusIntrExample(&${intcvar}, &${ipname}_TtlMemBus, \\
                                 ${deviceid}, \\
                                 ${intr_id}, \\
-                                ${intr_mask}, &DataRead);
+                                ${intr_mask});
     }"  
         }
         
-    }
     if {${hasStdout} == 1} {
         
-        switch ${all_inputs} {
-            0       { 
-                append testfunc_call "
+        append testfunc_call "
 
    {
       u32 status;
       
-      print(\"\\r\\nRunning GpioOutputExample() for ${ipname}...\\r\\n\");
+      print(\"\\r\\nRunning TTlMemBusExample() for ${ipname}...\\r\\n\");
 
-      status = GpioOutputExample(${deviceid},${gpio_width});
+      status = TtlMemBusExample(${deviceid});
       
       if (status == 0) {
-         print(\"GpioOutputExample PASSED.\\r\\n\");
+         print(\"TtlMemBusExample PASSED.\\r\\n\");
       }
       else {
-         print(\"GpioOutputExample FAILED.\\r\\n\");
+         print(\"TtlMemBusExample FAILED.\\r\\n\");
       }
    }"
-            }
-            1       { 
-                append testfunc_call "
-
-   {
-      u32 status;
-      
-      print(\"\\r\\nRunning GpioInputExample() for ${ipname}...\\r\\n\");
-
-      u32 DataRead;
-      
-      status = GpioInputExample(${deviceid}, &DataRead);
-      
-      if (status == 0) {
-         xil_printf(\"GpioInputExample PASSED. Read data:0x%X\\r\\n\", DataRead);
-      }
-      else {
-         print(\"GpioInputExample FAILED.\\r\\n\");
-      }
-   }"
-            }
-            default { return "" }
         }
         
         
-        if { ${ttlmembus_intr} == 1 && ${all_inputs} == 1 } {
-            set intr_id "XPAR_${intcname}_${ipname}_IP2INTC_IRPT_INTR"
-            if { ${gpio_isdual} == 1 } {
-                set intr_mask "GPIO_CHANNEL1 | GPIO_CHANNEL2"
-            } else {
-                set intr_mask "GPIO_CHANNEL1"
-            }
-            set intr_id [string toupper $intr_id]
-            set intr_mask [string toupper $intr_mask]
-            append testfunc_call "
+    if { ${ttlmembus_intr} == 1 } {
+        set intr_id "XPAR_${intcname}_${ipname}_IP2INTC_IRPT_INTR"
+        set intr_mask "TTLMEMBUS_ADDR | TTLMEMBUS_DATA_READ | TTLMEMBUS_DATA_WRITE"
+        set intr_id [string toupper $intr_id]
+        set intr_mask [string toupper $intr_mask]
+        append testfunc_call "
    {
       
       int Status;
         
-      u32 DataRead;
+      print(\" Press CE & OE buttons to Generate Interrupt\\r\\n\");
       
-      print(\" Press button to Generate Interrupt\\r\\n\");
-      
-      Status = GpioIntrExample(&${intcvar}, &${ipname}_Gpio, \\
+      Status = TtlMemBusIntrExample(&${intcvar}, &${ipname}_Gpio, \\
                                ${deviceid}, \\
                                ${intr_id}, \\
-                               ${intr_mask}, &DataRead);
+                               ${intr_mask});
 	
       if (Status == 0 ){
-             if(DataRead == 0)
-                print(\"No button pressed. \\r\\n\");
-             else
-                print(\"Gpio Interrupt Test PASSED. \\r\\n\"); 
+         print(\"TtlMemBus Interrupt Test PASSED. \\r\\n\"); 
       } 
       else {
-         print(\"Gpio Interrupt Test FAILED.\\r\\n\");
+         print(\"TtlMemBus Interrupt Test FAILED.\\r\\n\");
       }
 	
    }"  
         }
-    }
     
     return $testfunc_call
 }

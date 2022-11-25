@@ -7,6 +7,7 @@
 * Driver stub based on GPIO driver
 *
 *****************************************************************************/
+
 int XTtlMemBus_SelfTest(XTtlMemBus * InstancePtr)
 {
 	Xil_AssertNonvoid(InstancePtr != NULL);
