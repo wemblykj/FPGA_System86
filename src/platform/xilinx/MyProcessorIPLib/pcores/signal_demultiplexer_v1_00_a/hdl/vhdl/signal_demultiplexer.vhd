@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
--- signal_multiplexer.vhd - entity/architecture pair
+-- signal_demultiplexer.vhd - entity/architecture pair
 ------------------------------------------------------------------------------
 -- IMPORTANT:
 -- DO NOT MODIFY THIS FILE EXCEPT IN THE DESIGNATED SECTIONS.
@@ -32,7 +32,7 @@
 -- ***************************************************************************
 --
 ------------------------------------------------------------------------------
--- Filename:          signal_multiplexer.vhd
+-- Filename:          signal_demultiplexer.vhd
 -- Version:           1.00.a
 -- Description:       Top level design, instantiates library components and user logic.
 -- Date:              Wed Mar 20 13:15:10 2019 (by Create and Import Peripheral Wizard)
@@ -65,10 +65,10 @@ use ieee.std_logic_misc.all;
 use std.textio.all;
 
 -------------------------------------------------------------------------------
--- signal_multiplexer_v1_00_a library is used for signal_multiplexer component declarations
+-- signal_demultiplexer_v1_00_a library is used for signal_demultiplexer component declarations
 -------------------------------------------------------------------------------
 
-library signal_multiplexer_v1_00_a;
+library signal_demultiplexer_v1_00_a;
 
 
 -------------------------------------------------------------------------------
@@ -87,26 +87,26 @@ library signal_multiplexer_v1_00_a;
 
 ------------------------------------------------------------------------------
 
-entity signal_multiplexer is
+entity signal_demultiplexer is
   generic (
 	-- ROM generics
 	C_BUS_WIDTH : integer range 1 to 32 := 1;
-	C_NUM_PORTS : integer range 2 to 4 := 1;
+	C_NUM_PORTS : integer range 1 to 4 := 1;
 	C_SEL_WIDTH : integer range 1 to 2 := 1;
 	
 	--Family Generics
 	C_XLNX_REF_BOARD : string := "NONE";
 	C_FAMILY : string := "virtex6";
-	C_INSTANCE : string := "signal_multiplexer_inst"
+	C_INSTANCE : string := "signal_demultiplexer_inst"
   );
   port (
 	nCE		: in std_logic;
 	S		: in std_logic_vector((C_SEL_WIDTH - 1) downto 0);
 	A		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
-	B		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
-	C		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
-	D		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
-	Y		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0);
+	Y0		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0);
+	Y1		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0);
+	Y2		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0);
+	Y3		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0);
   );
 
   -------------------------------------------------------------------------------
@@ -119,16 +119,16 @@ entity signal_multiplexer is
   -- Attributes for MPD file
   -------------------------------------------------------------------------------
   attribute IP_GROUP : string;
-  attribute IP_GROUP of signal_multiplexer : entity is "LOGICORE";
+  attribute IP_GROUP of signal_demultiplexer : entity is "LOGICORE";
   attribute SIGIS : string;
 
-end entity signal_multiplexer;
+end entity signal_demultiplexer;
 
 ------------------------------------------------------------------------------
 -- Architecture section
 ------------------------------------------------------------------------------
 
-architecture IMP of signal_multiplexer is
+architecture IMP of signal_demultiplexer is
 
 -------------------------------------------------------------------------------
 -- constant added for webtalk information
@@ -162,7 +162,7 @@ function str(slv: std_logic_vector) return string is
      return result;
    end str;
 
-  constant C_CORE_GENERATION_INFO : string := C_INSTANCE & ",signal_multiplexer,{"
+  constant C_CORE_GENERATION_INFO : string := C_INSTANCE & ",signal_demultiplexer,{"
     & "C_FAMILY = "              &  C_FAMILY
     & ",C_INSTANCE = "           &  C_INSTANCE
     & ",C_BUS_WIDTH = "          & integer'image(C_BUS_WIDTH)
@@ -189,6 +189,18 @@ function str(slv: std_logic_vector) return string is
 
 begin -- architecture IMP
 
-	Y		<= 	(A when S = '0' else B) when nCE = '0' else (others => 'Z');
+	Y0		<= 	A when S = '0' else (others => '0');
+
+	g_PORT_2 : if C_NUM_PORTS >= 1 generate 
+		Y1		<= 	A when S = '1' else (others => '0');
+	end generate g_PORT_2
+	 
+	g_PORT_3 : if C_NUM_PORTS >= 1 generate 
+		Y2		<= 	A when S = '2' else (others => '0');
+	end generate g_PORT_3
+	 
+	g_PORT_4 : if C_NUM_PORTS >= 1 generate 
+		Y3		<= 	A when S = '3' else (others => '0');
+	end generate g_PORT_4
 	 
 end imp;

@@ -7,9 +7,9 @@
 		<tip>The width of the signal bus</tip>
 	</widget>
 	'>
-	<!ENTITY C_NUM_INPUTS '
-	<widget id="C_NUM_INPUTS">
-		<key>C_NUM_INPUTS</key>
+	<!ENTITY C_NUM_PORTS '
+	<widget id="C_NUM_PORTS">
+		<key>C_NUM_PORTS</key>
 		<label>Number of Inputs</label>
 		<tip>The number of input busses</tip>
 	</widget>
@@ -43,7 +43,7 @@
 		<group id="Characteristics">
 			<display>Characteristics</display>
 			<item>&C_BUS_WIDTH;</item>
-			<item>&C_NUM_INPUTS;</item>
+			<item>&C_NUM_PORTS;</item>
 			<item>&C_SEL_WIDTH;</item>		
 		</group>
 	</view>
