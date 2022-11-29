@@ -12,8 +12,8 @@ BEGIN signal_demultiplexer
 OPTION IPTYPE = PERIPHERAL
 OPTION IMP_NETLIST = TRUE
 OPTION HDL = VHDL
-OPTION DESC = Signal Multiplexer 
-OPTION LONG_DESC = A configurable multi-port signal bus multiplexer
+OPTION DESC = Signal Demultiplexer 
+OPTION LONG_DESC = A configurable multi-port signal bus demultiplexer
 OPTION ARCH_SUPPORT_MAP = (others=DEVELOPMENT)
 OPTION IP_GROUP = WemblyKJ:Logic
 OPTION USAGE_LEVEL = BASE_USER

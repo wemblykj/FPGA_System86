@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
--- signal_multiplexer.vhd - entity/architecture pair
+-- bcd_line_decoder.vhd - entity/architecture pair
 ------------------------------------------------------------------------------
 -- IMPORTANT:
 -- DO NOT MODIFY THIS FILE EXCEPT IN THE DESIGNATED SECTIONS.
@@ -32,7 +32,7 @@
 -- ***************************************************************************
 --
 ------------------------------------------------------------------------------
--- Filename:          signal_multiplexer.vhd
+-- Filename:          bcd_line_decoder.vhd
 -- Version:           1.00.a
 -- Description:       Top level design, instantiates library components and user logic.
 -- Date:              Wed Mar 20 13:15:10 2019 (by Create and Import Peripheral Wizard)
@@ -65,10 +65,10 @@ use ieee.std_logic_misc.all;
 use std.textio.all;
 
 -------------------------------------------------------------------------------
--- signal_multiplexer_v1_00_a library is used for signal_multiplexer component declarations
+-- bcd_line_decoder_v1_00_a library is used for bcd_line_decoder component declarations
 -------------------------------------------------------------------------------
 
-library signal_multiplexer_v1_00_a;
+library bcd_line_decoder_v1_00_a;
 
 
 -------------------------------------------------------------------------------
@@ -87,26 +87,27 @@ library signal_multiplexer_v1_00_a;
 
 ------------------------------------------------------------------------------
 
-entity signal_multiplexer is
+entity bcd_line_decoder is
   generic (
-	-- ROM generics
-	C_BUS_WIDTH : integer range 1 to 32 := 1;
-	C_NUM_PORTS : integer range 2 to 4 := 1;
-	C_SEL_WIDTH : integer range 1 to 2 := 1;
+	-- generics
+	C_BCD_WIDTH : integer range 1 to 3 := 2;
 	
 	--Family Generics
 	C_XLNX_REF_BOARD : string := "NONE";
 	C_FAMILY : string := "virtex6";
-	C_INSTANCE : string := "signal_multiplexer_inst"
+	C_INSTANCE : string := "bcd_line_decoder_inst"
   );
   port (
-	nCE		: in std_logic;
-	S		: in std_logic_vector((C_SEL_WIDTH - 1) downto 0);
-	A		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
-	B		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
-	C		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
-	D		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
-	Y		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0);
+	A		: in std_logic_vector((C_BCD_WIDTH - 1) downto 0);
+	Y0		: out std_logic;
+	Y1		: out std_logic;
+	Y2		: out std_logic;
+	Y3		: out std_logic;
+	Y4		: out std_logic;
+	Y5		: out std_logic;
+	Y6		: out std_logic;
+	Y7		: out std_logic;
+	CO		: out std_logic;
   );
 
   -------------------------------------------------------------------------------
@@ -119,16 +120,16 @@ entity signal_multiplexer is
   -- Attributes for MPD file
   -------------------------------------------------------------------------------
   attribute IP_GROUP : string;
-  attribute IP_GROUP of signal_multiplexer : entity is "LOGICORE";
+  attribute IP_GROUP of bcd_line_decoder : entity is "LOGICORE";
   attribute SIGIS : string;
 
-end entity signal_multiplexer;
+end entity bcd_line_decoder;
 
 ------------------------------------------------------------------------------
 -- Architecture section
 ------------------------------------------------------------------------------
 
-architecture IMP of signal_multiplexer is
+architecture IMP of bcd_line_decoder is
 
 -------------------------------------------------------------------------------
 -- constant added for webtalk information
@@ -162,12 +163,10 @@ function str(slv: std_logic_vector) return string is
      return result;
    end str;
 
-  constant C_CORE_GENERATION_INFO : string := C_INSTANCE & ",signal_multiplexer,{"
+  constant C_CORE_GENERATION_INFO : string := C_INSTANCE & ",bcd_line_decoder,{"
     & "C_FAMILY = "              &  C_FAMILY
     & ",C_INSTANCE = "           &  C_INSTANCE
-    & ",C_BUS_WIDTH = "          & integer'image(C_BUS_WIDTH)
-    & ",C_NUM_PORTS = "         & integer'image(C_NUM_PORTS)
-    & ",C_SEL_WIDTH = "          & integer'image(C_SEL_WIDTH)
+    & ",C_BCD_WIDTH = "          & integer'image(C_BCD_WIDTH)
     & "}";
 
   attribute CORE_GENERATION_INFO : string;
@@ -189,20 +188,19 @@ function str(slv: std_logic_vector) return string is
 
 begin -- architecture IMP
 
-	#Y		<= 	(A when S = '0' else B) when nCE = '0' else (others => 'Z');
-	case S is
-		when "0" =>
-			Y <= A;
-		when "1" =>
-			Y <= B;
-		g_PORT_C : if C_NUM_PORTS > 2 generate
-			when "2" =>
-				Y <= C;
-		end generate g_PORT_C;
-		g_PORT_D : if C_NUM_PORTS > 3 generate
-			when "3" =>
-				Y <= D;
-		end generate g_PORT_D;
-	end case;
+	Y0		<= 	'1' when A = '0' else (others => '0');
+	Y1		<= 	'1' when A = '1' else (others => '0');
+	 
+	g_PORT_3 : if C_BCD_WIDTH >= 1 generate 
+		Y2		<= 	'1' when A = '2' else (others => '0');
+		Y3		<= 	'1' when A = '3' else (others => '0');
+	end generate g_PORT_3
+	 
+	g_PORT_4 : if C_BCD_WIDTH_PORTS >= 2 generate 
+		Y4		<= 	'1' when A = '4' else (others => '0');
+		Y5		<= 	'1' when A = '5' else (others => '0');
+		Y6		<= 	'1' when A = '6' else (others => '0');
+		Y7		<= 	'1' when A = '7' else (others => '0');
+	end generate g_PORT_4
 	 
 end imp;

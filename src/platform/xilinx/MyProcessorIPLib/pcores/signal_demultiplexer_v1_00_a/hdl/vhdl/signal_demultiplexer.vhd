@@ -191,9 +191,7 @@ begin -- architecture IMP
 
 	Y0		<= 	A when S = '0' else (others => '0');
 
-	g_PORT_2 : if C_NUM_PORTS >= 1 generate 
-		Y1		<= 	A when S = '1' else (others => '0');
-	end generate g_PORT_2
+	Y1		<= 	A when S = '1' else (others => '0');
 	 
 	g_PORT_3 : if C_NUM_PORTS >= 1 generate 
 		Y2		<= 	A when S = '2' else (others => '0');
