@@ -100,13 +100,13 @@ entity signal_multiplexer is
 	C_INSTANCE : string := "signal_multiplexer_inst"
   );
   port (
-	nCE		: in std_logic;
+	nE		: in std_logic;
 	S		: in std_logic_vector((C_SEL_WIDTH - 1) downto 0);
 	A		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
 	B		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
 	C		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
 	D		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
-	Y		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0);
+	Y		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0)
   );
 
   -------------------------------------------------------------------------------
@@ -179,6 +179,9 @@ function str(slv: std_logic_vector) return string is
 
   -------------------  Constant Declaration Section BEGIN -----------------------
 
+constant ZERO_SEL_PAD : std_logic_vector(C_SEL_WIDTH-1 downto 0) := (others => '0');
+constant ZERO_BUS_PAD : std_logic_vector(C_BUS_WIDTH-1 downto 0) := (others => '0');
+
   -------------------------------------------------------------------------------
   -- Signal and Type Declarations
   -------------------------------------------------------------------------------
@@ -189,20 +192,30 @@ function str(slv: std_logic_vector) return string is
 
 begin -- architecture IMP
 
-	#Y		<= 	(A when S = '0' else B) when nCE = '0' else (others => 'Z');
-	case S is
-		when "0" =>
-			Y <= A;
-		when "1" =>
-			Y <= B;
-		g_PORT_C : if C_NUM_PORTS > 2 generate
-			when "2" =>
-				Y <= C;
-		end generate g_PORT_C;
-		g_PORT_D : if C_NUM_PORTS > 3 generate
-			when "3" =>
-				Y <= D;
-		end generate g_PORT_D;
-	end case;
+	SIG_MULTIPLEX: 
+	process (nE, S) is
+	begin
+		if (nE = '1') then
+			Y <= ZERO_BUS_PAD;
+		else
+			case S is
+				when ZERO_SEL_PAD =>
+					Y <= A;
+				when ZERO_SEL_PAD(C_SEL_WIDTH-1 downto 1) & "1" =>
+					Y <= B;
+--					g_PORT_C : if C_NUM_PORTS > 2 generate
+--						when ZERO_SEL_PAD(C_SEL_WIDTH-1 downto 2) & "10" =>
+--							Y <= C;
+--					end generate g_PORT_C;
+--					g_PORT_D : if C_NUM_PORTS > 3 generate
+--						when ZERO_SEL_PAD(C_SEL_WIDTH-1 downto 2) & "11" =>
+--							Y <= D;
+--					end generate g_PORT_D;
+				-- coverage off
+            when others => null;
+            -- coverage on
+			end case;
+		end if;
+    end process SIG_MULTIPLEX; 
 	 
 end imp;

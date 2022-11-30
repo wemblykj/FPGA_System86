@@ -100,13 +100,12 @@ entity signal_demultiplexer is
 	C_INSTANCE : string := "signal_demultiplexer_inst"
   );
   port (
-	nCE		: in std_logic;
 	S		: in std_logic_vector((C_SEL_WIDTH - 1) downto 0);
 	A		: in std_logic_vector((C_BUS_WIDTH - 1) downto 0);
 	Y0		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0);
 	Y1		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0);
 	Y2		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0);
-	Y3		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0);
+	Y3		: out std_logic_vector((C_BUS_WIDTH - 1) downto 0)
   );
 
   -------------------------------------------------------------------------------
@@ -179,6 +178,8 @@ function str(slv: std_logic_vector) return string is
 
   -------------------  Constant Declaration Section BEGIN -----------------------
 
+constant ZERO_SEL_PAD : std_logic_vector(C_SEL_WIDTH-1 downto 0) := (others => '0');
+
   -------------------------------------------------------------------------------
   -- Signal and Type Declarations
   -------------------------------------------------------------------------------
@@ -189,16 +190,16 @@ function str(slv: std_logic_vector) return string is
 
 begin -- architecture IMP
 
-	Y0		<= 	A when S = '0' else (others => '0');
+	Y0		<= 	A when S = ZERO_SEL_PAD else (others => '0');
 
-	Y1		<= 	A when S = '1' else (others => '0');
+	Y1		<= 	A when S = ZERO_SEL_PAD & "1" else (others => '0');
 	 
 	g_PORT_3 : if C_NUM_PORTS >= 1 generate 
-		Y2		<= 	A when S = '2' else (others => '0');
-	end generate g_PORT_3
+		Y2		<= 	A when S = ZERO_SEL_PAD & "10" else (others => '0');
+	end generate g_PORT_3;
 	 
 	g_PORT_4 : if C_NUM_PORTS >= 1 generate 
-		Y3		<= 	A when S = '3' else (others => '0');
-	end generate g_PORT_4
-	 
+		Y3		<= 	A when S = ZERO_SEL_PAD & "11" else (others => '0');
+	end generate g_PORT_4;
+ 
 end imp;
