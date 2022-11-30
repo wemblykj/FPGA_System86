@@ -193,15 +193,15 @@ begin -- architecture IMP
 	Y1		<= 	'1' when A = (ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 1) & '1') else '0';
 	 
 	G_OUT_34 : if C_BCD_WIDTH >= 1 generate
-		Y2		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 2) & "10" else (others => '0');
-		Y3		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 2) & "11" else (others => '0');
-	end generate G_OUT_34
+		Y2		<= 	'1' when A = (ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 2)) & "10" else '0';
+		Y3		<= 	'1' when A = (ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 2)) & "11" else '0';
+	end generate G_OUT_34;
 	 
-	g_PORT_4 : if C_BCD_WIDTH_PORTS >= 2 generate 
-		Y4		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "100" else (others => '0');
-		Y5		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "101" else (others => '0');
-		Y6		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "110" else (others => '0');
-		Y7		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "111" else (others => '0');
-	end generate g_PORT_4
+	G_OUT_5678 : if C_BCD_WIDTH >= 2 generate 
+		Y4		<= 	'1' when A = (ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "100") else '0';
+		Y5		<= 	'1' when A = (ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "101") else '0';
+		Y6		<= 	'1' when A = (ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "110") else '0';
+		Y7		<= 	'1' when A = (ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "111") else '0';
+	end generate G_OUT_5678;
 	 
 end imp;
