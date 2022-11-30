@@ -347,3 +347,17 @@ BEGIN signal_multiplexer
  PARAMETER C_NUM_PORTS = 2
 END
 
+BEGIN bcd_counter
+ PARAMETER INSTANCE = function_select
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_BCD_WIDTH = 2
+ PORT Q = function_select_Q
+END
+
+BEGIN bcd_line_decoder
+ PARAMETER INSTANCE = function_decoder
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_BCD_WIDTH = 2
+ PORT A = function_select_Q
+END
+

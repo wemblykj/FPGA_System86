@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE doc SYSTEM "../../ipdialog.dtd" [
-	<!ENTITY C_BUS_WIDTH '
+	<!ENTITY C_BCD_WIDTH '
 	<widget id="C_BCD_WIDTH">
-		<key>C_BUS_WIDTH</key>
-		<label>Signal Bus Width</label>
-		<tip>The width of the signal bus</tip>
+		<key>C_BCD_WIDTH</key>
+		<label>BCD Input Width</label>
+		<tip>The width of the BCD input</tip>
 	</widget>
 	'>
 	<!ENTITY C_FAMILY '

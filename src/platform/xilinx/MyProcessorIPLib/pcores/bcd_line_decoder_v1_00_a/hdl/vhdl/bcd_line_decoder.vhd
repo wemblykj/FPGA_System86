@@ -98,7 +98,7 @@ entity bcd_line_decoder is
 	C_INSTANCE : string := "bcd_line_decoder_inst"
   );
   port (
-	A		: in std_logic_vector((C_BCD_WIDTH - 1) downto 0);
+	A		: in std_logic_vector(C_BCD_WIDTH - 1 downto 0);
 	Y0		: out std_logic;
 	Y1		: out std_logic;
 	Y2		: out std_logic;
@@ -106,8 +106,7 @@ entity bcd_line_decoder is
 	Y4		: out std_logic;
 	Y5		: out std_logic;
 	Y6		: out std_logic;
-	Y7		: out std_logic;
-	CO		: out std_logic;
+	Y7		: out std_logic
   );
 
   -------------------------------------------------------------------------------
@@ -178,6 +177,8 @@ function str(slv: std_logic_vector) return string is
 
   -------------------  Constant Declaration Section BEGIN -----------------------
 
+constant ZERO_BCD_PAD : std_logic_vector(C_BCD_WIDTH-1 downto 0) := (others => '0');
+
   -------------------------------------------------------------------------------
   -- Signal and Type Declarations
   -------------------------------------------------------------------------------
@@ -188,19 +189,19 @@ function str(slv: std_logic_vector) return string is
 
 begin -- architecture IMP
 
-	Y0		<= 	'1' when A = '0' else (others => '0');
-	Y1		<= 	'1' when A = '1' else (others => '0');
+	Y0		<= 	'1' when A = ZERO_BCD_PAD else '0';
+	Y1		<= 	'1' when A = (ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 1) & '1') else '0';
 	 
-	g_PORT_3 : if C_BCD_WIDTH >= 1 generate 
-		Y2		<= 	'1' when A = '2' else (others => '0');
-		Y3		<= 	'1' when A = '3' else (others => '0');
-	end generate g_PORT_3
+	G_OUT_34 : if C_BCD_WIDTH >= 1 generate
+		Y2		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 2) & "10" else (others => '0');
+		Y3		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 2) & "11" else (others => '0');
+	end generate G_OUT_34
 	 
 	g_PORT_4 : if C_BCD_WIDTH_PORTS >= 2 generate 
-		Y4		<= 	'1' when A = '4' else (others => '0');
-		Y5		<= 	'1' when A = '5' else (others => '0');
-		Y6		<= 	'1' when A = '6' else (others => '0');
-		Y7		<= 	'1' when A = '7' else (others => '0');
+		Y4		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "100" else (others => '0');
+		Y5		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "101" else (others => '0');
+		Y6		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "110" else (others => '0');
+		Y7		<= 	'1' when A = ZERO_BCD_PAD(C_BCD_WIDTH-1 downto 3) & "111" else (others => '0');
 	end generate g_PORT_4
 	 
 end imp;

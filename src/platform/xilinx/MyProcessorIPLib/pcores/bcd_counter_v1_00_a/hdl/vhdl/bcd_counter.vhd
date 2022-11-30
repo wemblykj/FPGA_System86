@@ -90,6 +90,7 @@ library bcd_counter_v1_00_a;
 entity bcd_counter is
   generic (
 	-- generics
+	--C_SYNCHRONICITY : integer range 0 to 1 := 0;
 	C_BCD_WIDTH : integer range 1 to 32 := 1;
 	
 	--Family Generics
@@ -103,7 +104,7 @@ entity bcd_counter is
 	Clk		: in std_logic;
 	A		: in std_logic_vector((C_BCD_WIDTH - 1) downto 0);
 	Q		: out std_logic_vector((C_BCD_WIDTH - 1) downto 0);
-	CO		: out std_logic;
+	CO		: out std_logic
   );
 
   -------------------------------------------------------------------------------
@@ -118,6 +119,7 @@ entity bcd_counter is
   attribute IP_GROUP : string;
   attribute IP_GROUP of bcd_counter : entity is "LOGICORE";
   attribute SIGIS : string;
+  attribute SIGIS of Clk : signal is "Clk";
 
 end entity bcd_counter;
 
@@ -174,9 +176,14 @@ function str(slv: std_logic_vector) return string is
 
   -------------------  Constant Declaration Section BEGIN -----------------------
 
+constant ZERO_BCD_PAD : std_logic_vector(C_BCD_WIDTH-1 downto 0) := (others => '0');
+
   -------------------------------------------------------------------------------
   -- Signal and Type Declarations
   -------------------------------------------------------------------------------
+
+signal counter : std_logic_vector(C_BCD_WIDTH - 1 downto 0);
+--signal carry : std_logic;
 
   -------------------------------------------------------------------------------
   -- Architecture
@@ -184,16 +191,19 @@ function str(slv: std_logic_vector) return string is
 
 begin -- architecture IMP
 
-	Y0		<= 	A when S = '0' else (others => '0');
-
-	Y1		<= 	A when S = '1' else (others => '0');
-	 
-	g_PORT_3 : if C_NUM_PORTS >= 1 generate 
-		Y2		<= 	A when S = '2' else (others => '0');
-	end generate g_PORT_3
-	 
-	g_PORT_4 : if C_NUM_PORTS >= 1 generate 
-		Y3		<= 	A when S = '3' else (others => '0');
-	end generate g_PORT_4
-	 
+	Q <= counter;
+	
+	P_SYNCHRONOUS: process(Clk) is
+	begin
+		if (Clk'event and Clk = '1') then
+			if (nClr = '0') then
+				counter <= ZERO_BCD_PAD;
+			elsif (nLoad = '0') then
+				counter <= A;
+			else 
+				counter <= counter + 1;
+			end if;
+		end if;
+	end process P_SYNCHRONOUS;
+	
 end imp;

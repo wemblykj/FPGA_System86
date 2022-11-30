@@ -12,8 +12,8 @@ BEGIN flipflop
 OPTION IPTYPE = PERIPHERAL
 OPTION IMP_NETLIST = TRUE
 OPTION HDL = VHDL
-OPTION DESC = Signal Flipflop 
-OPTION LONG_DESC = A configurable signal bus flipflop
+OPTION DESC = Generic Flipflop 
+OPTION LONG_DESC = A configurable width flipflop
 OPTION ARCH_SUPPORT_MAP = (others=DEVELOPMENT)
 OPTION IP_GROUP = WemblyKJ:Logic
 OPTION USAGE_LEVEL = BASE_USER
