@@ -33,12 +33,13 @@
  PORT RS232_Uart_1_sin = RS232_Uart_1_sin, DIR = I
  PORT RESET = RESET, DIR = I, SIGIS = RST, RST_POLARITY = 0
  PORT GCLK = GCLK, DIR = I, SIGIS = CLK, CLK_FREQ = 100000000
- PORT DIP_Switches_A_TRI_I = DIP_Switches_A_TRI_I, DIR = I, VEC = [0:3]
- PORT DIP_Switches_D_TRI_I = DIP_Switches_D_TRI_I, DIR = I, VEC = [3:0]
+ PORT DIP_Switches_D_TRI_I = DIP_Switches_A_TRI_I, DIR = I, VEC = [0:3]
+# PORT DIP_Switches_D_TRI_I = DIP_Switches_D_TRI_I, DIR = I, VEC = [3:0]
  PORT Push_Buttons_OE_TRI_I = Push_Buttons_OE_TRI_I, DIR = I
  PORT Push_Buttons_WE_TRI_I = Push_Buttons_WE_TRI_I, DIR = I
- PORT Push_Buttons_ROMSEL_TRI_I = Push_Buttons_ROMSEL_TRI_I, DIR = I
- PORT Push_Buttons_RAMSEL_TRI_I = Push_Buttons_RAMSELWE_TRI_I, DIR = I
+ PORT Push_Buttons_LDDATA_TRI_I = Push_Buttons_LDDATA_TRI_I, DIR = I
+ PORT Push_Buttons_LDADDR_TRI_I = Push_Buttons_LDADDR_TRI_I, DIR = I
+ PORT Push_Buttons_MEMSEL_TRI_I = Push_Buttons_MEMSEL_TRI_I, DIR = I
  PORT LEDs_D_TRI_O = signal_multiplexer_0_Y, DIR = O, VEC = [3:0]
 
 
@@ -348,16 +349,46 @@ BEGIN signal_multiplexer
 END
 
 BEGIN bcd_counter
- PARAMETER INSTANCE = function_select
+ PARAMETER INSTANCE = mem_select
  PARAMETER HW_VER = 1.00.a
- PARAMETER C_BCD_WIDTH = 2
+ PARAMETER C_BCD_WIDTH = 1
  PORT Q = function_select_Q
+ PORT A = net_gnd
+ PORT nClr = net_vcc
+ PORT nLoad = net_vcc
+ PORT Clk = Push_Buttons_MEMSEL_TRI_I
 END
 
 BEGIN bcd_line_decoder
- PARAMETER INSTANCE = function_decoder
+ PARAMETER INSTANCE = mem_select_decoder
  PARAMETER HW_VER = 1.00.a
- PARAMETER C_BCD_WIDTH = 2
+ PARAMETER C_BCD_WIDTH = 1
  PORT A = function_select_Q
+ PORT Y0 = mem_select_decoder_Y0
+ PORT Y1 = mem_select_decoder_Y1
+END
+
+BEGIN flipflop
+ PARAMETER INSTANCE = rom_data_buffer
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_BUS_WIDTH = 4
+END
+
+BEGIN flipflop
+ PARAMETER INSTANCE = rom_addr_buffer
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_BUS_WIDTH = 4
+END
+
+BEGIN flipflop
+ PARAMETER INSTANCE = ram_data_buffer
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_BUS_WIDTH = 4
+END
+
+BEGIN flipflop
+ PARAMETER INSTANCE = ram_addr_buffer
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_BUS_WIDTH = 4
 END
 
