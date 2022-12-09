@@ -55,6 +55,7 @@
 
 typedef enum MemBusEventTypeTag
 {
+	MemBusEventType_Undefined = -1,
 	MemBusEventType_Addr,
 	MemBusEventType_Read,
 	MemBusEventType_Write,
@@ -65,7 +66,7 @@ typedef struct MemBusEventTag
 {
 	u32 BaseAddress;
 	MemBusEventType Type;
-	u32 BusData;
+	u32 BusValue;
 } MemBusEvent;
 
 /************************** Function Prototypes ******************************/
@@ -134,7 +135,7 @@ int main()
 	MemBusEvent event;
 	while (1) {
 		if (TryPopMemBusEvent(event)) {
-			xil_printf("%08x: %s - %08x\r\n", event.BaseAddress, event.Type, event.BusData);
+			xil_printf("0x%08x: %s - 0x%08x\r\n", event.BaseAddress, event.Type, event.BusValue);
 		}
 	}
 
@@ -164,58 +165,41 @@ int main()
 void TtlMemBusIsr(void *InstancePtr)
 {
 	XTtlMemBus *MemBusPtr = (XTtlMemBus *)InstancePtr;
-	//u32 Led;
-	//u32 LedState;
-	//u32 Buttons;
-	//u32 ButtonFound;
-	//u32 ButtonsChanged = 0;
-	//static u32 PreviousButtons;
-
-	//int status = XTtlMemBus_InterruptGetStatus(MemBusPtr);
-	//XTtlMemBus_DiscreteWrite(&LedsGpio, LEDS_CHANNEL, status);
 
 	/*
 	 * Disable the interrupt
 	 */
 	XTtlMemBus_InterruptDisable(MemBusPtr, XTTLMEMBUS_IR_MASK);
 
-	/* Keep track of the number of interrupts that occur */
-
-	//InterruptCount++;
-
 	/*
-	 * There should not be any other interrupts occurring other than the
-	 * the button changes
+	 * Get the cause of the interrupt
 	 */
-	u32 status = XTtlMemBus_InterruptGetStatus(MemBusPtr);
-	if ((status & XTTLMEMBUS_IR_MASK) ==
-			0) {
+	u32 status = XTtlMemBus_InterruptGetStatus(MemBusPtr) & XTTLMEMBUS_IR_MASK;
+	if (status == 0) {
 		return;
 	}
 
-	MemBusEvent event = { MemBusPtr->BaseAddress };
+	// Create an event
+	MemBusEvent event = { MemBusPtr->BaseAddress, MemBusEventType_Undefined, 0xCCCCCCCC };
 
-	if ((status & XTTLMEMBUS_IR_ADDR_MASK) == XTTLMEMBUS_IR_ADDR_MASK)
-	{
+	if (status == XTTLMEMBUS_IR_ADDR_MASK) {
 		event.Type = MemBusEventType_Addr;
-		event.BusData = XTtlMemBus_GetBusAddress(MemBusPtr);
-	}
-
-	if ((status & XTTLMEMBUS_IR_READ_MASK) == XTTLMEMBUS_IR_READ_MASK)
-	{
+		event.BusValue = XTtlMemBus_GetBusAddress(MemBusPtr);
+	} else if (status == XTTLMEMBUS_IR_READ_MASK) {
 		event.Type = MemBusEventType_Read;
-		event.BusData = XTtlMemBus_GetBusData(MemBusPtr);
-	}
-
-	if ((status & XTTLMEMBUS_IR_WRITE_MASK) == XTTLMEMBUS_IR_WRITE_MASK)
-	{
+		event.BusValue = XTtlMemBus_GetBusData(MemBusPtr);
+	} else if (status == XTTLMEMBUS_IR_WRITE_MASK) {
 		event.Type = MemBusEventType_Write;
-		event.BusData = XTtlMemBus_GetBusData(MemBusPtr);
+		event.BusValue = XTtlMemBus_GetBusData(MemBusPtr);
+	} else {
+		// we should have only one status bit set at a time
+		xil_printf("Unexpected memory bus status on device at base 0x%0x%d: 0x%0x\n\r", MemBusPtr->BaseAddress, status);
 	}
 
-	PushMemBusEvent(event);
+	if (event.Type != MemBusEventType_Undefined)
+		PushMemBusEvent(event);
 
-	/* Clear the interrupt such that it is no longer pending in the GPIO */
+	/* Clear the interrupt such that it is no longer pending */
 
 	(void)XTtlMemBus_InterruptClear(MemBusPtr, XTTLMEMBUS_IR_MASK);
 
@@ -223,7 +207,6 @@ void TtlMemBusIsr(void *InstancePtr)
 	 * Enable the interrupt
 	 */
 	XTtlMemBus_InterruptEnable(MemBusPtr, XTTLMEMBUS_IR_MASK);
-
 }
 
 
