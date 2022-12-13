@@ -105,8 +105,8 @@ entity bcd_line_encoder is
 	Y4		: in std_logic;
 	Y5		: in std_logic;
 	Y6		: in std_logic;
-	Y7		: in std_logic
-	A		: out std_logic_vector(C_BCD_WIDTH - 1 downto 0);
+	Y7		: in std_logic;
+	A		: out std_logic_vector(C_BCD_WIDTH - 1 downto 0)
   );
 
   -------------------------------------------------------------------------------
@@ -181,20 +181,77 @@ function str(slv: std_logic_vector) return string is
   -- Signal and Type Declarations
   -------------------------------------------------------------------------------
 
+	signal in_1 : std_logic;
+	signal in_12 : std_logic_vector(1 downto 0);
+	signal in_123 : std_logic_vector(2 downto 0);
+	signal in_1234 : std_logic_vector(3 downto 0);
+	
   -------------------------------------------------------------------------------
   -- Architecture
   -------------------------------------------------------------------------------
 
 begin -- architecture IMP
 
-	A(1 downto 0)		<= 	Y1 & Y0;
+	in_1 <= Y0;
+	
+	G_IN_2 : if C_BCD_WIDTH >= 2 generate
+	begin
+		process(Y1)
+		begin
+			if Y1 = '1' then
+				in_12 <= "10";
+			else
+				in_12 <= '0' & in_1;
+			end if;
+		end process;
+	end generate G_IN_2;
+
+	G_IN_34 : if C_BCD_WIDTH >= 3 generate
+	begin
+		process(Y3, Y2)
+		begin
+			if Y3 = '1' then
+				in_123 <= "100";
+			elsif Y2 = '1' then
+				in_123 <= "011";
+			else
+				in_123 <= '0' & in_12;
+			end if;
+		end process;
+	end generate G_IN_34;
+
+	G_IN_5678 : if C_BCD_WIDTH >= 4 generate 
+	begin
+		process(Y7, Y6, Y5, Y4)
+		begin
+			if Y7 = '1' then
+				in_1234 <= "1000";
+			elsif Y6 = '1' then
+				in_1234 <= "0111";
+			elsif Y5 = '1' then
+				in_1234 <= "0110";
+			elsif Y4 = '1' then
+				in_1234 <= "0101";
+			else
+				in_1234 <= '0' & in_123;
+			end if;
+		end process;
+	end generate G_IN_5678;
 	 
-	G_OUT_34 : if C_BCD_WIDTH >= 1 generate
-		A(3 downto 2)		<= 	Y3 & Y2;
-	end generate G_OUT_34;
-	 
-	G_OUT_5678 : if C_BCD_WIDTH >= 2 generate 
-		A(7 downto 4)		<= 	Y7 & Y6 & Y5 & Y4;
-	end generate G_OUT_5678;
-	 
+	G_OUT_1 : if C_BCD_WIDTH = 1 generate
+		A(0) <= in_1;
+	end generate G_OUT_1;
+	
+	G_OUT_12 : if C_BCD_WIDTH = 2 generate
+		A(1 downto 0) <= in_12;
+	end generate G_OUT_12;
+	
+	G_OUT_123 : if C_BCD_WIDTH = 3 generate
+		A(2 downto 0) <= in_123;
+	end generate G_OUT_123;
+	
+	G_OUT_1234 : if C_BCD_WIDTH = 4 generate
+		A(3 downto 0) <= in_1234;
+	end generate G_OUT_1234;
+	
 end imp;
