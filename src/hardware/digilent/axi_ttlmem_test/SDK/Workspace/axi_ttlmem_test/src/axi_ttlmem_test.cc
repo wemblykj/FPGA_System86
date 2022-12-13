@@ -133,11 +133,11 @@ int main()
 	 * level processing
 	 */
 	MemBusEvent event;
-	while (1) {
+	/*while (1) {
 		if (TryPopMemBusEvent(event)) {
 			xil_printf("0x%08x: %s - 0x%08x\r\n", event.BaseAddress, event.Type, event.BusValue);
 		}
-	}
+	}*/
 
 	cleanup_platform();
 

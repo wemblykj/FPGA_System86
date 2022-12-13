@@ -1,5 +1,5 @@
 
-<EDKSYSTEM EDKVERSION="14.7" EDWVERSION="1.2" TIMESTAMP="Wed Dec  7 21:17:31 2022">
+<EDKSYSTEM EDKVERSION="14.7" EDWVERSION="1.2" TIMESTAMP="Mon Dec 12 23:51:32 2022">
 
   <SYSTEMINFO ARCH="spartan6" DEVICE="xc6slx45" PACKAGE="csg324" PART="xc6slx45csg324-3" SOURCE="/home/wembly/development/github/wemblykj/FPGA/FPGA_System86/src/hardware/digilent/axi_ttlmem_test/system.xmp" SPEEDGRADE="-3"/>
 

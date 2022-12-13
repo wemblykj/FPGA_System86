@@ -312,20 +312,20 @@ BEGIN signal_multiplexer
  PARAMETER HW_VER = 1.00.a
  PARAMETER C_BUS_WIDTH = 4
  PARAMETER C_NUM_PORTS = 4
+ PARAMETER C_SEL_WIDTH = 2
  PORT A = net_gnd
  PORT B = test_rom_encoder_D_O
  PORT C = test_ram_encoder_D_O
  PORT D = net_gnd
- PORT S = bcd_line_encoder_0_A
 END
 
-BEGIN bcd_line_encoder
- PARAMETER INSTANCE = mem_sel_bcd
- PARAMETER HW_VER = 1.00.a
- PORT Y0 = net_gnd
- PORT Y1 = Push_Buttons_ROMSEL_TRI_I
- PORT Y2 = Push_Buttons_RAMSEL_TRI_I
- PORT Y3 = net_gnd
- PORT A = bcd_line_encoder_0_A
-END
-
+# PORT S = bcd_line_encoder_0_A
+# BEGIN bcd_line_encoder
+# PARAMETER INSTANCE = mem_sel_bcd
+# PARAMETER HW_VER = 1.00.a
+# PORT Y0 = net_gnd
+# PORT Y1 = Push_Buttons_ROMSEL_TRI_I
+# PORT Y2 = Push_Buttons_RAMSEL_TRI_I
+# PORT Y3 = net_gnd
+# PORT A = bcd_line_encoder_0_A
+# END
