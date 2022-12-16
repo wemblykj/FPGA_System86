@@ -192,7 +192,7 @@ u32 XTtlMemBus_GetStatus(XTtlMemBus *InstancePtr)
 * @return	The error flags.
 *
 *****************************************************************************/
-int XTtlMemBus_GetEnabled(XTtlMemBus *InstancePtr)
+int XTtlMemBus_GetRunning(XTtlMemBus *InstancePtr)
 {
 	u32 status = XTtlMemBus_GetStatus(InstancePtr);
 	
@@ -219,9 +219,6 @@ int XTtlMemBus_Start(XTtlMemBus *InstancePtr)
 	control = control | XTTLMEMBUS_CR_ENABLE_MASK;
 	
 	XTtlMemBus_WriteReg(InstancePtr->BaseAddress, XTTLMEMBUS_CR_OFFSET, control);
-	
-	if (!XTtlMemBus_GetEnabled(InstancePtr))
-		return (XST_FAILURE);
 		
 	return (XST_SUCCESS);
 }
