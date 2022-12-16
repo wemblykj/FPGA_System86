@@ -189,7 +189,7 @@ u32 XTtlMemBus_GetStatus(XTtlMemBus *InstancePtr)
 *
 * @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
 *
-* @return	The error flags.
+* @return	The running flags.
 *
 *****************************************************************************/
 int XTtlMemBus_GetRunning(XTtlMemBus *InstancePtr)
@@ -197,6 +197,22 @@ int XTtlMemBus_GetRunning(XTtlMemBus *InstancePtr)
 	u32 status = XTtlMemBus_GetStatus(InstancePtr);
 	
 	return (status & XTTLMEMBUS_SR_RUNNING_MASK) == XTTLMEMBUS_SR_RUNNING_MASK;
+}
+	
+/****************************************************************************/
+/**
+* Get the current status of the internal FSM.
+*
+* @param	InstancePtr is a pointer to an XTtlMemBus instance to be worked on.
+*
+* @return	The FSM state number.
+*
+*****************************************************************************/
+int XTtlMemBus_GetFSMState(XTtlMemBus *InstancePtr)
+{
+	u32 status = XTtlMemBus_GetStatus(InstancePtr);
+	
+	return (status & XTTLMEMBUS_SR_FSM_STATE) >> XTTLMEMBUS_SR_FSM_STATE_LSB;
 }
 	
 /****************************************************************************/

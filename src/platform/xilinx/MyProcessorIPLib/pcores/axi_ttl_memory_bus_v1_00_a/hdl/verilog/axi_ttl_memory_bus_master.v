@@ -54,31 +54,32 @@ module axi_ttl_memory_bus_master #(
 		  );
 
 localparam
-  Reset = 5'b00000,
-	Idle = 5'b00001,
-	BusAddressReq =     5'b00010,
-  AddressIntrReq =     5'b00011,
-  AddressIntrAck =     5'b00100,
-  AddressIntrPending = 5'b00101,
-  AddressIntrResp =    5'b00110,
-	MstAddressReq =     5'b00111,
-	BusReq =            5'b01000,
-  BusReadReq =         5'b01001, 
-  BusReadResp =        5'b01010, 
-	MstReadReq =        5'b01011, 
-  MstReadResp =        5'b01100, 
-  ReadIntrReq =        5'b01101, 
-  ReadIntrAck =        5'b01110, 
-  ReadIntrPending =    5'b01111,
-  BusWriteReq =        5'b10000, 
-  BusWriteResp =       5'b10001, 
-	MstWriteReq =       5'b10010, 
-  MstWriteResp =       5'b10011, 
-  WriteIntrReq =       5'b10100, 
-  WriteIntrAck =       5'b10101,
-  WriteIntrClear =     5'b10110;
+  Disabled = 5'b00000,
+  Reset = 5'b00001,
+  Idle = 5'b00010,
+	BusAddressReq =     5'b00011,
+  AddressIntrReq =     5'b00100,
+  AddressIntrAck =     5'b00101,
+  AddressIntrPending = 5'b00110,
+  AddressIntrResp =    5'b00111,
+	MstAddressReq =     5'b01000,
+	BusReq =            5'b01001,
+  BusReadReq =         5'b01010, 
+  BusReadResp =        5'b01011, 
+	MstReadReq =        5'b01100, 
+  MstReadResp =        5'b01101, 
+  ReadIntrReq =        5'b01110, 
+  ReadIntrAck =        5'b01111, 
+  ReadIntrPending =    5'b10000,
+  BusWriteReq =        5'b10001, 
+  BusWriteResp =       5'b10010, 
+	MstWriteReq =       5'b10011, 
+  MstWriteResp =       5'b10100, 
+  WriteIntrReq =       5'b10101, 
+  WriteIntrAck =       5'b10110,
+  WriteIntrClear =     5'b10111;
 
-reg[4:0] state_reg, state_next;
+reg[4:0] fsmState, state_next;
 
 reg [C_MST_DWIDTH-1:0] statusReg;
 
@@ -90,65 +91,75 @@ reg [C_DATA_WIDTH-1:0] readData;
 reg [C_MST_AWIDTH-1:0] mstAddress;
 reg [C_MST_DWIDTH-1:0] mstData;
 
+reg runningFlag;
 reg readRequest;
 reg writeRequest;
 reg intrStatus;
 
 always @(state_next, rst_n) begin
 	if (!rst_n) begin
-		state_reg <= Reset;
+		fsmState <= Disabled;
 	end else begin
-		state_reg <= state_next;
+		fsmState <= state_next;
 	end
 end
 
-always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
-	state_next <= state_reg;
+always @(fsmState) begin
+	statusReg <= { fsmState, {(C_MST_DWIDTH-7){1'b0}}, runningFlag };
+end
+
+always @(fsmState, nChipEnable, nOutputEnable, nWriteEnable) begin
+	state_next <= fsmState;
 	
-	case(state_reg)
-    Reset:
+	case(fsmState)
+		Disabled:
+		begin
+			if (ControlReg[0]) begin
+				state_next <= Reset;
+			end
+
+			runningFlag <= ControlReg[0];
+		end
+		
+		Reset:
       begin
-		  statusReg <= 0;
         writeRequest <= 0;
         readRequest <= 0;
 		  busControl <= 0;
         busAddress <= 0;
         busData <= 0;
         
-        // Assume that we should process the pending address once we come out of reset
-        //if (!nChipEnable)
-            state_next <= BusAddressReq;
-        //else
-			//	state_next <= Idle;
+        state_next <= Idle;
       end
       
-	 Idle:
+		Idle:
 		begin
 			if (ControlReg[0]) begin
 				if (!nChipEnable) begin
-					busControl <= { {(C_CTRL_WIDTH-1){1'b0}}, 1};
 					if (busAddress !== Address) begin
 						state_next <= BusAddressReq;
 					end
-				end else
-					busControl <= 0;
-			end
-			statusReg[0] <= ControlReg[0];
-		end			
-    BusAddressReq: 
-      begin
-        busAddress <= Address;
-        if (!nChipEnable)
-          if (AddrReqIntrEnable) begin
-            AddrReqIntr <= 1;
-            state_next <= AddressIntrReq;
-          end else
-            state_next <= MstAddressReq;
-        else 
-          state_next <= Idle;
-      end
+				end 
+
+				busControl <= { {(C_CTRL_WIDTH-1){1'b0}}, nChipEnable };
+			end else
+				state_next <= Disabled;
+		end	
 		
-    AddressIntrReq: 
+		BusAddressReq: 
+		begin
+			busAddress <= Address;
+			if (!nChipEnable)
+				if (AddrReqIntrEnable) begin
+					AddrReqIntr <= 1;
+					state_next <= AddressIntrReq;
+				end else
+					state_next <= MstAddressReq;
+			else 
+				state_next <= Reset;
+		end
+		
+		AddressIntrReq: 
       begin
         // Await interrupt to register
         if (AddrReqIntrStatus == 0) begin
@@ -156,7 +167,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
         end
       end
 
-    AddressIntrAck: 
+		AddressIntrAck: 
       begin
         // Await interrupt to register
         if (AddrReqIntrStatus == 1) begin
@@ -164,7 +175,7 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
         end
       end
 	  
-    AddressIntrPending: 
+		AddressIntrPending: 
       begin
         // Await pending interrupts to be clear
         if (AddrReqIntrStatus == 0) begin
@@ -176,44 +187,46 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
         end
       end
 	  
-    MstAddressReq:
+		MstAddressReq:
+		begin
+			if (!nChipEnable) begin
+			  mstAddress <= MappedAddress + busAddress;
+			  state_next <= BusReq;
+			end else
+			  state_next <= Reset;
+		end
+		
+		BusReq:
       if (!nChipEnable) begin
-        mstAddress <= MappedAddress + busAddress;
-        state_next <= BusReq;
+			// Await for operation if not already set 
+			// in the meantime handle any change in address
+			if (busAddress !== Address)
+				// address has changed, restart
+				state_next <= BusAddressReq;
+			else if (nWriteEnable)
+				// A write operation was requested
+				state_next <= BusWriteReq;
+			else if (nOutputEnable)
+					// A read operation was requested
+				state_next <= BusReadReq;
+			
       end else
-        state_next <= Idle;
-          
-    BusReq:
-      if (!nChipEnable) begin
-        // Await for operation if not already set 
-        // in the meantime handle any change in address
-        if (busAddress !== Address)
-          // address has changed, restart
-          state_next <= BusAddressReq;
-          if (nWriteEnable) begin
-            // A write operation was requested
-          state_next <= BusWriteReq;
-        end else if (nOutputEnable) begin
-          // A read operation was requested
-          state_next <= BusReadReq;
-        end
-      end else
-        state_next <= Idle;
+        state_next <= Reset;
 				
-    BusReadReq:
+		BusReadReq:
       if (!nChipEnable) begin
 			busControl[1] <= 1;
 			state_next <= MstReadReq;
       end else
-		state_next <= Idle;
+			state_next <= Reset;
         
-    MstReadReq:
+		MstReadReq:
       if (!bus2ip_mstwr_dst_rdy_n) begin
         readRequest <= 1;
         state_next <= MstReadResp;
       end
         
-    MstReadResp:
+		MstReadResp:
       if (bus2ip_mst_cmdack) begin			// request has been put on AXI bus
         // TODO: Handle errors
         if (bus2ip_mst_cmplt) begin			// request has completed
@@ -230,113 +243,113 @@ always @(state_reg, nChipEnable, nOutputEnable, nWriteEnable) begin
         end
       end
         
-	ReadIntrReq:
-      begin
-        // wait on pending interrupts
-        if (DataReadReqIntrStatus == 0) begin
-		    DataReadReqIntr <= 1;
-          
-          state_next <= ReadIntrAck;
-        end
-      end
+		ReadIntrReq:
+		begin
+			// wait on pending interrupts
+			if (DataReadReqIntrStatus == 0) begin
+				DataReadReqIntr <= 1;
+
+				state_next <= ReadIntrAck;
+			end
+		end
 	 
-    ReadIntrAck:
-      begin
-        // wait on pending interrupts
-        if (DataReadReqIntrStatus == 1) begin
-		  DataReadReqIntr <= 0;
-          
-          state_next <= ReadIntrPending;
-        end
-      end
+		ReadIntrAck:
+		begin
+			// wait on pending interrupts
+			if (DataReadReqIntrStatus == 1) begin
+				DataReadReqIntr <= 0;
+			 
+				state_next <= ReadIntrPending;
+			end
+		end
 	  
-    ReadIntrPending:
+		ReadIntrPending:
       begin
-        // TODO: wait on pending interrupts
-        if (DataReadReqIntrStatus == 0) begin
-          busData <= BusDataWriteReg[C_DATA_WIDTH-1:0];
-          
-          state_next <= BusReadResp;
-        end
+			// TODO: wait on pending interrupts
+			if (DataReadReqIntrStatus == 0) begin
+				busData <= BusDataWriteReg[C_DATA_WIDTH-1:0];
+
+				state_next <= BusReadResp;
+			end
       end
         
-    BusReadResp:
-      begin
-        // Update read data from bus data register
-        readData <= busData; 
+		BusReadResp:
+		begin
+			// Update read data from bus data register
+			readData <= busData; 
 
-        state_next <= Idle;
-      end
+			state_next <= Reset;
+		end
     
-    BusWriteReq:
-      if (!nChipEnable) begin
+		BusWriteReq:
+		if (!nChipEnable) begin
 			busControl[2] <= 1;
 
 			// TODO: wait on pending interrupts
-        
-        // Put data to write in bus data register
-        // TODO: byte strobing
-        busData <= Data[C_DATA_WIDTH-1:0];
-        
-        if (DataWriteReqIntrEnable)
-          state_next <= WriteIntrReq;
-        else
-          state_next <= MstWriteReq;
-        
-			end else
-				state_next <= Idle;
+
+			// Put data to write in bus data register
+			// TODO: byte strobing
+			busData <= Data[C_DATA_WIDTH-1:0];
+
+			if (DataWriteReqIntrEnable)
+				state_next <= WriteIntrReq;
+			else
+				state_next <= MstWriteReq;
+				
+		end else
+			state_next <= Reset;
         
 		WriteIntrReq:
       begin
-        // TODO: wait on pending interrupts
-        if (DataWriteReqIntrStatus == 0) begin
-          // TODO: raise write interrupt request
-          DataWriteReqIntr <= 1;
-          
-          state_next <= WriteIntrAck;
-        end
+			// TODO: wait on pending interrupts
+			if (DataWriteReqIntrStatus == 0) begin
+				// TODO: raise write interrupt request
+				DataWriteReqIntr <= 1;
+
+				state_next <= WriteIntrAck;
 			end
+		end
         
-    WriteIntrAck:
+		WriteIntrAck:
       begin
-        // TODO: wait on write req interrupt acknowledge
-        if (DataWriteReqIntrStatus == 1) begin
-          DataWriteReqIntr <= 0;
-          state_next <= WriteIntrClear;
-        end
+			// TODO: wait on write req interrupt acknowledge
+			if (DataWriteReqIntrStatus == 1) begin
+				DataWriteReqIntr <= 0;
+				state_next <= WriteIntrClear;
+			end
       end
         
-    WriteIntrClear:
+		WriteIntrClear:
       begin
-        // TODO: wait on write req interrupt acknowledge
-        if (DataWriteReqIntrStatus == 0) begin
-          // not sure if this if going to work without some thought
-          busData <= BusDataWriteReg[C_DATA_WIDTH-1:0];
-          
-          state_next <= MstWriteReq;
-        end
+			// TODO: wait on write req interrupt acknowledge
+			if (DataWriteReqIntrStatus == 0) begin
+				// not sure if this if going to work without some thought
+				busData <= BusDataWriteReg[C_DATA_WIDTH-1:0];
+
+				state_next <= MstWriteReq;
+			end
       end
       
-    MstWriteReq:
+		MstWriteReq:
       if (!bus2ip_mstwr_dst_rdy_n) begin
-          writeRequest <= 1;
-          state_next <= MstWriteResp;
+			writeRequest <= 1;
+			state_next <= MstWriteResp;
       end
         
-    MstWriteResp:
-	   if (bus2ip_mst_cmdack) begin		// request has been put on AXI bus
-		  // TODO: Handle errors
-		  if (bus2ip_mst_cmplt) begin		// request has completed
-			 writeRequest <= 0;
-			 state_next <= BusWriteResp;
-		  end
+		MstWriteResp:
+		if (bus2ip_mst_cmdack) begin		// request has been put on AXI bus
+			// TODO: Handle errors
+			if (bus2ip_mst_cmplt) begin		// request has completed
+				writeRequest <= 0;
+				state_next <= BusWriteResp;
+			end
 		end
 		   
-    BusWriteResp:
+		BusWriteResp:
       begin
-        // update the read data with the data just written
-        readData <= busData;
-		  state_next <= Idle;
+			// update the read data with the data just written
+			readData <= busData;
+			state_next <= Reset;
       end
         
 	endcase
@@ -346,8 +359,6 @@ end
   assign ip2bus_mst_addr = mstAddress;
   assign ip2bus_mstwr_req = writeRequest;
   assign ip2bus_mstwr_d = mstData;
-  
-  assign StatusReg = statusReg;
   
 generate
 	if (C_CTRL_WIDTH == 1)
@@ -359,6 +370,7 @@ generate
 	end
 endgenerate
   
+  assign StatusReg = statusReg;
   assign BusAddressReadReg = busAddress;
   assign BusDataReadReg = busData;
   
