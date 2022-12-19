@@ -542,7 +542,7 @@ constant IP_NUM_INTR       : integer   := 3;
 constant IP_NUM_REG   : integer   := 4;
 
 constant BASEADDR : std_logic_vector(31 downto 0) := X"00000000";
-constant HIGHADDR : std_logic_vector(31 downto 0) := X"000000FF";
+constant HIGHADDR : std_logic_vector(31 downto 0) := X"0000000F";
 
 constant INTR_BASEADDR  : std_logic_vector(0 to 31):= X"00000100";
 constant INTR_HIGHADDR  : std_logic_vector(0 to 31):= X"000001FF";
