@@ -181,25 +181,25 @@ begin
 					end if;
 					
                 case slv_reg_write_sel is
-                    --when "1000" =>
+                    --when "0001" =>
                     --    for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
                     --        if(Bus2IP_BE(byte_index) = '1') then
                     --            bus_data_write_i(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
                     --        end if;
                     --    end loop;
-                    when "0100" =>
+                    when "0010" =>
                         for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
                             if(Bus2IP_BE(byte_index) = '1') then
                                 bus_write_i(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
                             end if;
                         end loop;
-                    when "0010" =>
+                    when "0100" =>
                         for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
                             if(Bus2IP_BE(byte_index) = '1') then
                                 mapped_address_i(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
                             end if;
                         end loop;
-                    when "0001" =>
+                    when "1000" =>
                         for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
                             if(Bus2IP_BE(byte_index) = '1') then
                                 control_i(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
@@ -217,11 +217,11 @@ begin
     SLAVE_REG_READ_PROC: process(slv_reg_read_sel) is
     begin
         case slv_reg_read_sel is
-            --when "1000" => slv_ip2bus_data <= ;
-            when "0100" => slv_ip2bus_data <= pack_bus(BusDataRead, BusAddressRead, BusControlRead);
-            when "0010" => slv_ip2bus_data <= mapped_address_i;
-            when "0001" => slv_ip2bus_data <= Status;
-            when others => slv_ip2bus_data <= (others => '1');
+            --when "0001" => slv_ip2bus_data <= ;
+            when "0010" => slv_ip2bus_data <= pack_bus(BusDataRead, BusAddressRead, BusControlRead);
+            when "0100" => slv_ip2bus_data <= mapped_address_i;
+            when "1000" => slv_ip2bus_data <= Status;
+            when others => slv_ip2bus_data <= (others => '0');
         end case;
     end process SLAVE_REG_READ_PROC;
   
