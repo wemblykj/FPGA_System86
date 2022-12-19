@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2009-2012 Xilinx, Inc.  All rights reserved.
+ * Copyright (c) 2009-2012 Xili
+nx, Inc.  All rights reserved.
  *
  * Xilinx, Inc.
  * XILINX IS PROVIDING THIS DESIGN, CODE, OR INFORMATION "AS IS" AS A
@@ -76,6 +77,8 @@ void TtlMemBusIsr(void *InstancePtr);
 int Initialise();
 int SetupInterruptSystem();
 
+void PrintStatus();
+
 int InitialiseMemoryBus(u16 DeviceId);
 int InitialiseMemoryBusses();
 
@@ -83,7 +86,7 @@ int SetupMemBusInterrupt(INTC *IntcInstancePtr, u16 DeviceId);
 int SetupMemBusInterrupts(INTC *IntcInstancePtr);
 int EnableMemBusInterrupts(INTC *IntcInstancePtr);
 
-int GetMemBusEventQueueSize();
+int GetMemBusEventCount();
 void PushMemBusEvent(const MemBusEvent& event);
 const MemBusEvent& PopMemBusEvent();
 bool TryPopMemBusEvent(MemBusEvent& event);
@@ -96,6 +99,9 @@ const int MemBusEventQueueSize = 10;
 MemBusEvent MemBusEventQueue[MemBusEventQueueSize];
 volatile int MemBusEventQueueHead = 0;
 volatile int MemBusEventQueueTail = 0;
+
+
+XTtlMemBus* MemBusInstancePtr[2];
 
 /****************************************************************************/
 /**
@@ -120,7 +126,7 @@ int main()
 
     init_platform();
 
-    xil_printf("Hello World\n\r");
+    xil_printf("TtlMemBus Test Harness 1.0\n\r");
 
     Status = Initialise();
     if (Status != XST_SUCCESS) {
@@ -128,22 +134,59 @@ int main()
 		return XST_FAILURE;
 	}
 
+    MemBusInstancePtr[0] = XTtlMemBus_GetInstance(XPAR_TEST_ROM_DEVICE_ID);
+    MemBusInstancePtr[1] = XTtlMemBus_GetInstance(XPAR_TEST_RAM_DEVICE_ID);
+
+    xil_printf("Initialised\n\r");
+
+    XTtlMemBus_Start(MemBusInstancePtr[0]);
+
+    PrintStatus();
+
+
     /*
 	 * Loop forever while the button changes are handled by the interrupt
 	 * level processing
 	 */
 	MemBusEvent event;
-	/*while (1) {
-		if (TryPopMemBusEvent(event)) {
-			xil_printf("0x%08x: %s - 0x%08x\r\n", event.BaseAddress, event.Type, event.BusValue);
+	bool once = true;
+	int heartbeat = 0;
+	while (1) {
+		int count = GetMemBusEventCount();
+		if (count > 0) {
+			xil_printf("%d pending events\r\n", count);
+			while(count-- > 0) {
+				event = PopMemBusEvent();
+				xil_printf("0x%08x: %s - 0x%08x\r\n", event.BaseAddress, event.Type, event.BusValue);
+			}
+			once = true;
+		} else if (once) {
+			xil_printf("awaiting events\r\n");
+			once = false;
 		}
-	}*/
+
+		if (heartbeat++ > 1000000) {
+			PrintStatus();
+			heartbeat = 0;
+		}
+	}
 
 	cleanup_platform();
 
     return 0;
 }
 
+void PrintStatus() {
+	int i;
+	for (i = 0; i < 2; ++i) {
+		XTtlMemBus* InstancePtr = MemBusInstancePtr[i];
+
+		const u32 enabled = XTtlMemBus_GetRunning(InstancePtr);
+		const u32 status = XTtlMemBus_GetStatus(InstancePtr);
+
+		xil_printf("%d: en [%s] stat [0x%08x]\r\n", i, (enabled != 0 ? "true" : "false"), status);
+	}
+}
 /****************************************************************************/
 /**
 * This function is the Interrupt Service Routine for the GPIO device.  It
@@ -397,7 +440,7 @@ int EnableMemBusInterrupts(INTC *IntcInstancePtr)
 	return XST_SUCCESS;
 }
 
-int GetMemBusEventQueueSize()
+int GetMemBusEventCount()
 {
 	return (MemBusEventQueueHead - MemBusEventQueueTail) % MemBusEventQueueSize;
 }
@@ -418,7 +461,7 @@ const MemBusEvent& PopMemBusEvent()
 
 bool TryPopMemBusEvent(MemBusEvent& event)
 {
-	if (GetMemBusEventQueueSize() > 0)
+	if (GetMemBusEventCount() > 0)
 	{
 		event = PopMemBusEvent();
 		return true;

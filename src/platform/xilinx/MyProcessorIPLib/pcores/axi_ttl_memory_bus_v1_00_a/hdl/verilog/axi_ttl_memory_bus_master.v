@@ -104,8 +104,8 @@ always @(state_next, rst_n) begin
 	end
 end
 
-always @(fsmState) begin
-	statusReg <= { fsmState, {(C_MST_DWIDTH-7){1'b0}}, runningFlag };
+always @(fsmState, runningFlag) begin
+	statusReg <= { fsmState, {(C_MST_DWIDTH-6){1'b0}}, runningFlag, 1 };
 end
 
 always @(fsmState, nChipEnable, nOutputEnable, nWriteEnable) begin

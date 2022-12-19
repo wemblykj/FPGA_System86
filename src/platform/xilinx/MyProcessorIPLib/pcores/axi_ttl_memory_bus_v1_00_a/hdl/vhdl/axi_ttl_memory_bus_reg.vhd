@@ -221,7 +221,7 @@ begin
             when "0100" => slv_ip2bus_data <= pack_bus(BusDataRead, BusAddressRead, BusControlRead);
             when "0010" => slv_ip2bus_data <= mapped_address_i;
             when "0001" => slv_ip2bus_data <= Status;
-            when others => slv_ip2bus_data <= (others => '0');
+            when others => slv_ip2bus_data <= (others => '1');
         end case;
     end process SLAVE_REG_READ_PROC;
   

@@ -212,7 +212,7 @@ int XTtlMemBus_GetFSMState(XTtlMemBus *InstancePtr)
 {
 	u32 status = XTtlMemBus_GetStatus(InstancePtr);
 	
-	return (status & XTTLMEMBUS_SR_FSM_STATE) >> XTTLMEMBUS_SR_FSM_STATE_LSB;
+	return (status & XTTLMEMBUS_SR_FSM_STATE_MASK) >> XTTLMEMBUS_SR_FSM_STATE_LSB;
 }
 	
 /****************************************************************************/
