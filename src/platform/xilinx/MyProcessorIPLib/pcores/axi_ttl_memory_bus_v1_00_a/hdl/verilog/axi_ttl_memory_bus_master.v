@@ -114,11 +114,11 @@ always @(fsmState, nChipEnable, nOutputEnable, nWriteEnable) begin
 	case(fsmState)
 		Disabled:
 		begin
-			if (ControlReg[0]) begin
+			if (ControlReg[1]) begin
 				state_next <= Reset;
 			end
 
-			runningFlag <= ControlReg[0];
+			runningFlag <= ControlReg[1];
 		end
 		
 		Reset:
@@ -134,7 +134,7 @@ always @(fsmState, nChipEnable, nOutputEnable, nWriteEnable) begin
       
 		Idle:
 		begin
-			if (ControlReg[0]) begin
+			if (ControlReg[1]) begin
 				if (!nChipEnable) begin
 					if (busAddress !== Address) begin
 						state_next <= BusAddressReq;

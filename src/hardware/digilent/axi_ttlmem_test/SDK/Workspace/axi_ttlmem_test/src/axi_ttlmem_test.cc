@@ -139,6 +139,8 @@ int main()
 
     xil_printf("Initialised\n\r");
 
+    PrintStatus();
+
     XTtlMemBus_Start(MemBusInstancePtr[0]);
 
     PrintStatus();
