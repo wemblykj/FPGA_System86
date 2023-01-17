@@ -42,15 +42,15 @@ extern "C" {
 /** @name Bitmasks of XTTLMEMBUS_CR_OFFSET register
  * @{
  */
-#define XTTLMEMBUS_CR_ENABLE_MASK			0x00000010  /**< Enable memory bus */
-#define XTTLMEMBUS_CR_DYNAMIC_CTRL_MASK     0x00000020  /**< Dynamic mapping control, if supported by hardware */
+#define XTTLMEMBUS_CR_ENABLE_MASK			0x00000001  /**< Enable memory bus */
+#define XTTLMEMBUS_CR_DYNAMIC_CTRL_MASK     0x00000002  /**< Dynamic mapping control, if supported by hardware */
 /*@}*/
 
 /** @name Bitmasks of XTTLMEMBUS_SR_OFFSET register
  * This register reports capabilities and errors
  * @{
  */
-#define XTTLMEMBUS_SR_RUNNING_MASK			0x00000010 	/**< Memory bus is running */
+#define XTTLMEMBUS_SR_RUNNING_MASK			0x00000001 	/**< Memory bus is running */
 #define XTTLMEMBUS_SR_FSM_STATE_MASK			0xF8000000 	/**< The current status of the internam finite state machine */
 #define XTTLMEMBUS_SR_FSM_STATE_LSB			27 		/**< The least significant bit of the FSM state */
 #define XTTLMEMBUS_SR_ERR_ALL_MASK      	0x00000F00  /**< All errors */

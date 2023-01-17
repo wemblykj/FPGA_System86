@@ -903,6 +903,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
         C_MAPPED_BASEADDR        => C_MAPPED_BASEADDR,
         C_USE_DYNAMIC_MAPPING   => C_USE_DYNAMIC_MAPPING)
     port map(
+	--		rst_n 					=> bus2ip_resetn,
         Control                 => controlReg,
         Status                  => statusReg,
         MappedAddress           => mappedAddressReg,
@@ -944,6 +945,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
         C_MST_AWIDTH              => 32,
         C_MST_DWIDTH              => 32)
     port map(
+	 		rst_n 					=> bus2ip_resetn,
         nChipEnable		  		  => nChipEnable,
         nOutputEnable			  => nOutputEnable,
         nWriteEnable			     => nWriteEnable,

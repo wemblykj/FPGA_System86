@@ -61,6 +61,7 @@ entity axi_ttl_memory_bus_core is
     );
     port	
     (
+		rst_n 			   : in std_logic;
         nChipEnable 			   : in std_logic;
       	nOutputEnable 		   : in std_logic;
       	nWriteEnable 			: in std_logic;
@@ -122,6 +123,7 @@ entity axi_ttl_memory_bus_core is
     attribute MAX_FANOUT of M_AXI_ARESETN : signal is "10000";
     attribute SIGIS of M_AXI_ACLK         : signal is "Clk";
     attribute SIGIS of M_AXI_ARESETN      : signal is "Rst";
+	 attribute SIGIS of rst_n      : signal is "Rst";
 end axi_ttl_memory_bus_core;
 
 architecture Behavioral of axi_ttl_memory_bus_core is
@@ -351,7 +353,7 @@ begin
         C_MST_AWIDTH            => C_MST_AWIDTH,
         C_MST_DWIDTH            => C_MST_DWIDTH)
     port map(
-        rst_n                   => M_AXI_ARESETN,
+        rst_n                   => rst_n,
         nChipEnable             => nChipEnable,
         nOutputEnable           => nOutputEnable,
         nWriteEnable            => nWriteEnable,

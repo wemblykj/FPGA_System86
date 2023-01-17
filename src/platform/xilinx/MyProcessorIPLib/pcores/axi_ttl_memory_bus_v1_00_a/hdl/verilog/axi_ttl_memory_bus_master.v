@@ -91,57 +91,118 @@ reg [C_DATA_WIDTH-1:0] readData;
 reg [C_MST_AWIDTH-1:0] mstAddress;
 reg [C_MST_DWIDTH-1:0] mstData;
 
-reg enableFlag;
 reg runningFlag;
+
+reg busControlRead;
+reg busControlWrite;
+
 reg readRequest;
 reg writeRequest;
 reg intrStatus;
 
-assign enableFlag = ControlReg[1];
+wire enableFlag;
+
+assign enableFlag = ControlReg[0];
 
 always @(state_next, rst_n) begin
 	if (!rst_n) begin
 		fsmState <= Disabled;
 	end else begin
-		fsmState <= state_next;
+		fsmState <= { 1'b0, state_next[4:0] };
 	end
 end
 
+//always @(fsmState, runningFlag) begin
+//	statusReg <= ControlReg;
+//end
+
 always @(fsmState, runningFlag) begin
-	statusReg <= { fsmState, {(C_MST_DWIDTH-6){1'b0}}, runningFlag, 1 };
+	statusReg <= { {(C_MST_DWIDTH-8){1'b0}}, fsmState, 7'b0, enableFlag };
 end
 
 always @(fsmState, enableFlag, nChipEnable, nOutputEnable, nWriteEnable) begin
-	state_next <= fsmState;
+	//state_next <= fsmState;
 	
 	case(fsmState)
+		Reset:
+		begin
+			writeRequest <= 1;
+			readRequest <= 0;
+			busControl <= 0;
+			busAddress <= 0;
+			busData <= 0;
+		
+			state_next <= Disabled;
+		end
+			
 		Disabled:
 		begin
 			if (enableFlag) begin
-				state_next <= Reset;
+				state_next <= Idle;
 			end
-
+			
 			runningFlag <= enableFlag;
 		end
 		
-		Reset:
+		Off:
 		begin
-		writeRequest <= 1;
-		readRequest <= 0;
-			busControl <= 0;
-		busAddress <= 0;
-		busData <= 0;
-		
-		state_next <= Idle;
+			if (enableFlag) begin
+				if (!nChipEnable) begin
+					if (!nWriteEnable && busControlWrite)
+						// A write operation was requested
+						state_next <= BusWriteReq;
+					else if (!nOutputEnable && busControlRead)
+							// A read operation was requested
+						state_next <= BusReadReq;
+					end
+			else
+				state_next <= Disabled;
 		end
 		
 		Idle:
 		begin
+			if (!nChipEnable) begin
+				// Await for operation if not already set 
+				// in the meantime handle any change in address
+				if (busAddress !== Address) begin
+					busAddress <= Address;
+					// address has changed, restart
+					state_next <= BusAddressReq;
+				end else if (!nWriteEnable && busControlWrite)
+					// A write operation was requested
+					state_next <= BusWriteReq;
+				else if (!nOutputEnable && busControlRead)
+						// A read operation was requested
+					state_next <= BusReadReq;
+					
+				busControlRead = nOutputEnable;
+				busControlWrite = nWriteEnable;					
+			end else
+				state_next <= Idle;
+
+			busControl <= { {(C_CTRL_WIDTH-1){1'b0}}, nChipEnable };
+				
+		end	
+		
+		BusReq:
+		begin
 			if (enableFlag) begin
 				if (!nChipEnable) begin
+					// Await for operation if not already set 
+					// in the meantime handle any change in address
 					if (busAddress !== Address) begin
+						busAddress <= Address;
+						// address has changed, restart
 						state_next <= BusAddressReq;
-					end
+					end else if (nWriteEnable && !busControlWrite)
+						// A write operation was requested
+						state_next <= BusWriteReq;
+					else if (nOutputEnable && !busControlRead)
+							// A read operation was requested
+						state_next <= BusReadReq;
+						
+					busControlRead = nOutputEnable;
+					busControlWrite = nWriteEnable;					
 				end 
 
 				busControl <= { {(C_CTRL_WIDTH-1){1'b0}}, nChipEnable };
@@ -151,70 +212,56 @@ always @(fsmState, enableFlag, nChipEnable, nOutputEnable, nWriteEnable) begin
 		
 		BusAddressReq: 
 		begin
-			busAddress <= Address;
-			if (!nChipEnable)
-				if (AddrReqIntrEnable) begin
-					AddrReqIntr <= 1;
-					state_next <= AddressIntrReq;
-				end else
-					state_next <= MstAddressReq;
-			else 
-				state_next <= Reset;
+			if (AddrReqIntrEnable) begin
+				AddrReqIntr <= 1;
+				state_next <= AddressIntrReq;
+			end else
+				state_next <= MstAddressReq;
 		end
 		
 		AddressIntrReq: 
 		begin
-		// Await interrupt to register
-		if (AddrReqIntrStatus == 0) begin
-			state_next <= AddressIntrAck;
-		end
+			// Await interrupt to register
+			if (AddrReqIntrStatus == 0)
+				state_next <= AddressIntrAck;
 		end
 
 		AddressIntrAck: 
 		begin
-		// Await interrupt to register
-		if (AddrReqIntrStatus == 1) begin
-			state_next <= AddressIntrPending;
-		end
+			// Await interrupt to register
+			if (AddrReqIntrStatus == 1)
+				state_next <= AddressIntrPending;
 		end
 		
 		AddressIntrPending: 
 		begin
-		// Await pending interrupts to be clear
-		if (AddrReqIntrStatus == 0) begin
-			// Use address from register ??? need to think about this, could do with additional 'updated' register
-			// for now we assume if interrupts are enabled then the adress register will be updated
-			busAddress <= BusAddressWriteReg[C_ADDR_WIDTH-1:0];
-			
-			state_next <= MstAddressReq;
-		end
+			// Await pending interrupts to be clear
+			if (AddrReqIntrStatus == 0) begin
+				// Use address from register ??? need to think about this, could do with additional 'updated' register
+				// for now we assume if interrupts are enabled then the adress register will be updated
+				busAddress <= BusAddressWriteReg[C_ADDR_WIDTH-1:0];
+				
+				state_next <= MstAddressReq;
+			end
 		end
 		
 		MstAddressReq:
 		begin
 			if (!nChipEnable) begin
 				mstAddress <= MappedAddress + busAddress;
-				state_next <= BusReq;
+				
+				if (nWriteEnable)
+					// A write operation was requested
+					state_next <= BusWriteReq;
+				else if (nOutputEnable)
+						// A read operation was requested
+					state_next <= BusReadReq;
+				else
+					state_next <= Reset;
+				
 			end else
 				state_next <= Reset;
 		end
-		
-		BusReq:
-		if (!nChipEnable) begin
-			// Await for operation if not already set 
-			// in the meantime handle any change in address
-			if (busAddress !== Address)
-				// address has changed, restart
-				state_next <= BusAddressReq;
-			else if (nWriteEnable)
-				// A write operation was requested
-				state_next <= BusWriteReq;
-			else if (nOutputEnable)
-					// A read operation was requested
-				state_next <= BusReadReq;
-			
-		end else
-		state_next <= Reset;
 				
 		BusReadReq:
 		if (!nChipEnable) begin
