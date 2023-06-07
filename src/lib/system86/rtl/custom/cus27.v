@@ -101,8 +101,8 @@ module cus27
 		end
 	end
 	
-	always @(horizontal_counter/* or rst_n*/) begin
-		/*if (!rst_n) begin
+	always @(horizontal_counter or rst_n) begin
+		if (!rst_n) begin
 			nHSYNC <= 1'b1;
 			nHBLANK <= 1'b1;
 			nHRESET <= 1'b1;
@@ -113,8 +113,8 @@ module cus27
 			//CLK_2H <= 1'b0;
 			//CLK_S2H <= 1'b0;
 			//CLK_4H <= 1'b0;
-		end else */begin
-			if (horizontal_counter[8:0] !== 9'b100110000) begin // ~304
+		end else begin
+			if (horizontal_counter[8:0] === 9'b100110000) begin // ~304
 				nHSYNC <= 1'b0;
 				VRESETH <= 1;        
 			end else if (horizontal_counter[8:3] === 6'b101010) begin // ~336
@@ -126,7 +126,7 @@ module cus27
 			end
 				
 			// hblank
-			if (horizontal_counter[8:3] !== 6'b100010)
+			if (horizontal_counter[8:3] === 6'b100010)
 				nHBLANK <= 1'b0;	// ~272
 			else if (horizontal_counter[8:3] === 6'b101110) 
 				nHBLANK <= 1'b1;	// ~368
@@ -164,8 +164,8 @@ module cus27
 		end
 	end
 	
-	always @(vertical_counter/* or rst_n*/) begin
-		/* (!rst_n) begin
+	always @(vertical_counter or rst_n) begin
+		if (!rst_n) begin
 			nVSYNC <= 1'b1;
 			nVBLANK <= 1'b1;
 			VRESET <= 1'b0;
@@ -173,7 +173,7 @@ module cus27
 			//CLK_1V <= 1'b0;
 			//CLK_4V <= 1'b0;
 			//CLK_8V <= 1'b0;
-		end else*/ begin
+		end else begin
 			// nVSYNC
 			if (vertical_counter[8:3] === 6'b011111) //	~248
 				nVSYNC <= 1'b0;

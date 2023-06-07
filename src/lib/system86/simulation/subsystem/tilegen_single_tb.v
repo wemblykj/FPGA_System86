@@ -37,7 +37,7 @@
 `include "ttl_mem/ttl_mem.vh"
 
 //`define ROM_PATH "../../../../../../../../roms"
-`define ROM_PATH "../../roms"
+`define ROM_PATH "../../../../roms"
 
 `include "roms/rthunder.vh"
 
@@ -88,6 +88,7 @@ module tilegen_single_tb
 	
 	// Timing subsystem
 	timing_subsystem timing(
+	   .rst_n(rst_n),
 		.CLK_48M(clk_in),
 		.CLK_6M(CLK_6M),
 		.nVSYNC(nVSYNC),
@@ -231,9 +232,11 @@ module tilegen_single_tb
 		.HB2(cus42_7k_hb2)
 		);
 		
-	videogen_subsystem #(`ROM_3R, `ROM_3S) clut(
+	videogen_subsystem 
+		//#() 
+		clut(
 		// input
-		//.CLK_6M(CLK_6M), 
+		.CLK_6MD(CLK_6M), 
 		.nCLR(VCC), //.CLR(ls174_6v_q6), 
 		.D(prom_4v_d), 
 		.BANK(GND), //.BANK(ls174_9v_q5), 
@@ -255,8 +258,7 @@ module tilegen_single_tb
 		(
 			.nE(prom_3s_ce_n), 
 			.A(prom_3s_addr), 
-			.Q(prom_3s_data),
-			.data_valid(prom_3s_dv)
+			.Q(prom_3s_data)
 		);
 			
 	prom_mb7124 
@@ -267,8 +269,7 @@ module tilegen_single_tb
 		(
 			.nE(prom_3r_ce_n), 
 			.A(prom_3r_addr), 
-			.Q(prom_3r_data),
-			.data_valid(prom_3r_dv)
+			.Q(prom_3r_data)
 		);	
 		
 	prom_mb7138 
@@ -279,8 +280,7 @@ module tilegen_single_tb
 		(
 			.nE(prom_4v_ce_n), 
 			.A(prom_4v_addr), 
-			.Q(prom_4v_data),
-			.data_valid(prom_4v_dv)
+			.Q(prom_4v_data)
 		);	
 		
 	prom_mb7112 
@@ -291,8 +291,7 @@ module tilegen_single_tb
 		(
 			.nE(prom_6u_ce_n), 
 			.A(prom_6u_addr), 
-			.Q(prom_6u_data),
-			.data_valid(prom_6u_dv)
+			.Q(prom_6u_data)
 		);	
 	
 	// trying 200ns as per GnG instead of 250ns as documented in Rolling Thunder operators manual
@@ -307,8 +306,7 @@ module tilegen_single_tb
 			.nE(eprom_4r_ce_n), 
 			.nG(eprom_4r_oe_n), 
 			.A(eprom_4r_addr), 
-			.Q(eprom_4r_data),
-			.data_valid(eprom_4r_dv)
+			.Q(eprom_4r_data)
 		);	
 		
 	eprom_m27256 
@@ -322,8 +320,7 @@ module tilegen_single_tb
 			.nE(eprom_4s_ce_n), 
 			.nG(eprom_4s_oe_n), 
 			.A(eprom_4s_addr), 
-			.Q(eprom_4s_data),
-			.data_valid(eprom_4s_dv)
+			.Q(eprom_4s_data)
 		);	
 	
 	eprom_m27512 
@@ -337,8 +334,7 @@ module tilegen_single_tb
 			.nE(eprom_7r_ce_n), 
 			.nG(eprom_7r_oe_n), 
 			.A(eprom_7r_addr), 
-			.Q(eprom_7r_data),
-			.data_valid(eprom_7r_dv)
+			.Q(eprom_7r_data)
 		);	
 		
 	eprom_m27256 
@@ -352,8 +348,7 @@ module tilegen_single_tb
 			.nE(eprom_7s_ce_n), 
 			.nG(eprom_7s_oe_n), 
 			.A(eprom_7s_addr), 
-			.Q(eprom_7s_data),
-			.data_valid(eprom_7s_dv)
+			.Q(eprom_7s_data)
 		);	
 		
 	eprom_m27256 
@@ -367,8 +362,7 @@ module tilegen_single_tb
 			.nE(eprom_9c_ce_n), 
 			.nG(eprom_9c_oe_n), 
 			.A(eprom_9c_addr), 
-			.Q(eprom_9c_data),
-			.data_valid(eprom_9c_dv)
+			.Q(eprom_9c_data)
 		);	
 		
 	/* not used for rthunder
@@ -383,8 +377,7 @@ module tilegen_single_tb
 			.nE(eprom_9d_ce_n), 
 			.nG(eprom_9d_oe_n), 
 			.A(eprom_9d_addr), 
-			.Q(eprom_9d_data),
-			.data_valid(eprom_9d_dv)
+			.Q(eprom_9d_data)
 		);	
 	*/
 	
@@ -399,8 +392,7 @@ module tilegen_single_tb
 			.nE(eprom_12c_ce_n), 
 			.nG(eprom_12c_oe_n), 
 			.A(eprom_12c_addr), 
-			.Q(eprom_12c_data),
-			.data_valid(eprom_12c_dv)
+			.Q(eprom_12c_data)
 		);	
 		
 	eprom_m27256 
@@ -414,15 +406,14 @@ module tilegen_single_tb
 			.nE(eprom_12d_ce_n), 
 			.nG(eprom_12d_oe_n), 
 			.A(eprom_12d_addr), 
-			.Q(eprom_12d_data),
-			.data_valid(eprom_12d_dv)
+			.Q(eprom_12d_data)
 		);	
 			
 		// tile ram
 	sram_cy6264 
-		/*#(
+		#(
 			"../../../../../../../../snapshots/rthunder_gfx2_002.bin"
-		)*/
+		)
 		sram_4n
 		(
 			.nCE1(1'b0),
@@ -430,15 +421,14 @@ module tilegen_single_tb
 			.nWE(sram_4n_we_n),
 			.nOE(sram_4n_oe_n),
 			.A(sram_4n_addr),
-			.D(sram_4n_data),
-			.data_valid(sram_4n_dv)
+			.D(sram_4n_data)
 		);
 		
 	sram_cy6264 
-		/*#(
-			"../snapshots/rthunder_videoram1_2.bin"
+		#(
+			//"../snapshots/rthunder_videoram1_2.bin"
 			"../../../../../../../../snapshots/rthunder_gfx1_002.bin"
-		)*/
+		)
 		sram_7n
 		(
 			.nCE1(1'b0),
@@ -446,8 +436,7 @@ module tilegen_single_tb
 			.nWE(sram_7n_we_n),
 			.nOE(sram_7n_oe_n),
 			.A(sram_7n_addr),
-			.D(sram_7n_data),
-			.data_valid(sram_7n_dv)
+			.D(sram_7n_data)
 		);
 
 	// sprite ram
@@ -462,8 +451,7 @@ module tilegen_single_tb
 			.nWE(sram_10m_we_n),
 			.nOE(sram_10m_oe_n),
 			.A(sram_10m_addr),
-			.D(sram_10m_data),
-			.data_valid(sram_10m_dv)
+			.D(sram_10m_data)
 		);
 		
 	sram_m58725 
@@ -477,8 +465,7 @@ module tilegen_single_tb
 			.nWE(sram_11k_we_n),
 			.nOE(sram_11k_oe_n),
 			.A(sram_11k_addr),
-			.D(sram_11k_data),
-			.data_valid(sram_11k_dv)
+			.D(sram_11k_data)
 		);
 		
 	integer frame_count = 0;

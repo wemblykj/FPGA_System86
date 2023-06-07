@@ -27,7 +27,9 @@
 
 `include "ttl_mem/ttl_mem.vh"
 
-`define ROM_PATH "../../../../../../../../roms"
+//`define ROM_PATH "../../../../../../../../roms"
+`define ROM_PATH "../../../../roms"
+
 `include "roms/rthunder.vh"
 
 module videogen_subsystem_tb;
@@ -95,7 +97,7 @@ module videogen_subsystem_tb;
 		
 	videogen_subsystem
 		uut(
-			.Rst(~rst_n),
+			.rst_n(~rst_n),
 			
 			// input
 			.CLK_6MD(clk), 
@@ -103,7 +105,7 @@ module videogen_subsystem_tb;
 			.D(DOT), 
 			.BANK(clut_bank), //.BANK(ls174_9v_q5), 
 			// output
-			.SYNC(SYNC),
+			//.SYNC(SYNC),
 			.RED(RED), 
 			.GREEN(GREEN), 
 			.BLUE(BLUE),
@@ -223,7 +225,7 @@ module videogen_subsystem_tb;
 	initial begin
 		// Initialize Inputs
 		rst_n = 0;
-		CLK_6M= 0;
+		clk= 0;
 
 		// Wait 1000 ns for global reset to finish
 		#100;
@@ -234,7 +236,7 @@ module videogen_subsystem_tb;
 	end
 
 	// generate our 6.14025Mhz input clock
-	always #81.4299 CLK_6M = ~CLK_6M;
+	always #81.4299 clk = ~clk;
 
 endmodule
 
