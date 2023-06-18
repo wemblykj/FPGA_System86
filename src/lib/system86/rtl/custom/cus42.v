@@ -47,10 +47,8 @@ module cus42
 		output wire HB2
 	);
 
-  wire sram_layer;
-  wire prom_layer;
-	assign sram_layer = ~CLK_2H;
-	assign prom_layer = CLK_2H;
+   wire enable_layer_a = CLK_2H;
+	wire enable_layer_b = ~CLK_2H;
 	
 	wire [11:0] RAA;
 	wire [13:0] GAA;
@@ -59,7 +57,7 @@ module cus42
 		layer_a
 		(
 			.rst_n(rst_n),
-			
+			.active(enable_layer_a),
 			.CLK_6M(CLK_6M),
 			.FLIP(FLIP),
 			.nLATCH(nLATCH | CA[2]),
@@ -80,7 +78,7 @@ module cus42
 		layer_b
 		(
 			.rst_n(rst_n),
-			
+			.active(enable_layer_b),
 			.CLK_6M(CLK_6M),
 			.FLIP(FLIP),
 			.nLATCH(nLATCH | ~CA[2]),
@@ -106,8 +104,8 @@ module cus42
 	assign CD = (~nRCS & RnW) ? RD : 8'bz;
 	assign RD = (~nRCS & ~RnW) ? CD : 8'bz;
 	
-	assign RA = ~nRCS ? CA : { sram_layer, sram_layer ? RAB : RAA };
-	assign GA = { prom_layer ? GAB : GAA };				
+	assign RA = ~nRCS ? CA : { enable_layer_b, enable_layer_a ? RAA : RAB };
+	assign GA = { enable_layer_a ? GAB : GAA };				
 
 	assign HA2 = S3HA;
 	assign HB2 = S3HB;

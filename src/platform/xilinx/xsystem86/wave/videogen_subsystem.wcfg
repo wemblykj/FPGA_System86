@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="/home/wembly/development/github/wemblykj/FPGA/FPGA_System86/src/platform/xilinx/xsystem86/tilegen_subsystem_tb_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="tilegen_subsystem_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="18" />
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/rst_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rst_n</obj_property>
+      <obj_property name="ObjectShortName">rst_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/CLK_6MD" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">CLK_6MD</obj_property>
+      <obj_property name="ObjectShortName">CLK_6MD</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/nCLR" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">nCLR</obj_property>
+      <obj_property name="ObjectShortName">nCLR</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/D" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">D[7:0]</obj_property>
+      <obj_property name="ObjectShortName">D[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/BANK" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">BANK</obj_property>
+      <obj_property name="ObjectShortName">BANK</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/RED" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">RED[3:0]</obj_property>
+      <obj_property name="ObjectShortName">RED[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/GREEN" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">GREEN[3:0]</obj_property>
+      <obj_property name="ObjectShortName">GREEN[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/BLUE" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">BLUE[3:0]</obj_property>
+      <obj_property name="ObjectShortName">BLUE[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/prom_3r_ce_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">prom_3r_ce_n</obj_property>
+      <obj_property name="ObjectShortName">prom_3r_ce_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/prom_3r_addr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">prom_3r_addr[8:0]</obj_property>
+      <obj_property name="ObjectShortName">prom_3r_addr[8:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/prom_3r_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">prom_3r_data[7:0]</obj_property>
+      <obj_property name="ObjectShortName">prom_3r_data[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/prom_3s_ce_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">prom_3s_ce_n</obj_property>
+      <obj_property name="ObjectShortName">prom_3s_ce_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/prom_3s_addr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">prom_3s_addr[8:0]</obj_property>
+      <obj_property name="ObjectShortName">prom_3s_addr[8:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/prom_3s_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">prom_3s_data[3:0]</obj_property>
+      <obj_property name="ObjectShortName">prom_3s_data[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/ls273_4u_d" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">ls273_4u_d[7:0]</obj_property>
+      <obj_property name="ObjectShortName">ls273_4u_d[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/ls173_3v_d" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">ls173_3v_d[3:0]</obj_property>
+      <obj_property name="ObjectShortName">ls173_3v_d[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/ls173_3u_d" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">ls173_3u_d[3:0]</obj_property>
+      <obj_property name="ObjectShortName">ls173_3u_d[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tilegen_subsystem_tb/clut/ls173_3t_d" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">ls173_3t_d[3:0]</obj_property>
+      <obj_property name="ObjectShortName">ls173_3t_d[3:0]</obj_property>
+   </wvobject>
+</wave_config>

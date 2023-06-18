@@ -22,7 +22,7 @@
 module cus42_layer
 	(
 		input wire rst_n,
-		
+		input wire active,
 		input wire CLK_6M,
 		input wire FLIP,
 		input wire nLATCH,		// CPU write request
@@ -40,8 +40,13 @@ module cus42_layer
 	reg [8:0] vScrollOffset;	// 2 layers 9 bits
 	
 	//wire [8:0] fhCounter;
+	reg [8:0] hScrollCounter_latched;
+	reg [8:0] vScrollCounter_latched;
 	reg [8:0] hScrollCounter;
 	reg [8:0] vScrollCounter;
+	
+	// 
+	reg [1:0] state;
 	
 	// worry about flipping later
 	//assign fhCounter = FLIP ? (384 - H) : H;	// * for flip just subtract from width
@@ -50,7 +55,7 @@ module cus42_layer
 	wire [8:0] SV;		// 9 bits	0 -> 264
 	
 	reg [7:0] tile_index = 0;
-	reg [1:0] attr = 0;
+	reg [7:0] attr = 0;
 	
 	//
 	// debug
@@ -59,6 +64,9 @@ module cus42_layer
 	// tilemap space
 	wire [5:0] tilemap_column;
 	wire [4:0] tilemap_row;
+	
+	// ram
+	reg [11:0] sram_addr;
 	
 	// tile space
 	wire [2:0] tile_row;		// the row of the tile
@@ -72,7 +80,7 @@ module cus42_layer
 	reg nHSYNC_last = 0;
 	reg nVSYNC_last = 0;
 	
-	always @(posedge CLK_6M) begin
+	/*always @(posedge CLK_6M) begin
 		if (!rst_n) begin
 			hScrollCounter <= 0;
 			vScrollCounter <= 0;
@@ -90,14 +98,63 @@ module cus42_layer
 		
 		nHSYNC_last <= nHSYNC;
 		nVSYNC_last <= nVSYNC;
+	end*/
+	
+	always @(negedge CLK_6M or negedge rst_n) begin
+		if (!rst_n) begin
+			hScrollCounter_latched <= 0;
+			state = 0;
+		end else	begin
+			if (active)
+				state = state + 1'b1;
+				
+			if (!nHSYNC)
+				hScrollCounter_latched <= hScrollOffset;
+			else
+				hScrollCounter_latched <= hScrollCounter_latched + 1'b1;
+		end
 	end
 	
-	always @(SH[1:0] or RD) begin
+	always @(posedge CLK_6M or negedge rst_n) begin
+		if (!rst_n) begin
+			hScrollCounter = 0;
+			sram_addr = 0;
+		end else	begin
+			hScrollCounter = hScrollCounter_latched;
+			
+			case ( { active, state } )
+				3'b100: sram_addr = { SV[8:3] * 33 + SH[8:3], 0 };
+				3'b101: attr = RD;
+				3'b110: sram_addr = { SV[8:3] * 33 + SH[8:3], 1 };
+				3'b111: tile_index = RD;
+			endcase
+		end
+	end
+	
+	always @(negedge nHSYNC or negedge rst_n) begin
+		if (!rst_n) begin
+			vScrollCounter_latched <= 0;
+		end else	begin
+			if (!nVSYNC)
+				vScrollCounter_latched <= vScrollOffset;
+			else
+				vScrollCounter_latched <= vScrollCounter_latched + 1'b1;
+		end
+	end
+	
+	always @(posedge nHSYNC or negedge rst_n) begin
+		if (!rst_n) begin
+			vScrollCounter <= 0;
+		end else	begin
+			vScrollCounter <= vScrollCounter_latched;
+		end
+	end
+	
+	/*always @(SH[1:0] or RD) begin
 		if (SH[1:0] === 2'b01)
 			tile_index <= RD;
 		else if (SH[1:0] === 2'b11)
-			attr <= RD[1:0];
-	end
+		*/
 
 	// Handle CPU control requests
 	always @(negedge nLATCH or negedge rst_n) begin
@@ -125,7 +182,9 @@ module cus42_layer
 	assign SV = vScrollCounter;
 	assign S3H = SH[1:0] === 2'b11;
 	
-	assign RA = { SV[7:3], SH[8:3], SH[1] };
+	//assign RA = { SV[7:3], SH[8:3], SH[1] };
+	assign RA = sram_addr;
+	
 	assign GA = { attr, tile_index, SV[2:0], SH[2] };
 	
 	// debug

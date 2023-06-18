@@ -169,7 +169,7 @@ module videogen_subsystem_tb;
 		Blanking_To_Count
 		(
 			.i_Clk(clk),
-			.i_Rst(~rst_n),
+			.i_nRst(rst_n),
 			.i_nHSync(nHSYNC_2),
 			.i_nVSync(nVSYNC_2),
 			.i_HBlank(HBLANK_2),

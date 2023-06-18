@@ -278,7 +278,7 @@ module tilegen_single_tb
 		) 
 		prom_4v
 		(
-			.nE(prom_4v_ce_n), 
+			.nE(1'b0), 
 			.A(prom_4v_addr), 
 			.Q(prom_4v_data)
 		);	
@@ -289,7 +289,7 @@ module tilegen_single_tb
 		) 
 		prom_6u
 		(
-			.nE(prom_6u_ce_n), 
+			.nE(1'b0), 
 			.A(prom_6u_addr), 
 			.Q(prom_6u_data)
 		);	
@@ -303,8 +303,8 @@ module tilegen_single_tb
 		) 
 		eprom_4r
 		(
-			.nE(eprom_4r_ce_n), 
-			.nG(eprom_4r_oe_n), 
+			.nE(1'b0), 
+			.nG(1'b0), 
 			.A(eprom_4r_addr), 
 			.Q(eprom_4r_data)
 		);	
@@ -317,8 +317,8 @@ module tilegen_single_tb
 		) 
 		eprom_4s
 		(
-			.nE(eprom_4s_ce_n), 
-			.nG(eprom_4s_oe_n), 
+			.nE(1'b0), 
+			.nG(1'b0), 
 			.A(eprom_4s_addr), 
 			.Q(eprom_4s_data)
 		);	
@@ -331,8 +331,8 @@ module tilegen_single_tb
 		) 
 		eprom_7r
 		(
-			.nE(eprom_7r_ce_n), 
-			.nG(eprom_7r_oe_n), 
+			.nE(1'b0), 
+			.nG(1'b0), 
 			.A(eprom_7r_addr), 
 			.Q(eprom_7r_data)
 		);	
@@ -345,8 +345,8 @@ module tilegen_single_tb
 		) 
 		eprom_7s
 		(
-			.nE(eprom_7s_ce_n), 
-			.nG(eprom_7s_oe_n), 
+			.nE(1'b0), 
+			.nG(1'b0), 
 			.A(eprom_7s_addr), 
 			.Q(eprom_7s_data)
 		);	
@@ -412,7 +412,7 @@ module tilegen_single_tb
 		// tile ram
 	sram_cy6264 
 		#(
-			"../../../../../../../../snapshots/rthunder_gfx2_002.bin"
+			"../../../../snapshots/rthunder_gfx2_002.bin"
 		)
 		sram_4n
 		(
@@ -427,7 +427,7 @@ module tilegen_single_tb
 	sram_cy6264 
 		#(
 			//"../snapshots/rthunder_videoram1_2.bin"
-			"../../../../../../../../snapshots/rthunder_gfx1_002.bin"
+			"../../../../snapshots/rthunder_gfx1_002.bin"
 		)
 		sram_7n
 		(
@@ -441,9 +441,9 @@ module tilegen_single_tb
 
 	// sprite ram
 	sram_cy6264 
-		/*#(
-			"../../../../../../../../snapshots/rthunder_gfx2_002.bin"
-		)*/
+		#(
+			"../../../../snapshots/rthunder_gfx2_002.bin"
+		)
 		sram_10m
 		(
 			.nCE1(1'b0),
@@ -455,9 +455,9 @@ module tilegen_single_tb
 		);
 		
 	sram_m58725 
-		/*#(
-			"../../../../../../../../snapshots/rthunder_gfx1_002.bin"
-		)*/
+		#(
+			"../../../../snapshots/rthunder_gfx1_002.bin"
+		)
 		sram_11k
 		(
 			.nCE1(1'b0),
@@ -484,7 +484,6 @@ module tilegen_single_tb
 		nWE = 0;
 		
 		rgb_fd = $fopen("tilegen_single.txt", "w");
-
 		
 		// Wait 100 ns for global reset to finish
 		#100;
