@@ -22,7 +22,7 @@
 module cus42_layer
 	(
 		input wire rst_n,
-		input wire active,
+		input wire [1:0] state,
 		input wire CLK_6M,
 		input wire FLIP,
 		input wire nLATCH,		// CPU write request
@@ -40,13 +40,10 @@ module cus42_layer
 	reg [8:0] vScrollOffset;	// 2 layers 9 bits
 	
 	//wire [8:0] fhCounter;
-	reg [8:0] hScrollCounter_latched;
-	reg [8:0] vScrollCounter_latched;
+	reg [8:0] hScrollCounter_next;
+	reg [8:0] vScrollCounter_next;
 	reg [8:0] hScrollCounter;
 	reg [8:0] vScrollCounter;
-	
-	// 
-	reg [1:0] state;
 	
 	// worry about flipping later
 	//assign fhCounter = FLIP ? (384 - H) : H;	// * for flip just subtract from width
@@ -102,16 +99,12 @@ module cus42_layer
 	
 	always @(negedge CLK_6M or negedge rst_n) begin
 		if (!rst_n) begin
-			hScrollCounter_latched <= 0;
-			state = 0;
-		end else	begin
-			if (active)
-				state = state + 1'b1;
-				
+			hScrollCounter_next <= 0;
+		end else	begin	
 			if (!nHSYNC)
-				hScrollCounter_latched <= hScrollOffset;
+				hScrollCounter_next <= hScrollOffset;
 			else
-				hScrollCounter_latched <= hScrollCounter_latched + 1'b1;
+				hScrollCounter_next <= hScrollCounter_next + 1'b1;
 		end
 	end
 	
@@ -120,25 +113,25 @@ module cus42_layer
 			hScrollCounter = 0;
 			sram_addr = 0;
 		end else	begin
-			hScrollCounter = hScrollCounter_latched;
+			hScrollCounter = hScrollCounter_next;
 			
-			case ( { active, state } )
-				3'b100: sram_addr = { SV[8:3] * 33 + SH[8:3], 0 };
-				3'b101: attr = RD;
-				3'b110: sram_addr = { SV[8:3] * 33 + SH[8:3], 1 };
-				3'b111: tile_index = RD;
+			case (state)
+				2'b00: sram_addr = { tilemap_row, tilemap_column, 1'b0 };
+				2'b01: attr = RD;
+				2'b10: sram_addr = { tilemap_row, tilemap_column, 1'b1 };
+				2'b11: tile_index = RD;
 			endcase
 		end
 	end
 	
 	always @(negedge nHSYNC or negedge rst_n) begin
 		if (!rst_n) begin
-			vScrollCounter_latched <= 0;
+			vScrollCounter_next <= 0;
 		end else	begin
 			if (!nVSYNC)
-				vScrollCounter_latched <= vScrollOffset;
+				vScrollCounter_next <= vScrollOffset;
 			else
-				vScrollCounter_latched <= vScrollCounter_latched + 1'b1;
+				vScrollCounter_next <= vScrollCounter_next + 1'b1;
 		end
 	end
 	
@@ -146,7 +139,7 @@ module cus42_layer
 		if (!rst_n) begin
 			vScrollCounter <= 0;
 		end else	begin
-			vScrollCounter <= vScrollCounter_latched;
+			vScrollCounter <= vScrollCounter_next;
 		end
 	end
 	

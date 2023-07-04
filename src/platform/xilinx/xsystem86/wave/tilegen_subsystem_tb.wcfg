@@ -678,6 +678,30 @@
          <wvobject fp_name="group477" type="group">
             <obj_property name="label">impl</obj_property>
             <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/state_next" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">state_next[2:0]</obj_property>
+               <obj_property name="ObjectShortName">state_next[2:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/state" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">state[2:0]</obj_property>
+               <obj_property name="ObjectShortName">state[2:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/state_a" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">state_a[1:0]</obj_property>
+               <obj_property name="ObjectShortName">state_a[1:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/state_b" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">state_b[1:0]</obj_property>
+               <obj_property name="ObjectShortName">state_b[1:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/enable_layer_a" type="logic" db_ref_id="1">
+               <obj_property name="ElementShortName">enable_layer_a</obj_property>
+               <obj_property name="ObjectShortName">enable_layer_a</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/enable_layer_b" type="logic" db_ref_id="1">
+               <obj_property name="ElementShortName">enable_layer_b</obj_property>
+               <obj_property name="ObjectShortName">enable_layer_b</obj_property>
+            </wvobject>
             <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/RAA" type="array" db_ref_id="1">
                <obj_property name="ElementShortName">RAA[11:0]</obj_property>
                <obj_property name="ObjectShortName">RAA[11:0]</obj_property>
@@ -710,10 +734,6 @@
                <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_a/rst_n" type="logic" db_ref_id="1">
                   <obj_property name="ElementShortName">rst_n</obj_property>
                   <obj_property name="ObjectShortName">rst_n</obj_property>
-               </wvobject>
-               <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_a/active" type="logic" db_ref_id="1">
-                  <obj_property name="ElementShortName">active</obj_property>
-                  <obj_property name="ObjectShortName">active</obj_property>
                </wvobject>
                <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_a/CLK_6M" type="logic" db_ref_id="1">
                   <obj_property name="ElementShortName">CLK_6M</obj_property>
@@ -819,16 +839,6 @@
                   <obj_property name="ObjectShortName">vScrollOffset[8:0]</obj_property>
                   <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
                </wvobject>
-               <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_a/hScrollCounter_latched" type="array" db_ref_id="1">
-                  <obj_property name="ElementShortName">hScrollCounter_latched[8:0]</obj_property>
-                  <obj_property name="ObjectShortName">hScrollCounter_latched[8:0]</obj_property>
-                  <obj_property name="Radix">HEXRADIX</obj_property>
-               </wvobject>
-               <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_a/vScrollCounter_latched" type="array" db_ref_id="1">
-                  <obj_property name="ElementShortName">vScrollCounter_latched[8:0]</obj_property>
-                  <obj_property name="ObjectShortName">vScrollCounter_latched[8:0]</obj_property>
-                  <obj_property name="Radix">HEXRADIX</obj_property>
-               </wvobject>
                <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_a/hScrollCounter" type="array" db_ref_id="1">
                   <obj_property name="ElementShortName">hScrollCounter[8:0]</obj_property>
                   <obj_property name="ObjectShortName">hScrollCounter[8:0]</obj_property>
@@ -864,10 +874,6 @@
                <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_b/rst_n" type="logic" db_ref_id="1">
                   <obj_property name="ElementShortName">rst_n</obj_property>
                   <obj_property name="ObjectShortName">rst_n</obj_property>
-               </wvobject>
-               <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_b/active" type="logic" db_ref_id="1">
-                  <obj_property name="ElementShortName">active</obj_property>
-                  <obj_property name="ObjectShortName">active</obj_property>
                </wvobject>
                <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_b/CLK_6M" type="logic" db_ref_id="1">
                   <obj_property name="ElementShortName">CLK_6M</obj_property>
@@ -959,16 +965,6 @@
                <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_b/vScrollOffset" type="array" db_ref_id="1">
                   <obj_property name="ElementShortName">vScrollOffset[8:0]</obj_property>
                   <obj_property name="ObjectShortName">vScrollOffset[8:0]</obj_property>
-                  <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-               </wvobject>
-               <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_b/hScrollCounter_latched" type="array" db_ref_id="1">
-                  <obj_property name="ElementShortName">hScrollCounter_latched[8:0]</obj_property>
-                  <obj_property name="ObjectShortName">hScrollCounter_latched[8:0]</obj_property>
-                  <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-               </wvobject>
-               <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_b/vScrollCounter_latched" type="array" db_ref_id="1">
-                  <obj_property name="ElementShortName">vScrollCounter_latched[8:0]</obj_property>
-                  <obj_property name="ObjectShortName">vScrollCounter_latched[8:0]</obj_property>
                   <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
                </wvobject>
                <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/layer_b/hScrollCounter" type="array" db_ref_id="1">
@@ -1071,6 +1067,7 @@
             <wvobject fp_name="/tilegen_subsystem_tb/uut/cus42_7k/RA" type="array" db_ref_id="1">
                <obj_property name="ElementShortName">RA[12:0]</obj_property>
                <obj_property name="ObjectShortName">RA[12:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
             </wvobject>
             <wvobject fp_name="/tilegen_subsystem_tb/uut/cus42_7k/nRWE" type="logic" db_ref_id="1">
                <obj_property name="ElementShortName">nRWE</obj_property>
@@ -1092,9 +1089,26 @@
          <wvobject fp_name="group508" type="group">
             <obj_property name="label">impl</obj_property>
             <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/state_next" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">state_next[2:0]</obj_property>
+               <obj_property name="ObjectShortName">state_next[2:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/state" type="array" db_ref_id="1">
+               <obj_property name="ElementShortName">state[2:0]</obj_property>
+               <obj_property name="ObjectShortName">state[2:0]</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/enable_layer_a" type="logic" db_ref_id="1">
+               <obj_property name="ElementShortName">enable_layer_a</obj_property>
+               <obj_property name="ObjectShortName">enable_layer_a</obj_property>
+            </wvobject>
+            <wvobject fp_name="/tilegen_subsystem_tb/uut/CUS42_5K/enable_layer_b" type="logic" db_ref_id="1">
+               <obj_property name="ElementShortName">enable_layer_b</obj_property>
+               <obj_property name="ObjectShortName">enable_layer_b</obj_property>
+            </wvobject>
             <wvobject fp_name="/tilegen_subsystem_tb/uut/cus42_7k/RAA" type="array" db_ref_id="1">
                <obj_property name="ElementShortName">RAA[11:0]</obj_property>
                <obj_property name="ObjectShortName">RAA[11:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
             </wvobject>
             <wvobject fp_name="/tilegen_subsystem_tb/uut/cus42_7k/GAA" type="array" db_ref_id="1">
                <obj_property name="ElementShortName">GAA[13:0]</obj_property>

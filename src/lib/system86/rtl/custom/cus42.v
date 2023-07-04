@@ -47,8 +47,15 @@ module cus42
 		output wire HB2
 	);
 
-   wire enable_layer_a = CLK_2H;
-	wire enable_layer_b = ~CLK_2H;
+	reg [2:0] state_next;
+	reg [2:0] state;
+   reg enable_layer_a_next;
+	reg enable_layer_b_next;
+	reg enable_layer_a;
+	reg enable_layer_b;
+	
+	wire [1:0] state_a = { state_next[2], state_next[0] };
+	wire [1:0] state_b = { state_next[2], state_next[0] };
 	
 	wire [11:0] RAA;
 	wire [13:0] GAA;
@@ -57,7 +64,7 @@ module cus42
 		layer_a
 		(
 			.rst_n(rst_n),
-			.active(enable_layer_a),
+			.state(state_a),
 			.CLK_6M(CLK_6M),
 			.FLIP(FLIP),
 			.nLATCH(nLATCH | CA[2]),
@@ -78,7 +85,7 @@ module cus42
 		layer_b
 		(
 			.rst_n(rst_n),
-			.active(enable_layer_b),
+			.state(state_b),
 			.CLK_6M(CLK_6M),
 			.FLIP(FLIP),
 			.nLATCH(nLATCH | ~CA[2]),
@@ -92,9 +99,32 @@ module cus42
 			.S3H(S3HB)
 		);
 
+	// 
 	reg write_done_request;
-	always @(posedge CLK_6M) begin
-		write_done_request <= ~RnW;
+	
+	always @(negedge CLK_6M or negedge rst_n) begin
+		if (~rst_n || !nHSYNC) begin
+			state_next = 0;
+			enable_layer_a_next = 0;
+			enable_layer_b_next = 0;
+		end else begin
+			enable_layer_a_next = ~CLK_2H;
+			enable_layer_b_next = CLK_2H;
+			state_next = state_next + 1;
+		end
+	end
+	
+	always @(posedge CLK_6M or negedge rst_n) begin
+		if (~rst_n) begin
+			state = 0;
+			enable_layer_a = 0;
+			enable_layer_b = 0;
+		end else begin
+			write_done_request <= ~RnW;
+			state = state_next;
+			enable_layer_a = enable_layer_a_next;
+			enable_layer_b = enable_layer_b_next;
+		end
 	end
 
 	// CPU/RAM multiplexing
