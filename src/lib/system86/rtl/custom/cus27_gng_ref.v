@@ -77,7 +77,7 @@ module cus27_gng_ref
 	
 	reg [2:0] master_counter;
 	
-	always @(posedge CLK_48M or negedge rst_n) begin
+	always @(posedge CLK_48M or rst_n) begin
 		if (!rst_n)
 			master_counter <= 0;
 		else
@@ -92,7 +92,7 @@ module cus27_gng_ref
 	// horizontal
 	//
 
-	reg [9:0] horizontal_counter;	// represents the two 74'161 4-bit counters plus 2 74'74 flip-flops
+	reg [8:0] horizontal_counter;	// represents the two 74'161 4-bit counters plus 2 74'74 flip-flops
 											// 9 bits plus 'H512' carry used for HRESET
 	// 3L - 74'74 flip-flop
 	reg VCLK;
@@ -109,81 +109,87 @@ module cus27_gng_ref
 	wire H32 = horizontal_counter[5];
 	wire H64 = horizontal_counter[6];
 	wire H128 = horizontal_counter[7];
-	wire H256 = horizontal_counter[8];
-	wire H512 = horizontal_counter[9];	// carry signal 'HRESET'	
+	wire nH256 = horizontal_counter[8];
+	wire H256 = ~nH256;
 
-	reg HRESET;
-	reg HBANK;
+	wire HRESET = H1 & H2 & H4 & H8 & H16 & H32 & H64 & H128 & nH256;	// HRESET driven by ripple carry
+	reg HBLANK;
 	reg HSYNC;
 	
 	assign nHRESET = ~HRESET;
-	assign nHBLANK = ~HBLA7NK;
+	assign nHBLANK = ~HBLANK;
 	assign nHSYNC = ~HSYNC;
 	
-	// TO BE LATCHED on positive edge
-	reg __1H;
-	reg __2H;
-	reg __4H;
+	// TO BE LATCHED 
+	reg __S1H;
+	reg __S2H;
 		
 	// are these in phase or off by half a clock or something else
 	// for now assume they are the raw Hx signals exposed as is
-	assign _1H = __1H;
-	assign _2H = __2H;
-	assign _4H = __4H;
-	assign S1H = H1;
-	assign S2H = H2;
+	assign _1H = H1;
+	assign _2H = H2;
+	assign _4H = H4;
+	assign S1H = __S1H;
+	assign S2H = __S2H;
 	
 	// horizontal counter
-	always @(negedge CLK_6M_IN or negedge rst_n) begin
+	always @(posedge CLK_6M_IN or rst_n) begin
 		if (!rst_n) begin
 			horizontal_counter <= 0;	
 		end else begin
 			if (HRESET) begin	// 74xx161 provides synchronous load and reset of TC
-				horizontal_counter[9:1] <= 9'b001000000;	// zero'd with H128 set (512-128 = 384 target)	
+				horizontal_counter[9:0] <= 9'b010000000;	// zero'd with H128 set (512-128 = 384 target)	
 			end else
 				horizontal_counter <= horizontal_counter + 1'b1;	
 		end
 	end
 	
 	// horizontal latches
-	always @(posedge CLK_6M_IN or negedge rst_n) begin
+	always @(negedge CLK_6M_IN or rst_n) begin
+		if (!rst_n)
+			__S1H <= 1'b0;
+		else
+			__S1H <= ~H1;
+	end
+	
+	// hblank clocked on 74'112 neg edge of neg 6M - note schematics show the H256 being used which would appear to be inverted
+	wire _5M_CLK = CLK_6M_IN;
+	wire _5M_J = H1 & H2 & H4 & H256;
+	wire _5M_K = H1 & H2 & H4 & nH256; 
+	always @(posedge _5M_CLK or rst_n) begin
 		if (!rst_n) begin
-			__1H <= 1'b0;
-			__2H <= 1'b0;
-			__4H <= 1'b0;
-			HRESET <= 1'b0;
+			HBLANK <= 1'b0;
 		end else begin
-			HRESET <= H512;
-			__1H <= H1;
-			__2H <= H2;
-			__4H <= H4;
+			case ( { _5M_J, _5M_K} )
+				2'b00: HBLANK <= HBLANK;
+				2'b01: HBLANK <= 1'b0;
+				2'b10: HBLANK <= 1'b1;
+				2'b11: HBLANK <= ~HBLANK;
+			endcase
 		end
 	end
 	
-	// horizontal blank
-	always @(HRESET or H16 or H64 or rst_n) begin
+	always @(negedge __S1H or rst_n) begin
 		if (!rst_n)
-			HBLANK <= 1'b0;
-		else begin
-			if (H16 && H64)	// 240
-				HBLANK <= 1'b1;
-			else if (HRESET)
-				HBLANK <= 1'b0;
-			else
-				HBLANK <= HBLANK;
-		end
+			__S2H <= 1'b0;
+		else
+			__S2H <= ~H2;
 	end
+	
+	
 	
 	// horizontal sync
-	always @(HBLANK or H32 or rst_n) begin
+	always @(H256 or H64 or H32 or H16 or rst_n) begin
 		if (!rst_n)
 			HSYNC <= 1'b0;
-		else begin
-			if (HBLANK && H32)
-				HSYNC <= 1'b1;
-			else
-				HSYNC <= 1'b0;
-		end
+		else if (H256) begin
+			case ( { H64, H32, H16} )
+				3'b011:	HSYNC <= 1'b1;
+				3'b100:	HSYNC <= 1'b1;
+				default: HSYNC <= 1'b0;
+			endcase
+		end else
+			HSYNC <= 1'b0;
 	end
 	
 	//
@@ -211,8 +217,8 @@ module cus27_gng_ref
 	reg VSYNC;
 	
 	assign _1V = __1V;
-	assign _4V = __4V;
-	assign _8V = __8V;
+	//assign _4V = __4V;
+	//assign _8V = __8V;
 	
 	// vertical counter
 	always @(posedge _256V or rst_n) begin
