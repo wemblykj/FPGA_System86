@@ -26,12 +26,6 @@
 
 module tb_bus_req_fsm;
 
-    // Parameters (can be adjusted for your design)
-    parameter PORT_ADDR_WIDTH = 8;
-    parameter PORT_DATA_WIDTH = 8;
-    parameter BUS_ADDR_WIDTH = 32;
-    parameter BUS_DATA_WIDTH = 32;
-
     // DUT signals
     reg clk, rst;
     reg port_cs, port_wr;
@@ -40,17 +34,12 @@ module tb_bus_req_fsm;
     reg bus_grant, bus_valid;
 
     // Instantiate DUT
-    bus_req_fsm #(
-        .PORT_ADDR_WIDTH(PORT_ADDR_WIDTH),
-        .PORT_DATA_WIDTH(PORT_DATA_WIDTH),
-        .BUS_ADDR_WIDTH(BUS_ADDR_WIDTH),
-        .BUS_DATA_WIDTH(BUS_DATA_WIDTH)
-    ) dut (
+    bus_req_fsm #() dut (
         .clk(clk),
         .rst(rst),
         .port_cs(port_cs),
         .port_wr(port_wr),
-        .port_ready(port_ready),
+        .ready(port_ready),
         .bus_req(bus_req),
         .bus_wr(bus_wr),
         .bus_grant(bus_grant),

@@ -28,13 +28,14 @@ module element_extractor #(
     parameter PORT_ADDR_WIDTH = 8,
     parameter PORT_DATA_WIDTH = 8,
   	parameter BUS_ADDR_WIDTH = 32,
-  	parameter BUS_DATA_WIDTH = 32
+  	parameter BUS_DATA_WIDTH = 32,
+  	parameter DEBUG_ENABLE = 0  	// Set to 1 to enable debug output
 )(
-    // Legacy chip interface
-    input  wire [PORT_ADDR_WIDTH-1:0] port_addr,       // Address bus
-    output wire  [PORT_DATA_WIDTH-1:0] port_data_o,   // Data out (for read)
-    // Arbiter/memory interface
-    input  wire [BUS_DATA_WIDTH-1:0] bus_rdata  // Data from arbiter (for read)  
+    // Port interface
+    input  wire [PORT_ADDR_WIDTH-1:0] port_addr,        // Address bus
+    output wire  [PORT_DATA_WIDTH-1:0] port_data_o,     // Data out (for read)
+    // Bus interface
+    input  wire [BUS_DATA_WIDTH-1:0] bus_rdata          // Data from bus (for read)  
 );
 
 	// Compile-time check (optional, SystemVerilog)
@@ -49,5 +50,13 @@ module element_extractor #(
 
     wire [ELEMENT_SEL_BITS-1:0] element_sel = port_addr[ELEMENT_SEL_BITS-1:0];
 	assign port_data_o = bus_rdata[PORT_DATA_WIDTH*element_sel +: PORT_DATA_WIDTH];
-
+  
+  	generate
+      	if (DEBUG_ENABLE) begin: debug_block
+            always_comb begin
+                $display("Element extractor: input word=0x%h, port_addr=0x%h, offset=%0d, output=0x%h",
+                   bus_rdata, port_addr, port_addr[ELEMENT_SEL_BITS-1:0], port_data_o);
+            end
+        end
+    endgenerate
 endmodule

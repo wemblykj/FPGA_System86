@@ -7,14 +7,22 @@
 //  Description  : 
 //      <Short description of what this testbench verifies/tests.>
 //
-//  DUT          : <Design Under Test module(s) and file(s)>
+//  DUT          : port_bus_adapter.sv
 //  Dependencies : 
-//      <List any required files or modules>
+//      - bus_word_cache.sv
+//      - element_extractor.sv 
+//      - element_inserter.sv
+//      - addr_mapper.sv
+//      - bus_req_fsm.sv
 // 
 //  Revision History:
 //      Date        By               Version  Change Description
 //      ----------  ---------------  -------  ----------------------------------
 //      2025-10-07  Paul Wightmore   v0.01    Proof of concepts
+//      2025-10-15  Paul Wightmore   v0.02    Fixed data width mismatch in comparisons
+//      2025-10-15  Paul Wightmore   v0.03    Enhanced fake memory pattern for better byte identification
+//      2025-10-15  Paul Wightmore   v0.04    Added debug output to bus simulation methods
+//      2025-10-15  Paul Wightmore   v0.05    Fixed word address calculation in bus simulation routines
 //
 //  License      : https://www.apache.org/licenses/LICENSE-2.0
 //
@@ -26,14 +34,20 @@
 
 module tb_port_bus_adapter_static_rmw;
 
-    // Parameters
-    parameter PORT_ADDR_WIDTH = 16;
-    parameter PORT_DATA_WIDTH = 8;
-    parameter BUS_ADDR_WIDTH = 32;
-    parameter BUS_DATA_WIDTH = 32;
-    parameter BASE_ADDR_STATIC = 32'h1000_0000;     // Non-zero base address
-    parameter USE_DYNAMIC_BASE = 0;                 // 0 = static, 1 = dynamic
-    parameter USE_STROBE = 0;                       // 0 = RMW, 1 = strobe
+    // Parameters (adjust if needed)
+    parameter PORT_ADDR_WIDTH   = 12;
+    parameter PORT_DATA_WIDTH   = 8;
+    parameter BUS_ADDR_WIDTH    = 32;
+    parameter BUS_DATA_WIDTH    = 32;
+    parameter BASE_ADDR_STATIC  = 32'h0000_0000;
+    parameter USE_DYNAMIC_BASE  = 0;    // 0 = static, 1 = dynamic
+    parameter USE_STROBE        = 0; 	// 0 = RMW, 1 = strobe
+    parameter DEBUG_ENABLE      = 0;    // Set to 1 to enable debug output
+
+    // Localparams
+    localparam int ELEMENTS_PER_WORD   = BUS_DATA_WIDTH / PORT_DATA_WIDTH;
+    localparam int BUS_WORD_SHIFT   = $clog2(ELEMENTS_PER_WORD);
+    localparam int CACHE_ADDR_WIDTH = PORT_ADDR_WIDTH - BUS_WORD_SHIFT;
 
     // DUT signals
     reg clk, rst;
@@ -42,18 +56,16 @@ module tb_port_bus_adapter_static_rmw;
     reg [PORT_DATA_WIDTH-1:0] port_data_i;
     wire [PORT_DATA_WIDTH-1:0] port_data_o;
     wire port_ready;
-    reg [BUS_ADDR_WIDTH-1:0] base_addr_dynamic;
+    reg [BUS_ADDR_WIDTH-1:0] base_addr_dynamic = 0;
 
-    // Bus interface signals
     wire bus_req, bus_wr;
     wire [BUS_ADDR_WIDTH-1:0] bus_addr;
     wire [BUS_DATA_WIDTH-1:0] bus_wdata;
     wire [BUS_DATA_WIDTH/8-1:0] bus_wstrb;
-    reg  bus_grant;
-    reg  [BUS_DATA_WIDTH-1:0] bus_rdata;
-    reg  bus_valid;
+    reg bus_grant, bus_valid;
+    reg [BUS_DATA_WIDTH-1:0] bus_rdata;
 
-    // Instantiate DUT
+    // DUT instantiation
     port_bus_adapter #(
         .PORT_ADDR_WIDTH(PORT_ADDR_WIDTH),
         .PORT_DATA_WIDTH(PORT_DATA_WIDTH),
@@ -82,160 +94,327 @@ module tb_port_bus_adapter_static_rmw;
         .bus_valid(bus_valid)
     );
 
-    // Clock generation
+    // Clock
     initial clk = 0;
     always #5 clk = ~clk;
 
-    // Address array for testing
-    localparam NUM_TESTS = 10;
-    reg [PORT_ADDR_WIDTH-1:0] test_addrs [0:NUM_TESTS-1];
-    reg [PORT_DATA_WIDTH-1:0] test_data  [0:NUM_TESTS-1];
-    reg [BUS_DATA_WIDTH-1:0] test_bus_data  [0:NUM_TESTS-1];
-    
-    integer i;
+    // Simple single-word memory model for bus
+    reg [BUS_DATA_WIDTH-1:0] fake_mem [0:(1<<CACHE_ADDR_WIDTH)-1];
 
-    initial begin
-        // Word-aligned: 0x0000, 0x0004, 0x0400
-        // Non-aligned:  0x0001, 0x0002, 0x007F
-        test_addrs[0] = 16'h0000; test_data[0] = 8'hA1; test_bus_data[0] = 32'hDEADBEA1;
-        test_addrs[1] = 16'h0001; test_data[1] = 8'hB2; test_bus_data[1] = 32'hDEADB2EF;
-        test_addrs[2] = 16'h0002; test_data[2] = 8'hC3; test_bus_data[2] = 32'hDEC3BEEF;
-        test_addrs[3] = 16'h0003; test_data[3] = 8'hD4; test_bus_data[3] = 32'hD4ADBEEF;
-        test_addrs[4] = 16'h0005; test_data[4] = 8'h22; test_bus_data[4] = 32'hDEAD22EF;
-        test_addrs[5] = 16'h0007; test_data[5] = 8'h44; test_bus_data[5] = 32'h44ADBEEF;
-        test_addrs[6] = 16'h007F; test_data[6] = 8'h44; test_bus_data[6] = 32'h44ADBEEF;
-        test_addrs[7] = 16'h0400; test_data[7] = 8'h21; test_bus_data[7] = 32'hDEADBE21;
-        test_addrs[8] = 16'h0401; test_data[8] = 8'h32; test_bus_data[8] = 32'hDEAD32EF;
-        test_addrs[9] = 16'hF400; test_data[9] = 8'hA2; test_bus_data[9] = 32'hDEADBEA2;
-        test_addrs[9] = 16'hF404; test_data[9] = 8'h21; test_bus_data[9] = 32'hDEADBE21;
-    end
+    // Helper: Get bus word-aligned address from port_addr
+    function [CACHE_ADDR_WIDTH-1:0] word_addr(input [PORT_ADDR_WIDTH-1:0] addr);
+        word_addr = addr[PORT_ADDR_WIDTH-1:BUS_WORD_SHIFT];
+    endfunction
 
-    // Simulated memory: only responds with valid data if address matches correct offset from BASE_ADDR_STATIC
-    task simulate_bus_read(input [BUS_ADDR_WIDTH-1:0] expected_bus_addr, input [BUS_DATA_WIDTH-1:0] expected_bus_data);
+    // Helper: Extract the appropriate element bits from a source word based on address
+    function [PORT_DATA_WIDTH-1:0] extract_element(
+        input [BUS_DATA_WIDTH-1:0] word, 
+        input [PORT_ADDR_WIDTH-1:0] addr
+    );
+        // Calculate element offset within the word (based on low address bits)
+        //int element_offset = addr[BUS_WORD_SHIFT-1:0];
+        //logic [BUS_WORD_SHIFT-1:0] element_offset = int'(addr[BUS_WORD_SHIFT-1:0]);
+        
+        if (DEBUG_ENABLE) $display("DEBUG: extract_element - addr=0x%h, element_offset=%0d, extracting bits [%0d:%0d]", 
+                 addr, addr[BUS_WORD_SHIFT-1:0], (addr[BUS_WORD_SHIFT-1:0]*PORT_DATA_WIDTH)+(PORT_DATA_WIDTH-1), addr[BUS_WORD_SHIFT-1:0]*PORT_DATA_WIDTH);
+                 
+        // Extract and return the appropriate element (PORT_DATA_WIDTH bits)
+        return word[addr[BUS_WORD_SHIFT-1:0]*PORT_DATA_WIDTH +: PORT_DATA_WIDTH];
+    endfunction
+
+    // Bus response task (simulates latency, grants, and data from memory)
+    task automatic bus_read_respond(input [BUS_ADDR_WIDTH-1:0] addr);
+        reg [CACHE_ADDR_WIDTH-1:0] waddr;
         begin
-            if (bus_addr == expected_bus_addr) begin
-                bus_rdata = expected_bus_data;
-            end else begin
-                bus_rdata = 32'hDEADBEEF; // Invalid data indication
+            // Just use the lower bits directly - assume addr is already word-aligned
+            waddr = addr[CACHE_ADDR_WIDTH-1:0];
+            
+            if (DEBUG_ENABLE) $display("DEBUG: bus_read_respond - BUS REQUEST to address 0x%h", addr);
+            if (DEBUG_ENABLE) $display("DEBUG: bus_read_respond - Word address calculated: 0x%h", waddr);
+            
+            // grant after 1 cycle, then valid/data after 2 cycles
+            @(negedge clk);
+            bus_grant = 1;
+            @(negedge clk);
+            bus_grant = 0;
+            // Provide data
+            bus_rdata = fake_mem[waddr];
+            
+            if (DEBUG_ENABLE) begin
+                $display("DEBUG: bus_read_respond - Returning word 0x%h from fake_mem[0x%h]", fake_mem[waddr], waddr);
+                $display("DEBUG: bus_read_respond - Byte 0: 0x%h, Byte 1: 0x%h, Byte 2: 0x%h, Byte 3: 0x%h", 
+                     fake_mem[waddr][7:0], fake_mem[waddr][15:8], 
+                     fake_mem[waddr][23:16], fake_mem[waddr][31:24]);
             end
+            
+            @(negedge clk);
+            bus_valid = 1;
+            @(negedge clk);
+            bus_valid = 0;
         end
     endtask
 
-    // Helper function for word alignment
-    localparam integer BUS_WORD_BYTES = BUS_DATA_WIDTH / 8;
-    localparam integer BUS_WORD_ADDR_SHIFT = $clog2(BUS_WORD_BYTES); // = 2 for 32-bit bus
+    // Bus write response (simulate memory write)
+    task automatic bus_write_respond(input [BUS_ADDR_WIDTH-1:0] addr, input [BUS_DATA_WIDTH-1:0] data);
+        reg [CACHE_ADDR_WIDTH-1:0] waddr;
+        reg [BUS_DATA_WIDTH-1:0] old_val;
+        begin
+            // Just use the lower bits directly - assume addr is already word-aligned
+            waddr = addr[CACHE_ADDR_WIDTH-1:0];
+            
+            if (DEBUG_ENABLE) $display("DEBUG: bus_write_respond - BUS WRITE to address 0x%h", addr);
+            if (DEBUG_ENABLE) $display("DEBUG: bus_write_respond - Word address calculated: 0x%h", waddr);
+            if (DEBUG_ENABLE) $display("DEBUG: bus_write_respond - Data to write: 0x%h", data);
+            
+            @(negedge clk);
+            bus_grant = 1;
+            @(negedge clk);
+            bus_grant = 0;
+            
+            // Store old value for debug
+            old_val = fake_mem[waddr];
+            fake_mem[waddr] = data;
+            
+            if (DEBUG_ENABLE) $display("DEBUG: bus_write_respond - Updated word at fake_mem[0x%h]: 0x%h -> 0x%h", 
+                     waddr, old_val, data);
+            
+            // Simulate write response
+            @(negedge clk);
+            bus_valid = 1;
+            @(negedge clk);
+            bus_valid = 0;
+        end
+    endtask
 
-    function [BUS_ADDR_WIDTH-1:0] word_aligned_bus_addr(input [PORT_ADDR_WIDTH-1:0] paddr);
-        word_aligned_bus_addr = BASE_ADDR_STATIC + (paddr >> BUS_WORD_ADDR_SHIFT);
+    // Helper function for test validation
+    function automatic void check_result(
+        input [PORT_ADDR_WIDTH-1:0] addr,
+        input [PORT_DATA_WIDTH-1:0] actual,
+        input [PORT_DATA_WIDTH-1:0] expected,
+        input bit expect_bus_req = 0,
+        input string test_name
+    );
+        if (actual == expected && bus_req == expect_bus_req)
+            $display("PASS: %s, data 0x%h", test_name, actual);
+        else
+            $display("FAIL: %s at addr 0x%h, got 0x%h, expected 0x%h, bus_req=%b", 
+                     test_name, addr, actual, expected, bus_req);
+    endfunction
+    
+    // Helper: Get the expected byte value at a given address
+    function [PORT_DATA_WIDTH-1:0] get_expected_byte(
+        input [PORT_ADDR_WIDTH-1:0] addr
+    );
+        return extract_element(fake_mem[word_addr(addr)], addr);
     endfunction
 
-    // Stimulus
+    // Test procedure
     initial begin
-        $display("Starting tb_port_iface (16-bit port address, non-zero base address, bus word-aligned)...");
-        // Initialize
+        integer test_case = 0;
+        integer i;
+        integer hit_count = 0;
+        reg [7:0] b0, b1, b2, b3;
+      
+        // Init
         rst = 1;
-        port_cs = 0;
-        port_wr = 0;
-        port_addr = 0;
-        port_data_i = 0;
-        base_addr_dynamic = 0;
-        bus_grant = 0;
-        bus_rdata = 0;
-        bus_valid = 0;
-        #20;
-
-        rst = 0;
-        #10;
-
-        // Test all addresses: write then read
-        for (i = 0; i < NUM_TESTS; i = i + 1) begin
-            //$display("Iteration %d test_addr=0x%04X test_data=0x%02X test_bus_data=0x%08X", i+1, test_addrs[i], test_data[i], test_bus_data[i]);
+        port_cs = 0; port_wr = 0; port_addr = 0; port_data_i = 0;
+        bus_grant = 0; bus_valid = 0; bus_rdata = 0;
+        
+        // Preload fake memory with known pattern - each byte has a distinct value
+        for (i = 0; i < (1<<CACHE_ADDR_WIDTH); i = i+1) begin
+            // Calculate each byte separately
+            b0 = 8'd0 + (i * ELEMENTS_PER_WORD); // Byte 0 (least significant): 0, 4, 8, ...
+            b1 = 8'd1 + (i * ELEMENTS_PER_WORD); // Byte 1: 1, 5, 9, ...
+            b2 = 8'd2 + (i * ELEMENTS_PER_WORD); // Byte 2: 2, 6, 10, ...
+            b3 = 8'hA0;                       // Byte 3 (most significant): 0xA0 (marker)
             
-            // ---- WRITE ----
-            port_addr = test_addrs[i];
-            port_data_i = test_data[i];
-            port_wr = 1;
-            port_cs = 1;
-            #10;
-            port_cs = 0;
-            // Wait for bus_req
-            wait (bus_req == 1);
-            #5;
-            // Check that bus_addr is correct (word aligned)
-            if (bus_addr !== word_aligned_bus_addr(test_addrs[i]))
-                $display("FAIL: bus_addr=0x%08X (expected 0x%08X) during write to port_addr=0x%04X", bus_addr, word_aligned_bus_addr(test_addrs[i]), port_addr);
-            else
-                $display("PASS: Bus address alignment at port_addr 0x%04X mapped to bus_addr=0x%08X", test_addrs[i], bus_addr);
-
-
-            // Simulate RMW by assigning a known value to the bus data, as if read from memory
-            bus_rdata = 32'hDEADBEEF;
+            // Combine bytes into 32-bit word (concatenate bytes in big-endian order)
+            fake_mem[i] = {b3, b2, b1, b0};
             
-            // Simulate bus_grant
-            bus_grant = 1;
-            #10;
-            bus_grant = 0;
+            // For example:
+            // Word 0: 0xA0020100
+            // Word 1: 0xA0060504
+            // Word 2: 0xA00A0908
             
-            if (bus_wdata !== test_bus_data[i])
-                $display("FAIL: bus_wdata=0x%08X written to bus_addr 0x%08X (expected 0x%08X)", bus_wdata, bus_addr, test_bus_data[i]);
-            else
-                $display("PASS: Bus write completed at bus_addr 0x%08X (bus_wdata=0x%08X bus_wstrb=0b%04b)", bus_addr, bus_wdata, bus_wstrb);
-            
-            // Simulate bus_valid (response)
-            #10;
-            bus_valid = 1;
-            #10;
-            bus_valid = 0;
-            #10;
-            if (!port_ready)
-                $display("FAIL: port_ready not asserted after write to port_addr 0x%04X", port_addr);
-            else
-                $display("PASS: Write completed at port_addr 0x%04X (data=0x%02X)", port_addr, port_data_i);
-
-            // ---- READ ----
-            port_wr = 0;
-            port_addr = test_addrs[i];
-            port_cs = 1;
-            #10;
-            port_cs = 0;
-            wait (bus_req == 1);
-            #5;
-            // Check bus_addr for read (word aligned)
-            if (bus_addr !== word_aligned_bus_addr(test_addrs[i]))
-                $display("FAIL: bus_addr=0x%08X (expected 0x%08X) during read from port_addr=0x%04X", bus_addr, word_aligned_bus_addr(test_addrs[i]), port_addr);
-            else
-                $display("PASS: Bus address alignment at port_addr 0x%04X mapped to bus_addr=0x%08X", test_addrs[i], bus_addr);
-
-            // Simulate bus_grant
-            bus_grant = 1;
-            #10;
-            bus_grant = 0;
-            
-            // Provide only valid data if address matches expected offset
-            simulate_bus_read(word_aligned_bus_addr(test_addrs[i]), test_bus_data[i]);
-            
-            // Simulate bus_valid (response)
-            #10;
-            bus_valid = 1;
-            #10;
-            bus_valid = 0;
-            #10;
-            if (bus_addr == word_aligned_bus_addr(test_addrs[i])) begin
-                if (port_data_o !== test_data[i])
-                    $display("FAIL: port_data_o=0x%02X after read from port_addr 0x%04X (expected 0x%02X)", port_data_o, port_addr, test_data[i]);
-                else
-                    $display("PASS: Read completed at port_addr 0x%04X (data=0x%02X)", port_addr, port_data_o);
-            end else begin
-                if (port_data_o !== 8'hEF) // 0xDEADBEEF lower byte
-                    $display("FAIL: port_data_o=0x%02X after invalid read (expected 0xEF)", port_data_o);
-                else
-                    $display("PASS: Read at invalid bus address returned default value (0xDEADBEEF)");
-            end
-            #10;
+            if (DEBUG_ENABLE) $display("Memory word %0d initialized to: 0x%08h", i, fake_mem[i]);
         end
+        
+        @(negedge clk); rst = 0;
+        @(negedge clk);
 
-        $display("All tb_port_iface address offset and data checks completed.");
-        #20 $finish;
+        $display("=== TEST %0d: Read miss/fill/hit on address 0x004 ===", ++test_case);
+        // Read from 0x004 (should trigger miss/fill)
+        port_addr = 12'h004;
+        port_cs = 1; port_wr = 0;
+        @(negedge clk); port_cs = 0;
+        fork
+            bus_read_respond(bus_addr);
+        join_none
+        wait (port_ready);
+        @(negedge clk); // settle
+        
+        if (DEBUG_ENABLE) begin
+            $display("DEBUG: Test %0d - For port_addr=0x%h: ", test_case, port_addr);
+            $display("DEBUG: Test %0d - word_addr=%h, byte expected=0x%h, port_data_o=0x%h", test_case,
+                 word_addr(port_addr), get_expected_byte(port_addr), port_data_o);
+        end
+        
+        check_result(port_addr, port_data_o, get_expected_byte(port_addr), 
+             0, "Read miss/fill");
+
+        // Read from 0x004 again (should be cache hit, no bus access)
+        $display("=== TEST %0d: Read hit (cached) on address 0x004 ===", ++test_case);
+        port_addr = 12'h004;
+        port_cs = 1; port_wr = 0;
+        @(negedge clk); port_cs = 0;
+        wait (port_ready);
+        @(negedge clk);
+        
+        if (DEBUG_ENABLE) begin
+            $display("DEBUG: Test %0d - For port_addr=0x%h: ", test_case, port_addr);
+            $display("DEBUG: Test %0d - word_addr=%h, byte expected=0x%h, port_data_o=0x%h", test_case,
+                 word_addr(port_addr), get_expected_byte(port_addr), port_data_o);
+        end
+        
+        check_result(port_addr, port_data_o, get_expected_byte(port_addr), 
+             0, "Cache hit");
+        
+        // Read from 0x018 (different word, triggers miss/refill)
+        $display("=== TEST %0d: Read miss/refill on address 0x018 ===", ++test_case);
+        port_addr = 12'h018;
+        port_cs = 1; port_wr = 0;
+        @(negedge clk); port_cs = 0;
+        fork
+            bus_read_respond(bus_addr);
+        join_none
+        wait (port_ready);
+        @(negedge clk);
+        
+        if (DEBUG_ENABLE) begin
+            $display("DEBUG: Test %0d - For port_addr=0x%h: ", test_case, port_addr);
+            $display("DEBUG: Test %0d - word_addr=%h, byte expected=0x%h, port_data_o=0x%h", test_case,
+                 word_addr(port_addr), get_expected_byte(port_addr), port_data_o);
+        end
+        
+        check_result(port_addr, port_data_o, get_expected_byte(port_addr),
+             0, "Read miss/refill");
+        
+        // Read from 0x018 again (should be cache hit)
+        $display("=== TEST %0d: Read hit (cached) on address 0x018 ===", ++test_case);
+        port_addr = 12'h018;
+        port_cs = 1; port_wr = 0;
+        @(negedge clk); port_cs = 0;
+        wait (port_ready);
+        @(negedge clk);
+        
+        if (DEBUG_ENABLE) begin
+            $display("DEBUG: Test %0d - For port_addr=0x%h: ", test_case, port_addr);
+            $display("DEBUG: Test %0d - word_addr=%h, byte expected=0x%h, port_data_o=0x%h", test_case,
+                 word_addr(port_addr), get_expected_byte(port_addr), port_data_o);
+        end
+        
+        check_result(port_addr, port_data_o, get_expected_byte(port_addr),
+             0, "Cache hit #2");
+
+        // Write to 0x018 (should invalidate cache)
+        $display("=== TEST %0d: Write to 0x018 (should invalidate cache) ===", ++test_case);
+        port_addr = 12'h018;
+        port_data_i = 8'hFE;
+        port_cs = 1; port_wr = 1;
+        @(negedge clk); port_cs = 0;
+        fork
+            bus_write_respond(bus_addr, 32'hBAD0_00FF);
+        join_none
+        wait (port_ready);
+        @(negedge clk);
+        $display("Write complete - cache should now be invalidated for addr 0x%h", port_addr);
+
+        // Read from 0x018 (should be a miss/refill after invalidation)
+        $display("=== TEST %0d: Read after write (should be miss/refill) on 0x018 ===", ++test_case);
+        port_addr = 12'h018;
+        port_cs = 1; port_wr = 0;
+        @(negedge clk); port_cs = 0;
+        fork
+            bus_read_respond(bus_addr);
+        join_none
+        wait (port_ready);
+        @(negedge clk);
+        
+        if (DEBUG_ENABLE) begin
+            $display("DEBUG: Test %0d - For port_addr=0x%h: ", test_case, port_addr);
+            $display("DEBUG: Test %0d - word_addr=%h, byte expected=0x%h, port_data_o=0x%h", test_case,
+                 word_addr(port_addr), get_expected_byte(port_addr), port_data_o);
+        end
+        
+        check_result(port_addr, port_data_o, get_expected_byte(port_addr),
+             0, "Read after write");
+       
+        // Test bitslicing: read from addresses that differ only in lower bits (should hit same word)
+        $display("=== TEST %0d: Bitslice test: 0x01C through 0x01F (in same word) ===", ++test_case);
+
+        // First load the word into cache with a regular read
+        port_addr = 12'h01C;
+        port_cs = 1; port_wr = 0;
+        @(negedge clk); port_cs = 0;
+        fork
+            bus_read_respond(bus_addr);
+        join_none
+        wait (port_ready);
+        @(negedge clk);
+        
+        if (DEBUG_ENABLE) begin
+            $display("DEBUG: Test %0d - Initial cache load with addr 0x%h", test_case, port_addr);
+            $display("DEBUG: Test %0d - word_addr=%h, byte expected=0x%h, port_data_o=0x%h", test_case,
+                 word_addr(port_addr), get_expected_byte(port_addr), port_data_o);
+        end
+        
+        // Now check if each byte in the word can be accessed without triggering a bus request
+        hit_count = 0;
+        for (i = 0; i < ELEMENTS_PER_WORD; i=i+1) begin
+            port_addr = 12'h01C + i;
+            
+            if (DEBUG_ENABLE) begin
+                $display("\nDEBUG: Test %0d - Iteration %0d: port_addr=0x%h", test_case, i, port_addr);
+                $display("DEBUG: Test %0d - word_addr=%h, byte offset=%0d", test_case, word_addr(port_addr), port_addr[BUS_WORD_SHIFT-1:0]);
+                $display("DEBUG: Test %0d - Expected data: 0x%h", test_case, get_expected_byte(port_addr));
+            
+                // Check bus_req before asserting port_cs
+                $display("DEBUG: Test %0d - bus_req before port_cs: %b", test_case, bus_req);
+            end
+            
+            port_cs = 1; port_wr = 0;
+            @(negedge clk); port_cs = 0;
+            
+            // Give some time to see if bus_req is asserted
+            repeat(2) @(posedge clk);
+            if (DEBUG_ENABLE) $display("DEBUG: Test %0d - bus_req after port_cs: %b", test_case, bus_req);
+            
+            // If bus_req is asserted, we need to respond
+            if (bus_req) begin
+                if (DEBUG_ENABLE) $display("DEBUG: Test %0d - Bus request detected, providing response", test_case);
+                fork
+                    bus_read_respond(bus_addr);
+                join_none
+            end
+            
+            wait (port_ready);
+            @(negedge clk);
+            
+            if (DEBUG_ENABLE) $display("DEBUG: Test %0d - port_addr=0x%03X word_addr=0x%03X port_data_o=0x%h", test_case, port_addr, word_addr(port_addr), port_data_o);
+            
+            check_result(port_addr, port_data_o, get_expected_byte(port_addr),
+                         0, $sformatf("Bitslice byte %0d", i));
+            if (port_data_o == get_expected_byte(port_addr))
+                hit_count++;
+        end
+        
+        if (hit_count == ELEMENTS_PER_WORD)
+            $display("PASS: All addresses in same word hit cache (bitslicing correct)");
+        else
+            $display("FAIL: Bitslice test failed, %0d/%0d hits", hit_count, ELEMENTS_PER_WORD);
+
+        $display("All tests complete.");
+        #40 $finish;
     end
 
 endmodule

@@ -30,7 +30,8 @@ module addr_mapper #(
     parameter BUS_ADDR_WIDTH = 32,
     parameter BUS_DATA_WIDTH = 32,
     parameter BASE_ADDR_STATIC = 32'h0000_0000,
-    parameter USE_DYNAMIC_BASE = 0                          // 0 = static, 1 = dynamic
+    parameter USE_DYNAMIC_BASE = 0,	// 0 = static, 1 = dynamic
+  	parameter DEBUG_ENABLE = 0  	// Set to 1 to enable debug output
 )(
     input wire [PORT_ADDR_WIDTH-1:0] port_addr,             // Chip address bus
     input wire [BUS_ADDR_WIDTH-1:0] base_addr_dynamic,      // Used if USE_DYNAMIC_BASE=1
@@ -46,4 +47,12 @@ module addr_mapper #(
     // Calculate word-aligned bus address
     assign bus_addr = base_addr + (port_addr >> BUS_WORD_ADDR_SHIFT);
 
+  	generate
+    	if (DEBUG_ENABLE) begin: debug_block
+      		always_comb begin
+          		$display("DEBUG: addr_mapper - port_addr=0x%h -> bus_addr=0x%h", 
+              		port_addr, bus_addr);
+            end
+      	end
+    endgenerate
 endmodule

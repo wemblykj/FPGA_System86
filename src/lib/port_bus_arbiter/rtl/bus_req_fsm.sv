@@ -31,7 +31,8 @@ module bus_req_fsm #()
     // Port interface
     input  wire                  port_cs,           // Chip select (pulse for access)
     input  wire                  port_wr,           // Write enable (1=write, 0=read)
-    output reg                   port_ready,        // Ready for new port request
+    // Status
+    output reg                   ready,             // Ready for new port request
     // External bus interface
     output reg                   bus_req,           // Request to bus
     output reg                   bus_wr,            // Write/read indicator
@@ -82,13 +83,13 @@ module bus_req_fsm #()
     // Output logic
     always_comb begin
         // Defaults
-        port_ready = 0;
+        ready = 0;
         bus_req    = 0;
         bus_wr     = 0;
 
         case (state)
             IDLE: begin
-                port_ready = 1; // Ready for new command
+                ready = 1; // Ready for new command
             end
             REQ: begin
                 bus_req = 1;

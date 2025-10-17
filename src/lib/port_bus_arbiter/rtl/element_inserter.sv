@@ -29,7 +29,8 @@ module element_inserter #(
     parameter PORT_DATA_WIDTH = 8,
   	parameter BUS_ADDR_WIDTH = 32,
   	parameter BUS_DATA_WIDTH = 32,
-	parameter USE_STROBE = 0 // 0 = RMW, 1 = strobe
+	parameter USE_STROBE = 0, 		// 0 = RMW, 1 = strobe
+  	parameter DEBUG_ENABLE = 0  	// Set to 1 to enable debug output
 )(
     // Legacy chip interface
     input  wire [PORT_ADDR_WIDTH-1:0] port_addr,       // Address bus
@@ -39,7 +40,7 @@ module element_inserter #(
     output reg  [BUS_DATA_WIDTH-1:0] bus_wdata,   // Data to arbiter (for write)
 	output reg  [BUS_DATA_WIDTH/8-1:0] bus_wstrb  
 );
-// Compile-time check (optional, SystemVerilog)
+    // Compile-time check (optional, SystemVerilog)
     initial begin
         if (BUS_DATA_WIDTH % PORT_DATA_WIDTH != 0)
             $error("BUS_DATA_WIDTH (%0d) must be a multiple of PORT_DATA_WIDTH (%0d)", BUS_DATA_WIDTH, PORT_DATA_WIDTH);
