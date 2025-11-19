@@ -45,22 +45,23 @@ module timing_subsystem
 	output wire nCOMPSYNC,
 	
 	// video timing signals
-	output wire CLK_8V,
-	output wire CLK_4V,
-	output wire CLK_1V,
-	output wire CLK_4H,
-	output wire CLK_2H,
-	output wire CLK_1H,
-	output wire CLK_n1H,
-	output wire CLK_S2H,
-	output wire CLK_S1H,
-	output wire CLK_nS1H
+	output wire _8V,
+	output wire _4V,
+	output wire _1V,
+	output wire _4H,
+	output wire _2H,
+	output wire _1H,
+	output wire n1H,
+	output wire S2H,
+	output wire S1H,
+	output wire nS1H
 );
 
 	wire cus27_hblank;
 	
 	// CUS27 - CLOCK DIVIDER
-	cus27 
+	//cus27 
+	cus27_gng_ref
 		cus27_9p_clock_divider(
 			.rst_n(rst_n),
 			.CLK_48M(CLK_48M), 
@@ -74,14 +75,14 @@ module timing_subsystem
 			.nVBLANK(nVBLANK),
 			.nHRESET(nHRESET),
 			.nVRESET(nVRESET),
-			.CLK_8V(CLK_8V),
-			.CLK_4V(CLK_4V),
-			.CLK_1V(CLK_1V),
-			.CLK_4H(CLK_4H),
-			.CLK_2H(CLK_2H),
-			.CLK_1H(CLK_1H),
-			.CLK_S2H(CLK_S2H),
-			.CLK_S1H(CLK_S1H)
+			._8V(_8V),
+			._4V(_4V),
+			._1V(_1V),
+			._4H(_4H),
+			._2H(_2H),
+			._1H(_1H),
+			.S2H(S2H),
+			.S1H(S1H)
 		);
 
 	// == TTL glue logic
@@ -103,7 +104,7 @@ module timing_subsystem
 		);
 
 	assign CLK_6MD = CLK_6M;
-	assign CLK_nS1H = ~CLK_S1H;
+	assign nS1H = ~S1H;
 	assign nCOMPSYNC = nHSYNC && nVSYNC;	// via LS08 (3H) and'ing of negated signals
 	
 endmodule

@@ -22,7 +22,7 @@ typedef struct System86Tag
 {
     Xuint16 DeviceId;       /* ID to identify the XPci driver */
     int Used;               /* Indicate whether this entry is used */
-    XSystem86 System86;               /* XPci driver instance */
+    XSystem86 System86;     /* XPci driver instance */
 } System86Info;
 
 /***************** Macros (Inline Functions) Definitions ********************/
@@ -403,7 +403,7 @@ u16 XSystem86_ReadBus(XSystem86 *InstancePtr, u32 RegOffset, XSystem86_BusAttr *
 *****************************************************************************/
 void XSystem86_SetBusAddress(XSystem86 *InstancePtr, u32 BusAddress)
 {
-	WriteBus(InstancePtr, XSYSTEM86_BUS_OFFSET, InstancePtr->AddrBusAttr, BusAddress);
+	XTtlMemBus_WriteBus(InstancePtr, XSYSTEM86_BUS_OFFSET, InstancePtr->AddrBusAttr, BusAddress);
 }
 
 /****************************************************************************/
@@ -417,7 +417,7 @@ void XSystem86_SetBusAddress(XSystem86 *InstancePtr, u32 BusAddress)
 *****************************************************************************/
 u32 XSystem86_GetBusAddress(XSystem86 *InstancePtr)
 {
-	return ReadBus(InstancePtr, XSYSTEM86_BUS_OFFSET, InstancePtr->AddrBusAttr);
+	return XTtlMemBus_ReadBus(InstancePtr, XSYSTEM86_BUS_OFFSET, InstancePtr->AddrBusAttr);
 }
 
 /****************************************************************************/
@@ -435,7 +435,7 @@ u32 XSystem86_GetBusAddress(XSystem86 *InstancePtr)
 *****************************************************************************/
 void XSystem86_SetBusData(XSystem86 *InstancePtr, u32 BusData)
 {
-	WriteBus(InstancePtr, XSYSTEM86_BUS_OFFSET, InstancePtr->DataBusAttr, BusData);
+	XTtlMemBus_WriteBus(InstancePtr, XSYSTEM86_BUS_OFFSET, InstancePtr->DataBusAttr, BusData);
 }
 
 /****************************************************************************/
@@ -449,7 +449,7 @@ void XSystem86_SetBusData(XSystem86 *InstancePtr, u32 BusData)
 *****************************************************************************/
 u32 XSystem86_GetBusData(XSystem86 *InstancePtr)
 {
-	return ReadBus(InstancePtr, XSYSTEM86_BUS_OFFSET, InstancePtr->DataBusAttr);
+	return XTtlMemBus_ReadBus(InstancePtr, XSYSTEM86_BUS_OFFSET, InstancePtr->DataBusAttr);
 }
 
 /****************************************************************************/
@@ -814,13 +814,13 @@ XSystem86 *XSystem86_GetInstance(u16 DeviceId)
 {
     System86Info * DeviceInfo;
 
-    DeviceInfo = LookupDriver((Xuint16)DeviceId);
+    DeviceInfo = LookupDevice((Xuint16)DeviceId);
     if (DeviceInfo == NULL)
     {
         return XNULL;
     }
 
-    return DeviceInfo->System86;
+    return &DeviceInfo->System86;
 }
 
 int XSystem86_DeviceInitialize(u16 DeviceId)
@@ -835,12 +835,10 @@ int XSystem86_DeviceInitialize(u16 DeviceId)
     DeviceInfoPtr = LookupDevice(DeviceId);
     if (DeviceInfoPtr == NULL)
     {
-        /* No more room based on the number of ACE controllers in the system */
-        (void)errnoSet(ENODEV);
-        return ERROR;
+         return XST_DEVICE_NOT_FOUND;
     }
 	
-	Result = XSystem86_Initialize(DeviceInfoPtr->System86, DeviceId);
+	Result = XSystem86_Initialize(&DeviceInfoPtr->System86, DeviceId);
 	if (Result != XST_SUCCESS) {
 		return Result;
 	}
@@ -886,7 +884,7 @@ static System86Info *LookupDevice(u16 DeviceId)
 
     for (i=0; i < XPAR_XSYSTEM86_NUM_INSTANCES; i++)
     {
-		if (System86Info[i].Used) 
+		if (System86Device[i].Used) 
 		{
 			if (DeviceId == System86Device[i].DeviceId)
 			{
@@ -900,7 +898,7 @@ static System86Info *LookupDevice(u16 DeviceId)
 			 * Keep track of the first entry in the table that is unused. We
 			 * base the unused on the number of partitions set for the device.
 			 */
-			UnusedPtr = System86Device[i];
+			UnusedPtr = &System86Device[i];
 		}  
     }
 

@@ -17,6 +17,7 @@ extern "C" {
 
 #include "xil_types.h"
 #include "xil_assert.h"
+#include "xparameters.h"
 #include "xstatus.h"
 #include "xsystem86_l.h"
 

@@ -1,0 +1,8 @@
+##############################################################################
+## Filename:          signal_demultiplexer_v1_00_a/data/signal_demultiplexer_v2_1_0.pao
+## Description:       Peripheral Analysis Order
+## Date:              Wed Mar 20 13:15:10 2019 (by Create and Import Peripheral Wizard)
+##############################################################################
+
+## TTL Mem Bus Encoder 
+lib signal_demultiplexer_v1_00_a signal_demultiplexer.vhd vhdl

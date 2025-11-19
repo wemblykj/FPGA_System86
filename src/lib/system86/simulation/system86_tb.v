@@ -35,7 +35,8 @@
 
 `include "ttl_mem/ttl_mem.vh"
 
-`define ROM_PATH "../../../../../../../../roms"
+//`define ROM_PATH "../../../../../../../../roms"
+`define ROM_PATH "../../../../roms"
 `include "roms/rthunder.vh"
 
 module system86_tb;
@@ -110,7 +111,7 @@ module system86_tb;
 			.UNKNOWN_LAYER_PRIORITY(5)
 		)
 		uut (
-			.clk(clk_48m), 
+			.clk_48m(clk_48m), 
 			.rst_n(rst_n),
 			
 			.vid_clk(s86_vid_clk),
@@ -154,8 +155,7 @@ module system86_tb;
 		(
 			.nE(prom_3s_ce_n), 
 			.A(prom_3s_addr), 
-			.Q(prom_3s_data),
-			.data_valid(prom_3s_dv)
+			.Q(prom_3s_data)
 		);
 			
 	prom_mb7124 
@@ -166,8 +166,7 @@ module system86_tb;
 		(
 			.nE(prom_3r_ce_n), 
 			.A(prom_3r_addr), 
-			.Q(prom_3r_data),
-			.data_valid(prom_3r_dv)
+			.Q(prom_3r_data)
 		);	
 		
 	prom_mb7138 
@@ -178,8 +177,7 @@ module system86_tb;
 		(
 			.nE(prom_4v_ce_n), 
 			.A(prom_4v_addr), 
-			.Q(prom_4v_data),
-			.data_valid(prom_4v_dv)
+			.Q(prom_4v_data)
 		);	
 		
 	prom_mb7112 
@@ -190,8 +188,7 @@ module system86_tb;
 		(
 			.nE(prom_6u_ce_n), 
 			.A(prom_6u_addr), 
-			.Q(prom_6u_data),
-			.data_valid(prom_6u_dv)
+			.Q(prom_6u_data)
 		);	
 	
 	// trying 200ns as per GnG instead of 250ns as documented in Rolling Thunder operators manual
@@ -206,8 +203,7 @@ module system86_tb;
 			.nE(eprom_4r_ce_n), 
 			.nG(eprom_4r_oe_n), 
 			.A(eprom_4r_addr), 
-			.Q(eprom_4r_data),
-			.data_valid(eprom_4r_dv)
+			.Q(eprom_4r_data)
 		);	
 		
 	eprom_m27256 
@@ -221,8 +217,7 @@ module system86_tb;
 			.nE(eprom_4s_ce_n), 
 			.nG(eprom_4s_oe_n), 
 			.A(eprom_4s_addr), 
-			.Q(eprom_4s_data),
-			.data_valid(eprom_4s_dv)
+			.Q(eprom_4s_data)
 		);	
 	
 	eprom_m27512 
@@ -236,8 +231,7 @@ module system86_tb;
 			.nE(eprom_7r_ce_n), 
 			.nG(eprom_7r_oe_n), 
 			.A(eprom_7r_addr), 
-			.Q(eprom_7r_data),
-			.data_valid(eprom_7r_dv)
+			.Q(eprom_7r_data)
 		);	
 		
 	eprom_m27256 
@@ -251,8 +245,7 @@ module system86_tb;
 			.nE(eprom_7s_ce_n), 
 			.nG(eprom_7s_oe_n), 
 			.A(eprom_7s_addr), 
-			.Q(eprom_7s_data),
-			.data_valid(eprom_7s_dv)
+			.Q(eprom_7s_data)
 		);	
 		
 	eprom_m27256 
@@ -266,8 +259,7 @@ module system86_tb;
 			.nE(eprom_9c_ce_n), 
 			.nG(eprom_9c_oe_n), 
 			.A(eprom_9c_addr), 
-			.Q(eprom_9c_data),
-			.data_valid(eprom_9c_dv)
+			.Q(eprom_9c_data)
 		);	
 		
 	/* not used for rthunder
@@ -298,8 +290,7 @@ module system86_tb;
 			.nE(eprom_12c_ce_n), 
 			.nG(eprom_12c_oe_n), 
 			.A(eprom_12c_addr), 
-			.Q(eprom_12c_data),
-			.data_valid(eprom_12c_dv)
+			.Q(eprom_12c_data)
 		);	
 		
 	eprom_m27256 
@@ -313,8 +304,7 @@ module system86_tb;
 			.nE(eprom_12d_ce_n), 
 			.nG(eprom_12d_oe_n), 
 			.A(eprom_12d_addr), 
-			.Q(eprom_12d_data),
-			.data_valid(eprom_12d_dv)
+			.Q(eprom_12d_data)
 		);	
 			
 		// tile ram
@@ -329,8 +319,7 @@ module system86_tb;
 			.nWE(sram_4n_we_n),
 			.nOE(sram_4n_oe_n),
 			.A(sram_4n_addr),
-			.D(sram_4n_data),
-			.data_valid(sram_4n_dv)
+			.D(sram_4n_data)
 		);
 		
 	sram_cy6264 
@@ -344,8 +333,7 @@ module system86_tb;
 			.nWE(sram_7n_we_n),
 			.nOE(sram_7n_oe_n),
 			.A(sram_7n_addr),
-			.D(sram_7n_data),
-			.data_valid(sram_7n_dv)
+			.D(sram_7n_data)
 		);
 
 	// sprite ram
@@ -360,8 +348,7 @@ module system86_tb;
 			.nWE(sram_10m_we_n),
 			.nOE(sram_10m_oe_n),
 			.A(sram_10m_addr),
-			.D(sram_10m_data),
-			.data_valid(sram_10m_dv)
+			.D(sram_10m_data)
 		);
 		
 	sram_m58725 
@@ -375,8 +362,7 @@ module system86_tb;
 			.nWE(sram_11k_we_n),
 			.nOE(sram_11k_oe_n),
 			.A(sram_11k_addr),
-			.D(sram_11k_data),
-			.data_valid(sram_11k_dv)
+			.D(sram_11k_data)
 		);
 		
 		Video_Logger

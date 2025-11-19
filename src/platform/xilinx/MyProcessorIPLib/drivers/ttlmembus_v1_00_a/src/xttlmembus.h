@@ -17,6 +17,7 @@ extern "C" {
 
 #include "xil_types.h"
 #include "xil_assert.h"
+#include "xparameters.h"
 #include "xstatus.h"
 #include "xttlmembus_l.h"
 
@@ -89,7 +90,8 @@ void XTtlMemBus_WriteRegMasked(XTtlMemBus *InstancePtr, u32 RegOffset, u32 Data,
 
 u32 XTtlMemBus_GetStatus(XTtlMemBus *InstancePtr);
 int XTtlMemBus_GetSupportsDynamicMapping(XTtlMemBus *InstancePtr);
-int XTtlMemBus_GetEnabled(XTtlMemBus *InstancePtr);
+int XTtlMemBus_GetRunning(XTtlMemBus *InstancePtr);
+int XTtlMemBus_GetFSMState(XTtlMemBus *InstancePtr);
 int XTtlMemBus_Start(XTtlMemBus *InstancePtr);
 void XTtlMemBus_Stop(XTtlMemBus *InstancePtr);
 u32 XTtlMemBus_GetErrors(XTtlMemBus *InstancePtr);

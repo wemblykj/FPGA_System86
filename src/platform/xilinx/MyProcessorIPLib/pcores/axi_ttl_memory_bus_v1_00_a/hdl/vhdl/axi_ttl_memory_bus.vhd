@@ -261,7 +261,9 @@ entity axi_ttl_memory_bus is
 	C_CTRL_WIDTH : integer range 1 to 3 := 3;
     C_ADDR_WIDTH : integer range 4 to 16 := 16;
     C_DATA_WIDTH : integer range 4 to 8 := 8;
-
+	
+	-- Interfacing
+	C_BUS_TYPE : integer range 0 to 1      	    := 0;
     -- Mapping generics
     C_MAPPED_BASEADDR : std_logic_vector := X"FFFFFFFF";
 	C_MAPPED_SIZE : std_logic_vector := X"00000000";
@@ -289,16 +291,6 @@ entity axi_ttl_memory_bus is
     C_HIGHADDR                    : std_logic_vector := X"00000000"
   );
   port (
-    -- ROM ports
-    nChipEnable : in std_logic;
-    nOutputEnable : in std_logic;
-    nWriteEnable : in std_logic;
-    Address : in std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
-    Data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0);
-	 
-    -- Mapping
-    MappedAddress            : in std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
-
 	 -- Interrupt---------------------------------------------------------------
     IP2INTC_Irpt            : out std_logic;
 	 
@@ -361,7 +353,14 @@ entity axi_ttl_memory_bus is
     downto 0);
     S_AXI_RRESP : out std_logic_vector(1 downto 0);
     S_AXI_RVALID : out std_logic;
-    S_AXI_RREADY : in std_logic
+    S_AXI_RREADY : in std_logic;
+	 
+	 -- ROM ports
+    nChipEnable : in std_logic;
+    nOutputEnable : in std_logic;
+    nWriteEnable : in std_logic;
+    Address : in std_logic_vector((C_ADDR_WIDTH - 1) downto 0);
+    Data : inout std_logic_vector((C_DATA_WIDTH - 1) downto 0)
   );
 
   -------------------------------------------------------------------------------
@@ -543,7 +542,7 @@ constant IP_NUM_INTR       : integer   := 3;
 constant IP_NUM_REG   : integer   := 4;
 
 constant BASEADDR : std_logic_vector(31 downto 0) := X"00000000";
-constant HIGHADDR : std_logic_vector(31 downto 0) := X"000000FF";
+constant HIGHADDR : std_logic_vector(31 downto 0) := X"0000000F";
 
 constant INTR_BASEADDR  : std_logic_vector(0 to 31):= X"00000100";
 constant INTR_HIGHADDR  : std_logic_vector(0 to 31):= X"000001FF";
@@ -712,7 +711,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
         Bus2IP_WrCE    => bus2ip_wrce
        );
 
-
+	
 
     ip2bus_data_i   <= intr2bus_data or ip2bus_data;
     
@@ -904,6 +903,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
         C_MAPPED_BASEADDR        => C_MAPPED_BASEADDR,
         C_USE_DYNAMIC_MAPPING   => C_USE_DYNAMIC_MAPPING)
     port map(
+	--		rst_n 					=> bus2ip_resetn,
         Control                 => controlReg,
         Status                  => statusReg,
         MappedAddress           => mappedAddressReg,
@@ -918,7 +918,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
         
         Bus2IP_Clk              => bus2ip_clk,
         Bus2IP_Resetn           => bus2ip_resetn,
-		  Bus2IP_Data             => bus2ip_data,
+	  Bus2IP_Data             => bus2ip_data,
         Bus2IP_BE               => bus2ip_be,
         Bus2IP_RdCE             => bus2ip_rdce(0 to IP_NUM_REG-1),
         Bus2IP_WrCE             => bus2ip_wrce(0 to IP_NUM_REG-1),
@@ -945,6 +945,7 @@ AXI_LITE_IPIF_I : entity axi_lite_ipif_v1_01_a.axi_lite_ipif
         C_MST_AWIDTH              => 32,
         C_MST_DWIDTH              => 32)
     port map(
+	 		rst_n 					=> bus2ip_resetn,
         nChipEnable		  		  => nChipEnable,
         nOutputEnable			  => nOutputEnable,
         nWriteEnable			     => nWriteEnable,

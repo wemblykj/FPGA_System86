@@ -30,14 +30,14 @@ use proc_common_v3_00_a.proc_common_pkg.all;
 ------------------------------------------------------------------------
 entity axi_ttl_memory_bus_reg is
     generic(
-	     C_CTRL_WIDTH : integer range 2 to 3 := 3;
+	     C_CTRL_WIDTH : integer range 1 to 3 := 3;
 	     C_ADDR_WIDTH : integer range 4 to 16 := 16;
         C_DATA_WIDTH : integer range 4 to 8 := 8;
-        C_MAPPED_BASEADDR        	: std_logic_vector   			  := X"FFFFFFFF";
-		C_MAPPED_SIZE        		: std_logic_vector   			  := X"00000000";
-        C_USE_DYNAMIC_MAPPING	  	: integer range 0 to 1        := 0;
+        C_MAPPED_BASEADDR        : std_logic_vector   		     := X"FFFFFFFF";
+		  C_MAPPED_SIZE        		: std_logic_vector   			  := X"00000000";
+        C_USE_DYNAMIC_MAPPING	  	: integer range 0 to 1          := 0;
         C_SLV_DWIDTH        	  	: integer   						  := 32;
-		C_USER_NUM_REG          	: integer   						  := 4
+		  C_USER_NUM_REG          	: integer   						  := 4
 		);
     port(
         Control      		 : out std_logic_vector(C_SLV_DWIDTH - 1 downto 0);
@@ -181,25 +181,31 @@ begin
 					end if;
 					
                 case slv_reg_write_sel is
-                    --when "1000" =>
+		    -- line fault
+                    --when "0001" =>	
                     --    for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
                     --        if(Bus2IP_BE(byte_index) = '1') then
                     --            bus_data_write_i(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
                     --        end if;
                     --    end loop;
-                    when "0100" =>
+
+		    -- bus state
+                    when "0010" =>
                         for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
                             if(Bus2IP_BE(byte_index) = '1') then
                                 bus_write_i(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
                             end if;
                         end loop;
-                    when "0010" =>
+
+		    -- dynamic mapping address
+                    when "0100" =>
                         for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
                             if(Bus2IP_BE(byte_index) = '1') then
                                 mapped_address_i(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
                             end if;
                         end loop;
-                    when "0001" =>
+		    -- control
+                    when "1000" =>
                         for byte_index in 0 to (C_SLV_DWIDTH/8)-1 loop
                             if(Bus2IP_BE(byte_index) = '1') then
                                 control_i(byte_index*8+7 downto byte_index*8) <= Bus2IP_Data(byte_index*8+7 downto byte_index*8);
@@ -217,10 +223,17 @@ begin
     SLAVE_REG_READ_PROC: process(slv_reg_read_sel) is
     begin
         case slv_reg_read_sel is
-            --when "1000" => slv_ip2bus_data <= ;
-            when "0100" => slv_ip2bus_data <= pack_bus(BusDataRead, BusAddressRead, BusControlRead);
-            when "0010" => slv_ip2bus_data <= mapped_address_i;
-            when "0001" => slv_ip2bus_data <= Status;
+            --when "0001" => slv_ip2bus_data <= ;	-- line fault
+
+	    -- bus state
+            when "0010" => slv_ip2bus_data <= pack_bus(BusDataRead, BusAddressRead, BusControlRead);
+
+	    -- dynamic mapping address
+            when "0100" => slv_ip2bus_data <= mapped_address_i;
+
+	    -- control
+            when "1000" => slv_ip2bus_data <= Status;
+
             when others => slv_ip2bus_data <= (others => '0');
         end case;
     end process SLAVE_REG_READ_PROC;

@@ -1,0 +1,15 @@
+    	********************************************* 
+	* MAIN CPU EQUATES 
+	******************************************** 
+
+	SCROLL0		EQU	$0000		; TILEMAP 0/1 RAM
+	SCROLL1		EQU	$2000		; TILEMAP 2/3 RAM
+	SOUND		EQU	$4000		; WORK RAM (1K)
+	OBJECT		EQU	$4000		; WORK RAM (8K)
+	SPRITE		EQU	$5800		; SPRITE REGISTERS
+
+	ROM9C		EQU	$8000		;ROM 9C START  
+	ROM9CSIZ	EQU	$8000		;ROM 9C SIZE (32K)
+
+	ROM9D		EQU	$6000		;ROM 9D START  
+	ROM9DSIZ	EQU	$2000		;ROM 9D SIZE (8K BANKED)

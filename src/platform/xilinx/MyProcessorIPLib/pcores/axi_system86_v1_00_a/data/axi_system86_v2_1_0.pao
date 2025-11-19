@@ -10,7 +10,8 @@ lib interrupt_control_ex_v2_01_a all
 lib axi_lite_ipif_v1_01_a all 
 lib axi_master_lite_v2_00_a all 
 
-
 lib system86_v1_00_a all
 
 lib axi_system86_v1_00_a axi_system86 vhdl
+lib axi_system86_v1_00_a axi_system86_reg vhdl
+lib axi_system86_v1_00_a axi_system86_core vhdl

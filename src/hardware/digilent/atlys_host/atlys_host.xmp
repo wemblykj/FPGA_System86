@@ -3,6 +3,8 @@ XmpVersion: 14.7
 VerMgmt: 14.7
 IntStyle: default
 Flow: ise
+ModuleSearchPath: /home/wembly/development/github/wemblykj/FPGA/Digilent/Digilent_AXI_IPCore_Support_v_1_35/ipxact/pcores/d_usb_epp_dstm_axi_v1_00_a/../../../
+ModuleSearchPath: /home/wembly/development/github/wemblykj/FPGA/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/axi_system86_v1_00_a/../../../
 ModuleSearchPath: C:/Users/paulw/Development/FPGA/Digilent/Atlys_AXI_BSB_Support/lib/Digilent/pcores/axi_hdmi_v1_00_a/../../../
 ModuleSearchPath: C:/Users/paulw/Development/FPGA/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/system86_v1_00_a/../../../
 ModuleSearchPath: /home/paul/development/FPGA_System86/src/platform/xilinx/MyProcessorIPLib/pcores/axi_ttl_memory_bus_v1_00_a/../../../

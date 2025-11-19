@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE doc SYSTEM "../../ipdialog.dtd" [
+	<!ENTITY C_BUS_WIDTH '
+	<widget id="C_BUS_WIDTH">
+		<key>C_BUS_WIDTH</key>
+		<label>Signal Bus Width</label>
+		<tip>The width of the signal bus</tip>
+	</widget>
+	'>
+	<!ENTITY C_NUM_PORTS '
+	<widget id="C_NUM_PORTS">
+		<key>C_NUM_PORTS</key>
+		<label>Number of Inputs</label>
+		<tip>The number of input busses</tip>
+	</widget>
+	'>
+	<!ENTITY C_SEL_WIDTH '
+	<widget id="C_SEL_WIDTH">
+		<key>C_SEL_WIDTH</key>
+		<label>Selection Width</label>
+		<tip>The width of the selection bus</tip>
+	</widget>
+	'>
+	<!ENTITY C_FAMILY '
+	<widget id="C_FAMILY">
+		<key>C_FAMILY</key>
+		<label>Target FPGA Architecture</label>
+		<tip></tip>
+	</widget>
+	'>
+	<!ENTITY C_INSTANCE '
+	<widget id="C_INSTANCE">
+		<key>C_INSTANCE</key>
+		<label>IP Instance Name</label>
+		<tip></tip>
+	</widget>
+	'>
+]>
+
+<doc>
+	<view id="Config">
+		<display>Config</display>
+		<group id="Characteristics">
+			<display>Characteristics</display>
+			<item>&C_BUS_WIDTH;</item>
+			<item>&C_NUM_PORTS;</item>
+			<item>&C_SEL_WIDTH;</item>		
+		</group>
+	</view>
+</doc>

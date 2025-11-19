@@ -59,7 +59,7 @@
 void
 enable_caches()
 {
-#ifdef __PPC__
+/*#ifdef __PPC__
     Xil_ICacheEnableRegion(CACHEABLE_REGION_MASK);
     Xil_DCacheEnableRegion(CACHEABLE_REGION_MASK);
 #elif __MICROBLAZE__
@@ -69,14 +69,23 @@ enable_caches()
 #ifdef XPAR_MICROBLAZE_USE_DCACHE
     Xil_DCacheEnable();
 #endif
-#endif
+#endif*/
 }
 
 void
 disable_caches()
 {
-    Xil_DCacheDisable();
+/*#ifdef __PPC__
+	Xil_ICacheDisable();
+	Xil_DCacheDisable();
+#elif __MICROBLAZE__
+#ifdef XPAR_MICROBLAZE_USE_ICACHE
     Xil_ICacheDisable();
+#endif
+#ifdef XPAR_MICROBLAZE_USE_DCACHE
+    Xil_DCacheDisable();
+#endif
+#endif*/
 }
 
 void

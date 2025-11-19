@@ -9,7 +9,6 @@
 /***************************** Include Files *********************************/
 
 #include "xsystem86.h"
-#include "xparameters.h"
 
 /************************** Constant Definitions *****************************/
 

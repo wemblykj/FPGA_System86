@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE doc SYSTEM "../../ipdialog.dtd" [
+	<!ENTITY C_BCD_WIDTH '
+	<widget id="C_BCD_WIDTH">
+		<key>C_BCD_WIDTH</key>
+		<label>BCD output width</label>
+		<tip>The width of the BCD output</tip>
+	</widget>
+	'>
+	<!ENTITY C_FAMILY '
+	<widget id="C_FAMILY">
+		<key>C_FAMILY</key>
+		<label>Target FPGA Architecture</label>
+		<tip></tip>
+	</widget>
+	'>
+	<!ENTITY C_INSTANCE '
+	<widget id="C_INSTANCE">
+		<key>C_INSTANCE</key>
+		<label>IP Instance Name</label>
+		<tip></tip>
+	</widget>
+	'>
+]>
+
+<doc>
+	<view id="Config">
+		<display>Config</display>
+		<group id="Characteristics">
+			<display>Characteristics</display>
+			<item>&C_BCD_WIDTH;</item>
+		</group>
+	</view>
+</doc>

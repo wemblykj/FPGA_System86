@@ -69,9 +69,9 @@ proc gen_testfunc_def {swproj mhsinst} {
         
         if { ${system86_intr} == 1 } {
             append decl "
-#define system86_ADDR 1
-#define system86_DATA_READ 2
-#define system86_DATA_WRITE 4"
+#define SYSTEM86_ADDR 1
+#define SYSTEM86_DATA_READ 2
+#define SYSTEM86_DATA_WRITE 4"
             
             set inc_file_lines $decl
             return $inc_file_lines
@@ -90,7 +90,7 @@ proc gen_init_code {swproj mhsinst} {
         set ipname [xget_value $mhsinst "NAME"]
         
         if { ${system86_intr} == 1 && ${all_inputs} == 1 } {
-            set decl "   static Xsystem86 ${ipname}_Xsystem86;"
+            set decl "   static XSystem86 ${ipname}_XSystem86;"
             set inc_file_lines $decl
             return $inc_file_lines
         } else {
@@ -128,7 +128,7 @@ proc gen_testfunc_call {swproj mhsinst} {
    {
       int status;
       
-      status = system86Example(${deviceid});
+      status = System86Example(${deviceid});
    }"
             }
             1       { 

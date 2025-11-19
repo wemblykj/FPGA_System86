@@ -40,7 +40,7 @@ library axi_ttl_memory_bus_v1_00_a;
 entity axi_ttl_memory_bus_core is
     generic
     (
-	   C_CTRL_WIDTH 			: integer range 2 to 3 := 3;
+	   C_CTRL_WIDTH 			: integer range 1 to 3 := 3;
       C_ADDR_WIDTH 				: integer range 4 to 16 := 16;
       C_DATA_WIDTH 				: integer range 4 to 8 := 8;
       C_MAPPED_BASEADDR        	: std_logic_vector     	:= X"FFFFFFFF";
@@ -61,6 +61,7 @@ entity axi_ttl_memory_bus_core is
     );
     port	
     (
+		rst_n 			   : in std_logic;
         nChipEnable 			   : in std_logic;
       	nOutputEnable 		   : in std_logic;
       	nWriteEnable 			: in std_logic;
@@ -122,6 +123,7 @@ entity axi_ttl_memory_bus_core is
     attribute MAX_FANOUT of M_AXI_ARESETN : signal is "10000";
     attribute SIGIS of M_AXI_ACLK         : signal is "Clk";
     attribute SIGIS of M_AXI_ARESETN      : signal is "Rst";
+	 attribute SIGIS of rst_n      : signal is "Rst";
 end axi_ttl_memory_bus_core;
 
 architecture Behavioral of axi_ttl_memory_bus_core is
@@ -193,7 +195,7 @@ architecture Behavioral of axi_ttl_memory_bus_core is
 
 component axi_ttl_memory_bus_master
     generic(
-      C_CTRL_WIDTH        : integer range 2 to 3   := 3;
+      C_CTRL_WIDTH        : integer range 1 to 3   := 3;
       C_ADDR_WIDTH        : integer range 4 to 16  := 16;
       C_DATA_WIDTH        : integer range 4 to 8   := 8;
 	   C_MST_AWIDTH 		  : integer 			      := 32;
@@ -351,7 +353,7 @@ begin
         C_MST_AWIDTH            => C_MST_AWIDTH,
         C_MST_DWIDTH            => C_MST_DWIDTH)
     port map(
-        rst_n                   => M_AXI_ARESETN,
+        rst_n                   => rst_n,
         nChipEnable             => nChipEnable,
         nOutputEnable           => nOutputEnable,
         nWriteEnable            => nWriteEnable,
