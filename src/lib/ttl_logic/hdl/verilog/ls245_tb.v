@@ -27,7 +27,7 @@ module lsS245_tb;
 
 	// Inputs
 	reg DIR;
-	reg OE;
+	reg bOE;
 
 	// Bidirs
 	wire [7:0] A;
@@ -36,13 +36,15 @@ module lsS245_tb;
 	reg [7:0] AIn = 'h99;	
 	reg [7:0] BIn = 'h66;
 	
-	assign A = DIR ? AIn : 8'bZ;
-	assign B = ~DIR ? BIn : 8'bZ;
+	assign a_to_b = ~bOE & DIR;
+	assign b_to_a = ~bOE & ~DIR;
+	assign A = a_to_b ? AIn : 8'bZ;
+	assign B = b_to_a ? BIn : 8'bZ;
 	
 	// Instantiate the Unit Under Test (UUT)
 	ls245 uut (
 		.DIR(DIR), 
-		.OE(OE), 
+		.bOE(bOE), 
 		.A(A),
 		.B(B)
 	);
@@ -53,7 +55,7 @@ module lsS245_tb;
 	initial begin
 		// Initialize Inputs
 		DIR = 0;
-		OE = 0;
+		bOE = 1;
 		
 		// Wait 100 ns for global reset to finish
 		#100;
@@ -62,7 +64,7 @@ module lsS245_tb;
 		$display("OE\tDIR\tAIn\tBIn\tAOut\tBOut");
 		
 		for (e = 0; e <= 1; e=e+1) begin
-			OE <= e[0];
+			bOE <= e[0];
 			
 			for (d = 0; d <= 1; d=d+1) begin
 				
@@ -70,7 +72,7 @@ module lsS245_tb;
 					
 				#4
 				$display("%s\t%s\t0x%x\t0x%x\t0x%x\t0x%x", 
-					OE ? "H" : "L",
+					bOE ? "H" : "L",
 					DIR ? "H" : "L", 
 					AIn,
 					BIn,

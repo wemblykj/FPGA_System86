@@ -29,16 +29,16 @@ module videogen_subsystem
 #(
 )
 (
-	 input wire rst_n,
+	 input wire _rst_n,
 	
-    input CLK_6MD,
-    input nCLR,
-    input [7:0] D,
-    input BANK,
+    input s86_6MD_i,
+    input s86_bCLR_i,
+    input [7:0] s86_D_i,
+    input s86_BANK_i,
 	  //output wire SYNC,
-    output wire [3:0] RED,
-    output wire [3:0] GREEN,
-    output wire [3:0] BLUE,
+    output wire [3:0] s86_RED_o,
+    output wire [3:0] s86_GREEN_o,
+    output wire [3:0] s86_BLUE_o,
     
     // == hardware abstraction - memory buses ==
    
@@ -48,58 +48,58 @@ module videogen_subsystem
 		
 	wire [7:0] ls273_4u_d;
 	ls273 ls273_4u(
-		.CLK(CLK_6MD),
-		.nCLR(nCLR),
-		.D(D),
+		.CLK(s86_6MD_i),
+		.s86_bCLR_i(s86_bCLR_i),
+		.s86_D_i(s86_D_i),
 		.Q(ls273_4u_d)
 		);
 	
 	wire [3:0] ls173_3v_d;
 	ls173 ls173_3v(
-		.CLK(CLK_6MD),
+		.CLK(s86_6MD_i),
 		.CLR(1'b0),
 		.nG1(1'b0),
 		.nG2(1'b0),
 		.M(1'b0),
 		.N(1'b0),
-		.D(prom_3s_data),
+		.s86_D_i(prom_3s_data),
 		.Q(ls173_3v_d)
 		);
 		
 	wire [3:0] ls173_3u_d;
 	ls173 ls173_3u(
-		.CLK(CLK_6MD),
+		.CLK(s86_6MD_i),
 		.CLR(1'b0),
 		.nG1(1'b0),
 		.nG2(1'b0),
 		.M(1'b0),
 		.N(1'b0),
-		.D(prom_3r_data[7:4]),
+		.s86_D_i(prom_3r_data[7:4]),
 		.Q(ls173_3u_d)
 		);
 		
 	wire [3:0] ls173_3t_d;
 	ls173 ls173_3t(
-		.CLK(CLK_6MD),
+		.CLK(s86_6MD_i),
 		.CLR(1'b0),
 		.nG1(1'b0),
 		.nG2(1'b0),
 		.M(1'b0),
 		.N(1'b0),
-		.D(prom_3r_data[3:0]),
+		.s86_D_i(prom_3r_data[3:0]),
 		.Q(ls173_3t_d)
 		);
 		
 	// == hardware abstraction - memory buses ==
 
-	assign BLUE = ls173_3v_d;
-	assign GREEN = ls173_3u_d;
-	assign RED = ls173_3t_d;
+	assign s86_BLUE_o = ls173_3v_d;
+	assign s86_GREEN_o = ls173_3u_d;
+	assign s86_RED_o = ls173_3t_d;
     
-	assign prom_3r_addr = {BANK, ls273_4u_d};
+	assign prom_3r_addr = {s86_BANK_i, ls273_4u_d};
 	assign prom_3r_ce_n = 1'b0;
 	
-	assign prom_3s_addr = {BANK, ls273_4u_d};
+	assign prom_3s_addr = {s86_BANK_i, ls273_4u_d};
 	assign prom_3s_ce_n = 1'b0;
 	
 	 	

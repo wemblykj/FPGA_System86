@@ -55,8 +55,8 @@ module cus41_tb;
 	reg clk_48m;
 
 	// CUS27 outputs
-	wire CLK_S2H;
-	wire CLK_6M;
+	wire s86_S2H;
+	wire s86_6M;
 	wire nVBLANK;
 	
 	// Inputs
@@ -65,7 +65,7 @@ module cus41_tb;
 	//reg nVBLA;
 	//reg CLK_0;
 	reg CLK_1;
-	//reg CLK_6M;
+	//reg s86_6M;
 	reg nSWE;
 	reg SA15;
 	reg SA14;
@@ -100,9 +100,9 @@ module cus41_tb;
 		.MA(MA), 
 		.nMWE(nMWE), 
 		.nVBLA(nVBLANK), 
-		.CLK_0(~CLK_S2H), 
+		.CLK_0(~s86_S2H), 
 		.CLK_1(CLK_1), 
-		.CLK_6M(CLK_6M), 
+		.s86_6M(s86_6M), 
 		.nSWE(nSWE), 
 		.SA15(SA15), 
 		.SA14(SA14), 
@@ -135,10 +135,10 @@ module cus41_tb;
 		cus27_9p_clock_divider(
 			.rst(rst),
 			.CLK_48M(clk_48m), 
-			.CLK_6M_IN(CLK_6M),
+			.s86_6M_IN(s86_6M),
 			//.CLK_24M(CLK_24M),
 			//.CLK_12M(CLK_12M),
-			.CLK_6M(CLK_6M),
+			.s86_6M(s86_6M),
 			//.nVSYNC(nVSYNC),
 			//.nHSYNC(nHSYNC),
 			//.nHBLANK(nHBLANK),
@@ -149,10 +149,10 @@ module cus41_tb;
 			//.CLK_4V(CLK_4V),
 			//.CLK_1V(CLK_1V),
 			//.CLK_4H(CLK_4H),
-			//.CLK_2H(CLK_2H),
-			//.CLK_1H(CLK_1H),
-			.CLK_S2H(CLK_S2H)
-			//.CLK_S1H(CLK_S1H)
+			//.s86_2H(s86_2H),
+			//.s86_1H(s86_1H),
+			.s86_S2H(s86_S2H)
+			//.s86_S1H(s86_S1H)
 		);
 	
 	integer i;
@@ -168,7 +168,7 @@ module cus41_tb;
 		//nVBLA = 0;
 		//CLK_0 = 0;
 		CLK_1 = 0;
-		//CLK_6M = 0;
+		//s86_6M = 0;
 		nSWE = 0;
 		SA15 = 0;
 		SA14 = 0;

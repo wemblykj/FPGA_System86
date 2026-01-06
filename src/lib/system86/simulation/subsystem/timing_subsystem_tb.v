@@ -25,77 +25,90 @@
 
 module timing_subsystem_tb;
 
-	reg clk_in;
-	reg rst_n;
+	reg _rst_n;
 
-	// == supply rails ==
-	supply1 VCC;
-	supply0 GND;
-	
-	wire CLK_6M;
-	
-	wire _1H;
-	wire _2H;
-	wire _4H;
+	reg sig_48M;
 
-	wire _1V;
-	//wire CLK_2V;
-	wire _4V;
+	wire sig_24M;
+	wire sig_12M;
+	wire sig_6M;
+	wire sig_6MD;
+	wire sig_X6M;
+	wire sig_X24M;
 	
-	wire n1H;
-	wire S1H;
-	wire S2H;
-	wire nS1H;
+	wire sig_1H;
+	wire sig_b1H;
+	wire sig_2H;
+	wire sig_4H;
+
+	wire sig_1V;
+	wire sig_2V;
+	wire sig_4V;
+	wire sig_8V;
+	
+	wire sig_S1H;
+	wire sig_S2H;
+	wire sig_bS1H;
 		
-	wire nHSYNC;
-	wire nVSYNC;
-	wire nHBLANK;
-	wire nVBLANK;
-	
-	wire nVRESET;
-	wire nCOMPSYNC;
+	wire sig_bHSYNC;
+	wire sig_bVSYNC;
+	wire sig_bHBLANK;
+	wire sig_bVBLANK;
+	wire sig_HRESET;
+	wire sig_VRESET;
+	wire sig_bCOMPSYNC;
+	wire sig_BLANKING;
 	
 	// Timing subsystem
 	timing_subsystem timing(
-	   .rst_n(rst_n),
-		.CLK_48M(clk_in),
-		.CLK_6M(CLK_6M),
-		.nHSYNC(nHSYNC),
-		.nVSYNC(nVSYNC),
-		.nHBLANK(nHBLANK),
-		.nVBLANK(nVBLANK),
-		.nVRESET(nVRESET),
-		.nCOMPSYNC(nCOMPSYNC),
-		._1H(_1H),
-		.n1H(n1H),
-		._2H(_2H),
-		._4H(_4H),
-		._1V(_1V),
-		//.CLK_2V(_2V),
-		._4V(_4V),
-		._8V(_8V),
-		.S1H(S1H),
-		.nS1H(nS1H),
-		.S2H(S2H)
+	   ._rst_ni(_rst_n),
+		.s86_48M_i(sig_48M),
+		.s86_24M_o(sig_24M),
+		.s86_12M_o(sig_12M),
+		
+		.s86_6M_o(sig_6M),
+		.s86_6MD_o(sig_6MD),
+		.s86_X24M_o(sig_X24M),
+		.s86_X6M_o(sig_X6M),
+		
+		.s86_bHSYNC_o(sig_bHSYNC),
+		.s86_bVSYNC_o(sig_bVSYNC),
+		.s86_bHBLANK_o(sig_bHBLANK),
+		.s86_bHRESET_o(sig_HRESET),
+		.s86_bVBLANK_o(sig_bVBLANK),
+		.s86_bVRESET_o(sig_VRESET),
+		.s86_bCOMPSYNC_o(sig_bCOMPSYNC),
+		.s86_BLANKING_o(sig_BLANKING),
+		.s86_1H_o(sig_1H),
+		.s86_b1H_o(sig_b1H),
+		.s86_2H_o(sig_2H),
+		.s86_4H_o(sig_4H),
+		.s86_1V_o(sig_1V),
+		.s86_2V_o(sig_2V),
+		.s86_4V_o(sig_4V),
+		.s86_8V_o(sig_8V),
+		.s86_S1H_o(sig_S1H),
+		.s86_bS1H_o(sig_bS1H),
+		.s86_S2H_o(sig_S2H)
 	);
 
 	initial begin
-		rst_n = 0;
-		clk_in = 0;
+		_rst_n = 0;
+		sig_48M = 0;
 
 		// Wait 100 ns for global reset to finish
 		#100;
         
-		rst_n = 1;
+		_rst_n = 1;
 	end
 	
-	always @(negedge nHSYNC) begin
-		if (_1V && _4V && _8V)
+	always @(negedge sig_bHSYNC) begin
+		if (sig_8V)
 			$stop;
 	end
     
 	always begin
-		#10.1725 clk_in = ~clk_in;
+		#10.1725 sig_48M = ~sig_48M;
 	end
 	
 endmodule

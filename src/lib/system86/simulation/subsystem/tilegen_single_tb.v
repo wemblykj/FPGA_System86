@@ -68,13 +68,13 @@ module tilegen_single_tb
 	
 	// Inputs
 	reg clk_in;
-	reg rst_n;
+	reg _rst_n;
 	
 	wire [3:0] R;
 	wire [3:0] G;
 	wire [3:0] B;
-	wire nHSYNC;
-	wire nVSYNC;
+	wire bHSYNC;
+	wire bVSYNC;
 	
 	reg [8:0] hScrollOffset = 0;
 	
@@ -82,23 +82,23 @@ module tilegen_single_tb
 	supply1 VCC;
 	supply0 GND;
 	
-	wire CLK_6M;
-	wire CLK_1H;
-	wire CLK_2H;
+	wire s86_6M;
+	wire s86_1H;
+	wire s86_2H;
 	
 	// Timing subsystem
 	timing_subsystem timing(
-	   .rst_n(rst_n),
+	   ._rst_n(_rst_n),
 		.CLK_48M(clk_in),
-		.CLK_6M(CLK_6M),
-		.nVSYNC(nVSYNC),
-		.nHSYNC(nHSYNC),
-		.nHBLANK(nHBLANK),
-		.nVBLANK(nVBLANK),
+		.s86_6M(s86_6M),
+		.bVSYNC(bVSYNC),
+		.bHSYNC(bHSYNC),
+		.bHBLANK(bHBLANK),
+		.bVBLANK(bVBLANK),
 		.nVRESET(nVRESET),
 		.nCOMPSYNC(nCOMPSYNC),
-		.CLK_1H(CLK_1H),
-		.CLK_2H(CLK_2H)
+		.s86_1H(s86_1H),
+		.s86_2H(s86_2H)
 	);
 	
 	/*VIDGEN vidgen(
@@ -121,7 +121,7 @@ module tilegen_single_tb
 	reg SRCWIN;
 	reg BACKCOLOR;
 	reg [12:0] A;
-	reg nWE;
+	reg bWE;
 	
 	// Outputs
 	wire [2:0] SPR;
@@ -140,7 +140,7 @@ module tilegen_single_tb
 	
 	// == Layer 1 & 2 =
 	
-	wire layer = CLK_2H;
+	wire layer = s86_2H;
 	wire [13:0] cus42_7k_ga;
 	wire cus42_7k_rwe_n;
 	wire cus42_7k_roe_n;
@@ -184,22 +184,22 @@ module tilegen_single_tb
 	
 	cus42 CUS42_7K(
 		// inputs
-		.CLK_6M(CLK_6M), 
-		.CLK_2H(CLK_2H), 
-		.nHSYNC(nHSYNC),
-		.nVSYNC(nVSYNC),
+		.s86_6M(s86_6M), 
+		.s86_2H(s86_2H), 
+		.bHSYNC(bHSYNC),
+		.bVSYNC(bVSYNC),
 		.nRCS(nSCROLL0),
 		.nGCS(GND),	// held high (inactive) on schematics
 		.nLATCH(nLATCH0),
 		.CA( { GND, A[12:0] } ),
-		.RnW(nWE),
+		.s86_RbW(bWE),
 		.CD(D),
 		// outputs
 		.GA(cus42_7k_ga),
 		.RA(cus42_7k_ra),
-		.nRWE(cus42_7k_rwe_n),
+		.bRWE(cus42_7k_rwe_n),
 		.RD(cus42_7k_rd),
-		.nROE(cus42_7k_roe_n),
+		.bROE(cus42_7k_roe_n),
 		.HA2(cus42_7k_ha2),
 		.HB2(cus42_7k_hb2)
 		);
@@ -214,15 +214,15 @@ module tilegen_single_tb
 		);
 	// tile generator
 	cus43 CUS43_8N(
-		.CLK_6M(CLK_6M),
-		.CLK_2H(CLK_2H),
+		.s86_6M(s86_6M),
+		.s86_2H(s86_2H),
 		.PRI( 3'b0 ),
 		.CLI( 8'b0 ),
 		.DTI( 3'b0 ),
 		.GDI( { ls158_7u_y, prom_7r_d } ),
 		.MDI( cus42_7k_rd ),
 		.CA(A[2:0]),
-		.RnW(nWE),
+		.s86_RbW(bWE),
 		.nLATCH(nLATCH0),
 		.FLIP(FLIP),
 		.PRO(PR),
@@ -236,7 +236,7 @@ module tilegen_single_tb
 		//#() 
 		clut(
 		// input
-		.CLK_6MD(CLK_6M), 
+		.s86_6MD(s86_6M), 
 		.nCLR(VCC), //.CLR(ls174_6v_q6), 
 		.D(prom_4v_d), 
 		.BANK(GND), //.BANK(ls174_9v_q5), 
@@ -256,7 +256,7 @@ module tilegen_single_tb
 		) 
 			prom_3s
 		(
-			.nE(prom_3s_ce_n), 
+			.bE(prom_3s_ce_n), 
 			.A(prom_3s_addr), 
 			.Q(prom_3s_data)
 		);
@@ -267,7 +267,7 @@ module tilegen_single_tb
 		)
 		prom_3r
 		(
-			.nE(prom_3r_ce_n), 
+			.bE(prom_3r_ce_n), 
 			.A(prom_3r_addr), 
 			.Q(prom_3r_data)
 		);	
@@ -278,7 +278,7 @@ module tilegen_single_tb
 		) 
 		prom_4v
 		(
-			.nE(1'b0), 
+			.bE(1'b0), 
 			.A(prom_4v_addr), 
 			.Q(prom_4v_data)
 		);	
@@ -289,7 +289,7 @@ module tilegen_single_tb
 		) 
 		prom_6u
 		(
-			.nE(1'b0), 
+			.bE(1'b0), 
 			.A(prom_6u_addr), 
 			.Q(prom_6u_data)
 		);	
@@ -303,7 +303,7 @@ module tilegen_single_tb
 		) 
 		eprom_4r
 		(
-			.nE(1'b0), 
+			.bE(1'b0), 
 			.nG(1'b0), 
 			.A(eprom_4r_addr), 
 			.Q(eprom_4r_data)
@@ -317,7 +317,7 @@ module tilegen_single_tb
 		) 
 		eprom_4s
 		(
-			.nE(1'b0), 
+			.bE(1'b0), 
 			.nG(1'b0), 
 			.A(eprom_4s_addr), 
 			.Q(eprom_4s_data)
@@ -331,7 +331,7 @@ module tilegen_single_tb
 		) 
 		eprom_7r
 		(
-			.nE(1'b0), 
+			.bE(1'b0), 
 			.nG(1'b0), 
 			.A(eprom_7r_addr), 
 			.Q(eprom_7r_data)
@@ -345,7 +345,7 @@ module tilegen_single_tb
 		) 
 		eprom_7s
 		(
-			.nE(1'b0), 
+			.bE(1'b0), 
 			.nG(1'b0), 
 			.A(eprom_7s_addr), 
 			.Q(eprom_7s_data)
@@ -359,7 +359,7 @@ module tilegen_single_tb
 		) 
 		eprom_9c
 		(
-			.nE(eprom_9c_ce_n), 
+			.bE(eprom_9c_ce_n), 
 			.nG(eprom_9c_oe_n), 
 			.A(eprom_9c_addr), 
 			.Q(eprom_9c_data)
@@ -374,7 +374,7 @@ module tilegen_single_tb
 		) 
 		eprom_9d
 		(
-			.nE(eprom_9d_ce_n), 
+			.bE(eprom_9d_ce_n), 
 			.nG(eprom_9d_oe_n), 
 			.A(eprom_9d_addr), 
 			.Q(eprom_9d_data)
@@ -389,7 +389,7 @@ module tilegen_single_tb
 		) 
 		eprom_12c
 		(
-			.nE(eprom_12c_ce_n), 
+			.bE(eprom_12c_ce_n), 
 			.nG(eprom_12c_oe_n), 
 			.A(eprom_12c_addr), 
 			.Q(eprom_12c_data)
@@ -403,7 +403,7 @@ module tilegen_single_tb
 		) 
 		eprom_12d
 		(
-			.nE(eprom_12d_ce_n), 
+			.bE(eprom_12d_ce_n), 
 			.nG(eprom_12d_oe_n), 
 			.A(eprom_12d_addr), 
 			.Q(eprom_12d_data)
@@ -418,8 +418,8 @@ module tilegen_single_tb
 		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(sram_4n_we_n),
-			.nOE(sram_4n_oe_n),
+			.bWE(sram_4n_we_n),
+			.bOE(sram_4n_oe_n),
 			.A(sram_4n_addr),
 			.D(sram_4n_data)
 		);
@@ -433,8 +433,8 @@ module tilegen_single_tb
 		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(sram_7n_we_n),
-			.nOE(sram_7n_oe_n),
+			.bWE(sram_7n_we_n),
+			.bOE(sram_7n_oe_n),
 			.A(sram_7n_addr),
 			.D(sram_7n_data)
 		);
@@ -448,8 +448,8 @@ module tilegen_single_tb
 		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(sram_10m_we_n),
-			.nOE(sram_10m_oe_n),
+			.bWE(sram_10m_we_n),
+			.bOE(sram_10m_oe_n),
 			.A(sram_10m_addr),
 			.D(sram_10m_data)
 		);
@@ -462,8 +462,8 @@ module tilegen_single_tb
 		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(sram_11k_we_n),
-			.nOE(sram_11k_oe_n),
+			.bWE(sram_11k_we_n),
+			.bOE(sram_11k_oe_n),
 			.A(sram_11k_addr),
 			.D(sram_11k_data)
 		);
@@ -472,7 +472,7 @@ module tilegen_single_tb
 	
 	initial begin
 		// Initialize Inputs
-		rst_n = 0;
+		_rst_n = 0;
 		clk_in = 0;
 		nSCROLL0 = 0;
 		nLATCH0 = 0;
@@ -481,13 +481,13 @@ module tilegen_single_tb
 		SRCWIN = 0;
 		BACKCOLOR = 0;
 		A = 0;
-		nWE = 0;
+		bWE = 0;
 		
 		rgb_fd = $fopen("tilegen_single.txt", "w");
 		
 		// Wait 100 ns for global reset to finish
 		#100;
-		rst_n = 1;
+		_rst_n = 1;
         
 		// Add stimulus here
 		
@@ -499,14 +499,14 @@ module tilegen_single_tb
 		#10.1725 clk_in = ~clk_in;
 	end
       
-	always @(posedge CLK_6M) begin
-		if (rst_n) begin
-			$fwrite(rgb_fd, "%0d ns: %b %b %b %b %b\n", $time, nHSYNC, nVSYNC, R, G, B);
+	always @(posedge s86_6M) begin
+		if (_rst_n) begin
+			$fwrite(rgb_fd, "%0d ns: %b %b %b %b %b\n", $time, bHSYNC, bVSYNC, R, G, B);
 		end
 	end
 	
-	always @(negedge nVBLANK) begin
-		if (rst_n) begin
+	always @(negedge bVBLANK) begin
+		if (_rst_n) begin
 			frame_count <= frame_count + 1;
 			
 			hScrollOffset = hScrollOffset + 1;
@@ -522,7 +522,7 @@ module tilegen_single_tb
 			#10 nLATCH0 = 0;
 			
 			if (frame_count > 16) begin
-				rst_n = 0;
+				_rst_n = 0;
 				$fclose(rgb_fd);
 				$stop;
 			end

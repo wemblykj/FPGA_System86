@@ -21,8 +21,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module CUS42_ALT(
-        input wire CLK_6M,
-        input wire CLK_2H,
+        input wire pin_6M_i,
+        input wire pin_2H_i,
         input wire HSYNC,
         input wire VSYNC,
         input wire GCS,
@@ -120,7 +120,7 @@ module CUS42_ALT(
 		reg ls175_8c_3q;
 		reg ls175_8c_4q;
 		
-	assign X6M = CLK_6M;
+	assign X6M = pin_6M_i;
 	assign L6M = ~X6M;
 	assign H = hCounter;
 	assign SH = hScrollCounter;

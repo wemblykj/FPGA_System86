@@ -24,37 +24,41 @@ module timing_subsystem
 	parameter C_USE_HARDWARE_CLOCKS = 0
 )
 (
-	input wire rst_n,
+	// master clock
+	input wire _rst_ni,
 	
-	input wire CLK_48M,
+	input wire s86_48M_i,
 	
 	// generated clocks
-	output wire CLK_24M,
-	output wire CLK_12M,
-	output wire CLK_6M,
-	output wire CLK_6MD,
+	output wire s86_24M_o,
+	output wire s86_12M_o,
+	output wire s86_6M_o,
+	output wire s86_6MD_o,
+	output wire s86_X6M_o,
+	output wire s86_X24M_o,
 	
 	// video synchronisation
-	output wire nVSYNC,
-	output wire nHSYNC,
-	output wire nHBLANK,
-	output wire nVBLANK,
-	output wire nHRESET,
-	output wire nVRESET,
-	output wire BLANKING,
-	output wire nCOMPSYNC,
+	output wire s86_bVSYNC_o,
+	output wire s86_bHSYNC_o,
+	output wire s86_bHBLANK_o,
+	output wire s86_bVBLANK_o,
+	output wire s86_bHRESET_o,
+	output wire s86_bVRESET_o,
+	output wire s86_BLANKING_o,
+	output wire s86_bCOMPSYNC_o,
 	
 	// video timing signals
-	output wire _8V,
-	output wire _4V,
-	output wire _1V,
-	output wire _4H,
-	output wire _2H,
-	output wire _1H,
-	output wire n1H,
-	output wire S2H,
-	output wire S1H,
-	output wire nS1H
+	output wire s86_8V_o,
+	output wire s86_4V_o,
+	output wire s86_2V_o,
+	output wire s86_1V_o,
+	output wire s86_4H_o,
+	output wire s86_2H_o,
+	output wire s86_1H_o,
+	output wire s86_b1H_o,
+	output wire s86_S2H_o,
+	output wire s86_S1H_o,
+	output wire s86_bS1H_o
 );
 
 	wire cus27_hblank;
@@ -63,48 +67,52 @@ module timing_subsystem
 	//cus27 
 	cus27_gng_ref
 		cus27_9p_clock_divider(
-			.rst_n(rst_n),
-			.CLK_48M(CLK_48M), 
-			.CLK_6M_IN(CLK_6M),
-			.CLK_24M(CLK_24M),
-			.CLK_12M(CLK_12M),
-			.CLK_6M(CLK_6M),
-			.nVSYNC(nVSYNC),
-			.nHSYNC(nHSYNC),
-			.nHBLANK(nHBLANK),
-			.nVBLANK(nVBLANK),
-			.nHRESET(nHRESET),
-			.nVRESET(nVRESET),
-			._8V(_8V),
-			._4V(_4V),
-			._1V(_1V),
-			._4H(_4H),
-			._2H(_2H),
-			._1H(_1H),
-			.S2H(S2H),
-			.S1H(S1H)
+			._rst_ni(_rst_ni),
+			.pin_48M_i(s86_48M_i), 
+			.pin_6M_i(s86_6M_o),
+			.pin_24M_o(s86_24M_o),
+			.pin_12M_o(s86_12M_o),
+			.pin_6M_o(s86_6M_o),
+			.pin_bVSYNC_o(s86_bVSYNC_o),
+			.pin_bHSYNC_o(s86_bHSYNC_o),
+			.pin_bHBLANK_o(s86_bHBLANK_o),
+			.pin_bVBLANK_o(s86_bVBLANK_o),
+			.pin_bHRESET_o(s86_bHRESET_o),
+			.pin_bVRESET_o(s86_bVRESET_o),
+			.pin_1H_o(s86_1H_o),
+			.pin_2H_o(s86_2H_o),
+			.pin_4H_o(s86_4H_o),
+			.pin_1V_o(s86_1V_o),
+			.pin_2V_o(s86_2V_o),
+			.pin_4V_o(s86_4V_o),
+			.pin_8V_o(s86_8V_o),
+			.pin_S1H_o(s86_S1H_o),
+			.pin_S2H_o(s86_S2H_o)
 		);
 
 	// == TTL glue logic
     
 	ls74 
 		ls74_8u(
-			.CLK1(CLK_6M),
+			.CLK1(s86_6M_o),
 			.nPRE1(1'b1),
 			.nCLR1(1'b1),
-			.D1(CLK_1H),
-      .Q1(CLK_n1H),
-      //.nQ1(1'b0),
-			.CLK2(CLK_4H),
+			.D1(s86_1H_o),
+			.Q1(CLK_s86_b1H_o),
+			//.nQ1(1'b0),
+			.CLK2(s86_4H_o),
 			.nPRE2(1'b1),
-			.nCLR2(nVBLANK),
-			.D2(nHBLANK),
-      //.Q2(1'b0),
-			.nQ2(BLANKING)
+			.nCLR2(s86_bVBLANK_o),
+			.D2(s86_bHBLANK_o),
+			//.Q2(1'b0),
+			.nQ2(s86_BLANKING_o)
 		);
 
-	assign CLK_6MD = CLK_6M;
-	assign nS1H = ~S1H;
-	assign nCOMPSYNC = nHSYNC && nVSYNC;	// via LS08 (3H) and'ing of negated signals
+	assign s86_6MD_o = s86_6M_o;
+	assign s86_X6M_o = s86_6M_o;
+	assign s86_X24M_o = s86_24M_o;
+	assign s86_b1H_o = ~s86_1H_o;
+	assign s86_bS1H_o = ~s86_S1H_o;
+	assign s86_bCOMPSYNC_o = s86_bHSYNC_o && s86_bVSYNC_o;	// via LS08 (3H) and'ing of negated signals
 	
 endmodule

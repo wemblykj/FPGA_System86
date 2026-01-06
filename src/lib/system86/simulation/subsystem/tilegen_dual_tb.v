@@ -41,20 +41,20 @@ module tilegen_dual_tb
 	supply1 VCC;
 	supply0 GND;
 	
-	wire CLK_6M;
-	wire CLK_2H;
+	wire s86_6M;
+	wire s86_2H;
 	
 	// Timing subsystem
 	TIMING timing(
 		.CLK_48M(clk_in),
-		.CLK_6M(CLK_6M),
+		.s86_6M(s86_6M),
 		.VSYNC(VSYNC),
 		.HSYNC(HSYNC),
 		.HBLANK(HBLANK),
 		.VBLANK(VBLANK),
 		.VRESET(VRESET),
 		.COMPSYNC(COMPSYNC),
-		.CLK_2H(CLK_2H)
+		.s86_2H(s86_2H)
 	);
 	
 	// Inputs
@@ -89,8 +89,8 @@ module tilegen_dual_tb
 		)
 		uut
 		(
-			.CLK_6M(CLK_6M), 
-			.CLK_2H(CLK_2H), 
+			.s86_6M(s86_6M), 
+			.s86_2H(s86_2H), 
 			.SCROLL0(SCROLL0), 
 			.SCROLL1(SCROLL1), 
 			.LATCH0(LATCH0), 

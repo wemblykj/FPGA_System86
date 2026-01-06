@@ -4,7 +4,7 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    14/04/2020 
-// Design Name:    SCROLL H POSITION
+// Design Name:    SCROLL sig_H_o POSITION
 // Module Name:    system86\src\custom\gng_scroll_position.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
@@ -25,35 +25,35 @@ module cus42_synchronous
 	(
 		input wire rst,
 			
-		input wire CLK_6M,
-		input wire nHSYNC,
-		input wire nVSYNC,
-		output reg [8:0] H,
-		output reg [8:0] V
+		input wire sig_6M_i,
+		input wire sig_bHSYNC_i,
+		input wire sig_bVSYNC_i,
+		output reg [8:0] sig_H_o,
+		output reg [8:0] sig_V_o
 	);
 	
-	reg CLK_6M_last;
+	reg sig_6M_last;
 	reg hsyncLast;
 	reg vsyncLast;
 	
-	always @(CLK_6M or nHSYNC or nVSYNC or rst) begin
+	always @(sig_6M_i or sig_bHSYNC_i or sig_bVSYNC_i or rst) begin
 		if (rst) begin
-			H <= 0;
-			V <= 0;
+			sig_H_o <= 0;
+			sig_V_o <= 0;
 		end else begin
-			if (!nHSYNC && hsyncLast) begin
-				H <= 0;
-				V <= V + 1;
-			end else if (CLK_6M && !CLK_6M_last)
-				H <= H + 1;
+			if (!sig_bHSYNC_i && hsyncLast) begin
+				sig_H_o <= 0;
+				sig_V_o <= sig_V_o + 1;
+			end else if (sig_6M_i && !sig_6M_last)
+				sig_H_o <= sig_H_o + 1;
 				
-			if (!nVSYNC && vsyncLast)
-				V <= 0;
+			if (!sig_bVSYNC_i && vsyncLast)
+				sig_V_o <= 0;
 		end
 		
-		CLK_6M_last <= CLK_6M;
-		hsyncLast <= nHSYNC;
-		vsyncLast <= nVSYNC;
+		sig_6M_last <= sig_6M_i;
+		hsyncLast <= sig_bHSYNC_i;
+		vsyncLast <= sig_bVSYNC_i;
 	end
 	
 endmodule

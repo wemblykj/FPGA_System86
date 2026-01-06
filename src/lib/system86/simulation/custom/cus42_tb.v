@@ -29,23 +29,23 @@
 module cus42_tb;
 
 	// Inputs
-	reg rst_n;
-	reg CLK_6M;
-	wire CLK_2H;
-	wire nHSYNC;
-	wire nVSYNC;
+	reg _rst_n;
+	reg s86_6M;
+	wire s86_2H;
+	wire bHSYNC;
+	wire bVSYNC;
 	reg nGCS;
 	reg nRCS;
 	reg nLATCH;
 	reg FLIP;
 	reg [13:0] CA;
-	reg RnW;
+	reg s86_RbW;
 
 	// Outputs
 	wire [13:0] GA;
 	wire [12:0] RA;
-	wire nRWE;
-	wire nROE;
+	wire bRWE;
+	wire bROE;
 	wire HA2;
 	wire HB2;
 
@@ -57,23 +57,23 @@ module cus42_tb;
 
 	// Instantiate the Unit Under Test (UUT)
 	cus42 uut (
-		.rst_n(rst_n), 
-		.CLK_6M(CLK_6M), 
-		.CLK_2H(CLK_2H), 
-		.nHSYNC(nHSYNC), 
-		.nVSYNC(nVSYNC), 
+		._rst_n(_rst_n), 
+		.s86_6M(s86_6M), 
+		.s86_2H(s86_2H), 
+		.bHSYNC(bHSYNC), 
+		.bVSYNC(bVSYNC), 
 		.nGCS(nGCS), 
 		.nRCS(nRCS), 
 		.nLATCH(nLATCH), 
 		.FLIP(FLIP), 
 		.CA(CA), 
-		.RnW(RnW), 
+		.s86_RbW(s86_RbW), 
 		.CD(CD), 
 		.RD(RD), 
 		.GA(GA), 
 		.RA(RA), 
-		.nRWE(nRWE), 
-		.nROE(nROE), 
+		.bRWE(bRWE), 
+		.bROE(bROE), 
 		.HA2(HA2), 
 		.HB2(HB2)
 	);
@@ -81,26 +81,26 @@ module cus42_tb;
 	// CUS27 - CLOCK DIVIDER
 	cus27 
 		cus27_9p_clock_divider(
-			.rst_n(rst_n),
+			._rst_n(_rst_n),
 			//.CLK_48M(clk_48m), 
-			.CLK_6M_IN(CLK_6M),
+			.s86_6M_IN(s86_6M),
 			//.CLK_24M(CLK_24M),
 			//.CLK_12M(CLK_12M),
-			//.CLK_6M(CLK_6M),
-			.nVSYNC(nVSYNC),
-			.nHSYNC(nHSYNC),
-			//.nHBLANK(nHBLANK),
-			//.nVBLANK(nVBLANK),
+			//.s86_6M(s86_6M),
+			.bVSYNC(bVSYNC),
+			.bHSYNC(bHSYNC),
+			//.bHBLANK(bHBLANK),
+			//.bVBLANK(bVBLANK),
 			//.nHRESET(nHRESET),
 			//.nVRESET(nVRESET),
 			//.CLK_8V(CLK_8V),
 			//.CLK_4V(CLK_4V),
 			//.CLK_1V(CLK_1V),
 			//.CLK_4H(CLK_4H),
-			.CLK_2H(CLK_2H)
-			//.CLK_1H(CLK_1H),
-			//.CLK_S2H(CLK_S2H)
-			//.CLK_S1H(CLK_S1H)
+			.s86_2H(s86_2H)
+			//.s86_1H(s86_1H),
+			//.s86_S2H(s86_S2H)
+			//.s86_S1H(s86_S1H)
 		);
 		
 	sram_cy6264 
@@ -111,40 +111,40 @@ module cus42_tb;
 		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(sram_7n_we_n),
-			.nOE(sram_7n_oe_n),
+			.bWE(sram_7n_we_n),
+			.bOE(sram_7n_oe_n),
 			.A(sram_7n_addr),
 			.D(sram_7n_data),
 			.data_valid(sram_7n_dv)
 		);
 
 	assign sram_7n_ce_n = 0;
-	assign sram_7n_oe_n = nROE;
-	assign sram_7n_we_n = nRWE;
+	assign sram_7n_oe_n = bROE;
+	assign sram_7n_we_n = bRWE;
 	assign sram_7n_addr = RA;
 	assign RD = sram_7n_data;
 	
 	initial begin
 		// Initialize Inputs
-		rst_n = 0;
-		CLK_6M = 0;
+		_rst_n = 0;
+		s86_6M = 0;
 		nGCS = 1;
 		nRCS = 1;
 		nLATCH = 1;
 		FLIP = 0;
 		CA = 0;
-		RnW = 1;
+		s86_RbW = 1;
 
 		// Wait 100 ns for global reset to finish
 		#100;
-		rst_n = 1;
+		_rst_n = 1;
         
 		// Add stimulus here
 
 	end
       
 	// generate our 6.14025Mhz input clock
-	always #81.3802084 CLK_6M = ~CLK_6M;
+	always #81.3802084 s86_6M = ~s86_6M;
 	
 endmodule
 
