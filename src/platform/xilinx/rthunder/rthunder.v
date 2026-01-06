@@ -41,7 +41,7 @@
 //`include "roms/rthunder.vh"
 
 
-module xsystem86
+module rthunder
 	/*#(
 		parameter LAYER_DISABLE_MASK = 0,
 		parameter BACKGROUND_LAYER_AUTOSCROLL = 0,
@@ -56,7 +56,7 @@ module xsystem86
 		
 		// == Simulation outputs
 		output wire vid_clk,
-		//output wire [11:0] vid_data,
+		//output wire [11:0] vid_data,`	
 		output wire [3:0] vid_red,
 		output wire [3:0] vid_green,
 		output wire [3:0] vid_blue,

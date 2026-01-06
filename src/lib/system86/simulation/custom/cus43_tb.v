@@ -39,20 +39,20 @@ module CUS43_tb(
 	supply1 VCC;
 	supply0 GND;
 	
-	wire CLK_6M;
-	wire CLK_2H;
+	wire s86_6M;
+	wire s86_2H;
 	
 	// Timing subsystem
 	TIMING TIMING(
 		.CLK_48M(clk_in),
-		.CLK_6M(CLK_6M),
+		.s86_6M(s86_6M),
 		.VSYNC(VSYNC),
 		.HSYNC(HSYNC),
 		.HBLANK(HBLANK),
 		.VBLANK(VBLANK),
 		.VRESET(VRESET),
 		.COMPSYNC(COMPSYNC),
-		.CLK_2H(CLK_2H)
+		.s86_2H(s86_2H)
 	);
 	
 	// Inputs
@@ -88,8 +88,8 @@ module CUS43_tb(
 		
 	// tile generator
 	CUS43 CUS43_8N(
-		.CLK_6M(CLK_6M),
-		.CLK_2H(GND),
+		.s86_6M(s86_6M),
+		.s86_2H(GND),
 		.PRI( 3'b0 ),
 		.CLI( 8'b0 ),
 		.DTI( 3'b0 ),
@@ -108,7 +108,7 @@ module CUS43_tb(
 		
 	CLUT #("roms/rt1-1.3r", "roms/rt1-2.3s") CLUT(
 		// input
-		.CLK_6M(CLK_6M), 
+		.s86_6M(s86_6M), 
 		.CLR(GND), //.CLR(ls174_6v_q6), 
 		.D(prom_4v_d), 
 		.BANK(GND), //.BANK(ls174_9v_q5), 
@@ -157,7 +157,7 @@ module CUS43_tb(
 	// color
 	assign MD = { vCounter[8:3], hCounter[4:3] };
 	
-	always @(posedge CLK_6M) begin   
+	always @(posedge s86_6M) begin   
 		if (!rst) begin
 			if (HSYNC && !hsyncLast) begin
 				hCounter = 0;
@@ -175,7 +175,7 @@ module CUS43_tb(
 		end
 	end
 	
-	always @(posedge CLK_6M) begin
+	always @(posedge s86_6M) begin
 		if (!rst) begin
 			$fwrite(rgb_fd, "%0d ns: %b %b %b %b %b\n", $time, HSYNC, VSYNC, R, G, B);
 		end

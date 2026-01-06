@@ -29,15 +29,15 @@
 module cus42_layer_tb;
 
 	// Inputs
-	reg rst_n;
-	reg CLK_6M;
+	reg _rst_n;
+	reg s86_6M;
 	reg FLIP;
 	reg nLATCH;
 	reg [2:0] CA;
 	reg [7:0] CD;
 	wire [7:0] RD;
-	wire nHSYNC;
-	wire nVSYNC;
+	wire bHSYNC;
+	wire bVSYNC;
 
 	// Outputs
 	wire [11:0] RA;
@@ -48,15 +48,15 @@ module cus42_layer_tb;
 	
 	// Instantiate the Unit Under Test (UUT)
 	cus42_layer uut (
-		.rst_n(rst_n), 
-		.CLK_6M(CLK_6M), 
+		._rst_n(_rst_n), 
+		.s86_6M(s86_6M), 
 		.FLIP(FLIP), 
 		.nLATCH(nLATCH), 
 		.CA(CA), 
 		.CD(CD), 
 		.RD(RD), 
-		.nHSYNC(nHSYNC), 
-		.nVSYNC(nVSYNC), 
+		.bHSYNC(bHSYNC), 
+		.bVSYNC(bVSYNC), 
 		.RA(RA), 
 		.GA(GA), 
 		.S3H(S3H)
@@ -65,26 +65,26 @@ module cus42_layer_tb;
 	// CUS27 - CLOCK DIVIDER
 	cus27 
 		cus27_9p_clock_divider(
-			.rst_n(rst_n),
+			._rst_n(_rst_n),
 			//.CLK_48M(clk_48m), 
-			.CLK_6M_IN(CLK_6M),
+			.s86_6M_IN(s86_6M),
 			//.CLK_24M(CLK_24M),
 			//.CLK_12M(CLK_12M),
-			//.CLK_6M(CLK_6M),
-			.nVSYNC(nVSYNC),
-			.nHSYNC(nHSYNC)
-			//.nHBLANK(nHBLANK),
-			//.nVBLANK(nVBLANK),
+			//.s86_6M(s86_6M),
+			.bVSYNC(bVSYNC),
+			.bHSYNC(bHSYNC)
+			//.bHBLANK(bHBLANK),
+			//.bVBLANK(bVBLANK),
 			//.nHRESET(nHRESET),
 			//.nVRESET(nVRESET),
 			//.CLK_8V(CLK_8V),
 			//.CLK_4V(CLK_4V),
 			//.CLK_1V(CLK_1V),
 			//.CLK_4H(CLK_4H),
-			//.CLK_2H(CLK_2H),
-			//.CLK_1H(CLK_1H),
-			//.CLK_S2H(CLK_S2H)
-			//.CLK_S1H(CLK_S1H)
+			//.s86_2H(s86_2H),
+			//.s86_1H(s86_1H),
+			//.s86_S2H(s86_S2H)
+			//.s86_S1H(s86_S1H)
 		);
 	
 	sram_cy6264 
@@ -95,8 +95,8 @@ module cus42_layer_tb;
 		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(sram_7n_we_n),
-			.nOE(sram_7n_oe_n),
+			.bWE(sram_7n_we_n),
+			.bOE(sram_7n_oe_n),
 			.A(sram_7n_addr),
 			.D(sram_7n_data),
 			.data_valid(sram_7n_dv)
@@ -110,8 +110,8 @@ module cus42_layer_tb;
 	
 	initial begin
 		// Initialize Inputs
-		rst_n = 0;
-		CLK_6M = 0;
+		_rst_n = 0;
+		s86_6M = 0;
 		FLIP = 0;
 		nLATCH = 0;
 		CA = 0;
@@ -119,14 +119,14 @@ module cus42_layer_tb;
 		
 		// Wait 100 ns for global reset to finish
 		#100;
-      rst_n = 1;
+      _rst_n = 1;
 		
 		// Add stimulus here
 
 	end
       
 	// generate our 6.14025Mhz input clock
-	always #81.3802084 CLK_6M = ~CLK_6M;
+	always #81.3802084 s86_6M = ~s86_6M;
 	
 endmodule
 

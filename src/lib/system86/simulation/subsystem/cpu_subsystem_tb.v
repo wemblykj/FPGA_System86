@@ -28,24 +28,24 @@ reg rst;
 	reg clk_48m;
 
 	// CUS27 outputs
-	wire CLK_6M;
-	wire CLK_2H;
-	wire CLK_S2H;
-	wire CLK_1H;
-	wire CLK_S1H;
-	wire nVBLANK;
+	wire s86_6M;
+	wire s86_2H;
+	wire s86_S2H;
+	wire s86_1H;
+	wire s86_S1H;
+	wire bVBLANK;
 	
 	// Inputs
 	//reg rst;
-	//reg CLK_6M;
-	//reg CLK_2H;
-	//reg CLK_S2H;
-	//reg CLK_1H;
-	//reg CLK_S1H;
-	//reg nVBLANK;
+	//reg s86_6M;
+	//reg s86_2H;
+	//reg s86_S2H;
+	//reg s86_1H;
+	//reg s86_S1H;
+	//reg bVBLANK;
 
 	// Outputs
-	wire nWE;
+	wire bWE;
 	wire nRESET;
 	wire nSCROLL0;
 	wire nSCROLL1;
@@ -62,15 +62,15 @@ reg rst;
 	// Instantiate the Unit Under Test (UUT)
 	cpu_subsystem uut (
 		.rst(rst), 
-		.CLK_6M(CLK_6M), 
-		.CLK_2H(CLK_2H), 
-		.CLK_S2H(CLK_S2H), 
-		.CLK_1H(CLK_1H), 
-		.CLK_S1H(CLK_S1H), 
-		.nVBLANK(nVBLANK), 
+		.s86_6M(s86_6M), 
+		.s86_2H(s86_2H), 
+		.s86_S2H(s86_S2H), 
+		.s86_1H(s86_1H), 
+		.s86_S1H(s86_S1H), 
+		.bVBLANK(bVBLANK), 
 		.A(A), 
 		.D(D), 
-		.nWE(nWE), 
+		.bWE(bWE), 
 		.nRESET(nRESET), 
 		.nSCROLL0(nSCROLL0), 
 		.nSCROLL1(nSCROLL1), 
@@ -86,24 +86,24 @@ reg rst;
 		cus27_9p_clock_divider(
 			.rst(rst),
 			.CLK_48M(clk_48m), 
-			.CLK_6M_IN(CLK_6M),
+			.s86_6M_IN(s86_6M),
 			//.CLK_24M(CLK_24M),
 			//.CLK_12M(CLK_12M),
-			.CLK_6M(CLK_6M),
-			//.nVSYNC(nVSYNC),
-			//.nHSYNC(nHSYNC),
-			//.nHBLANK(nHBLANK),
-			.nVBLANK(nVBLANK),
+			.s86_6M(s86_6M),
+			//.bVSYNC(bVSYNC),
+			//.bHSYNC(bHSYNC),
+			//.bHBLANK(bHBLANK),
+			.bVBLANK(bVBLANK),
 			//.nHRESET(nHRESET),
 			//.nVRESET(nVRESET),
 			//.CLK_8V(CLK_8V),
 			//.CLK_4V(CLK_4V),
 			//.CLK_1V(CLK_1V),
 			//.CLK_4H(CLK_4H),
-			.CLK_2H(CLK_2H),
-			.CLK_1H(CLK_1H),
-			.CLK_S2H(CLK_S2H),
-			.CLK_S1H(CLK_S1H)
+			.s86_2H(s86_2H),
+			.s86_1H(s86_1H),
+			.s86_S2H(s86_S2H),
+			.s86_S1H(s86_S1H)
 		);
 		
 	initial begin
@@ -126,11 +126,11 @@ reg rst;
 	reg PACLAND_Q;
 	wire PACLAND_E;
 	
-	always @(posedge CLK_1H) begin
-		PACLAND_Q <= CLK_2H;
+	always @(posedge s86_1H) begin
+		PACLAND_Q <= s86_2H;
 	end
 	
-	assign PACLAND_E = ~CLK_2H;
+	assign PACLAND_E = ~s86_2H;
 	
 endmodule
 

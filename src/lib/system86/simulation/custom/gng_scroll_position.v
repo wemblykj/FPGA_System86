@@ -27,7 +27,7 @@ module gng_scroll_position
 		input wire rst,
 		input wire layer,
 			
-		input wire CLK_6M,
+		input wire s86_6M,
 		input wire FLIP,
 		input wire nSCRCS,
 		input wire [8:0] H,	// 9 bits
@@ -134,7 +134,7 @@ module gng_scroll_position
 		endcase
 	end
 	
-	always @(posedge CLK_6M) begin
+	always @(posedge s86_6M) begin
 		// GnG 8C LS175 latch
 		/*S0H <= ~hDemux[7];
 		s6h <= ~hDemux[5];

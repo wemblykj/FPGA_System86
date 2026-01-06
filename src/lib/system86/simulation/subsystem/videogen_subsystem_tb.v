@@ -36,13 +36,13 @@ module videogen_subsystem_tb;
 
 	// Inputs
 	reg clk;
-	reg rst_n;
+	reg _rst_n;
 	
 	`PROM_WIRE_DEFS(MB7124, prom_3r);
 	`PROM_WIRE_DEFS(MB7116, prom_3s);
 	
-	wire nHSYNC;
-	wire nVSYNC;
+	wire bHSYNC;
+	wire bVSYNC;
 	wire nHSYNC_2;
 	wire nVSYNC_2;
 	wire HBLANK_2;
@@ -67,40 +67,40 @@ module videogen_subsystem_tb;
 	/*timing_subsystem
 		timing_subsystem(
 			.CLK_48M(clk),
-			.CLK_6M(CLK_6M),
-			.CLK_6MD(CLK_6MD),	// secondary driver? in phase with 6M
-			.nVSYNC(nVSYNC),
-			.nHSYNC(nHSYNC),
-			.nHBLANK(nHBLANK),
-			.nVBLANK(nVBLANK),
+			.s86_6M(s86_6M),
+			.s86_6MD(s86_6MD),	// secondary driver? in phase with 6M
+			.bVSYNC(bVSYNC),
+			.bHSYNC(bHSYNC),
+			.bHBLANK(bHBLANK),
+			.bVBLANK(bVBLANK),
 			.nVRESET(nVRESET),
 			.BLANKING(BLANKING),
 			.nCOMPSYNC(nCOMPSYNC),
-			.CLK_1H(CLK_1H),
-			.CLK_S1H(CLK_S1H),	// secondary driver? in phase with 1H
-			.CLK_2H(CLK_2H),
-			.CLK_S2H(CLK_S2H),	// secondary driver? in phase with 2H
+			.s86_1H(s86_1H),
+			.s86_S1H(s86_S1H),	// secondary driver? in phase with 1H
+			.s86_2H(s86_2H),
+			.s86_S2H(s86_S2H),	// secondary driver? in phase with 2H
 			.CLK_4H(CLK_4H)
 		);
 	*/
 	
 	// clut
 	prom_mb7116 #(`ROM_3S) prom_3s(
-		.nE(prom_3s_ce_n), 
+		.bE(prom_3s_ce_n), 
 		.A(prom_3s_addr), 
 		.Q(prom_3s_data));
 		
 	prom_mb7124 #(`ROM_3R) prom_3r(
-		.nE(prom_3r_ce_n), 
+		.bE(prom_3r_ce_n), 
 		.A(prom_3r_addr), 
 		.Q(prom_3r_data));	
 		
 	videogen_subsystem
 		uut(
-			.rst_n(~rst_n),
+			._rst_n(~_rst_n),
 			
 			// input
-			.CLK_6MD(clk), 
+			.s86_6MD(clk), 
 			.nCLR(1'b1), //.CLR(ls174_6v_q6), 
 			.D(DOT), 
 			.BANK(clut_bank), //.BANK(ls174_9v_q5), 
@@ -126,9 +126,9 @@ module videogen_subsystem_tb;
 		VGA_Sync_Pulses
 		(
 			.i_Clk(clk),
-			.i_Rst(~rst_n),
-			.o_nHSync(nHSYNC),
-			.o_nVSync(nVSYNC)
+			.i_Rst(~_rst_n),
+			.o_nHSync(bHSYNC),
+			.o_nVSync(bVSYNC)
 		);
 		
 	Sync_To_Blanking
@@ -147,9 +147,9 @@ module videogen_subsystem_tb;
 		Sync_To_Blanking
 		(
 			.i_Clk(clk),
-			.i_Rst(~rst_n),
-			.i_nHSync(nHSYNC),
-			.i_nVSync(nVSYNC),
+			.i_Rst(~_rst_n),
+			.i_nHSync(bHSYNC),
+			.i_nVSync(bVSYNC),
 			.o_nHSync(nHSYNC_2),
 			.o_nVSync(nVSYNC_2),
 			.o_HBlank(HBLANK_2),
@@ -169,7 +169,7 @@ module videogen_subsystem_tb;
 		Blanking_To_Count
 		(
 			.i_Clk(clk),
-			.i_nRst(rst_n),
+			.i_nRst(_rst_n),
 			.i_nHSync(nHSYNC_2),
 			.i_nVSync(nVSYNC_2),
 			.i_HBlank(HBLANK_2),
@@ -212,7 +212,7 @@ module videogen_subsystem_tb;
 		.C_FILE_NAME("raw.txt")
 	)
 	raw_logger (
-		.i_Rst(~rst_n),
+		.i_Rst(~_rst_n),
 		.i_Clk(clk),
 		.i_OutputEnable(vid_locked),
 		.i_Red(RED),
@@ -224,12 +224,12 @@ module videogen_subsystem_tb;
 				
 	initial begin
 		// Initialize Inputs
-		rst_n = 0;
+		_rst_n = 0;
 		clk= 0;
 
 		// Wait 1000 ns for global reset to finish
 		#100;
-      rst_n = 1;
+      _rst_n = 1;
 		
 		// Add stimulus here
 		

@@ -41,27 +41,27 @@ module tilegen_subsystem
 		parameter UNKNOWN_LAYER_PRIORITY = 0
 	)
 	(
-		input wire rst_n,
+		input wire _rst_ni,
 	
-		input wire CLK_6M,
-		input wire CLK_2H,
-		input wire nSCROLL0,
-		input wire nSCROLL1,
-		input wire nLATCH0,
-		input wire nLATCH1,
-		input wire nHSYNC,
-		input wire nVSYNC,
-		input wire FLIP,
-		input wire SRCWIN,
-		input wire BANK,
-		input wire nBACKCOLOR,
-		input wire [12:0] A,
-		input wire RnW,
-		input wire [7:0] MD,
-		inout wire [7:0] D,
-		inout wire [20:1] J5,
-		output wire [2:0] SPR,
-		output wire [7:0] DOT, 
+		input wire s86_6M_i,
+		input wire s86_2H_i,
+		input wire s86_bSCROLL0_i,
+		input wire s86_bSCROLL1_i,
+		input wire s86_bLATCH0_i,
+		input wire s86_bLATCH1_i,
+		input wire s86_bHSYNC_i,
+		input wire s86_bVSYNC_i,
+		input wire s86_FLIP_i,
+		input wire s86_SRCWIN_i,
+		input wire s86_BANK_i,
+		input wire s86_bBACKCOLOR_i,
+		input wire [12:0] s86_A_i,
+		input wire s86_RbW_i,
+		input wire [7:0] s86_MD_i,
+		inout wire [7:0] s86_D_io,
+		inout wire [20:1] s86_J5_io,
+		output wire [2:0] s86_SPR_o,
+		output wire [7:0] s86_DOT_o, 
         
       // == hardware abstraction - memory buses ==
 		`EPROM_OUTPUT_DEFS(M27512, eprom_4r),
@@ -81,7 +81,7 @@ module tilegen_subsystem
 	// CUS43 inter-connects
 	wire [2:0] PR;		// layer priority
 	wire [7:0] CL;		//	not sure maybe color - certainly defaulted to background color
-	wire [2:0] DT;		// not sure - defaults from J5 and pulled up high - maps to A0-A2 of tilemap clut.
+	wire [2:0] DT;		// not sure - defaults from s86_J5_io and pulled up high - maps to A0-A2 of tilemap clut.
 	
 	// == Layer 1 & 2 =
 	
@@ -166,15 +166,15 @@ module tilegen_subsystem
 	
 	// background color latch
 	ls374 LS374_8H(
-			.nOC(J5[5]),		// disable background color driver from auxillary driver over J5
-			.CLK(nBACKCOLOR),	// latches on negative edge
-			.D(MD),
+			.nOC(s86_J5_io[5]),		// disable background color driver from auxillary driver over s86_J5_io
+			.CLK(s86_bBACKCOLOR_i),	// latches on negative edge
+			.s86_D_io(s86_MD_i),
 			.Q(ls374_8h_q)
 		);
 	
     // tile address decoder (used at runtime) 0x1400 - 0x0020
 	// possibly similar functionality to system 1 functionality as described in Mame	
-    assign prom_6u_addr = { CLK_2H, cus42_7k_ga[13:12], cus42_5k_ga[13:12] };
+    assign prom_6u_addr = { s86_2H_i, cus42_7k_ga[13:12], cus42_5k_ga[13:12] };
     assign prom_6u_ce_n = 1'b0;
 	
     // tile map palette prom
@@ -191,25 +191,25 @@ module tilegen_subsystem
 		)
 		cus42_7k
 		(
-			.rst_n(rst_n),
+			._rst_ni(_rst_ni),
 			
 			// inputs
-			.CLK_6M(CLK_6M), 
-			.CLK_2H(CLK_2H),
-			.FLIP(FLIP),
-			.nHSYNC(nHSYNC),
-			.nVSYNC(nVSYNC),
-			.nRCS(nSCROLL0),
+			.s86_6M_i(s86_6M_i), 
+			.s86_2H_i(s86_2H_i),
+			.s86_FLIP_i(s86_FLIP_i),
+			.s86_bHSYNC_i(s86_bHSYNC_i),
+			.s86_bVSYNC_i(s86_bVSYNC_i),
+			.nRCS(s86_bSCROLL0_i),
 			.nGCS(1'b1),	// held high (inactive) on schematics
-			.nLATCH(nLATCH0),
-			.CA( { 1'b0, A[12:0] } ),
-			.RnW(RnW),
-			.CD(D),
+			.nLATCH(s86_bLATCH0_i),
+			.CA( { 1'b0, s86_A_i[12:0] } ),
+			.s86_RbW_i(s86_RbW_i),
+			.CD(s86_D_io),
 			// outputs
 			.GA(cus42_7k_ga),
 			.RA(sram_7n_addr),
-			.nRWE(sram_7n_we_n),
-			.nROE(sram_7n_oe_n),
+			.bRWE(sram_7n_we_n),
+			.bROE(sram_7n_oe_n),
 			.RD(sram_7n_data),
 			.HA2(cus42_7k_ha2),
 			.HB2(cus42_7k_hb2)
@@ -219,12 +219,12 @@ module tilegen_subsystem
 	assign sram_7n_ce_n = 1'b0;
 	
    // layer 1/2 - red and green channels (4-bit per channel)
-	assign eprom_7r_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:0] };
+	assign eprom_7r_addr = { s86_BANK_i, prom_6u_data[3:1], cus42_7k_ga[11:0] };
    assign eprom_7r_ce_n = 1'b0;
 	assign eprom_7r_oe_n = 1'b0;
     
    // layer 1/2 - blue channel (4-bit per channel with two pixels per address)
-   assign eprom_7s_addr = { BANK, prom_6u_data[3:1], cus42_7k_ga[11:1] };
+   assign eprom_7s_addr = { s86_BANK_i, prom_6u_data[3:1], cus42_7k_ga[11:1] };
    assign eprom_7s_ce_n = 1'b0;
 	assign eprom_7s_oe_n = 1'b0;
     
@@ -232,7 +232,7 @@ module tilegen_subsystem
 	ls158 ls158_7u(
 			.nG(prom_6u_data[0]),
 			.nSELA(cus42_7k_ga[0]),
-			.A(eprom_7s_data[7:4]),
+			.s86_A_i(eprom_7s_data[7:4]),
 			.B(eprom_7s_data[3:0]),
 			.Y(ls158_7u_y)
 			);
@@ -242,11 +242,11 @@ module tilegen_subsystem
 	wire [7:0] cus43_8n_cl_in;
 	wire [2:0] cus43_8n_dt_in;
 	// priority - held low if no aux
-	assign cus43_8n_pr_in = 0; //J5[5] ? { J5[15], J5[14], J5[13] } : 3'b0;	
+	assign cus43_8n_pr_in = 0; //s86_J5_io[5] ? { s86_J5_io[15], s86_J5_io[14], s86_J5_io[13] } : 3'b0;	
 	// color - from backcolor latch if no aux
-	assign cus43_8n_cl_in = 0; //J5[5] ? { J5[4], J5[17], J5[3], J5[18], J5[2], J5[19], J5[1], J5[20] } : ls374_8h_q;
+	assign cus43_8n_cl_in = 0; //s86_J5_io[5] ? { s86_J5_io[4], s86_J5_io[17], s86_J5_io[3], s86_J5_io[18], s86_J5_io[2], s86_J5_io[19], s86_J5_io[1], s86_J5_io[20] } : ls374_8h_q;
 	// dt - held high if no aux
-	assign cus43_8n_dt_in = 0; //J5[5] ? { J5[8], J5[9], J5[10] } : 3'b1;		
+	assign cus43_8n_dt_in = 0; //s86_J5_io[5] ? { s86_J5_io[8], s86_J5_io[9], s86_J5_io[10] } : 3'b1;		
 	
 	// tile generator
 	cus43 
@@ -257,19 +257,19 @@ module tilegen_subsystem
 		)
 		cus43_8n
 		(
-			.rst_n(rst_n),
+			._rst_ni(_rst_ni),
 			
-			.CLK_6M(CLK_6M),
-			.CLK_2H(CLK_2H),
+			.s86_6M_i(s86_6M_i),
+			.s86_2H_i(s86_2H_i),
 			.PRI( cus43_8n_pr_in ),
 			.CLI( cus43_8n_cl_in ),
 			.DTI( cus43_8n_dt_in ),
 			.GDI( { ls158_7u_y, eprom_7r_data } ),
 			.MDI( sram_7n_data ),
-			.CA(A[2:0]),
-			.RnW(RnW),
-			.nLATCH(nLATCH0),
-			.FLIP(FLIP),
+			.CA(s86_A_i[2:0]),
+			.s86_RbW_i(s86_RbW_i),
+			.nLATCH(s86_bLATCH0_i),
+			.s86_FLIP_i(s86_FLIP_i),
 			.PRO(PR),
 			.CLO(CL),
 			.DTO(DT),
@@ -281,22 +281,22 @@ module tilegen_subsystem
 	
 	// tile address generator
 	cus42 CUS42_5K(
-			.rst_n(rst_n),
+			._rst_ni(_rst_ni),
 			
-			.CLK_6M(CLK_6M), 
-			.CLK_2H(CLK_2H), 
-			.FLIP(FLIP),
-			.nHSYNC(nHSYNC),
-			.nVSYNC(nVSYNC),
+			.s86_6M_i(s86_6M_i), 
+			.s86_2H_i(s86_2H_i), 
+			.s86_FLIP_i(s86_FLIP_i),
+			.s86_bHSYNC_i(s86_bHSYNC_i),
+			.s86_bVSYNC_i(s86_bVSYNC_i),
 			.nGCS(1'b1),	// held high (inactive) on schematics
-			.nRCS(nSCROLL1),
-			.nLATCH(nLATCH1),
-			.CA( { 1'b0, A[12:0] } ),
-			.RnW(RnW),
-			.CD(D),
+			.nRCS(s86_bSCROLL1_i),
+			.nLATCH(s86_bLATCH1_i),
+			.CA( { 1'b0, s86_A_i[12:0] } ),
+			.s86_RbW_i(s86_RbW_i),
+			.CD(s86_D_io),
 			.GA(cus42_5k_ga),
-			.nRWE(sram_4n_we_n),
-			.nROE(sram_4n_oe_n),
+			.bRWE(sram_4n_we_n),
+			.bROE(sram_4n_oe_n),
 			.RA(sram_4n_addr),
 			.RD(sram_4n_data),
 			.HA2(cus42_5k_ha2),
@@ -320,7 +320,7 @@ module tilegen_subsystem
 	ls158 ls158_5u(
 			.nG(prom_6u_data[4]),
 			.nSELA(cus42_5k_ga[0]),
-			.A(eprom_4s_data[7:4]),
+			.s86_A_i(eprom_4s_data[7:4]),
 			.B(eprom_4s_data[3:0]),
 			.Y(ls158_5u_y)
 			);
@@ -334,19 +334,19 @@ module tilegen_subsystem
 		)
 		cus43_6n
 		(
-			.rst_n(rst_n),
+			._rst_ni(_rst_ni),
 			
-			.CLK_6M(CLK_6M),
-			.CLK_2H(CLK_2H),
+			.s86_6M_i(s86_6M_i),
+			.s86_2H_i(s86_2H_i),
 			.PRI(PR),
 			.CLI(CL),
 			.DTI(DT),
 			.GDI( { ls158_5u_y, eprom_4r_data } ),
 			.MDI( sram_4n_data ),
-			.CA(A[2:0]),
-			.RnW(RnW),
-			.nLATCH(nLATCH1),
-			.FLIP(FLIP),
+			.CA(s86_A_i[2:0]),
+			.s86_RbW_i(s86_RbW_i),
+			.nLATCH(s86_bLATCH1_i),
+			.s86_FLIP_i(s86_FLIP_i),
 			.PRO(cus43_6n_pro),
 			.CLO(cus43_6n_clo),
 			.DTO(cus43_6n_dto),
@@ -354,8 +354,8 @@ module tilegen_subsystem
 			.HB2(cus42_5k_hb2)
 		);
 	
-	// to auxillary color drivers over J5
-	assign J5[6] = nBACKCOLOR;
+	// to auxillary color drivers over s86_J5_io
+	assign s86_J5_io[6] = s86_bBACKCOLOR_i;
 
-	assign DOT = prom_4v_data;
+	assign s86_DOT_o = prom_4v_data;
 endmodule

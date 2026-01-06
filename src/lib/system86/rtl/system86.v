@@ -51,7 +51,7 @@ module system86
 	)
 	(
 		// == Simulation inputs
-		input wire rst_n,				// master reset
+		input wire _rst_n,				// master reset
 		
 		// == Simulation outputs
 		output wire vid_clk,
@@ -65,17 +65,17 @@ module system86
 		output wire [3:0] vid_blue,
 
 		// System 86 hardware timing
-		input wire clk_48m,				// System 86 master clock @ 49.125 MHz
+		input wire s86_48M_i,				// System 86 master clock @ 49.125 MHz
 
 		// == Native 4 bit RGB output and composite sync signals ==
-		output wire conn_j2_sync,
-		output wire [3:0] conn_j2_red,
-		output wire [3:0] conn_j2_green,
-		output wire [3:0] conn_j2_blue,
+		output wire [3:0] s86_J2_1_RED,
+		output wire [3:0] s86_J2_2_GREEN,
+		output wire [3:0] s86_J2_3_BLUE,
+		output wire s86_J2_4_SYNC,
 
 		// == External boards connectors
-		inout wire [1:20] conn_j5,			// 20 pin
-		inout wire [1:40] conn_j34p,		// 40 pin
+		inout wire [1:20] s86_J5_io,			// 20 pin
+		inout wire [1:40] s86_J34_io,		// 40 pin
 		
 		// == Pluggable CPUs
 		
@@ -111,64 +111,66 @@ module system86
 	
 	// == global signals ==
 	//wire RESET;
-	wire CLK_6M;
-	wire CLK_1H;
-	wire CLK_S1H;
-	wire CLK_2H;
-	wire CLK_S2H;
-	wire [12:0] A;
-	wire [7:0] D;
-	wire nSCROLL0;
-	wire nSCROLL1;
-	wire nOBJECT;
-	wire nLATCH0;
-	wire nLATCH1;
-	wire nBACKCOLOR;
-	wire RnW;
-	wire BANK = 1'b0;
-	wire FLIP = 1'b0;
+	wire s86_6M;
+	wire s86_1H;
+	wire s86_S1H;
+	wire s86_2H;
+	wire s86_S2H;
+	wire [12:0] s86_A;
+	wire [7:0] s86_D;
+	wire s86_bSCROLL0;
+	wire s86_bSCROLL1;
+	wire s86_OBJECT;
+	wire s86_bLATCH0;
+	wire s86_bLATCH1;
+	wire s86_bBACKCOLOR;
+	wire s86_RbW;
+	wire s86_BANK = 1'b0;
+	wire s86_FLIP = 1'b0;
 	
-	wire nHSYNC;
-	wire nVSYNC;
-	wire nHBLANK;
-	wire nVBLANK;
+	wire s86_bHSYNC;
+	wire s86_bVSYNC;
+	wire s86_bHBLANK;
+	wire s86_bVBLANK;
  
-	wire BLANKING;
-   wire nCOMPSYNC;
-	wire nHRESET;
-	wire nVRESET;
+	wire s86_BLANKING;
+	wire s86_bCOMPSYNC;
+	wire s86_bHRESET;
+	wire s86_bVRESET;
 	
-	wire [3:0] RED;
-	wire [3:0] GREEN;
-	wire [3:0] BLUE;
+	wire [3:0] s86_RED;
+	wire [3:0] s86_GREEN;
+	wire [3:0] s86_BLUE;
 	
 	// == [not so] global signals ==
-	wire [7:0] MD;					// master CPU data bus to backcolor latch
+	wire [7:0] s86_MD;					// master CPU data bus to backcolor latch
 	wire [2:0] SPR = 3'b0;			// CUS43 tile generator to sprite enable logic
 	wire [7:0] DOT;			// multiplexed tilemap color index and sprite color index
 	 
 	// == Timing subsystem ==
 	timing_subsystem
 		timing_subsystem(
-			.rst_n(rst_n),
+			._rst_n(_rst_n),
 			
-			.CLK_48M(clk_48m),
+			.s86_48M_i(s86_48M_i),
       //.CLK_24M(0),
       //.CLK_12M(0),
-			.CLK_6M(CLK_6M),
-			.CLK_6MD(CLK_6MD),	// secondary driver? in phase with 6M
-			.nVSYNC(nVSYNC),
-			.nHSYNC(nHSYNC),
-			.nHBLANK(nHBLANK),
-			.nVBLANK(nVBLANK),
-			.nVRESET(nVRESET),
-			.BLANKING(BLANKING),
-			.nCOMPSYNC(nCOMPSYNC),
-			.CLK_1H(CLK_1H),
-			.CLK_S1H(CLK_S1H),	// secondary driver? in phase with 1H
-			.CLK_2H(CLK_2H),
-			.CLK_S2H(CLK_S2H)	// secondary driver? in phase with 2H
-			//.CLK_4H(CLK_4H)
+			.s86_6M_o(s86_6M),
+			.s86_6MD_o(s86_6MD),	// secondary driver? in phase with 6M
+			//.s86_X6M_o(s86_X6M),
+			//.s86_X24M_o(s86_X24M),
+			.s86_bVSYNC_o(s86_bVSYNC),
+			.s86_bHSYNC_o(s86_bHSYNC),
+			.s86_bHBLANK_o(s86_bHBLANK),
+			.s86_bVBLANK_o(s86_bVBLANK),
+			.s86_bVRESET_o(s86_bVRESET),
+			.s86_BLANKING_o(s86_BLANKING),
+			.s86_bCOMPSYNC_o(s86_bCOMPSYNC),
+			.s86_1H_o(s86_1H),
+			.s86_S1H_o(s86_S1H),	// secondary driver? in phase with 1H
+			.s86_2H_o(s86_2H),
+			.s86_S2H_o(s86_S2H)	// secondary driver? in phase with 2H
+			//.s86_4H(s86_4H)
 		);
 	
 	/*tilegen_subsystem
@@ -182,30 +184,30 @@ module system86
 		)
 		tilegen_subsystem
 		(
-			.rst_n(rst_n),
+			._rst_n(_rst_n),
 			
 			// input
-			.CLK_6M(CLK_6M),
-			.CLK_2H(CLK_2H),
-			.nSCROLL0(nSCROLL0),
-			.nSCROLL1(nSCROLL1),
-			.nLATCH0(nLATCH0),
-			.nLATCH1(nLATCH1),
-			.nHSYNC(nHSYNC),
-			.nVSYNC(nVSYNC),
-			.FLIP(FLIP),
-			.BANK(BANK),
-			.SRCWIN(SRCWIN),
-			.nBACKCOLOR(nBACKCOLOR),
-			.A(A[12:0]),
-			.RnW(RnW),
-			.MD(MD),
+			.s86_6M_i(s86_6M),
+			.s86_2H_i(s86_2H),
+			.s86_bSCROLL0_i(s86_bSCROLL0),
+			.s86_bSCROLL1_i(s86_bSCROLL1),
+			.s86_bLATCH0_i(s86_bLATCH0),
+			.s86_bLATCH1_i(s86_bLATCH1),
+			.s86_bHSYNC_i(s86_bHSYNC),
+			.s86_bVSYNC_i(s86_bVSYNC),
+			.s86_FLIP_i(s86_FLIP),
+			.s86_BANK_i(s86_BANK),
+			.SRCWIN_i(SRCWIN),
+			.s86_bBACKCOLOR_i(s86_bBACKCOLOR),
+			.s86_A_i(s86_A[12:0]),
+			.s86_RbW_i(s86_RbW),
+			.MD_i(s86_MD),
 			// inout
-			.D(D),
-			.J5(conn_j5),
+			.s86_D_io(s86_D),
+			.s86_J5_io_io(s86_J5_io),
 			// output
-			.SPR(SPR),
-			.DOT(DOT),
+			.s86_SPR_o(SPR),
+			.s86_DOT_o(DOT),
 						
 			// == hardware abstraction - memory buses ==			
 			`EPROM_CONNECTION_DEFS(eprom_4r, eprom_4r),
@@ -218,23 +220,23 @@ module system86
 			`SRAM_CONNECTION_DEFS(sram_7n, sram_7n)
 		);*/
 	
-	reg ls174_9v_q5 = 1'b0;	// videogen_bank
+	reg ls174_9v_q5 = 1'b0;	// videogen_s86_BANK
 	reg ls174_6v_q6 = 1'b1;	// videogen_clear
 	
 	/*sprite_subsystem
 		sprite_subsystem
 		(
-			.rst_n(rst_n),
+			._rst_n(_rst_n),
 			
 			// input
-			.CLK_6M(CLK_6M),
-			.CLK_1H(CLK_1H),
-			.nOBJECT(nOBJECT),
-			.nHSYNC(nHSYNC),
-			.nVRESET(nVRESET),
-			.A(A[12:0]),
-			.RnW(RnW),
-			.D(D),
+			.s86_6M(s86_6M),
+			.s86_1H(s86_1H),
+			.s86_OBJECT(s86_OBJECT),
+			.s86_bHSYNC(s86_bHSYNC),
+			.s86_bVRESET(s86_bVRESET),
+			.s86_A(s86_A[12:0]),
+			.s86_RbW(s86_RbW),
+			.s86_D(s86_D),
 						
 			// == hardware abstraction - memory buses ==			
 			//`EPROM_CONNECTION_DEFS(eprom_4r, eprom_4r),
@@ -249,16 +251,16 @@ module system86
 		
 	videogen_subsystem
 		videogen_subsystem(
-			.rst_n(rst_n),
+			._rst_n(_rst_n),
 			// input
-			.CLK_6MD(CLK_6MD), 
-			.nCLR(ls174_6v_q6),
-			.D(DOT), 
-			.BANK(ls174_9v_q5), 
+			.s86_6MD_i(s86_6MD), 
+			.s86_bCLR_i(ls174_6v_q6),
+			.s86_D_i(DOT), 
+			.s86_BANK_i(ls174_9v_q5), 
 			// output
-			.RED(RED), 
-			.GREEN(GREEN), 
-			.BLUE(BLUE),
+			.s86_RED_o(s86_RED), 
+			.s86_GREEN_o(s86_GREEN), 
+			.s86_BLUE_o(s86_BLUE),
 			
 			// == hardware abstraction - memory buses ==
 			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
@@ -267,29 +269,30 @@ module system86
 		
 	cpu_subsystem
 		cpu_subsystem(
-			.rst_n(rst_n),
+			._rst_ni(_rst_n),
 			// inputs
-			.CLK_6M(CLK_6M),
-			.CLK_2H(CLK_2H),
-			.CLK_S2H(CLK_S2H),
-			.CLK_1H(CLK_1H),
-			.CLK_S1H(CLK_S1H),
-			.nVBLANK(nVBLANK),
-			//.nRESET(nRESET),
+			.s86_6M_i(s86_6M),
+			.s86_2H_i(s86_2H),
+			.s86_S2H_i(s86_S2H),
+			.s86_1H_i(s86_1H),
+			.s86_S1H_i(s86_S1H),
+			.s86_bVBLANK_i(s86_bVBLANK),
+			//.s86_bRESET(s86_bRESET),
 			// inout
-			.A(A),
-			.D(D),
+			.s86_A_o(s86_A),
+			.s86_D_io(s86_D),
 			// outputs
-			.RnW(RnW),
-			.nRESET(nRESET),
-			.nSCROLL0(nSCROLL0),
-			.nSCROLL1(nSCROLL1),
-			.nOBJECT(nOBJECT),
-			.nLATCH0(nLATCH0),
-			.nLATCH1(nLATCH1),
-			.nBACKCOLOR(nBACKCOLOR),
-			.MD(MD),
-			
+			.s86_RbW_o(s86_RbW),
+			.s86_bRESET_o(s86_bRESET),	// input???
+			.s86_bSCROLL0_o(s86_bSCROLL0),
+			.s86_bSCROLL1_o(s86_bSCROLL1),
+			.s86_OBJECT_o(s86_OBJECT),
+			.s86_bLATCH0_o(s86_bLATCH0),
+			.s86_bLATCH1_o(s86_bLATCH1),
+			.s86_bBACKCOLOR_o(s86_bBACKCOLOR),
+			.s86_BANK_o(s86_BANK),
+			.s86_MD_o(s86_MD),
+			// == hardware abstraction - CPU buses ==
 			`MC6809_CONNECTION_DEFS(mcpu_11a, mcpu_11a),
 			`MC6809_CONNECTION_DEFS(scpu_9a, scpu_9a),
 		  
@@ -300,8 +303,8 @@ module system86
 			`EPROM_CONNECTION_DEFS(eprom_12d, eprom_12d)
 			);
 			
-	always @(negedge CLK_6M) begin
-    if (rst_n) begin
+	always @(negedge s86_6M) begin
+    if (_rst_n) begin
       ls174_6v_q6  <= 1;
       ls174_9v_q5  <= 0;
     end
@@ -316,26 +319,26 @@ module system86
 	
 	// == assign external connections
 	
-  	assign conn_j2_sync = nCOMPSYNC;
-	assign conn_j2_red = RED;
-	assign conn_j2_green = GREEN;
-	assign conn_j2_blue = BLUE;
+  	assign s86_J2_4_SYNC = s86_bCOMPSYNC;
+	assign s86_J2_1_RED = s86_RED;
+	assign s86_J2_2_GREEN = s86_GREEN;
+	assign s86_J2_3_BLUE = s86_BLUE;
 	
 	// diagnostics I/O (driven as documented)
-	assign conn_j5[16] = CLK_6M;
-	assign conn_j5[7] = clk_48m;	
-	assign conn_j5[12] = nHRESET;
-	assign conn_j5[11] = nVRESET;
+	assign s86_J5_io[16] = s86_6M;
+	assign s86_J5_io[7] = s86_48M_i;	
+	assign s86_J5_io[12] = s86_bHRESET;
+	assign s86_J5_io[11] = s86_bVRESET;
 
 	// simulation outputs
-	assign vid_clk = CLK_6M;
-	assign vid_data = { BLUE, GREEN, RED };
-	assign vid_red = RED;
-	assign vid_green = GREEN;
-	assign vid_blue = BLUE;
-	assign vid_hsync_n = nHSYNC;
-	assign vid_vsync_n = nVSYNC;
-	assign vid_hblank_n = nHBLANK;
-	assign vid_vblank_n = nVBLANK;
+	assign vid_clk = s86_6M;
+	assign vid_data = { s86_BLUE, s86_GREEN, s86_RED };
+	assign vid_red = s86_RED;
+	assign vid_green = s86_GREEN;
+	assign vid_blue = s86_BLUE;
+	assign vid_hsync_n = s86_bHSYNC;
+	assign vid_vsync_n = s86_bVSYNC;
+	assign vid_hblank_n = s86_bHBLANK;
+	assign vid_vblank_n = s86_bVBLANK;
 	
 endmodule

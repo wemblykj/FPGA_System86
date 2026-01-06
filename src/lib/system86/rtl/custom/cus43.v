@@ -25,27 +25,27 @@ module cus43
 			parameter LAYER_B_PRIORITY = 0
 	)
 	(
-		  input rst_n,
+		  input _rst_n,
 		
-        input wire [2:0] PRI,
-        input wire [7:0] CLI,
-        input wire [2:0] DTI,
-        input wire [11:0] GDI,
-        input wire nOE,			// hard to decipher text from schematics (held at logic high)
-        input wire [2:0] CA,
-        input wire RnW,
-        input wire [7:0] MDI, // hard to decipher text from schematics
-        input wire [2:0] HA, 	// hard to decipher text from schematics
-        input wire CLK_6M,
-        input wire CLK_2H,
-        input wire nLATCH,
-        input wire FLIP,
-        input wire HA2,
-        input wire HB2,
-        output wire [2:0] PRO,
-        output wire [7:0] CLO,
-        output wire [2:0] DTO,
-        output wire CLE			// hard to decipher text from schematics (not used)
+        input wire [2:0] pin_PRI_i,
+        input wire [7:0] pin_CLI_i,
+        input wire [2:0] pin_DTI_i,
+        input wire [11:0] pin_GDI_i,
+        input wire pin_bOE,			// hard to decipher text from schematics (held at logic high)
+        input wire [2:0] pin_CA_i,
+        input wire pin_RbW_i,
+        input wire [7:0] pin_MDI_i, // hard to decipher text from schematics
+        input wire [2:0] pin_HA_i, 	// hard to decipher text from schematics
+        input wire pin_6M_i,
+        input wire pin_2H_i,
+        input wire pin_bLATCH_i,
+        input wire pin_FLIP_i,
+        input wire pin_HA2_i,
+        input wire pin_HB2_i,
+        output wire [2:0] pin_PRO_o,
+        output wire [7:0] pin_CLO_o,
+        output wire [2:0] pin_DTO_o,
+        output wire pin_CLE_o			// hard to decipher text from schematics (not used)
     );
 
 	wire [2:0] PR_A;
@@ -59,22 +59,22 @@ module cus43
 		)
 		layer_a
 		(
-			.rst_n(rst_n),
+			._rst_n(_rst_n),
 			
-			.CLK_6M(CLK_6M),
-			.CLK_2H(CLK_2H),
-			.PRI( PRI ),
-			.CLI( CLI ),
-			.DTI( DTI ),
-			.GDI( GDI ),
-			.MDI( MDI ),
-			.CA(CA),
-			.nLATCH(nLATCH || !CA[2]),
-			.FLIP(FLIP),
-			.PRO(PR_A),
-			.CLO(CL_A),
-			.DTO(DT_A),
-			.H2(HA2)
+			.sig_6M_i(pin_6M_i),
+			.sig_2H_i(pin_2H_i),
+			.sig_PRI_i( pin_PRI_i ),
+			.sig_CLI_i( pin_CLI_i ),
+			.sig_DTI_i( pin_DTI_i ),
+			.sig_GDI_i( pin_GDI_i ),
+			.sig_MDI_i( pin_MDI_i ),
+			.sig_CA_i(pin_CA_i),
+			.sig_bLATCH_i(pin_bLATCH_i || !pin_CA_i[2]),
+			.sig_FLIP_i(pin_FLIP_i),
+			.sig_H2_i(pin_HA2_i),
+			.sig_PRO_o(PR_A),
+			.sig_CLO_o(CL_A),
+			.sig_DTO_o(DT_A)
 		);
 
 		cus43_layer 
@@ -84,22 +84,22 @@ module cus43
 		)
 		layer_b
 		(
-			.rst_n(rst_n),
+			._rst_n(_rst_n),
 			
-			.CLK_6M(CLK_6M),
-			.CLK_2H(~CLK_2H),
-			.PRI( PR_A ),
-			.CLI( CL_A ),
-			.DTI( DT_A ),
-			.GDI( GDI ),
-			.MDI( MDI ),
-			.CA(CA),
-			.nLATCH(nLATCH || !CA[2]),
-			.FLIP(FLIP),
-			.PRO(PRO),
-			.CLO(CLO),
-			.DTO(DTO),
-			.H2(HB2)
+			.sig_6M_i(pin_6M_i),
+			.sig_2H_i(~pin_2H_i),
+			.sig_PRI_i( PR_A ),
+			.sig_CLI_i( CL_A ),
+			.sig_DTI_i( DT_A ),
+			.sig_GDI_i( pin_GDI_i ),
+			.sig_MDI_i( pin_MDI_i ),
+			.sig_CA_i(pin_CA_i),
+			.sig_bLATCH_i(pin_bLATCH_i || !pin_CA_i[2]),
+			.sig_FLIP_i(pin_FLIP_i),
+			.sig_H2_i(pin_HB2_i),
+			.sig_PRO_o(pin_PRO_o),
+			.sig_CLO_o(pin_CLO_o),
+			.sig_DTO_o(pin_DTO_o)
 		);
 	
 endmodule

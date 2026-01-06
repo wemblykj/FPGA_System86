@@ -27,34 +27,34 @@
 module cus27_gng_ref
 (
 	// simulation control
-	input wire rst_n,
+	input wire _rst_n,
 	
 	// input clocks
-	input wire CLK_48M,
-	input wire CLK_6M_IN,
+	input wire pin_48M_i,
+	input wire pin_6M_i,
 	
 	// generated clocks
-   output wire CLK_24M,
-   output wire CLK_12M,
-   output wire CLK_6M,
+   output wire pin_24M_o,
+   output wire pin_12M_o,
+   output wire pin_6M_o,
 	
 	// video synchronisation
-	output wire nVSYNC,
-	output wire nHSYNC,
-	output wire nVBLANK,
-	output wire nHBLANK,
-	output wire nVRESET,
-	output wire nHRESET,
+	output wire pin_bVSYNC_o,
+	output wire pin_bHSYNC_o,
+	output wire pin_bVBLANK_o,
+	output wire pin_bHBLANK_o,
+	output wire pin_bVRESET_o,
+	output wire pin_bHRESET_o,
 	
 	// video timing signals
-	output wire _8V,
-	output wire _4V,
-	output wire _1V,
-	output wire _4H,
-	output wire _2H,
-	output wire _1H,
-	output wire S2H,
-	output wire S1H
+	output wire pin_8V_o,
+	output wire pin_4V_o,
+	output wire pin_1V_o,
+	output wire pin_4H_o,
+	output wire pin_2H_o,
+	output wire pin_1H_o,
+	output wire pin_S2H_o,
+	output wire pin_S1H_o
 );
 
 	//
@@ -63,16 +63,16 @@ module cus27_gng_ref
 	
 	reg [2:0] master_counter;
 	
-	always @(posedge CLK_48M or negedge rst_n) begin
-		if (!rst_n)
+	always @(posedge pin_48M_i or negedge _rst_n) begin
+		if (!_rst_n)
 			master_counter <= 0;
 		else
 			master_counter <= master_counter + 1'b1;
 	end	
 
-	assign CLK_24M = master_counter[0];
-	assign CLK_12M = master_counter[1];
-	assign CLK_6M = master_counter[2];
+	assign pin_24M_o = master_counter[0];
+	assign pin_12M_o = master_counter[1];
+	assign pin_6M_o = master_counter[2];
 	
 	//
 	// horizontal
@@ -103,31 +103,31 @@ module cus27_gng_ref
 	reg HBLANK;
 	reg HSYNC;
 	
-	assign nHRESET = ~HINIT;
-	assign nHBLANK = ~HBLANK;
-	assign nHSYNC = ~HSYNC;
+	assign pin_bHRESET_o = ~HINIT;
+	assign pin_bHBLANK_o = ~HBLANK;
+	assign pin_bHSYNC_o = ~HSYNC;
 	
 	// TO BE LATCHED akin to GnG's 0H 4-3H 4H signals
 	reg __0H;	// GnG only
-	reg __0_1H;	// S86 signal using GnG approach
-	reg __1H;	// S86 signal using GnG approach
-	reg __1_2H;	// S86 signal using GnG approach
-	reg __2H;	// S86 signal using GnG approach
+	reg __0pin_1H_o;	// S86 signal using GnG approach
+	reg _pin_1H_o;	// S86 signal using GnG approach
+	reg __1pin_2H_o;	// S86 signal using GnG approach
+	reg _pin_2H_o;	// S86 signal using GnG approach
 	reg __4_3H; // GnG only
-	reg __4H;	// GnG signal also used by S86
+	reg _pin_4H_o;	// GnG signal also used by S86
 	reg __7H;	// GnG only
 		
 	// are these in phase or off by half a clock or something else
 	// for now assume they are the raw Hx signals exposed as is
-	assign _1H = __1H;
-	assign _2H = __2H;
-	assign _4H = __4H;
-	assign S1H = H1;
-	assign S2H = H2;
+	assign pin_1H_o = _pin_1H_o;
+	assign pin_2H_o = _pin_2H_o;
+	assign pin_4H_o = _pin_4H_o;
+	assign pin_S1H_o = H1;
+	assign pin_S2H_o = H2;
 	
 	// horizontal counter
-	always @(posedge CLK_6M_IN or negedge rst_n) begin
-		if (!rst_n) begin
+	always @(posedge pin_6M_i or negedge _rst_n) begin
+		if (!_rst_n) begin
 			horizontal_counter <= 0;	
 			VCLK <= 0;
 		end else begin
@@ -140,37 +140,37 @@ module cus27_gng_ref
 	end
 	
 	// horizontal latches
-	always @(negedge CLK_6M_IN or negedge rst_n) begin
-		if (!rst_n) begin
-			__0_1H <= 1'b0;
-			__1_2H <= 1'b0;
+	always @(negedge pin_6M_i or negedge _rst_n) begin
+		if (!_rst_n) begin
+			__0pin_1H_o <= 1'b0;
+			__1pin_2H_o <= 1'b0;
 			__4_3H <= 1'b0;
 			__7H <= 1'b0;
 		end else begin
-			__0_1H <= __0H && ~H1 & ~H2 & ~H4;	// might work?
-			__1_2H <= H1 & ~H2 & ~H4;
+			__0pin_1H_o <= __0H && ~H1 & ~H2 & ~H4;	// might work?
+			__1pin_2H_o <= H1 & ~H2 & ~H4;
 			__4_3H <= H1 & H2 & ~H4;
 			__7H <= H1 & H2 & H4; 
 		end
 	end
 	
-	always @(posedge CLK_6M_IN or negedge rst_n) begin
-		if (!rst_n) begin
+	always @(posedge pin_6M_i or negedge _rst_n) begin
+		if (!_rst_n) begin
 			__0H <= 1'b0;
-			__1H <= 1'b0;
-			__2H <= 1'b0;
-			__4H <= 1'b0;
+			_pin_1H_o <= 1'b0;
+			_pin_2H_o <= 1'b0;
+			_pin_4H_o <= 1'b0;
 		end else begin
 			__0H <= __7H;
-			__1H <= __0_1H & ~H1;
-			__2H <= __1_2H & ~H2;
-			__4H <= __4_3H & ~H4;
+			_pin_1H_o <= __0pin_1H_o & ~H1;
+			_pin_2H_o <= __1pin_2H_o & ~H2;
+			_pin_4H_o <= __4_3H & ~H4;
 		end
 	end
 	
 	// horizontal blank
-	always @(HINIT or H16 or H64 or negedge rst_n) begin
-		if (!rst_n)
+	always @(HINIT or H16 or H64 or negedge _rst_n) begin
+		if (!_rst_n)
 			HBLANK <= 1'b0;
 		else begin
 			if (H16 && H64)	// 240
@@ -183,8 +183,8 @@ module cus27_gng_ref
 	end
 	
 	// horizontal sync
-	always @(HBLANK or H32 or negedge rst_n) begin
-		if (!rst_n)
+	always @(HBLANK or H32 or negedge _rst_n) begin
+		if (!_rst_n)
 			HSYNC <= 1'b0;
 		else begin
 			if (HBLANK && H32)
@@ -198,15 +198,15 @@ module cus27_gng_ref
 	// vertical unit
 	//
 	
-	assign nVRESET = ~VRESET;
-	assign nVBLANK = ~VBLANK;
-	assign nVSYNC = ~VSYNC;
+	assign pin_bVRESET_o = ~VRESET;
+	assign pin_bVBLANK_o = ~VBLANK;
+	assign pin_bVSYNC_o = ~VSYNC;
 	
 	// vertical counter aliases
-	assign _1V = vertical_counter[0];
-	wire _2V = vertical_counter[1];
-	assign _4V = vertical_counter[2];
-	assign _8V = vertical_counter[3];
+	assign pin_1V_o = vertical_counter[0];
+	wire pin_2V_o = vertical_counter[1];
+	assign pin_4V_o = vertical_counter[2];
+	assign pin_8V_o = vertical_counter[3];
 	wire _16V = vertical_counter[4];
 	wire _32V = vertical_counter[5];
 	wire _64V = vertical_counter[6];
@@ -214,29 +214,29 @@ module cus27_gng_ref
 	wire _256V = vertical_counter[8];
 	
 	reg [8:0] vertical_counter;
-	wire VRESET = _256V && _8V;	// 264;
+	wire VRESET = _256V && pin_8V_o;	// 264;
 	reg VBLANK;
 	reg VSYNC;
 	
 	// vertical counter
-	always @(posedge VCLK or VRESET or negedge rst_n) begin
-		if (!rst_n || VRESET)
+	always @(posedge VCLK or VRESET or negedge _rst_n) begin
+		if (!_rst_n || VRESET)
 			vertical_counter <= 0;	
 		else	
 			vertical_counter <= vertical_counter + 1'b1;	
 	end
 	
 	// vertical reset
-	/*always @(posedge HRESET or negedge rst_n) begin
-		if (!rst_n)
+	/*always @(posedge HRESET or negedge _rst_n) begin
+		if (!_rst_n)
 			VRESET <= 0;	
 		else	
-			VRESET <= _256V && _8V;	// 264
+			VRESET <= _256V && pin_8V_o;	// 264
 	end*/
 	
 	// vertical blank
-	always @(VRESET or _16V or negedge rst_n) begin
-		if (!rst_n)
+	always @(VRESET or _16V or negedge _rst_n) begin
+		if (!_rst_n)
 			VBLANK <= 1'b0;
 		else begin
 			if (_16V)
@@ -249,11 +249,11 @@ module cus27_gng_ref
 	end
 	
 	// vertical sync
-	always @(VBLANK or _8V or _4V or negedge rst_n) begin
-		if (!rst_n)
+	always @(VBLANK or pin_8V_o or pin_4V_o or negedge _rst_n) begin
+		if (!_rst_n)
 			VSYNC <= 1'b0;
 		else begin
-			if (VBLANK && _4V && ~_8V)
+			if (VBLANK && pin_4V_o && ~pin_8V_o)
 				VSYNC <= 1'b1;
 			else
 				VSYNC <= 1'b0;

@@ -28,12 +28,12 @@ module cus35_tb;
 
 	// Inputs
 	reg rst;
-	reg CLK_6M;
+	reg s86_6M;
 	
 	reg nVRES;
-	reg nHSYNC;
+	reg bHSYNC;
 	reg nOCS;
-	reg RnW;
+	reg s86_RbW;
 	reg [12:0] A;
 
 	// Outputs
@@ -53,8 +53,8 @@ module cus35_tb;
 	wire VSET;
 	wire nCS0;
 	wire nCS1;
-	wire nROE;
-	wire nRWE;
+	wire bROE;
+	wire bRWE;
 
 	// Bidirs
 	wire [7:0] D;
@@ -64,11 +64,11 @@ module cus35_tb;
 	// Instantiate the Unit Under Test (UUT)
 	cus35 uut (
 		.rst(rst),
-		.CLK_6M(CLK_6M), 
+		.s86_6M(s86_6M), 
 		.nVRES(nVRES), 
-		.nHSYNC(nHSYNC), 
+		.bHSYNC(bHSYNC), 
 		.nOCS(nOCS), 
-		.RnW(RnW), 
+		.s86_RbW(s86_RbW), 
 		.A(A), 
 		.D(D), 
 		.O16VA(O16VA), 
@@ -87,8 +87,8 @@ module cus35_tb;
 		.VSET(VSET), 
 		.nCS0(nCS0), 
 		.nCS1(nCS1), 
-		.nROE(nROE), 
-		.nRWE(nRWE), 
+		.bROE(bROE), 
+		.bRWE(bRWE), 
 		.B0(B0),
 		.B1(B1)
 	);
@@ -98,36 +98,36 @@ module cus35_tb;
 		cus27_9p_clock_divider(
 			.rst(rst),
 			//.CLK_48M(clk_48m), 
-			.CLK_6M_IN(CLK_6M),
+			.s86_6M_IN(s86_6M),
 			//.CLK_24M(CLK_24M),
 			//.CLK_12M(CLK_12M),
-			//.CLK_6M(CLK_6M),
-			//.nVSYNC(nVSYNC),
-			//.nHSYNC(nHSYNC),
-			//.nHBLANK(nHBLANK),
-			//.nVBLANK(nVBLANK),
+			//.s86_6M(s86_6M),
+			//.bVSYNC(bVSYNC),
+			//.bHSYNC(bHSYNC),
+			//.bHBLANK(bHBLANK),
+			//.bVBLANK(bVBLANK),
 			//.nHRESET(nHRESET),
 			//.nVRESET(nVRESET),
 			//.CLK_8V(CLK_8V),
 			//.CLK_4V(CLK_4V),
 			//.CLK_1V(CLK_1V),
 			//.CLK_4H(CLK_4H),
-			//.CLK_2H(CLK_2H),
-			//.CLK_1H(CLK_1H),
-			.CLK_S2H(CLK_S2H)
-			//.CLK_S1H(CLK_S1H)
+			//.s86_2H(s86_2H),
+			//.s86_1H(s86_1H),
+			.s86_S2H(s86_S2H)
+			//.s86_S1H(s86_S1H)
 		);
 		
 	initial begin
 		rst = 0;
 		
 		// Initialize Inputs
-		CLK_6M = 0;
+		s86_6M = 0;
 		nOCS = 1;
-		nHSYNC = 1;
+		bHSYNC = 1;
 		nVRES = 1;
 		A = 'hffff;
-		RnW = 1;
+		s86_RbW = 1;
 
 		// Wait 100 ns for global reset to finish
 		#100;
@@ -147,11 +147,11 @@ module cus35_tb;
 		// CUS35 enable write
 		nOCS = 0;
 		#200
-		RnW = 0;
+		s86_RbW = 0;
 		#10
 		`ASSERT_EQUAL(8'b10100101, D)
 		#390 
-		RnW = 1;
+		s86_RbW = 1;
 		#200
 		nOCS = 1;
 		#1000
@@ -159,11 +159,11 @@ module cus35_tb;
 		$finish;
 	end
       
-	assign D = ~RnW ? 8'b10100101 : 8'bz;
-	assign B0 = RnW ? 8'b01011010 : 8'bz;
+	assign D = ~s86_RbW ? 8'b10100101 : 8'bz;
+	assign B0 = s86_RbW ? 8'b01011010 : 8'bz;
 
 	// generate our 6.14025Mhz input clock
-	always #81.4299 CLK_6M = ~CLK_6M;
+	always #81.4299 s86_6M = ~s86_6M;
 	
 endmodule
 

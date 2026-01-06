@@ -26,69 +26,71 @@
 module cus27_tb;
 
 	// Inputs
-	reg rst;
-	reg clk_48m;
+	reg _rst_n;
+	reg s86_48M;
 	
 	// Outputs
-	wire clk_24m_o;
-	wire clk_12m_o;
-	wire clk_6m_o;
+	wire s86_24M_o;
+	wire s86_12M_o;
+	wire s86_6M_o;
 
-	wire hsync;
-	wire hreset;
-	wire hblank;
+	wire s86_HSYNC;
+	wire s86_HBLANK;
+	wire s86_HRESET;
 	
-	wire vsync;
-	wire vblank;
-	wire vreset;
+	wire s86_VSYNC;
+	wire s86_VBLANK;
+	wire s86_VRESET;
 	
-	wire pclk_8v_o;
-	wire pclk_4v_o;
-	wire pclk_1v_o;
-	wire pclk_4h_o;
-	wire pclk_2h_o;
-	wire pclk_1h_o;
-	wire pclk_s2h_o;
-	wire pclk_s1h_o;
+	wire s86_8V_o;
+	wire s86_4V_o;
+	wire s86_1V_o;
+	wire s86_4H_o;
+	wire s86_2H_o;
+	wire s86_1H_o;
+	wire s86_s2H_o;
+	wire s86_s1H_o;
 
 	// Instantiate the Unit Under Test (UUT)
 	cus27 uut (
-		.rst(rst),
-		.clk_48m(clk_48m), 
-		.clk_6m(clk_6m_o), 
-		.clk_24m_o(clk_24m_o), 
-		.clk_12m_o(clk_12m_o), 
-		.clk_6m_o(clk_6m_o), 
+		._rst_ni(_rst_n),
+		.pin_48M_i(s86_48M),
+		.pin_6M_i(s86_6M_o),
+		.pin_6M_o(s86_6M_o),
+		.pin_12M_o(s86_12M_o),
+		.pin_24M_o(s86_24M_o),
 		
-		.hsync(hsync), 
-		.hblank(hblank), 
-		.hreset(hreset), 
+		.pin_HSYNC_o(s86_HSYNC),
+		.pin_HBLANK_o(s86_HBLANK),
+		.pin_HRESET_o(s86_hreset),
 		
-		.vsync(vsync), 
-		.vblank(vblank), 
-		.vreset(vreset), 
+		.pin_VSYNC_o(s86_VSYNC),
+		.pin_VBLANK_o(s86_VBLANK),
+		.pin_VRESET_o(s86_VRESET),
 		
-		.pclk_8v_o(pclk_8v_o), 
-		.pclk_4v_o(pclk_4v_o), 
-		.pclk_1v_o(pclk_1v_o), 
-		.pclk_4h_o(pclk_4h_o), 
-		.pclk_2h_o(pclk_2h_o), 
-		.pclk_1h_o(pclk_1h_o), 
-		.pclk_s2h_o(pclk_s2h_o), 
-		.pclk_s1h_o(pclk_s1h_o)
+		.pin_1H_o(s86_1H_o),
+		.pin_2H_o(s86_2H_o),
+		.pin_4H_o(s86_4H_o),
+		
+		.pin_1V_o(s86_1V_o),
+		.pin_4V_o(s86_4V_o),
+		.pin_8V_o(s86_8V_o),
+		
+		.pin_s1H_o(s86_s1H_o),
+		.pin_s2H_o(s86_s2H_o)
 	);
 
 	initial begin
 		// Initialize Inputs
-		clk_48m = 0;
+		s86_48M = 0;
 		
-		rst = 1;
+		_rst_n = 0;
 
 		// Wait 1000 ns for global reset to finish
 		#400;
         
 		// Add stimulus here
-		rst = 0;
+		_rst_n = 1;
 		
 		#61440;	// one full line
 		
@@ -97,7 +99,7 @@ module cus27_tb;
 	end
       
 	always begin
-		#10 clk_48m = ~clk_48m;	// more like 50mhz
+		#10 s86_48M = ~s86_48M;	// more like 50mhz
 		
 	end
    

@@ -34,15 +34,15 @@ module sprite_subsystem_tb;
 
 	// Inputs
 	reg rst;
-	reg CLK_6M;
+	reg s86_6M;
 	
-	reg CLK_1H;
+	reg s86_1H;
 	reg nOBJECT;
-	reg nHSYNC;
+	reg bHSYNC;
 	reg nVRESET;
 	reg [12:0] A;
 	wire [7:0] D;
-	reg RnW;
+	reg s86_RbW;
 
 	`SRAM_WIRE_DEFS(CY6264, sram_10m);
 	`SRAM_WIRE_DEFS(M58725, sram_11k);
@@ -50,14 +50,14 @@ module sprite_subsystem_tb;
 	// Instantiate the Unit Under Test (UUT)
 	sprite_subsystem uut (
 		.rst(rst), 
-		.CLK_6M(CLK_6M), 
-		.CLK_1H(CLK_1H), 
+		.s86_6M(s86_6M), 
+		.s86_1H(s86_1H), 
 		.nOBJECT(nOBJECT), 
-		.nHSYNC(nHSYNC), 
+		.bHSYNC(bHSYNC), 
 		.nVRESET(nVRESET), 
 		.A(A), 
 		.D(D), 
-		.RnW(RnW),
+		.s86_RbW(s86_RbW),
 		
 		`SRAM_CONNECTION_DEFS(sram_10m, sram_10m),
 		`SRAM_CONNECTION_DEFS(sram_11k, sram_11k)
@@ -67,13 +67,13 @@ module sprite_subsystem_tb;
 		// Initialize Inputs
 		rst = 0;
 		
-		CLK_6M = 0;
-		CLK_1H = 0;
+		s86_6M = 0;
+		s86_1H = 0;
 		nOBJECT = 1;
-		nHSYNC = 1;
+		bHSYNC = 1;
 		nVRESET = 1;
 		A = 'h0000;
-		RnW = 1;
+		s86_RbW = 1;
 
 		// Wait 100 ns for global reset to finish
 		#100;
@@ -83,7 +83,7 @@ module sprite_subsystem_tb;
 		
 		// test 0h1fff with 1H low
 		A = 'h0000;
-		CLK_1H = 0;
+		s86_1H = 0;
 		
 		// CUS35 enable read
 		nOBJECT = 0;
@@ -103,7 +103,7 @@ module sprite_subsystem_tb;
 		// CUS35 enable write
 		nOBJECT = 0;
 		#200
-		RnW = 0;
+		s86_RbW = 0;
 		#10
 		
 		`ASSERT_EQUAL(0, sram_10m_ce_n)
@@ -114,13 +114,13 @@ module sprite_subsystem_tb;
 		
 		`ASSERT_EQUAL(1, sram_11k_ce_n)
 		#390 
-		RnW = 1;
+		s86_RbW = 1;
 		#200
 		nOBJECT = 1;
 		#1000
 		
 		// test h0000 with 1H high
-		CLK_1H = 1;
+		s86_1H = 1;
 		
 		// CUS35 enable read
 		nOBJECT = 0;
@@ -140,7 +140,7 @@ module sprite_subsystem_tb;
 		// CUS35 enable write
 		nOBJECT = 0;
 		#200
-		RnW = 0;
+		s86_RbW = 0;
 		#10
 		
 		`ASSERT_EQUAL(0, sram_10m_ce_n)
@@ -151,14 +151,14 @@ module sprite_subsystem_tb;
 		
 		`ASSERT_EQUAL(1, sram_11k_ce_n)
 		#390 
-		RnW = 1;
+		s86_RbW = 1;
 		#200
 		nOBJECT = 1;
 		#1000
 		
 		// test 0h1fff with 1H low
 		A = 'h1fff;
-		CLK_1H = 0;
+		s86_1H = 0;
 		
 		// CUS35 enable read
 		nOBJECT = 0;
@@ -178,7 +178,7 @@ module sprite_subsystem_tb;
 		// CUS35 enable write
 		nOBJECT = 0;
 		#200
-		RnW = 0;
+		s86_RbW = 0;
 		#10
 		
 		`ASSERT_EQUAL(0, sram_10m_ce_n)
@@ -189,14 +189,14 @@ module sprite_subsystem_tb;
 		
 		`ASSERT_EQUAL(1, sram_11k_ce_n)
 		#390 
-		RnW = 1;
+		s86_RbW = 1;
 		#200
 		nOBJECT = 1;
 		#1000
 		
 		// test h1fff with 1H high
 		A = 'h1fff;
-		CLK_1H = 1;
+		s86_1H = 1;
 		
 		// CUS35 enable read
 		nOBJECT = 0;
@@ -216,7 +216,7 @@ module sprite_subsystem_tb;
 		// CUS35 enable write
 		nOBJECT = 0;
 		#200
-		RnW = 0;
+		s86_RbW = 0;
 		#10
 		
 		`ASSERT_EQUAL(0, sram_10m_ce_n)
@@ -227,7 +227,7 @@ module sprite_subsystem_tb;
 		
 		`ASSERT_EQUAL(1, sram_11k_ce_n)
 		#390 
-		RnW = 1;
+		s86_RbW = 1;
 		#200
 		nOBJECT = 1;
 		#1000
@@ -235,11 +235,11 @@ module sprite_subsystem_tb;
 		$finish;
 	end
       
-	assign D = ~RnW ? 8'b10100101 : 8'bz;
-	assign sram_10m_data = RnW ? 8'b01011010 : 8'bz;
+	assign D = ~s86_RbW ? 8'b10100101 : 8'bz;
+	assign sram_10m_data = s86_RbW ? 8'b01011010 : 8'bz;
 	
 	// generate our 6.14025Mhz input clock
-	always #81.4299 CLK_6M = ~CLK_6M; 
+	always #81.4299 s86_6M = ~s86_6M; 
 	
 endmodule
 

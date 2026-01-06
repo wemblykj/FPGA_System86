@@ -27,8 +27,8 @@
 module ls257_tb;
 
 	// Inputs
-	reg nG;
-	reg nSELA;
+	reg bG;
+	reg bSELA;
 	reg A1;
 	reg A2;
 	reg A3;
@@ -46,8 +46,8 @@ module ls257_tb;
 
 	// Instantiate the Unit Under Test (UUT)
 	ls257 uut (
-		.nG(nG), 
-		.nSELA(nSELA), 
+		.bG(bG), 
+		.bSELA(bSELA), 
 		.A1(A1), 
 		.A2(A2), 
 		.A3(A3), 
@@ -64,8 +64,8 @@ module ls257_tb;
 
 	initial begin
 		// Initialize Inputs
-		nG = 1;
-		nSELA = 0;
+		bG = 1;
+		bSELA = 0;
 		A1 = 0;
 		A2 = 0;
 		A3 = 0;
@@ -100,7 +100,7 @@ module ls257_tb;
 		`ASSERT_EQUAL(1'bz, Y3)
 		`ASSERT_EQUAL(1'bz, Y4)
 		
-		nSELA = 1;
+		bSELA = 1;
 		#10
 		
 		`ASSERT_EQUAL(1'bz, Y1)
@@ -109,8 +109,8 @@ module ls257_tb;
 		`ASSERT_EQUAL(1'bz, Y4)
 		
 		// Enable active
-		nG = 0;
-		nSELA = 0;
+		bG = 0;
+		bSELA = 0;
 		#10
 		
 		`ASSERT_EQUAL(1, Y1)
@@ -118,7 +118,7 @@ module ls257_tb;
 		`ASSERT_EQUAL(1, Y3)
 		`ASSERT_EQUAL(0, Y4)
 		
-		nSELA = 1;
+		bSELA = 1;
 		#10
 		
 		`ASSERT_EQUAL(0, Y1)
@@ -141,7 +141,7 @@ module ls257_tb;
 		`ASSERT_EQUAL(1, Y3)
 		`ASSERT_EQUAL(0, Y4)
 		
-		nSELA = 0;
+		bSELA = 0;
 		#10
 		
 		`ASSERT_EQUAL(0, Y1)
@@ -149,7 +149,7 @@ module ls257_tb;
 		`ASSERT_EQUAL(0, Y3)
 		`ASSERT_EQUAL(1, Y4)
 		
-		nG = 1;
+		bG = 1;
 		#10
 		
 		`ASSERT_EQUAL(1'bz, Y1)

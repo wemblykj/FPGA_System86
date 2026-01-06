@@ -45,20 +45,20 @@ module system86_tb;
 
 	// Inputs
 	reg clk_48m;
-	reg rst_n;
+	reg _rst_n;
 
 	reg clk_25m;
 		
 	reg log = 0;
 	
-	wire s86_vid_clk;
-	wire [3:0] s86_vid_red;
-	wire [3:0] s86_vid_green;
-	wire [3:0] s86_vid_blue;
-	wire s86_hsync_n;
-	wire s86_vsync_n;
-	wire s86_hblank_n;
-	wire s86_vblank_n;
+	wire vid_clk;
+	wire [3:0] vid_red;
+	wire [3:0] vid_green;
+	wire [3:0] vid_blue;
+	wire vid_bHSYNC;
+	wire vid_bVSYNC;
+	wire vid_bHBLANK;
+	wire vid_bVBLANK;
 	
 	`PROM_WIRE_DEFS(MB7124, prom_3r);
 	`PROM_WIRE_DEFS(MB7116, prom_3s);
@@ -90,12 +90,12 @@ module system86_tb;
 	wire out_vid_locked;
 	wire [11:0] out_vid_width;
 	wire [11:0] out_vid_height;
-	wire out_vid_hsync_n;
-	wire out_vid_vsync_n;
-	wire out1_hsync_n;
-	wire out1_vsync_n;
-	wire out2_hsync_n;
-	wire out2_vsync_n;
+	wire out_vid_bHSYNC;
+	wire out_vid_bVSYNC;
+	wire out1_bHSYNC;
+	wire out1_bVSYNC;
+	wire out2_bHSYNC;
+	wire out2_bVSYNC;
 	wire out2_hblank;
 	wire out2_vblank;
 	
@@ -111,17 +111,17 @@ module system86_tb;
 			.UNKNOWN_LAYER_PRIORITY(5)
 		)
 		uut (
-			.clk_48m(clk_48m), 
-			.rst_n(rst_n),
+			._rst_n(_rst_n),
+			.clk_48m_i(clk_48m), 
 			
-			.vid_clk(s86_vid_clk),
-			.vid_red(s86_vid_red),
-			.vid_green(s86_vid_green),
-			.vid_blue(s86_vid_blue),
-			.vid_hsync_n(s86_hsync_n),
-			.vid_vsync_n(s86_vsync_n),
-			.vid_hblank_n(s86_hblank_n),
-			.vid_vblank_n(s86_vblank_n),
+			.vid_clk(vid_clk),
+			.vid_red(vid_red),
+			.vid_green(vid_green),
+			.vid_blue(vid_blue),
+			.vid_bHSYNC(vid_bHSYNC),
+			.vid_bVSYNC(vid_bVSYNC),
+			.vid_bHBLANK(vid_bHBLANK),
+			.vid_bVBLANK(vid_bVBLANK),
 			
 			`PROM_CONNECTION_DEFS(prom_3r, prom_3r),
 			`PROM_CONNECTION_DEFS(prom_3s, prom_3s),
@@ -153,7 +153,7 @@ module system86_tb;
 		) 
 			prom_3s
 		(
-			.nE(prom_3s_ce_n), 
+			.bE(prom_3s_ce_n), 
 			.A(prom_3s_addr), 
 			.Q(prom_3s_data)
 		);
@@ -164,7 +164,7 @@ module system86_tb;
 		)
 		prom_3r
 		(
-			.nE(prom_3r_ce_n), 
+			.bE(prom_3r_ce_n), 
 			.A(prom_3r_addr), 
 			.Q(prom_3r_data)
 		);	
@@ -175,7 +175,7 @@ module system86_tb;
 		) 
 		prom_4v
 		(
-			.nE(prom_4v_ce_n), 
+			.bE(prom_4v_ce_n), 
 			.A(prom_4v_addr), 
 			.Q(prom_4v_data)
 		);	
@@ -186,7 +186,7 @@ module system86_tb;
 		) 
 		prom_6u
 		(
-			.nE(prom_6u_ce_n), 
+			.bE(prom_6u_ce_n), 
 			.A(prom_6u_addr), 
 			.Q(prom_6u_data)
 		);	
@@ -200,7 +200,7 @@ module system86_tb;
 		) 
 		eprom_4r
 		(
-			.nE(eprom_4r_ce_n), 
+			.bE(eprom_4r_ce_n), 
 			.nG(eprom_4r_oe_n), 
 			.A(eprom_4r_addr), 
 			.Q(eprom_4r_data)
@@ -214,7 +214,7 @@ module system86_tb;
 		) 
 		eprom_4s
 		(
-			.nE(eprom_4s_ce_n), 
+			.bE(eprom_4s_ce_n), 
 			.nG(eprom_4s_oe_n), 
 			.A(eprom_4s_addr), 
 			.Q(eprom_4s_data)
@@ -228,7 +228,7 @@ module system86_tb;
 		) 
 		eprom_7r
 		(
-			.nE(eprom_7r_ce_n), 
+			.bE(eprom_7r_ce_n), 
 			.nG(eprom_7r_oe_n), 
 			.A(eprom_7r_addr), 
 			.Q(eprom_7r_data)
@@ -242,7 +242,7 @@ module system86_tb;
 		) 
 		eprom_7s
 		(
-			.nE(eprom_7s_ce_n), 
+			.bE(eprom_7s_ce_n), 
 			.nG(eprom_7s_oe_n), 
 			.A(eprom_7s_addr), 
 			.Q(eprom_7s_data)
@@ -256,7 +256,7 @@ module system86_tb;
 		) 
 		eprom_9c
 		(
-			.nE(eprom_9c_ce_n), 
+			.bE(eprom_9c_ce_n), 
 			.nG(eprom_9c_oe_n), 
 			.A(eprom_9c_addr), 
 			.Q(eprom_9c_data)
@@ -271,7 +271,7 @@ module system86_tb;
 		) 
 		eprom_9d
 		(
-			.nE(eprom_9d_ce_n), 
+			.bE(eprom_9d_ce_n), 
 			.nG(eprom_9d_oe_n), 
 			.A(eprom_9d_addr), 
 			.Q(eprom_9d_data),
@@ -287,7 +287,7 @@ module system86_tb;
 		) 
 		eprom_12c
 		(
-			.nE(eprom_12c_ce_n), 
+			.bE(eprom_12c_ce_n), 
 			.nG(eprom_12c_oe_n), 
 			.A(eprom_12c_addr), 
 			.Q(eprom_12c_data)
@@ -301,7 +301,7 @@ module system86_tb;
 		) 
 		eprom_12d
 		(
-			.nE(eprom_12d_ce_n), 
+			.bE(eprom_12d_ce_n), 
 			.nG(eprom_12d_oe_n), 
 			.A(eprom_12d_addr), 
 			.Q(eprom_12d_data)
@@ -316,8 +316,8 @@ module system86_tb;
 		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(sram_4n_we_n),
-			.nOE(sram_4n_oe_n),
+			.bWE(sram_4n_we_n),
+			.bOE(sram_4n_oe_n),
 			.A(sram_4n_addr),
 			.D(sram_4n_data)
 		);
@@ -330,8 +330,8 @@ module system86_tb;
 		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(sram_7n_we_n),
-			.nOE(sram_7n_oe_n),
+			.bWE(sram_7n_we_n),
+			.bOE(sram_7n_oe_n),
 			.A(sram_7n_addr),
 			.D(sram_7n_data)
 		);
@@ -345,8 +345,8 @@ module system86_tb;
 		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(sram_10m_we_n),
-			.nOE(sram_10m_oe_n),
+			.bWE(sram_10m_we_n),
+			.bOE(sram_10m_oe_n),
 			.A(sram_10m_addr),
 			.D(sram_10m_data)
 		);
@@ -359,8 +359,8 @@ module system86_tb;
 		(
 			.nCE1(1'b0),
 			.CE2(1'b1),
-			.nWE(sram_11k_we_n),
-			.nOE(sram_11k_oe_n),
+			.bWE(sram_11k_we_n),
+			.bOE(sram_11k_oe_n),
 			.A(sram_11k_addr),
 			.D(sram_11k_data)
 		);
@@ -371,14 +371,14 @@ module system86_tb;
 			.C_FILE_NAME("raw.txt")
 		)
 		raw_logger (
-			.i_Rst(~rst_n),
-			.i_Clk(s86_vid_clk),
+			.i_Rst(~_rst_n),
+			.i_Clk(vid_clk),
 			.i_OutputEnable(log),
-			.i_Red(s86_vid_red),
-			.i_Green(s86_vid_green),
-			.i_Blue(s86_vid_blue),
-			.i_nHSync(s86_hsync_n),
-			.i_nVSync(s86_vsync_n)
+			.i_Red(vid_red),
+			.i_Green(vid_green),
+			.i_Blue(vid_blue),
+			.i_nHSync(vid_bHSYNC),
+			.i_nVSync(vid_bVSYNC)
 		);
 		
 	/*scan_doubler
@@ -386,14 +386,14 @@ module system86_tb;
 			.C_COMPONENT_DEPTH(C_VIDEO_COMPONENT_DEPTH)
 		)
 		doubler (
-			.pixel_clk_in(s86_vid_clk),
+			.pixel_clk_in(vid_clk),
 			.pixel_clk_out_ref(clk_24m),
 			
-			.red_in(s86_vid_red),
-			.green_in(s86_vid_green),
-			.blue_in(s86_vid_blue),
-			.hsync_in(s86_hsync),
-			.vsync_in(s86_vsync),
+			.red_in(vid_red),
+			.green_in(vid_green),
+			.blue_in(vid_blue),
+			.hsync_in(vid_hsync),
+			.vsync_in(vid_vsync),
 			
 			.red_out(x2_vid_red),
 			.green_out(x2_vid_green),
@@ -408,18 +408,18 @@ module system86_tb;
 		output_sync_gen (
 			.i_Clk(clk_25m),
 			.i_Rst(rst),
-			.o_nHSync(out1_hsync_n),
-			.o_nVSync(out1_vsync_n)
+			.o_nHSync(out1_bHSYNC),
+			.o_nVSync(out1_bVSYNC)
 		);
 	
 	Sync_To_Blanking
 		output_blanking (
 			.i_Clk(clk_25m),
 			.i_Rst(rst),
-			.i_nHSync(out1_hsync_n),
-			.i_nVSync(out1_vsync_n),
-			.o_nHSync(out2_hsync_n),
-			.o_nVSync(out2_vsync_n),
+			.i_nHSync(out1_bHSYNC),
+			.i_nVSync(out1_bVSYNC),
+			.o_nHSync(out2_bHSYNC),
+			.o_nVSync(out2_bVSYNC),
 			.o_HBlank(out2_hblank),
 			.o_VBlank(out2_vblank)
 		);
@@ -436,18 +436,18 @@ module system86_tb;
 		Upscaler (
 			.i_Rst(rst),
 			
-			.i_ClkA(s86_vid_clk),
-			.i_RedA(s86_vid_red),
-			.i_GreenA(s86_vid_green),
-			.i_BlueA(s86_vid_blue),
-			.i_nHSyncA(s86_hsync_n),
-			.i_nVSyncA(s86_vsync_n),
-			.i_HBlankA(s86_hblank),
-			.i_VBlankA(s86_vblank),
+			.i_ClkA(vid_clk),
+			.i_RedA(vid_red),
+			.i_GreenA(vid_green),
+			.i_BlueA(vid_blue),
+			.i_nHSyncA(vid_bHSYNC),
+			.i_nVSyncA(vid_bVSYNC),
+			.i_HBlankA(vid_hblank),
+			.i_VBlankA(vid_vblank),
 			
 			.i_ClkB(clk_25m),
-			.i_nHSyncB(out2_hsync_n),
-			.i_nVSyncB(out2_vsync_n),
+			.i_nHSyncB(out2_bHSYNC),
+			.i_nVSyncB(out2_bVSYNC),
 			.i_HBlankB(out2_hblank),
 			.i_VBlankB(out2_vblank),
 			
@@ -458,8 +458,8 @@ module system86_tb;
 			.o_WidthB(out_vid_width),
 			.o_HeightB(out_vid_height),
 			
-			.o_nHSyncB(out_vid_hsync_n),
-			.o_nVSyncB(out_vid_vsync_n),
+			.o_nHSyncB(out_vid_bHSYNC),
+			.o_nVSyncB(out_vid_bVSYNC),
 			
 			.o_RedB(out_vid_red),
 			.o_GreenB(out_vid_green),
@@ -478,8 +478,8 @@ module system86_tb;
 			.i_Red(out_vid_red),
 			.i_Green(out_vid_green),
 			.i_Blue(out_vid_blue),
-			.i_nHSync(out_vid_hsync_n),
-			.i_nVSync(out_vid_vsync_n)
+			.i_nHSync(out_vid_bHSYNC),
+			.i_nVSync(out_vid_bVSYNC)
 		);
 		*/
 		
@@ -487,14 +487,14 @@ module system86_tb;
 		// Initialize Inputs
 		clk_48m = 0;
 		clk_25m = 0;
-		rst_n = 0;
+		_rst_n = 0;
 		log = 0;
 
 		// Wait 1000 ns for global reset to finish
 		#2000;
 		  
 		// Add stimulus here
-		rst_n = 1;
+		_rst_n = 1;
 		//log = 1;
 		#100000000;
 		#100000000;

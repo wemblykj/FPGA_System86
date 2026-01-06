@@ -21,19 +21,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 module cus42_layer
 	(
-		input wire rst_n,
+		input wire _rst_n,
 		input wire [1:0] state,
-		input wire CLK_6M,
-		input wire FLIP,
-		input wire nLATCH,		// CPU write request
-		input wire [1:0] CA,		// CPU address bus
-		input wire [7:0] CD,		// CPU data bus
-		input wire [7:0] RD,		// SRAM data bus
-		input wire nHSYNC,
-		input wire nVSYNC,
-		output wire [11:0] RA,	// SRAM address bus
-		output wire [13:0] GA,	// PROM address bus
-		output wire S3H			// latch request
+		input wire sig_6M_i,
+		input wire sig_FLIP_i,
+		input wire sig_bLATCH_i,		// CPU write request
+		input wire [1:0] sig_CA_i,		// CPU address bus
+		input wire [7:0] sig_CD_i,		// CPU data bus
+		input wire [7:0] sig_RD_i,		// SRAM data bus
+		input wire sig_bHSYNC_i,
+		input wire sig_bVSYNC_i,
+		output wire [11:0] sig_RA_o,	// SRAM address bus
+		output wire [13:0] sig_GA_o,	// PROM address bus
+		output wire sig_S3H_o			// latch request
 	);
 	
 	reg [8:0] hScrollOffset;	// 2 layers 9 bits
@@ -46,7 +46,7 @@ module cus42_layer
 	reg [8:0] vScrollCounter;
 	
 	// worry about flipping later
-	//assign fhCounter = FLIP ? (384 - H) : H;	// * for flip just subtract from width
+	//assign fhCounter = sig_FLIP_i ? (384 - H) : H;	// * for flip just subtract from width
 	
 	wire [8:0] SH;		// 9 bits	0 -> 384
 	wire [8:0] SV;		// 9 bits	0 -> 264
@@ -77,15 +77,15 @@ module cus42_layer
 	reg nHSYNC_last = 0;
 	reg nVSYNC_last = 0;
 	
-	/*always @(posedge CLK_6M) begin
-		if (!rst_n) begin
+	/*always @(posedge sig_6M_i) begin
+		if (!_rst_n) begin
 			hScrollCounter <= 0;
 			vScrollCounter <= 0;
 		end else	begin
-			if (!nHSYNC && nHSYNC_last) begin
+			if (!sig_bHSYNC_i && nHSYNC_last) begin
 				hScrollCounter <= hScrollOffset;
 				
-				if (nVSYNC && !nVSYNC_last)
+				if (sig_bVSYNC_i && !nVSYNC_last)
 					vScrollCounter <= vScrollOffset;
 				else
 					vScrollCounter <= vScrollCounter + 1'b1;
@@ -93,23 +93,23 @@ module cus42_layer
 					hScrollCounter <= hScrollCounter + 1'b1;
 		end
 		
-		nHSYNC_last <= nHSYNC;
-		nVSYNC_last <= nVSYNC;
+		nHSYNC_last <= sig_bHSYNC_i;
+		nVSYNC_last <= sig_bVSYNC_i;
 	end*/
 	
-	always @(negedge CLK_6M or negedge rst_n) begin
-		if (!rst_n) begin
+	always @(negedge sig_6M_i or negedge _rst_n) begin
+		if (!_rst_n) begin
 			hScrollCounter_next <= 0;
 		end else	begin	
-			if (!nHSYNC)
+			if (!sig_bHSYNC_i)
 				hScrollCounter_next <= hScrollOffset;
 			else
 				hScrollCounter_next <= hScrollCounter_next + 1'b1;
 		end
 	end
 	
-	always @(posedge CLK_6M or negedge rst_n) begin
-		if (!rst_n) begin
+	always @(posedge sig_6M_i or negedge _rst_n) begin
+		if (!_rst_n) begin
 			hScrollCounter = 0;
 			sram_addr = 0;
 		end else	begin
@@ -117,68 +117,68 @@ module cus42_layer
 			
 			case (state)
 				2'b00: sram_addr = { tilemap_row, tilemap_column, 1'b0 };
-				2'b01: attr = RD;
+				2'b01: attr = sig_RD_i;
 				2'b10: sram_addr = { tilemap_row, tilemap_column, 1'b1 };
-				2'b11: tile_index = RD;
+				2'b11: tile_index = sig_RD_i;
 			endcase
 		end
 	end
 	
-	always @(negedge nHSYNC or negedge rst_n) begin
-		if (!rst_n) begin
+	always @(negedge sig_bHSYNC_i or negedge _rst_n) begin
+		if (!_rst_n) begin
 			vScrollCounter_next <= 0;
 		end else	begin
-			if (!nVSYNC)
+			if (!sig_bVSYNC_i)
 				vScrollCounter_next <= vScrollOffset;
 			else
 				vScrollCounter_next <= vScrollCounter_next + 1'b1;
 		end
 	end
 	
-	always @(posedge nHSYNC or negedge rst_n) begin
-		if (!rst_n) begin
+	always @(posedge sig_bHSYNC_i or negedge _rst_n) begin
+		if (!_rst_n) begin
 			vScrollCounter <= 0;
 		end else	begin
 			vScrollCounter <= vScrollCounter_next;
 		end
 	end
 	
-	/*always @(SH[1:0] or RD) begin
+	/*always @(SH[1:0] or sig_RD_i) begin
 		if (SH[1:0] === 2'b01)
-			tile_index <= RD;
+			tile_index <= sig_RD_i;
 		else if (SH[1:0] === 2'b11)
 		*/
 
 	// Handle CPU control requests
-	always @(negedge nLATCH or negedge rst_n) begin
-		if (!rst_n) begin
+	always @(negedge sig_bLATCH_i or negedge _rst_n) begin
+		if (!_rst_n) begin
 			hScrollOffset <= 0;
 			vScrollOffset <= 0;
-		end else	if (!nLATCH) begin
-			if (CA[1:0] == 'b00)
+		end else	if (!sig_bLATCH_i) begin
+			if (sig_CA_i[1:0] == 'b00)
 				// tilemap 0/1 X scroll + priority
 				// set lower 8 bits
-				hScrollOffset[7:0] <= CD;
-			else if (CA[1:0] == 2'b01) begin
+				hScrollOffset[7:0] <= sig_CD_i;
+			else if (sig_CA_i[1:0] == 2'b01) begin
 				// tilemap 0/1 X scroll + priority
 				// set 9th bit
-				hScrollOffset[8] <= CD[0];
-			end else if (CA[1:0] == 2'b10)
+				hScrollOffset[8] <= sig_CD_i[0];
+			end else if (sig_CA_i[1:0] == 2'b10)
 				// tilemap 0/1 Y scroll
 				// set all 8 bits
-				vScrollOffset[7:0] <= CD;
+				vScrollOffset[7:0] <= sig_CD_i;
 		end
 	end	
 	
-	//assign SH = { hScrollCounter[8:3], FLIP ? ~hScrollCounter[2:0] : hScrollCounter[2:0] };	// negate flipped counter
+	//assign SH = { hScrollCounter[8:3], sig_FLIP_i ? ~hScrollCounter[2:0] : hScrollCounter[2:0] };	// negate flipped counter
 	assign SH = { hScrollCounter[8:3], hScrollCounter[2:0] };
 	assign SV = vScrollCounter;
-	assign S3H = SH[1:0] === 2'b11;
+	assign sig_S3H_o = SH[1:0] === 2'b11;
 	
-	//assign RA = { SV[7:3], SH[8:3], SH[1] };
-	assign RA = sram_addr;
+	//assign sig_RA_o = { SV[7:3], SH[8:3], SH[1] };
+	assign sig_RA_o = sram_addr;
 	
-	assign GA = { attr, tile_index, SV[2:0], SH[2] };
+	assign sig_GA_o = { attr, tile_index, SV[2:0], SH[2] };
 	
 	// debug
 		

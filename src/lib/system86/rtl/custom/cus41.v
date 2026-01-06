@@ -24,41 +24,41 @@ module cus41
         parameter WATCHDOG_WIDTH = 4
     )
     (
-		  input wire rst_n,
+		input wire _rst_ni,
 			
-        input wire [15:11] MA,
-        input wire nMWE,
-        input wire nVBLA,
-        input wire CLK_0,
-        input wire CLK_1,
-        input wire CLK_6M,
-        input wire nSWE,
-        input wire SA15,
-        input wire SA14,
-        input wire SA13,
-        input wire SA12,
-        input wire SA11,
+        input wire [15:11] pin_MA_i,
+        input wire pin_bMWE_i,
+        input wire pin_bVBLA_i,
+        input wire pin_CLK0,
+        input wire pin_CLK1,
+        input wire pin_6M_i,
+        input wire pin_bSWE_i,
+        input wire pin_SA15_i,
+        input wire pin_SA14_i,
+        input wire pin_SA13_i,
+        input wire pin_SA12_i,
+        input wire pin_SA11_i,
         // MRESET is implied, by convention, as an 'input' on schematics but must logically be an output for watchdog functionality.
         // ref: Pac-Mania CUS117:SUBRES, MAME namco86.cpp  
-        output wire nMRESET,
-        output reg nSINT,
-		  output reg nMINT,
-        output wire SROM,
-        output wire SCS4,
-        output wire SCS3,
-        output wire SCS2,
-        output wire SCS1,
-        output wire SCS0,
-        output wire Q,			// 90 degrees out of phase with nS2H? (http://www.ukvac.com/forum/topic362440&OB=DESC.html)
-        output wire nLTH0,
-        output wire nLTH1,
-        output wire nSND,
-        output wire nMCS0,
-        output wire nMCS1,
-        output wire nMCS2,
-        output wire nMCS3,
-        output wire nMCS4,
-        output wire nMROM
+        output wire pin_bMRESET_o,
+        output reg pin_bSINT_o,
+		  output reg pin_bMINT_o,
+        output wire pin_SROM_o,
+        output wire pin_SCS4_o,
+        output wire pin_SCS3_o,
+        output wire pin_SCS2_o,
+        output wire pin_SCS1_o,
+        output wire pin_SCS0_o,
+        output wire pin_Q_o,			// 90 degrees out of phase with nS2H? (http://www.ukvac.com/forum/topic362440&OB=DESC.html)
+        output wire pin_bLTH0_o,
+        output wire pin_bLTH1_o,
+        output wire pin_bSND_o,
+        output wire pin_bMCS0_o,
+        output wire pin_bMCS1_o,
+        output wire pin_bMCS2_o,
+        output wire pin_bMCS3_o,
+        output wire pin_bMCS4_o,
+        output wire pin_bMROM_o
     );
 
 	reg [WATCHDOG_WIDTH-1:0] main_watchdog_counter = 0;
@@ -68,62 +68,62 @@ module cus41
 	
 	reg [3:0] cpu_clock_counter = 0;
 	
-	assign Q = cpu_clock_counter[1] ^ cpu_clock_counter[0];
+	assign pin_Q_o = cpu_clock_counter[1] ^ cpu_clock_counter[0];
 	
 	// 0000h - 1FFFh R/W	(sprite ram)
-	assign nMCS2 = MA[15:13] !== 'b000;
+	assign pin_bMCS2_o = pin_MA_i[15:13] !== 'b000;
 	
 	// 2000h - 3FFFh R/W 	(videoram 1)
-	assign nMCS0 = ~MA[13] | |MA[15:14]; // MA[15:13] !== 'b001;
+	assign pin_bMCS0_o = ~pin_MA_i[13] | |pin_MA_i[15:14]; // pin_MA_i[15:13] !== 'b001;
 	
 	// 4000h - 5FFFh R/W		(videoram 2)
-	assign nMCS1 = ~MA[14] | MA[15] | MA[13]; // MA[15:13] !== 'b010;
+	assign pin_bMCS1_o = ~pin_MA_i[14] | pin_MA_i[15] | pin_MA_i[13]; // pin_MA_i[15:13] !== 'b010;
 	
 	// unused
-	assign nMCS3 = 'b1;
+	assign pin_bMCS3_o = 'b1;
 	
 	// 6000h - 7FFFh R	(EEPROM 12D)
-	assign nMCS4 = ~nMWE | MA[15] | ~&MA[14:13]; // /*nMWE ||*/ (MA[15:13] !== 'b011);
+	assign pin_bMCS4_o = ~pin_bMWE_i | pin_MA_i[15] | ~&pin_MA_i[14:13]; // /*pin_bMWE_i ||*/ (pin_MA_i[15:13] !== 'b011);
 	
 	// 8000h - FFFFh R	(EEPROM 12C)
-	assign nMROM = ~nMWE | ~MA[15];  //*nMWE ||*/ MA[15] !== 1;
+	assign pin_bMROM_o = ~pin_bMWE_i | ~pin_MA_i[15];  //*pin_bMWE_i ||*/ pin_MA_i[15] !== 1;
 	
 	// 8000h W	(watchdog)
-	assign main_watchdog_clear = ~nMWE && MA[15:11] === 'b10000;
+	assign main_watchdog_clear = ~pin_bMWE_i && pin_MA_i[15:11] === 'b10000;
 	
 	// 9800h W	(watchdog, CUS130)
-	//assign sound_watchdog_clear = ~nSWE & MA[15:11] === 'b10011;
+	//assign sound_watchdog_clear = ~pin_bSWE_i & pin_MA_i[15:11] === 'b10011;
 	
 	// 0x8800 - 0x8800 W  (INT ACK)
-	assign main_int_ack = ~nMWE && MA[15:11] === 'b10001;
+	assign main_int_ack = ~pin_bMWE_i && pin_MA_i[15:11] === 'b10001;
 	
 	// 0x8800 - 0x8800 W  (INT ACK)
-	//assign sound_int_ack = ~nSWE && MA[15:11] === 'b10011;
+	//assign sound_int_ack = ~pin_bSWE_i && pin_MA_i[15:11] === 'b10011;
 	
 	// D000h - D002h W	(scroll + priority)
 	// D003h - D003h W 	(ROM 9D bank select)
 	// D004h - D006h W	(scroll + priority)
-	assign nLTH0 = nMWE | ~(&MA[15:14] & MA[12]) | MA[13] | MA[11]; // /*nMWE ||*/ MA[15:11] !== 'b11010;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
+	assign pin_bLTH0_o = pin_bMWE_i | ~(&pin_MA_i[15:14] & pin_MA_i[12]) | pin_MA_i[13] | pin_MA_i[11]; // /*pin_bMWE_i ||*/ pin_MA_i[15:11] !== 'b11010;// & (~A[1] == 'b0 | A[1:0] == 'b10));	
 	
 	// D800h - D802h W	(scroll + priority)
 	// D803h - D803h W 	(ROM 12D bank select)
 	// D8004h - D806h W	(scroll + priority)
-	assign nLTH1 = nMWE | ~(&MA[15:14] & &MA[12:11]) | MA[13]; // /*nMWE ||*/ MA[15:11] !== 'b11011;	
+	assign pin_bLTH1_o = pin_bMWE_i | ~(&pin_MA_i[15:14] & &pin_MA_i[12:11]) | pin_MA_i[13]; // /*pin_bMWE_i ||*/ pin_MA_i[15:11] !== 'b11011;	
 	
-	assign nMRESET = ~main_watchdog_counter[WATCHDOG_WIDTH-1];	// reset on msb
+	assign pin_bMRESET_o = ~main_watchdog_counter[WATCHDOG_WIDTH-1];	// reset on msb
 	
 	initial begin
-		nMINT = 1'b1;
-		nSINT = 1'b1;
+		pin_bMINT_o = 1'b1;
+		pin_bSINT_o = 1'b1;
 	end
 	
 	// CPU clock - 90 degrees out of phase from 2H? (http://www.ukvac.com/forum/topic362440&OB=DESC.html)
-	always @(negedge CLK_6M or negedge rst_n) begin
+	always @(negedge pin_6M_i or negedge _rst_ni) begin
 		/* based on interpretation of 74LS161 circuit from www.ukvac.com.
 		 * N.B. to be out of sync by 90 as described required my CUS27 implmentation to be tweaked to update its counter on falling edge of 6M 
 		 * (rather than the positive edge), this would lead me to believe that the CUS27 is now [more] correct.
 		*/
-		if (!rst_n || !CLK_0) begin
+		if (!_rst_ni || !pin_CLK0) begin
 			cpu_clock_counter <= 0;
 		end else begin
 			cpu_clock_counter <= cpu_clock_counter + 1'b1;
@@ -133,14 +133,14 @@ module cus41
 	
 	// watchdog reset and int ack
 	// http://www.ukvac.com/forum/topic362440&OB=DESC.html
-	always @(negedge nVBLA or negedge rst_n) begin
-		if (!rst_n || main_watchdog_clear || main_watchdog_counter === 'b1010) begin
+	always @(negedge pin_bVBLA_i or negedge _rst_ni) begin
+		if (!_rst_ni || main_watchdog_clear || main_watchdog_counter === 'b1010) begin
 			main_watchdog_counter <= 0;
-      nMINT <= 1;
+      pin_bMINT_o <= 1;
 		end else begin
 			main_watchdog_counter <= main_watchdog_counter + 1'b1;
-      nMINT <= ~main_int_ack;
-		//nSINT <= ~sound_int_ack;
+      pin_bMINT_o <= ~main_int_ack;
+		//pin_bSINT_o <= ~sound_int_ack;
 		end
 	end
 	

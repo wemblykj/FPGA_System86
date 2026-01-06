@@ -21,15 +21,15 @@
 //////////////////////////////////////////////////////////////////////////////////
 module ls245(
         input wire DIR,
-        input wire nOE,
+        input wire bOE,
         inout wire [7:0] A,
         inout wire [7:0] B
     );
 
-	wire nBToA = nOE | DIR;
-	wire nAToB = nOE | ~DIR;
+	wire bBToA = bOE | DIR;
+	wire bAToB = bOE | ~DIR;
 	
-	assign A = nBToA ? 8'bZ : B;
-	assign B = nAToB ? 8'bZ : A;
+	assign A = bBToA ? 8'bZ : B;
+	assign B = bAToB ? 8'bZ : A;
 	
 endmodule
