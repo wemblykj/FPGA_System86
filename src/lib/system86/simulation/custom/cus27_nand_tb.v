@@ -14,15 +14,16 @@ module cus27_nand_tb;
   );
 
   // Helper function to resolve high-impedance inputs
-  function bit resolve(input logic sig);
+  function resolve(input sig);
     if (sig === 1'bz) resolve = 1;
     else resolve = sig;
   endfunction
 
+	reg expected;
+	
   // Task to apply inputs, check output, and display results
-  task test_case(input logic tA, tB, tC, tD);
+  task test_case(input tA, tB, tC, tD);
     begin
-      bit expected;
       
       A = tA;
       B = tB;
@@ -37,9 +38,6 @@ module cus27_nand_tb;
       $display("%4t | %b %b %b %b | %b | %b | %s", 
         $time, A, B, C, D, Y, expected, (Y === expected) ? "PASS" : "FAIL");
 
-      // Assertion for correctness
-      assert (Y === expected)
-        else $error("Mismatch: A=%b, B=%b, C=%b, D=%b, Y=%b, Expected=%b", A, B, C, D, Y, expected);
     end
   endtask
 

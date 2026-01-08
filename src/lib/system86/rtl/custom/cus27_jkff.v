@@ -27,6 +27,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module cus27_jkff (
+  input wire _rst_ni,
   input  wire CLK,
   input  wire bJ,
   input  wire K,
@@ -39,20 +40,24 @@ module cus27_jkff (
   // Internal storage for state
   reg q;
 
+  assign set = (bSET !== 1'bz) ? ~bSET : 1'b0;
+  assign res = (bRES !== 1'bz) ? ~bRES : 1'b0;
+   
   // Assign outputs
-  assign Q = (bSET == 1'b0 && bRES == 1'b0) ? 1'b1 : q;     // Unstable state when both bSET and bRES are low
-  assign bQ = (bSET == 1'b0 && bRES == 1'b0) ? 1'b1 : ~q;   // Unstable state when both bSET and bRES are low
+  assign Q = (set && res) ? 1'b1 : q;     // Unstable state when both bSET and bRES are low
+  assign bQ = (set && res) ? 1'b1 : ~q;   // Unstable state when both bSET and bRES are low
 
   // Sequential always block
-  always @(posedge CLK or negedge bSET or negedge bRES) begin
-    // Handle asynchronous active-low set and reset with unstable condition
-    if (!bSET && !bRES) begin
+  always @(negedge _rst_ni, posedge CLK or posedge set or posedge res) begin
+    if (!_rst_ni) begin
+      q <= 1'b0;
+    end else if (set && res) begin
       // Both active-low: enter unstable state (do nothing as assign handles this)
       q <= q; // Keep `q` in its prior state for recovery
-    end else if (!bSET) begin
+    end else if (set) begin
       // Set condition
       q <= 1'b1;
-    end else if (!bRES) begin
+    end else if (res) begin
       // Reset condition
       q <= 1'b0;
     end else begin

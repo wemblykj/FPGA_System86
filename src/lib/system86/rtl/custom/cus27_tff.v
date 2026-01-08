@@ -28,27 +28,33 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module cus27_tff (
+  input wire _rst_ni,
   input wire CLK,
-  output wire Q,
-  output wire bQ,
   input wire bSET,
   input wire bRES,
+  output wire Q,
+  output wire bQ
 );
 
   reg        q;
 
-  assign Q = q;
-  assign bQ = ~q;
+  assign set = (bSET !== 1'bz) ? ~bSET : 1'b0;
+  assign res = (bRES !== 1'bz) ? ~bRES : 1'b0;
+  
+  assign Q = (set && res) ? 1'b1 : q;     // Unstable state when both bSET and bRES are low
+  assign bQ = (set && res) ? 1'b1 : ~q;   // Unstable state when both bSET and bRES are low
 
-  always @(posedge CLK or posedge bSET or posedge bRES)
+  always @(negedge _rst_ni or posedge CLK or posedge set or posedge res)
   begin
-    if (~bSET && ~bRES) begin
+    if (!_rst_ni) begin
+	   q <= 1'b0;
+    end else if (set && res) begin
       // this is not a scenario possible in the CUS27 according to [^2]
       // so we'll just ignore and leave the state unchanged
       q <= q;
-    end else if (~bSET) begin
+    end else if (set) begin
       q <= 1'b1;
-    end else if (~bRES) begin
+    end else if (res) begin
       q <= 1'b0;
     end else begin
       // currently assuming that SET and RES are as per D-type FF and that when they are not active

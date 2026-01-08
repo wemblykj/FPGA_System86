@@ -32,7 +32,7 @@ module cus27_dff (
   output wire Q,
   output wire bQ,
   input wire bSET,
-  input wire bRES,
+  input wire bRES
 );
 
   reg        q;

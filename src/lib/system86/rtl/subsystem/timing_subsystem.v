@@ -65,7 +65,7 @@ module timing_subsystem
 	
 	// CUS27 - CLOCK DIVIDER
 	//cus27 
-	cus27_gng_ref
+	cus27_furrtek_ref
 		cus27_9p_clock_divider(
 			._rst_ni(_rst_ni),
 			.pin_48M_i(s86_48M_i), 
