@@ -27,42 +27,43 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module cus27_jkff (
-  input wire CLK,
-  input wire bJ,
-  input wire K,
-  input wire bSET,
-  input wire bRES,
+  input  wire CLK,
+  input  wire bJ,
+  input  wire K,
+  input  wire bSET,
+  input  wire bRES,
   output wire Q,
-  output wire bQ,
+  output wire bQ
 );
 
-  reg        q;
+  // Internal storage for state
+  reg q;
 
-  assign Q = q;
-  assign bQ = ~q;
-  
-  // non-inverted J input so conventional, and more readable, truth-table logic can be applied [^3]
-  assign j = ~bJ;   
+  // Assign outputs
+  assign Q = (bSET == 1'b0 && bRES == 1'b0) ? 1'b1 : q;     // Unstable state when both bSET and bRES are low
+  assign bQ = (bSET == 1'b0 && bRES == 1'b0) ? 1'b1 : ~q;   // Unstable state when both bSET and bRES are low
 
-  always @(posedge CLK or posedge bSET or posedge bRES)
-  begin
-    if (~bSET && ~bRES) begin
-      // [^3] suggests that both Q and bQ would go high until either SET or RES go inactive
-      // most JK FF datasheets concur with this behaviour
-      // this is not a scenario possible in the CUS27 according to [^2]
-      // so we'll just ignore and leave the state unchanged
-      q <= q;
-    end else if (~bSET) begin
+  // Sequential always block
+  always @(posedge CLK or negedge bSET or negedge bRES) begin
+    // Handle asynchronous active-low set and reset with unstable condition
+    if (!bSET && !bRES) begin
+      // Both active-low: enter unstable state (do nothing as assign handles this)
+      q <= q; // Keep `q` in its prior state for recovery
+    end else if (!bSET) begin
+      // Set condition
       q <= 1'b1;
-    end else if (~bRES) begin
+    end else if (!bRES) begin
+      // Reset condition
       q <= 1'b0;
     end else begin
-        case({jK})
-          00: q <= q;       // do  nothing
-          01: q <= 1'b0;    // reset
-          10: q <= 1'b1;    // set
-          11: q <= ~q;      // toggle
-        endcase
+      // Handle normal JK flip-flop behavior
+      case ({~bJ, K}) // {J, K} concatenation (interpreting bJ as active-low J)
+        2'b00: q <= q;       // No change
+        2'b01: q <= 1'b0;    // Reset
+        2'b10: q <= 1'b1;    // Set
+        2'b11: q <= ~q;      // Toggle
+      endcase
     end
   end
+
 endmodule
