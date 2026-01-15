@@ -28,18 +28,22 @@ module cus27_furrtek_ref_tb;
 	reg _rst_ni;
 	reg sig_48M_i;
 	//reg sig_6M_i;
-	reg sig_bHRESET_i;
+	reg sig_bHRES_IN_i;
+	reg sig_bVRES_IN_i;
 
 	// Outputs
 	wire sig_24M_o;
 	wire sig_12M_o;
 	wire sig_6M_o;
-	wire sig_bVSYNC_o;
+	
 	wire sig_bHSYNC_o;
-	wire sig_bVBLANK_o;
 	wire sig_bHBLANK_o;
-	wire sig_bVRESET_o;
-	wire sig_bHRESET_o;
+	wire sig_bHRES_o;
+	
+	wire sig_bVSYNC_o;
+	wire sig_bVBLANK_o;
+	wire sig_bVRES_o;
+		
 	wire sig_1H_o;
 	wire sig_2H_o;
 	wire sig_4H_o;
@@ -61,7 +65,8 @@ module cus27_furrtek_ref_tb;
 		.pin_MODE1_i(1'b0),
 		.pin_FLIP_i(1'b0),
 		.pin_6M_i(sig_6M_o), 
-		.pin_bHRESET_i(sig_bHRESET_i),
+		.pin_bHRES_IN_i(sig_bHRES_IN_i),
+		.pin_bVRES_IN_i(sig_bVRES_IN_i),
 		.pin_24M_o(sig_24M_o), 
 		.pin_12M_o(sig_12M_o), 
 		.pin_6M_o(sig_6M_o), 
@@ -69,8 +74,8 @@ module cus27_furrtek_ref_tb;
 		.pin_bHSYNC_o(sig_bHSYNC_o), 
 		.pin_bVBLANK_o(sig_bVBLANK_o), 
 		.pin_bHBLANK_o(sig_bHBLANK_o), 
-		.pin_bVRESET_o(sig_bVRESET_o), 
-		.pin_bHRESET_o(sig_bHRESET_o), 
+		.pin_bVRES_o(sig_bVRES_o), 
+		.pin_bHRES_o(sig_bHRES_o), 
 		.pin_1H_o(sig_1H_o), 
 		.pin_2H_o(sig_2H_o), 
 		.pin_4H_o(sig_4H_o), 
@@ -89,7 +94,8 @@ module cus27_furrtek_ref_tb;
 		_rst_ni = 0;
 		sig_48M_i = 0;
 		//sig_6M_i = 0;
-		sig_bHRESET_i = 1'b1;
+		sig_bHRES_IN_i = 1'b1;
+		sig_bVRES_IN_i = 1'b1;
 
 		// Wait 100 ns for global reset to finish
 		#100;
@@ -100,11 +106,19 @@ module cus27_furrtek_ref_tb;
 		
 		#800;
 		
-		sig_bHRESET_i = 1'b0;
+		sig_bHRES_IN_i = 1'b0;
 		
 		#100;
 		
-		sig_bHRESET_i = 1'b1;
+		sig_bHRES_IN_i = 1'b1;
+		
+		#100;
+		
+		sig_bVRES_IN_i = 1'b0;
+		
+		#100;
+		
+		sig_bVRES_IN_i = 1'b1;
 		
 		#800;
 		

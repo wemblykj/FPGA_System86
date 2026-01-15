@@ -40,10 +40,11 @@ module cus27_furrtek_ref
 	// configuration
 	input wire pin_OTEN_i,
 	input wire pin_MODE0_i,
-	input wire pin_MODE1_i,
+	input wire pin_MODE1_i,		// use external resets
 	input wire pin_FLIP_i,
 	
-	input wire pin_bHRESET_i,
+	input wire pin_bHRES_IN_i,	// external horizontal reset
+	input wire pin_bVRES_IN_i, // external vertical reset
 	
 	// generated clocks
    output wire pin_24M_o,
@@ -51,12 +52,16 @@ module cus27_furrtek_ref
    output wire pin_6M_o,
 	
 	// video synchronisation
-	output wire pin_bVSYNC_o,
+	
 	output wire pin_bHSYNC_o,
-	output wire pin_bVBLANK_o,
 	output wire pin_bHBLANK_o,
-	output wire pin_bVRESET_o,
-	output wire pin_bHRESET_o,
+	output wire pin_bHRES_o,
+	output wire dir_bHRES_o,
+	
+	output wire pin_bVSYNC_o,
+	output wire pin_bVBLANK_o,
+	output wire pin_bVRES_o,
+	output wire dir_bVRES_o,
 	
 	// video timing signals
 	
@@ -148,7 +153,9 @@ module cus27_furrtek_ref
 	assign sig_MODE0 = pin_MODE0_i;
 	assign sig_MODE1 = pin_MODE1_i;
 	assign sig_FLIP = pin_FLIP_i;
-	assign sig_bHRESET = pin_bHRESET_i;
+	assign sig_bHRES_IN = pin_bHRES_IN_i;
+	assign sig_bVRES_IN = pin_bVRES_IN_i;
+	
 	//
 	// route internal signals to output pins
 	
@@ -158,16 +165,33 @@ module cus27_furrtek_ref
 	assign pin_S1H_o = sig_S1H;
 	assign pin_S2H_o = sig_S2H;
 	
-	assign pin_bHRESET_o = sig_bHRES;
-	assign dir_HRESET_o = pin_MODE1_i;
+	assign pin_bHRES_o = sig_bHRES;
+	assign dir_HRES_o = pin_MODE1_i;
+	assign pin_bVRES_o = sig_bVRES;
+	assign dir_VRES_o = pin_MODE1_i;
+	
 	assign pin_PIN40_o = sig_PIN40;
 	assign pin_PIN41_o = sig_PIN41;
 
 	// TODO
-	assign sig_bHRESET = pin_bHRESET_i;
-	assign sig_HRESET = ~pin_bHRESET_i;
-	assign sig_bHRESET1 = ~sig_HRESET;
-	assign sig_bHRES = 1'b1;
+	assign sig_E5BOT = ~(sig_48M & sig_E5TOP);
+	
+	// HRESET in input mode
+	assign sig_F5TOP = ~(sig_bHRES_IN & sig_E5BOT);
+	assign sig_HRESET = sig_F5TOP;
+	assign sig_bHRESET1 = ~sig_F5TOP;
+	assign sig_bHRESET2 = ~sig_F5TOP;
+	assign sig_bHRESET3 = ~sig_F5TOP;
+	// VRESET in input mode
+	assign sig_F5BOT = ~(sig_bVRES_IN & sig_E5BOT);
+	assign sig_VRESET = sig_F5BOT;
+	assign sig_bVRESET1 = ~sig_F5BOT;
+	assign sig_bVRESET2 = ~sig_F5BOT;
+	assign sig_bVRESET3 = ~sig_F5BOT;
+	// HRESET in output mode
+	assign sig_bHRES = 1'b1; 
+	// VRESET in output mode
+	assign sig_bVRES = 1'b1; 
 	
 	//
 	// RTL
