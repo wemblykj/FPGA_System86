@@ -40,6 +40,9 @@ module cus27_jkff (
   // Internal storage for state
   reg q;
 
+  assign j = (bJ !== 1'bz) ? ~bJ : 1'b1;
+  assign k = (K !== 1'bz) ? K : 1'b0;
+  
   assign set = (bSET !== 1'bz) ? ~bSET : 1'b0;
   assign res = (bRES !== 1'bz) ? ~bRES : 1'b0;
    
@@ -62,7 +65,7 @@ module cus27_jkff (
       q <= 1'b0;
     end else begin
       // Handle normal JK flip-flop behavior
-      case ({~bJ, K}) // {J, K} concatenation (interpreting bJ as active-low J)
+      case ({j, k}) // {J, K} concatenation (interpreting bJ as active-low J)
         2'b00: q <= q;       // No change
         2'b01: q <= 1'b0;    // Reset
         2'b10: q <= 1'b1;    // Set

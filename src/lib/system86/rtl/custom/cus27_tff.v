@@ -30,6 +30,7 @@
 module cus27_tff (
   input wire _rst_ni,
   input wire CLK,
+  input wire T,
   input wire bSET,
   input wire bRES,
   output wire Q,
@@ -37,6 +38,8 @@ module cus27_tff (
 );
 
   reg        q;
+
+  //assign t = (T !== 1'bz) ? T : 1'b0;
 
   assign set = (bSET !== 1'bz) ? ~bSET : 1'b0;
   assign res = (bRES !== 1'bz) ? ~bRES : 1'b0;

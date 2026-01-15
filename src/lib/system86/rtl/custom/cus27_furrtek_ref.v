@@ -43,6 +43,8 @@ module cus27_furrtek_ref
 	input wire pin_MODE1_i,
 	input wire pin_FLIP_i,
 	
+	input wire pin_bHRESET_i,
+	
 	// generated clocks
    output wire pin_24M_o,
    output wire pin_12M_o,
@@ -65,12 +67,16 @@ module cus27_furrtek_ref
 	output wire pin_2V_o,	//	2 line count
 	output wire pin_4V_o,	//	4 line count
 	output wire pin_8V_o,	//	8 line count
-	output wire pin_S1H_o,	//	1 pixel count
-	output wire pin_S2H_o	//	2 pixel count
+	output wire pin_S1H_o,	//	1 pixel count (negative offset?)
+	output wire pin_S2H_o,	//	2 pixel count (negative offset?)
+	
+	output wire pin_PIN40_o,	// unknown function, HRESET dependant
+	output wire pin_PIN41_o	// unknown function, regular pulse in sync with 48M clock
 );
 
 	// I'm going out on a limb and assuming that signals into and out of the chip are inverted and that the logic cells are
-	// expecting this such that the inputs to an inverter are themselves inverted and the standard cell input stage is a NOR gate
+	// expecting this such that the inputs to an inverter are themselves inverted and the standard cell input stage logic is a NOR gate
+	// resulting in NAND logic
 	
 	// As a proof of my conjecture...
 	// Assume an external observer applies signls A and B to input pins routed through an internal 'NAND' gate and the resultant output is observered as signal Q
@@ -104,91 +110,133 @@ module cus27_furrtek_ref
 	//  0  |  1     |  => | 1  |  1  |  0            |     |  1           |
 	//  1  |  1     |     | 0  |  0  |  1            |     |  0           |
 	
-	wire sig_D5_Q;
-	wire sig_D5_bQ;
-	wire sig_B5_Q;
-	wire sig_E7BOT_Y;
-	wire sig_B9BOT_Y;
-	wire sig_E1_Q;
-	wire sig_E1_bQ;
-	wire sig_G8_Q;
-	wire sig_G8_bQ;
-	wire sig_G1_Q;
-	wire sig_G1_bQ;
+	//
+	// internal signals
 	
-	assign sig_bHRESET = 1'b1;
-	assign sig_E5TOP = ~sig_E7BOT_Y;
-	assign sig_E6TOP = ~sig_B9BOT_Y;
+	wire sig_48M;
+	wire sig_24M;
+	wire sig_12M;
+	wire sig_6M;
 
-	assign pin_24M_o = ~sig_D5_bQ;
-	assign pin_12M_o = ~sig_B5_Q;
-	assign pin_6M_o = ~sig_E1_Q;
-	assign pin_S1H_o = ~sig_G8_bQ;
-	assign pin_S2H_o = ~sig_G1_Q;
+	wire sig_S1H;
+	wire sig_S2H;
+	
+	wire sig_MODE0;
+	wire sig_MODE1;
+	wire sig_FLIP;
+	
+	// inverted inputs
+	wire sig_b48M;
+	wire sig_b48M2;
+	wire sig_b6MIN;
+	wire sig_b6MIN2;
+	wire sig_bMODE0;
+	wire sig_bFLIP;
+		
+	wire sig_bHRESET1;
+	wire sig_E7BOT;
+	
+	wire sig_PIN40;
+	wire sig_PIN41;
+	
+	//
+	// route input pins to internal signals
+	
+	assign sig_48M = pin_48M_i;
+	assign sig_6M = pin_6M_i;
+	
+	assign sig_MODE0 = pin_MODE0_i;
+	assign sig_MODE1 = pin_MODE1_i;
+	assign sig_FLIP = pin_FLIP_i;
+	assign sig_bHRESET = pin_bHRESET_i;
+	//
+	// route internal signals to output pins
+	
+	assign pin_24M_o = sig_24M;
+	assign pin_12M_o = sig_12M;
+	//assign pin_6M_o = sig_6M;
+	assign pin_S1H_o = sig_S1H;
+	assign pin_S2H_o = sig_S2H;
+	
+	assign pin_bHRESET_o = sig_bHRES;
+	assign dir_HRESET_o = pin_MODE1_i;
+	assign pin_PIN40_o = sig_PIN40;
+	assign pin_PIN41_o = sig_PIN41;
 
+	// TODO
+	assign sig_bHRESET = pin_bHRESET_i;
+	assign sig_HRESET = ~pin_bHRESET_i;
+	assign sig_bHRESET1 = ~sig_HRESET;
+	assign sig_bHRES = 1'b1;
+	
+	//
+	// RTL
+	//
+	
+	//
+	// synthesise the routing of signals through inverter cells  
+	
+	// inverted input signals
+	assign sig_b48M = ~pin_48M_i;
+	assign sig_b48M2 = ~pin_48M_i;	// schematic shows this is driven off a secondary IO block signal pin_48M_2_i
+	assign sig_b6MIN = ~pin_6M_i;
+	assign sig_b6MIN2 = ~pin_6M_i;
+	
+	assign sig_bMODE0 = ~pin_MODE0_i;
+	assign sig_bFLIP = ~pin_FLIP_i;		// schematic shows this is driven off a secondary IO block signal pin_FLIP_2_i
+	assign sig_bFLIP2 = ~pin_FLIP_i;
+	
+	// inverted internal signals
+	assign sig_E5TOP = ~sig_E7BOT;
+	
+	//
+	// miscellaneous standard cell synthesis
+	
+	// E7BOT interpretation - disables all clocks if MODE1 active
+	//	output is low if MODE1 high and MODE0 and FLIP are low, otherwise output is high
 	cus27_nand
 		cus27_E7BOT_nand(
-			.A(~pin_MODE1_i),
-			.B(pin_MODE0_i),
-			.C(pin_FLIP_i),
-			.Y(sig_E7BOT_Y)
+			.A(sig_MODE1),
+			.B(sig_bMODE0),
+			.C(sig_bFLIP),
+			.Y(sig_E7BOT)
 		);
-		
-	cus27_tff
-		cus27_D5_tff(
-			._rst_ni(_rst_ni),
-			.CLK(pin_48M_i),
-			.bSET(sig_E7BOT_Y),
-			.Q(sig_D5_Q),
-			.bQ(sig_D5_bQ)
-		);
-		
-	cus27_jkff
-		cus27_B5_jkff(
-			._rst_ni(_rst_ni),
-			.CLK(pin_48M_i),
-			.bJ(sig_D5_Q),
-			.K(sig_D5_bQ),
-			.bRES(sig_E7BOT_Y),
-			.Q(sig_B5_Q)
-		);
-		
-	cus27_nand
-		cus27_B9BOT_nand(
-			.A(sig_D5_bQ),
-			.B(sig_B5_Q),
-			.Y(sig_B9BOT_Y)
-		);
-			
-	cus27_jkff
-		cus27_E1_jkff(
-			._rst_ni(_rst_ni),
-			.CLK(pin_48M_i),
-			.bJ(sig_B9BOT_Y),
-			.K(sig_E6TOP),
-			.bRES(sig_E7BOT_Y),
-			.Q(sig_E1_Q),
-			.bQ(sig_E1_bQ)
-		);
-		
-	cus27_tff
-		cus27_G8_tff(
-			._rst_ni(_rst_ni),
-			.CLK(sig_E1_bQ),
-			.bRES(sig_bHRESET1),
-			.Q(sig_G8_Q),
-			.bQ(sig_G8_bQ)
-		);
-		
-	cus27_jkff
-		cus27_G1_jkff(
-			._rst_ni(_rst_ni),
-			.CLK(sig_E1_bQ),
-			.bJ(sig_G8_bQ),
-			.K(sig_G8_Q),
-			.bSET(sig_bHRESET1),
-			.Q(sig_G1_Q),
-			.bQ(sig_G1_bQ)
-		);
+	
+	//	
+	// delegate to sub-modules
+	
+	furrtek_clockdivider 
+		clockdivider (
+		._rst_ni(_rst_ni), 
+		.sig_48M_i(sig_48M), 
+		.sig_bHRESET1_i(sig_bHRESET1), 
+		.sig_E7BOT_i(sig_E7BOT),
+		.sig_24M_o(sig_24M), 
+		.sig_12M_o(sig_12M), 
+		.sig_6M_o(pin_6M_o), // drive the output pin directly as sig_6M maps to the CUS27 input
+		.sig_S1H_o(sig_S1H), 
+		.sig_S2H_o(sig_S2H)
+	);
+	
+	furrtek_pin40
+		pin40 (
+		._rst_ni(_rst_ni),		
+		.sig_48M_i(sig_48M),
+		.sig_24M_i(sig_24M),
+		.sig_12M_i(sig_12M),
+		.sig_HRESET_i(sig_HRESET),
+		.sig_PIN40_o(sig_PIN40)
+	);
+	
+	furrtek_pin41
+		pin41 (
+		._rst_ni(_rst_ni),
+		.sig_MODE1_i(sig_MODE1),
+		.sig_bMODE0_i(sig_bMODE0),
+		.sig_bFLIP_i(sig_bFLIP),
+		.sig_48M_i(sig_48M),
+		.sig_b48M2_i(sig_b48M2), 
+		.sig_PIN41_o(sig_PIN41)
+	);
 			
 endmodule
