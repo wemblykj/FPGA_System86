@@ -29,13 +29,16 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module cus27_furrtek_ref
+#(
+		parameter IOB_INVERSION = 0
+)
 (
 	// simulation control
 	input wire _rst_ni,
 	
 	// input clocks
 	input wire pin_48M_i,
-	input wire pin_6M_i,
+	input wire pin_6M_IN_i,
 	
 	// configuration
 	input wire pin_OTEN_i,
@@ -49,7 +52,7 @@ module cus27_furrtek_ref
 	// generated clocks
    output wire pin_24M_o,
    output wire pin_12M_o,
-   output wire pin_6M_o,
+   output wire pin_6M_OUT_o,
 	
 	// video synchronisation
 	
@@ -68,6 +71,7 @@ module cus27_furrtek_ref
 	output wire pin_1H_o,	// 1 pixel count
 	output wire pin_2H_o,	// 2 pixel count
 	output wire pin_4H_o,	// 4 pixel count
+	output wire pin_8H_o,	// 8 pixel count (pin 6)
 	output wire pin_1V_o,	//	1 line count
 	output wire pin_2V_o,	//	2 line count
 	output wire pin_4V_o,	//	4 line count
@@ -116,72 +120,94 @@ module cus27_furrtek_ref
 	//  1  |  1     |     | 0  |  0  |  1            |     |  0           |
 	
 	//
-	// internal signals
+	// internal input signals
 	
-	wire sig_48M;
-	wire sig_24M;
-	wire sig_12M;
-	wire sig_6M;
-
-	wire sig_S1H;
-	wire sig_S2H;
-	
-	wire sig_MODE0;
-	wire sig_MODE1;
-	wire sig_FLIP;
-	
-	// inverted inputs
 	wire sig_b48M;
-	wire sig_b48M2;
-	wire sig_b6MIN;
-	wire sig_b6MIN2;
+	wire sig_b6M_IN;
+	
+	//wire sig_bMODE1;
+	
 	wire sig_bMODE0;
 	wire sig_bFLIP;
-		
+	
+	// input inverter stage
+	
+	wire sig_FLIP;		// E9TOP
+	wire sig_FLIP2;	// A11BOT
+	wire sig_MODE0;	// E10BOT
+	wire sig_48M;		// A9BOT
+	wire sig_48M_2;	// C9BOT
+	wire sig_6MIN;		// H9BOT
+	wire sig_6MIN2;	// J9BOT
+	
 	wire sig_bHRESET1;
 	wire sig_E7BOT;
 	
-	wire sig_PIN40;
-	wire sig_PIN41;
+	// output signals
+	
+	wire sig_24M;
+	wire sig_12M;
+	wire sig_b6M_OUT;
+
+	wire sig_bS1H;
+	wire sig_bS2H;	
+
+	wire sig_b1H;	
+	wire sig_b2H;	
+	wire sig_b4H;	
+	wire sig_bPIN_6;	
+	
+	wire sig_bPIN40;
+	wire sig_bPIN41;
+
+	//
+	//
+	
+	wire iob_i = IOB_INVERSION;
+	wire iob_o = IOB_INVERSION;
 	
 	//
-	// route input pins to internal signals
+	// route input pins to internal signals (assuming external signal is inverted by IO block)
 	
-	assign sig_48M = pin_48M_i;
-	assign sig_6M = pin_6M_i;
-	
-	assign sig_MODE0 = pin_MODE0_i;
-	assign sig_MODE1 = pin_MODE1_i;
-	assign sig_FLIP = pin_FLIP_i;
-	assign sig_bHRES_IN = pin_bHRES_IN_i;
-	assign sig_bVRES_IN = pin_bVRES_IN_i;
+	assign sig_b48M = pin_48M_i ^ iob_i;
+	assign sig_b48M_2 = pin_48M_i ^ iob_i;
+	assign sig_bMODE1 = pin_MODE1_i ^ iob_i;
+	assign sig_b6M_IN = pin_6M_IN_i ^ iob_i;
+	assign sig_bFLIP = pin_FLIP_i ^ iob_i;
+	assign sig_bMODE0 = pin_MODE0_i ^ iob_i;
+	assign sig_bHRES_IN = pin_bHRES_IN_i ^ iob_i;
+	assign sig_bVRES_IN = pin_bVRES_IN_i ^ iob_i;
 	
 	//
-	// route internal signals to output pins
+	// route internal signals to output pins (assuming internal signals are inverted by IO blocks)
 	
-	assign pin_24M_o = sig_24M;
-	assign pin_12M_o = sig_12M;
-	//assign pin_6M_o = sig_6M;
-	assign pin_S1H_o = sig_S1H;
-	assign pin_S2H_o = sig_S2H;
+	assign pin_24M_o = sig_24M ^ iob_o;	// non-barred 24M and barred PIN_24M are both driven from the same output
+	assign pin_12M_o = sig_12M ^ iob_o;  // non-barred 12M and barred PIN_12M are both driven from the same output
+	assign pin_6M_OUT_o = sig_b6M_OUT ^ iob_o;
+	assign pin_S1H_o = sig_bS1H ^ iob_o;
+	assign pin_S2H_o = sig_bS2H ^ iob_o;
 	
-	assign pin_bHRES_o = sig_bHRES;
-	assign dir_HRES_o = pin_MODE1_i;
-	assign pin_bVRES_o = sig_bVRES;
-	assign dir_VRES_o = pin_MODE1_i;
+	assign pin_1H_o = sig_b1H ^ iob_o;
+	assign pin_2H_o = sig_b2H ^ iob_o;
+	assign pin_4H_o = sig_b4H ^ iob_o;
+	assign pin_8H_o = sig_bPIN_6 ^ iob_o;
+	assign pin_bHRES_o = sig_bHRES ^ iob_o;
+	assign pin_bVRES_o = sig_bVRES ^ iob_o;
+	assign dir_HRES_o = sig_bMODE1;
+	assign dir_VRES_o = sig_bMODE1;
 	
-	assign pin_PIN40_o = sig_PIN40;
-	assign pin_PIN41_o = sig_PIN41;
+	assign pin_PIN40_o = sig_bPIN40 ^ iob_o;
+	assign pin_PIN41_o = sig_bPIN41 ^ iob_o;
 
 	// TODO
-	assign sig_E5BOT = ~(sig_48M & sig_E5TOP);
+	assign sig_E5BOT = ~(sig_b48M_2 & sig_E5TOP);
 	
 	// HRESET in input mode
 	assign sig_F5TOP = ~(sig_bHRES_IN & sig_E5BOT);
 	assign sig_HRESET = sig_F5TOP;
-	assign sig_bHRESET1 = ~sig_F5TOP;
-	assign sig_bHRESET2 = ~sig_F5TOP;
-	assign sig_bHRESET3 = ~sig_F5TOP;
+	assign sig_bHRESET1 = ~sig_F5TOP;	// via F9TOP
+	assign sig_bHRESET2 = ~sig_F5TOP;	// via F9BOT
+	assign sig_bHRESET3 = ~sig_F5TOP;	// via H9TOP
 	// VRESET in input mode
 	assign sig_F5BOT = ~(sig_bVRES_IN & sig_E5BOT);
 	assign sig_VRESET = sig_F5BOT;
@@ -200,15 +226,13 @@ module cus27_furrtek_ref
 	//
 	// synthesise the routing of signals through inverter cells  
 	
-	// inverted input signals
-	assign sig_b48M = ~pin_48M_i;
-	assign sig_b48M2 = ~pin_48M_i;	// schematic shows this is driven off a secondary IO block signal pin_48M_2_i
-	assign sig_b6MIN = ~pin_6M_i;
-	assign sig_b6MIN2 = ~pin_6M_i;
-	
-	assign sig_bMODE0 = ~pin_MODE0_i;
-	assign sig_bFLIP = ~pin_FLIP_i;		// schematic shows this is driven off a secondary IO block signal pin_FLIP_2_i
-	assign sig_bFLIP2 = ~pin_FLIP_i;
+	assign sig_MODE0 = ~sig_bMODE0;		// E10BOT
+	assign sig_FLIP = ~sig_bFLIP;			// E9TOP
+	assign sig_FLIP2 = ~sig_bFLIP;		// E9TOP
+	assign sig_48M = ~sig_b48M;			// A9BOT
+	assign sig_48M2 = ~sig_b48M_2;		// C9BOT
+	assign sig_6MIN = ~sig_b6M_IN;		// H9BOT
+	assign sig_6MIN2 = ~sig_b6M_IN;		// J9BOT
 	
 	// inverted internal signals
 	assign sig_E5TOP = ~sig_E7BOT;
@@ -220,9 +244,9 @@ module cus27_furrtek_ref
 	//	output is low if MODE1 high and MODE0 and FLIP are low, otherwise output is high
 	cus27_nand
 		cus27_E7BOT_nand(
-			.A(sig_MODE1),
-			.B(sig_bMODE0),
-			.C(sig_bFLIP),
+			.A(sig_bMODE1),
+			.B(sig_MODE0),
+			.C(sig_FLIP),
 			.Y(sig_E7BOT)
 		);
 	
@@ -230,37 +254,50 @@ module cus27_furrtek_ref
 	// delegate to sub-modules
 	
 	furrtek_clockdivider 
-		clockdivider (
+		clock_divider (
 		._rst_ni(_rst_ni), 
 		.sig_48M_i(sig_48M), 
 		.sig_bHRESET1_i(sig_bHRESET1), 
 		.sig_E7BOT_i(sig_E7BOT),
 		.sig_24M_o(sig_24M), 
 		.sig_12M_o(sig_12M), 
-		.sig_6M_o(pin_6M_o), // drive the output pin directly as sig_6M maps to the CUS27 input
-		.sig_S1H_o(sig_S1H), 
-		.sig_S2H_o(sig_S2H)
+		.sig_b6M_OUT_o(sig_b6M_OUT), // drive the output pin directly as sig_b6M_IN maps to the CUS27 input
+		.sig_bS1H_o(sig_bS1H), 
+		.sig_bS2H_o(sig_bS2H)
+	);
+	
+	furrtek_horizontal
+		horizontal_timings (
+		._rst_ni(_rst_ni),
+		.sig_6MIN2_i(sig_6MIN2),
+		.sig_bHRESET3_i(sig_bHRESET3),
+		.sig_J5Q_o(sig_J5Q),
+		.sig_J5bQ_o(sig_J5bQ),
+		.sig_b1H_o(sig_b1H),
+		.sig_b2H_o(sig_b2H),
+		.sig_b4H_o(sig_b4H),
+		.sig_bPIN_6_o(sig_bPIN_6)
 	);
 	
 	furrtek_pin40
 		pin40 (
 		._rst_ni(_rst_ni),		
-		.sig_48M_i(sig_48M),
+		.sig_b48M_i(sig_b48M),
 		.sig_24M_i(sig_24M),
 		.sig_12M_i(sig_12M),
 		.sig_HRESET_i(sig_HRESET),
-		.sig_PIN40_o(sig_PIN40)
+		.sig_bPIN40_o(sig_bPIN40)
 	);
 	
 	furrtek_pin41
 		pin41 (
 		._rst_ni(_rst_ni),
-		.sig_MODE1_i(sig_MODE1),
-		.sig_bMODE0_i(sig_bMODE0),
-		.sig_bFLIP_i(sig_bFLIP),
-		.sig_48M_i(sig_48M),
-		.sig_b48M2_i(sig_b48M2), 
-		.sig_PIN41_o(sig_PIN41)
+		.sig_bMODE1_i(sig_bMODE1),
+		.sig_MODE0_i(sig_MODE0),
+		.sig_FLIP_i(sig_FLIP),
+		.sig_b48M_i(sig_b48M),
+		.sig_48M2_i(sig_48M2), 
+		.sig_bPIN41_o(sig_bPIN41)
 	);
 			
 endmodule

@@ -47,6 +47,7 @@ module cus27_furrtek_ref_tb;
 	wire sig_1H_o;
 	wire sig_2H_o;
 	wire sig_4H_o;
+	wire sig_8H_o;
 	wire sig_1V_o;
 	wire sig_2V_o;
 	wire sig_4V_o;
@@ -64,12 +65,12 @@ module cus27_furrtek_ref_tb;
 		.pin_MODE0_i(1'b0),
 		.pin_MODE1_i(1'b0),
 		.pin_FLIP_i(1'b0),
-		.pin_6M_i(sig_6M_o), 
+		.pin_6M_IN_i(sig_6M_o), 
 		.pin_bHRES_IN_i(sig_bHRES_IN_i),
 		.pin_bVRES_IN_i(sig_bVRES_IN_i),
 		.pin_24M_o(sig_24M_o), 
 		.pin_12M_o(sig_12M_o), 
-		.pin_6M_o(sig_6M_o), 
+		.pin_6M_OUT_o(sig_6M_o), 
 		.pin_bVSYNC_o(sig_bVSYNC_o), 
 		.pin_bHSYNC_o(sig_bHSYNC_o), 
 		.pin_bVBLANK_o(sig_bVBLANK_o), 
@@ -79,6 +80,7 @@ module cus27_furrtek_ref_tb;
 		.pin_1H_o(sig_1H_o), 
 		.pin_2H_o(sig_2H_o), 
 		.pin_4H_o(sig_4H_o), 
+		.pin_8H_o(sig_8H_o), 
 		.pin_1V_o(sig_1V_o), 
 		.pin_2V_o(sig_2V_o), 
 		.pin_4V_o(sig_4V_o), 

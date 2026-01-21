@@ -28,34 +28,44 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module furrtek_pin41
+module furrtek_horizontal
 (
 	// simulation control
 	input wire _rst_ni,
 	
 	// input clocks
-	input wire sig_b48M_i,
-	input wire sig_48M2_i,
+	input wire sig_6MIN2_i,
+	input wire sig_bHRESET3_i,
 	
-	// internal routing inputs
-	input wire sig_bMODE1_i,
-	input wire sig_MODE0_i,
-	input wire sig_FLIP_i,
+	output wire sig_b1H_o,
+	output wire sig_b2H_o,
+	output wire sig_b4H_o,
+	output wire sig_bPIN_6_o,	// presuming this is equivalent to 8H
 	
-	output wire sig_bPIN41_o	//	pin 41 driver
+	// internal routing ouputs
+	output wire sig_J5Q_o,
+	output wire sig_J5bQ_o
 );
 
-	wire sig_E6BOT;
-	wire sig_C1_Q;
-	wire sig_C1_bQ;
-	wire sig_C9TOP;
-	wire sig_C5_Q;
-	wire sig_C5_bQ;
-	wire sig_D1_Q;
-	wire sig_D1_bQ;
-	wire sig_D8_Q;
+	wire sig_H10BOT;
+	wire sig_H10TOP;
+	wire sig_J9TOP;
+	wire sig_J10BOT;
+	wire sig_H1_Q;
+	wire sig_H1_bQ;
+	wire sig_H5_Q;
+	wire sig_H5_bQ;
+	wire sig_J1_Q;
+	wire sig_J1_bQ;
+	wire sig_J5_Q;
+	wire sig_J5_bQ;
 	
-	assign sig_bPIN41_o = sig_D8_Q;
+	assign sig_J5Q_o = sig_J5_Q;
+	assign sig_J5bQ_o = sig_J5_bQ;
+	assign sig_b1H_o = sig_H1_bQ;
+	assign sig_b2H_o = sig_H5_Q;
+	assign sig_b4H_o = sig_J1_Q;
+	assign sig_bPIN_6_o = sig_J5_Q;
 	
 	//
 	// RTL
@@ -64,61 +74,68 @@ module furrtek_pin41
 	//
 	// synthesise the routing of signals through simple logic cells 
 	
-	assign sig_C9TOP = sig_C5_bQ & sig_D1_bQ;
+	assign sig_J9TOP = ~sig_H10BOT;//~sig_H10BOT;
+	assign sig_J10BOT = ~sig_H10TOP;//~sig_H10TOP;
 	
 	//
 	// standard cell synthesis
 	
-	// E6BOT interpretation - enable <pin 41> signal if MODE1 active
-	//	output is low if MODE1 high and MODE0 and FLIP are low, otherwise output is high
 	cus27_nand
-		cus27_E6BOT_nand(
-			.A(sig_bMODE1_i),
-			.B(sig_MODE0_i),
-			.C(sig_FLIP_i),
-			.Y(sig_E6BOT)
+		cus27_H10BOT_nand(
+			.A(~sig_H1_Q),
+			.B(~sig_H5_bQ),
+			.Y(sig_H10BOT)
+		);
+		
+	cus27_nand
+		cus27_H10TOP_nand(
+			.A(~sig_J1_bQ),
+			.B(~sig_H1_Q),
+			.C(~sig_H5_bQ),
+			.Y(sig_H10TOP)
+		);
+		
+			
+	cus27_tff
+		cus27_H1_tff(
+			._rst_ni(_rst_ni),
+			.CLK(sig_6MIN2_i),
+			.bRES(sig_HRESET),
+			.Q(sig_H1_Q),
+			.bQ(sig_H1_bQ)
 		);
 		
 	cus27_jkff
-		cus27_C1_jkff(
+		cus27_H5_jkff(
 			._rst_ni(_rst_ni),
-			.CLK(sig_48M2_i),
-			.bJ(sig_C1_Q),
-			.K(sig_C9TOP),
-			.bRES(sig_E6BOT),
-			.Q(sig_C1_Q),
-			.bQ(sig_C1_bQ)
+			.CLK(sig_6MIN2_i),
+			.bJ(~sig_H1_bQ),
+			.K(~sig_H1_Q),
+			.bSET(sig_HRESET),
+			.Q(sig_H5_Q),
+			.bQ(sig_H5_bQ)
 		);
 		
 	cus27_jkff
-		cus27_C5_jkff(
+		cus27_J1_jkff(
 			._rst_ni(_rst_ni),
-			.CLK(sig_48M2_i),
-			.bJ(sig_C1_bQ),
-			.K(sig_C1_Q),
-			.bRES(sig_E6BOT),
-			.Q(sig_C5_Q),
-			.bQ(sig_C5_bQ)
+			.CLK(sig_6MIN2_i),
+			.bJ(sig_H10BOT),
+			.K(sig_J9TOP),
+			.bSET(sig_HRESET),
+			.Q(sig_J1_Q),
+			.bQ(sig_J1_bQ)
 		);
 		
 	cus27_jkff
-		cus27_D1_jkff(
+		cus27_J5_jkff(
 			._rst_ni(_rst_ni),
-			.CLK(sig_48M2_i),
-			.bJ(sig_C5_bQ),
-			.K(sig_C5_Q),
-			.bRES(sig_E6BOT),
-			.Q(sig_D1_Q),
-			.bQ(sig_D1_bQ)
-		);
-		
-	cus27_dff
-		cus27_D8_dff(
-			._rst_ni(_rst_ni),
-			.CLK(sig_b48M_i),
-			.D(sig_D1_Q),
-			.bSET(sig_E6BOT),
-			.Q(sig_D8_Q)
+			.CLK(sig_6MIN2_i),
+			.bJ(sig_H10TOP),
+			.K(sig_J10BOT),
+			.bSET(sig_HRESET),
+			.Q(sig_J5_Q),
+			.bQ(sig_J5_bQ)
 		);
 			
 endmodule

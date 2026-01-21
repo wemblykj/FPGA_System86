@@ -34,14 +34,14 @@ module furrtek_pin40
 	input wire _rst_ni,
 	
 	// input clocks
-	input wire sig_48M_i,
+	input wire sig_b48M_i,
 	input wire sig_24M_i,
 	input wire sig_12M_i,
 	
 	// internal routing inputs
 	input wire sig_HRESET_i,
 	
-	output wire sig_PIN40_o	//	pin 40 driver
+	output wire sig_bPIN40_o	//	pin 40 driver
 );
 
 	wire sig_B9TOP;
@@ -50,7 +50,7 @@ module furrtek_pin40
 	wire sig_A1_bQ;
 	wire sig_B1_Q;
 	
-	assign sig_PIN40_o = sig_B1_Q;
+	assign sig_bPIN40_o = sig_B1_Q;
 	
 	//
 	// RTL
@@ -63,7 +63,7 @@ module furrtek_pin40
 	//	output is low if MODE1 high and MODE0 and FLIP are low, otherwise output is high
 	cus27_nand
 		cus27_E9TOP_nand(
-			.A(sig_48M_i),
+			.A(sig_b48M_i),
 			.B(sig_24M_i),
 			.C(sig_12M_i),
 			.D(sig_HRESET_i),
@@ -73,7 +73,7 @@ module furrtek_pin40
 	cus27_jkff
 		cus27_A5_jkff(
 			._rst_ni(_rst_ni),
-			.CLK(sig_48M_i),
+			.CLK(sig_b48M_i),
 			.bJ(sig_A1_bQ),
 			.bRES(sig_B9TOP),
 			.Q(sig_A5_Q)
@@ -82,7 +82,7 @@ module furrtek_pin40
 	cus27_jkff
 		cus27_A1_jkff(
 			._rst_ni(_rst_ni),
-			.CLK(sig_48M_i),
+			.CLK(sig_b48M_i),
 			.bJ(sig_A5_Q),
 			.bRES(sig_B9TOP),
 			.Q(sig_A1_Q),
@@ -92,7 +92,7 @@ module furrtek_pin40
 	cus27_jkff
 		cus27_D1_jkff(
 			._rst_ni(_rst_ni),
-			.CLK(sig_48M_i),
+			.CLK(sig_b48M_i),
 			.bJ(sig_A1_bQ),
 			.K(sig_A1_Q),
 			.bRES(sig_B9TOP),

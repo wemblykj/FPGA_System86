@@ -334,7 +334,7 @@
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="128"/>
     </file>
     <file xil_pn:name="../../../lib/system86/rtl/custom/cus27_furrtek_ref.v" xil_pn:type="FILE_VERILOG">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="8"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="9"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="96"/>
     </file>
     <file xil_pn:name="../../../lib/system86/rtl/custom/cus27_dff.v" xil_pn:type="FILE_VERILOG">
@@ -378,13 +378,13 @@
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="110"/>
     </file>
     <file xil_pn:name="../../../lib/system86/simulation/custom/cus27_furrtek_ref_tb.v" xil_pn:type="FILE_VERILOG">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="9"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="10"/>
       <association xil_pn:name="PostMapSimulation" xil_pn:seqID="128"/>
       <association xil_pn:name="PostRouteSimulation" xil_pn:seqID="128"/>
       <association xil_pn:name="PostTranslateSimulation" xil_pn:seqID="128"/>
     </file>
     <file xil_pn:name="../../../lib/system86/rtl/custom/furrtek_clock_divider.v" xil_pn:type="FILE_VERILOG">
-      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="7"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="8"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="112"/>
     </file>
     <file xil_pn:name="../../../lib/system86/simulation/custom/furrtek_clock_divider_tb.v" xil_pn:type="FILE_VERILOG">
@@ -400,6 +400,10 @@
     <file xil_pn:name="../../../lib/system86/rtl/custom/furrtek_pin40.v" xil_pn:type="FILE_VERILOG">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="6"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="116"/>
+    </file>
+    <file xil_pn:name="../../../lib/system86/rtl/custom/furrtek_horizontal.v" xil_pn:type="FILE_VERILOG">
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="7"/>
+      <association xil_pn:name="Implementation" xil_pn:seqID="117"/>
     </file>
   </files>
 

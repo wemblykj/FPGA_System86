@@ -43,17 +43,17 @@ module furrtek_clockdivider
 	// generated clocks
    output wire sig_24M_o,
    output wire sig_12M_o,
-   output wire sig_6M_o,
+   output wire sig_b6M_OUT_o,
 	
-	output wire sig_S1H_o,	//	1 pixel count (negative offset?)
-	output wire sig_S2H_o	//	2 pixel count (negative offset?)
+	output wire sig_bS1H_o,	//	1 pixel count (negative offset?)
+	output wire sig_bS2H_o	//	2 pixel count (negative offset?)
 );
 
-	assign sig_24M_o = ~sig_D5_bQ;
-	assign sig_12M_o = ~sig_B5_Q;
-	assign sig_6M_o = ~sig_E1_Q;
-	assign sig_S1H_o = ~sig_G8_bQ;
-	assign sig_S2H_o = ~sig_G1_Q;
+	assign sig_24M_o = sig_D5_bQ;
+	assign sig_12M_o = sig_B5_Q;
+	assign sig_b6M_OUT_o = sig_E1_Q;
+	assign sig_bS1H_o = sig_G8_bQ;
+	assign sig_bS2H_o = sig_G1_Q;
 	
 	wire sig_D5_Q;
 	wire sig_D5_bQ;
