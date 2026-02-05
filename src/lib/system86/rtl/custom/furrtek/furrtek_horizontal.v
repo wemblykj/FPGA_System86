@@ -5,7 +5,7 @@
 // 
 // Create Date:    22:56:27 04/17/2018 
 // Design Name:    cus27
-// Module Name:    system86\src\custom\cus27.v 
+// Module Name:    system86\src\custom\furrtek\furrtek_horizontal.v
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -28,13 +28,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module furrtek_horizontal
-	#(	parameter IOB_INPUT_INVERSION = 1'b0,
-		parameter IOB_OUTPUT_INVERSION = 1'b0 )
-	(
-		// simulation control
-		input wire _rst_ni,
-		
+module furrtek_horizontal (
 		// input clocks
 		input wire sig_6MIN2_i,
 		input wire sig_bHRESET3_i,
@@ -82,18 +76,14 @@ module furrtek_horizontal
 	//
 	// standard cell synthesis
 	
-	cus27_nand3 #(
-			IOB_INPUT_INVERSION,
-			IOB_OUTPUT_INVERSION )
+	cus27_nand3
 		cus27_H10BOT_nand3(
 			.A(sig_H1_Q),
 			.B(sig_H5_bQ),
 			.Y(sig_H10BOT)
 		);
 		
-	cus27_nand3 #(
-			IOB_INPUT_INVERSION,
-			IOB_OUTPUT_INVERSION )
+	cus27_nand3
 		cus27_H10TOP_nand3(
 			.A(sig_J1_bQ),
 			.B(sig_H1_Q),
@@ -101,9 +91,7 @@ module furrtek_horizontal
 			.Y(sig_H10TOP)
 		);
 				
-	cus27_tff #(
-			IOB_INPUT_INVERSION,
-			IOB_OUTPUT_INVERSION )
+	cus27_tff
 		cus27_H1_tff(
 			.CLK(sig_6MIN2_i),
 			.bRES(sig_HRESET),
@@ -111,9 +99,7 @@ module furrtek_horizontal
 			.bQ(sig_H1_bQ)
 		);
 		
-	cus27_jkff #(
-			IOB_INPUT_INVERSION,
-			IOB_OUTPUT_INVERSION )
+	cus27_jkff
 		cus27_H5_jkff(
 			.CLK(sig_6MIN2_i),
 			.bJ(sig_H1_bQ),
@@ -123,9 +109,7 @@ module furrtek_horizontal
 			.bQ(sig_H5_bQ)
 		);
 		
-	cus27_jkff #(
-			IOB_INPUT_INVERSION,
-			IOB_OUTPUT_INVERSION )
+	cus27_jkff
 		cus27_J1_jkff(
 			.CLK(sig_6MIN2_i),
 			.bJ(sig_H10BOT),
@@ -135,9 +119,7 @@ module furrtek_horizontal
 			.bQ(sig_J1_bQ)
 		);
 		
-	cus27_jkff #(
-			IOB_INPUT_INVERSION,
-			IOB_OUTPUT_INVERSION )
+	cus27_jkff
 		cus27_J5_jkff(
 			.CLK(sig_6MIN2_i),
 			.bJ(sig_H10TOP),

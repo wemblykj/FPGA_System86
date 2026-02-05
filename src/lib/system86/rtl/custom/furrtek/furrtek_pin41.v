@@ -5,7 +5,7 @@
 // 
 // Create Date:    22:56:27 04/17/2018 
 // Design Name:    cus27
-// Module Name:    system86\src\custom\cus27.v 
+// Module Name:    system86\src\custom\furrtek\furrtek_pin41.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -28,75 +28,96 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module furrtek_pin40
-(
-	// simulation control
-	input wire _rst_ni,
-	
-	// input clocks
-	input wire sig_b48M_i,
-	input wire sig_24M_i,
-	input wire sig_12M_i,
-	
-	// internal routing inputs
-	input wire sig_HRESET_i,
-	
-	output wire sig_bPIN40_o	//	pin 40 driver
-);
+module furrtek_pin41 (
+		// input clocks
+		input wire sig_b48M_i,
+		input wire sig_48M2_i,
+		
+		// internal routing inputs
+		input wire sig_bMODE1_i,
+		input wire sig_MODE0_i,
+		input wire sig_FLIP_i,
+		
+		output wire sig_bPIN41_o	//	pin 41 driver
+	);
 
-	wire sig_B9TOP;
-	wire sig_A5_Q;
-	wire sig_A1_Q;
-	wire sig_A1_bQ;
-	wire sig_B1_Q;
+	// output mapping
+	assign sig_bPIN41_o = sig_D8_Q;
 	
-	assign sig_bPIN40_o = sig_B1_Q;
+	// internal routing
+	wire sig_E6BOT;
+	wire sig_C1_Q;
+	wire sig_C1_bQ;
+	wire sig_C9TOP;
+	wire sig_C5_Q;
+	wire sig_C5_bQ;
+	wire sig_D1_Q;
+	wire sig_D1_bQ;
+	wire sig_D8_Q;
 	
+
 	//
 	// RTL
 	//
+	
+	//
+	// synthesise the routing of signals through simple logic cells 
+	
+	assign sig_C9TOP = sig_C5_bQ & sig_D1_bQ;
 	
 	//
 	// standard cell synthesis
 	
 	// E6BOT interpretation - enable <pin 41> signal if MODE1 active
 	//	output is low if MODE1 high and MODE0 and FLIP are low, otherwise output is high
-	cus27_nand
-		cus27_E9TOP_nand(
-			.A(sig_b48M_i),
-			.B(sig_24M_i),
-			.C(sig_12M_i),
-			.D(sig_HRESET_i),
-			.Y(sig_B9TOP)
+	cus27_nand3
+		cus27_E6BOT_nand3(
+			.A(sig_bMODE1_i),
+			.B(sig_MODE0_i),
+			.C(sig_FLIP_i),
+			.Y(sig_E6BOT)
 		);
 		
 	cus27_jkff
-		cus27_A5_jkff(
+		cus27_C1_jkff(
 			._rst_ni(_rst_ni),
-			.CLK(sig_b48M_i),
-			.bJ(sig_A1_bQ),
-			.bRES(sig_B9TOP),
-			.Q(sig_A5_Q)
+			.CLK(sig_48M2_i),
+			.bJ(sig_C1_Q),
+			.K(sig_C9TOP),
+			.bRES(sig_E6BOT),
+			.Q(sig_C1_Q),
+			.bQ(sig_C1_bQ)
 		);
 		
 	cus27_jkff
-		cus27_A1_jkff(
+		cus27_C5_jkff(
 			._rst_ni(_rst_ni),
-			.CLK(sig_b48M_i),
-			.bJ(sig_A5_Q),
-			.bRES(sig_B9TOP),
-			.Q(sig_A1_Q),
-			.bQ(sig_A1_bQ)
+			.CLK(sig_48M2_i),
+			.bJ(sig_C1_bQ),
+			.K(sig_C1_Q),
+			.bRES(sig_E6BOT),
+			.Q(sig_C5_Q),
+			.bQ(sig_C5_bQ)
 		);
 		
 	cus27_jkff
 		cus27_D1_jkff(
 			._rst_ni(_rst_ni),
+			.CLK(sig_48M2_i),
+			.bJ(sig_C5_bQ),
+			.K(sig_C5_Q),
+			.bRES(sig_E6BOT),
+			.Q(sig_D1_Q),
+			.bQ(sig_D1_bQ)
+		);
+		
+	cus27_dff
+		cus27_D8_dff(
+			._rst_ni(_rst_ni),
 			.CLK(sig_b48M_i),
-			.bJ(sig_A1_bQ),
-			.K(sig_A1_Q),
-			.bRES(sig_B9TOP),
-			.Q(sig_B1_Q)
+			.D(sig_D1_Q),
+			.bSET(sig_E6BOT),
+			.Q(sig_D8_Q)
 		);
 			
 endmodule

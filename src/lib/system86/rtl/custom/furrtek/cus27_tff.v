@@ -1,10 +1,11 @@
+`timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    07/01/2025 
 // Design Name:    cus27_tff
-// Module Name:    system86\src\custom\cus27_tff.v 
+// Module Name:    system86\src\custom\furrtek\cus27_tff.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -27,29 +28,31 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus27_tff 
-(
-	input wire CLK,
-	input wire SET,
-	input wire RES,
-	output wire Q,
-	output wire bQ
-);
+module cus27_tff (
+		input wire CLK,
+		input wire SET,
+		input wire RES,
+		output wire Q,
+		output wire bQ
+	);
 
+	// input mapping
+	assign sig_CLK = CLK;
+	assign sig_SET = SET;
+	assign sig_RES = RES;
+
+	// output mapping
+	assign Q = sig_D_bQ;
+	assign bQ = sig_A_bQ;
+	
+	// internal routing
 	wire sig_A_bQ;
 	wire sig_B_bQ;
 	wire sig_C_bQ;
 	wire sig_D_bQ;
 	wire sig_E_Q;
 	wire sig_F_bQ;
-	
-	assign Q = sig_D_bQ;
-	assign bQ = sig_A_bQ;
-	
-	assign sig_CLK = CLK;
-	assign sig_SET = (SET !== 1'bz && SET !== 1'bx) ? SET : 1'b1;	// low if not connected
-	assign sig_RES = (RES !== 1'bz && RES !== 1'bx) ? RES : 1'b1;	// low if not connected
-	
+		
 	// ~Q driver - depends on D, C
 	cus27_cell
 		cell_A (
@@ -103,41 +106,5 @@ module cus27_tff
 			.D4(sig_CLK),	// clock
 			.bQ(sig_F_bQ)
 			);	
-			
-	/*wire iob_i = IOB_INPUT_INVERSION;
-	wire iob_o = IOB_OUTPUT_INVERSION;
-	wire active = ~iob_i;
-	
-	reg q;
 
-	assign t = resolve_input(T) ^ iob_i;
-
-	assign set = (SET !== 1'bz) ? ~SET : 1'b0;
-	assign res = (RES !== 1'bz) ? ~RES : 1'b0;
-
-	assign Q = (set && res) ? 1'b1 : q;     // Unstable state when both SET and RES are low
-	assign bQ = (set && res) ? 1'b1 : ~q;   // Unstable state when both SET and RES are low
-
-	always @(posedge CLK or posedge set or posedge res) begin
-		if (set && res) begin
-			// this is not a scenario possible in the CUS27 according to [^2]
-			// so we'll just ignore and leave the state unchanged
-			q <= q;
-		end else if (set) begin
-			q <= 1'b1;
-		end else if (res) begin
-			q <= 1'b0;
-		end else begin
-			// currently assuming that SET and RES are as per D-type FF and that when they are not active
-			// the FF toggles on every clock tick and that there is no explicit enabling 'T' input [^3]
-			q <= ~q;
-		end
-	end
-	
-	// Function to resolve high-impedance inputs
-	function resolve_input(input sig);
-		begin
-			resolve_input = (sig !== 1'bx) ? sig : active;
-		end
-	endfunction*/
 endmodule

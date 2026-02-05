@@ -1,10 +1,11 @@
+`timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    07/01/2025 
 // Design Name:    cus27_nand
-// Module Name:    system86\src\custom\cus27_nand.v 
+// Module Name:    system86\src\custom\furrtek\cus27_cell.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -26,52 +27,39 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus27_nand3
-(	
-	input wire A,
-	input wire B,
-	input wire C,
-	output wire Y 
-);
+module cus27_cell (
+		input  wire D1,
+		input  wire D2,
+		input  wire D3,
+		input  wire D4,
+		input  wire Q_IN,
+		output wire Q,
+		output wire bQ
+	);
+	assign d1 = resolve_input(D1);
+	assign d2 = resolve_input(D2);
+	assign d3 = resolve_input(D3);
+	assign d4 = resolve_input(D4);
 	
-	cus27_cell
-		cell (
-			.D2(C),
-			.D3(B),
-			.D4(A),
-			.bQ(Y)
-		);
+	// logic high if not connected otherwise acts as a pull-down when logic low
+	assign q_in = (Q_IN !== 1'bx && Q_IN !== 1'bz) ? Q_IN : 1'b1;
 	
-	/*wire iob_i = IOB_INPUT_INVERSION;
-	wire iob_o = IOB_OUTPUT_INVERSION;
-	wire active = ~iob_i;
+	assign Q = q;
+	assign bQ = ~q;
 	
-	// Internal wires for resolved inputs
-	wire a, b, c, d, y;
+	// output of input stage - logic high if all inputs are low (or disconnected)
+	assign x = d1 | d2 | d3 | d4;
+	
+	// q is logic high when x is logic high and not pulled-low by Q_IN
+	// FIXME: this works but is not intuitive
+	assign #1 q = q_in & x;
 
-	// Resolve each input (replace high-impedance with 1)
-	assign a = resolve_input(A);
-	assign b = resolve_input(B);
-	assign c = resolve_input(C);
-	assign d = resolve_input(D);
-	
-	generate
-		if (IOB_INPUT_INVERSION) begin	
-			// OR operation on the resolved inverted inputs
-			assign y = a | b | c | d;
-		end else begin
-			// NAND operation on the resolved inputs
-			assign y = ~(a & b & c & d);
-		end
-	endgenerate
-
-	assign Y = y ^ iob_o;
-
-	// Function to resolve high-impedance inputs
+	// Function to resolve high-impedance inputs - logic low if not connected
 	function resolve_input(input sig);
 		begin
-			resolve_input = (sig !== 1'bx) ? sig : active;
+			resolve_input = (sig !== 1'bx && sig !== 1'bz) ? sig : 1'b0;
 		end
-	endfunction*/
-  
+		
+	endfunction
+	
 endmodule

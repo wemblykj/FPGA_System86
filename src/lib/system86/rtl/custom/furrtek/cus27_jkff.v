@@ -4,7 +4,7 @@
 // 
 // Create Date:    07/01/2025 
 // Design Name:    cus27_jkff
-// Module Name:    system86\src\custom\cus27_jkff.v 
+// Module Name:    system86\src\custom\furrtek\cus27_jkff.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -26,17 +26,25 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus27_jkff 
-(
-	input  wire CLK,
-	input  wire J,
-	input  wire K,
-	input  wire SET,
-	input  wire RES,
-	output wire Q,
-	output wire bQ
-);
-
+module cus27_jkff (
+		input  wire CLK,
+		input  wire bJ,
+		input  wire K,
+		input  wire SET,
+		input  wire RES,
+		output wire Q,
+		output wire bQ
+	);
+	
+	// input mapping
+	assign sig_SET = SET;
+	assign sig_RES = RES;
+	
+	// output mapping
+	assign bQ = sig_E_bQ;
+	assign Q = sig_F_bQ;
+	
+	// internal routing
 	wire sig_A_Q;
 	wire sig_B_bQ;
 	wire sig_C_bQ;
@@ -45,19 +53,13 @@ module cus27_jkff
 	wire sig_F_bQ;
 	wire sig_G_bQ;
 
-	assign bQ = sig_E_bQ;
-	assign Q = sig_F_bQ;
-	
-	assign sig_SET = (SET !== 1'bz && SET !== 1'bx) ? SET : 1'b0;	// non-active if not connected
-	assign sig_RES = (RES !== 1'bz && RES !== 1'bx) ? RES : 1'b0;	// non-active if not connected
-	
 	// J input gate
 	// 	J
 	// 	sig_E_bQ feedback from E (bQ gate)
 	//		sig_G_bQ ?? clock pos edge
 	cus27_cell
 		cell_A (
-			.D2(J),
+			.D2(bJ),
 			.D3(sig_E_bQ),
 			.D4(sig_G_bQ),
 			.Q(sig_A_Q)
@@ -128,54 +130,5 @@ module cus27_jkff
 			.D4(sig_RES),	// TODO: confirm RES?
 			.bQ(sig_G_bQ)
 		);
-		
-	/*
-	wire iob_i = IOB_INPUT_INVERSION;
-	wire iob_o = IOB_OUTPUT_INVERSION;
-	wire active = ~iob_i;
 	
-	// Internal storage for state
-	reg q;
-
-	assign j = resolve_input(~J) ^ iob_i;
-	assign k = resolve_input(K) ^ iob_i;
-
-	assign set = (SET !== 1'bz) ? ~SET : 1'b0;
-	assign res = (RES !== 1'bz) ? ~RES : 1'b0;
-
-	// Assign outputs
-	assign Q = (set && res) ? 1'b1 : q;     // Unstable state when both SET and RES are low
-	assign bQ = (set && res) ? 1'b1 : ~q;   // Unstable state when both SET and RES are low
-
-	// Sequential always block
-	always @(negedge _rst_ni, posedge CLK or posedge set or posedge res) begin
-		if (!_rst_ni) begin
-			q <= 1'b0;
-		end else if (set && res) begin
-			// Both active-low: enter unstable state (do nothing as assign handles this)
-			q <= q; // Keep `q` in its prior state for recovery
-		end else if (set) begin
-			// Set condition
-			q <= 1'b1;
-		end else if (res) begin
-			// Reset condition
-			q <= 1'b0;
-		end else begin
-			// Handle normal JK flip-flop behavior
-			case ({j, k}) // {J, K} concatenation (interpreting J as active-low J)
-				2'b00: q <= q;       // No change
-				2'b01: q <= 1'b0;    // Reset
-				2'b10: q <= 1'b1;    // Set
-				2'b11: q <= ~q;      // Toggle
-			endcase
-		end
-	end
-
-	// Function to resolve high-impedance inputs
-	function resolve_input(input sig);
-		begin
-			resolve_input = (sig !== 1'bx) ? sig : active;
-		end
-	endfunction
-	*/
 endmodule

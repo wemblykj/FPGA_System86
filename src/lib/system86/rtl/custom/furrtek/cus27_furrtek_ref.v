@@ -244,9 +244,8 @@ module cus27_furrtek_ref
 	
 	// E7BOT interpretation - disables all clocks if MODE1 active
 	//	output is low if MODE1 high and MODE0 and FLIP are low, otherwise output is high
-	cus27_nand #(
-			IOB_INPUT_INVERSION )
-		cus27_E7BOT_nand (
+	cus27_nand3
+		cus27_E7BOT_nand3 (
 			.A(sig_bMODE1),
 			.B(sig_MODE0),
 			.C(sig_FLIP),
@@ -256,10 +255,8 @@ module cus27_furrtek_ref
 	//	
 	// delegate to sub-modules
 	
-	furrtek_clockdivider #(
-			IOB_INPUT_INVERSION )
+	furrtek_clock_divider
 		clock_divider (
-			._rst_ni(_rst_ni), 
 			.sig_48M_i(sig_48M), 
 			.sig_bHRESET1_i(sig_bHRESET1), 
 			.sig_E7BOT_i(sig_E7BOT),
@@ -270,10 +267,8 @@ module cus27_furrtek_ref
 			.sig_bS2H_o(sig_bS2H)
 		);
 	
-	furrtek_horizontal #(
-			IOB_INPUT_INVERSION )
+	furrtek_horizontal
 		horizontal_timings (
-			._rst_ni(_rst_ni),
 			.sig_6MIN2_i(sig_6MIN2),
 			.sig_bHRESET3_i(sig_bHRESET3),
 			.sig_J5Q_o(sig_J5Q),
@@ -285,8 +280,7 @@ module cus27_furrtek_ref
 		);
 	
 	furrtek_pin40
-		pin40 (
-		._rst_ni(_rst_ni),		
+		pin40 (	
 		.sig_b48M_i(sig_b48M),
 		.sig_24M_i(sig_24M),
 		.sig_12M_i(sig_12M),
@@ -296,7 +290,6 @@ module cus27_furrtek_ref
 	
 	furrtek_pin41
 		pin41 (
-		._rst_ni(_rst_ni),
 		.sig_bMODE1_i(sig_bMODE1),
 		.sig_MODE0_i(sig_MODE0),
 		.sig_FLIP_i(sig_FLIP),
