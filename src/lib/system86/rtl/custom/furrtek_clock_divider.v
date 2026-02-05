@@ -28,27 +28,29 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module furrtek_clockdivider
-(
-	// simulation control
-	input wire _rst_ni,
-	
-	// input clocks
-	input wire sig_48M_i,
-	
-	// internal routing inputs
-	input wire sig_bHRESET1_i,
-	input wire sig_E7BOT_i,
-	
-	// generated clocks
-   output wire sig_24M_o,
-   output wire sig_12M_o,
-   output wire sig_b6M_OUT_o,
-	
-	output wire sig_bS1H_o,	//	1 pixel count (negative offset?)
-	output wire sig_bS2H_o	//	2 pixel count (negative offset?)
-);
+module furrtek_clockdivider 
+	#(	parameter IOB_INPUT_INVERSION = 1'b0,
+		parameter IOB_OUTPUT_INVERSION = 1'b0 )
+	(
+		// input clocks
+		input wire sig_48M_i,
+		
+		// internal routing inputs
+		input wire sig_bHRESET1_i,
+		input wire sig_E7BOT_i,
+		
+		// generated clocks
+		output wire sig_24M_o,
+		output wire sig_12M_o,
+		output wire sig_b6M_OUT_o,
+		
+		output wire sig_bS1H_o,	//	1 pixel count (negative offset?)
+		output wire sig_bS2H_o	//	2 pixel count (negative offset?)
+	);
 
+	wire iob_i = IOB_INPUT_INVERSION;
+	wire iob_o = IOB_OUTPUT_INVERSION;
+	
 	assign sig_24M_o = sig_D5_bQ;
 	assign sig_12M_o = sig_B5_Q;
 	assign sig_b6M_OUT_o = sig_E1_Q;
@@ -78,35 +80,37 @@ module furrtek_clockdivider
 	//
 	// standard cell synthesis
 	
-	cus27_tff
-		cus27_D5_tff(
-			._rst_ni(_rst_ni),
+	cus27_tff #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
+		cus27_D5_tff (
 			.CLK(sig_48M_i),
 			.bSET(sig_E7BOT_i),
 			.Q(sig_D5_Q),
-			.bQ(sig_D5_bQ)
-		);
+			.bQ(sig_D5_bQ) );
 		
-	cus27_jkff
-		cus27_B5_jkff(
-			._rst_ni(_rst_ni),
+	cus27_jkff #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
+		cus27_B5_jkff (
 			.CLK(sig_48M_i),
 			.bJ(sig_D5_Q),
 			.K(sig_D5_bQ),
 			.bRES(sig_E7BOT_i),
-			.Q(sig_B5_Q)
-		);
+			.Q(sig_B5_Q) );
 		
-	cus27_nand
-		cus27_B9BOT_nand(
+	cus27_nand3 #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
+		cus27_B9BOT_nand3 (
 			.A(sig_D5_bQ),
 			.B(sig_B5_Q),
-			.Y(sig_B9BOT_Y)
-		);
+			.Y(sig_B9BOT_Y) );
 			
-	cus27_jkff
+	cus27_jkff #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
 		cus27_E1_jkff(
-			._rst_ni(_rst_ni),
 			.CLK(sig_48M_i),
 			.bJ(sig_B9BOT_Y),
 			.K(sig_E6TOP),
@@ -115,18 +119,20 @@ module furrtek_clockdivider
 			.bQ(sig_E1_bQ)
 		);
 		
-	cus27_tff
+	cus27_tff #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
 		cus27_G8_tff(
-			._rst_ni(_rst_ni),
 			.CLK(sig_E1_bQ),
 			.bRES(sig_bHRESET1_i),
 			.Q(sig_G8_Q),
 			.bQ(sig_G8_bQ)
 		);
 		
-	cus27_jkff
+	cus27_jkff #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
 		cus27_G1_jkff(
-			._rst_ni(_rst_ni),
 			.CLK(sig_E1_bQ),
 			.bJ(sig_G8_bQ),
 			.K(sig_G8_Q),

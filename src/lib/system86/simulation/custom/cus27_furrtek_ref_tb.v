@@ -24,6 +24,9 @@
 
 module cus27_furrtek_ref_tb;
 
+	parameter IOB_INPUT_INVERSION = 1'b1;
+	parameter IOB_OUTPUT_INVERSION = 1'b1;
+	
 	// Inputs
 	reg _rst_ni;
 	reg sig_48M_i;
@@ -52,44 +55,47 @@ module cus27_furrtek_ref_tb;
 	wire sig_2V_o;
 	wire sig_4V_o;
 	wire sig_8V_o;
-	wire sig_S1H_o;
-	wire sig_S2H_o;
+	wire sig_bS1H_o;
+	wire sig_bS2H_o;
 	wire sig_PIN40_o;
 	wire sig_PIN41_o;
 
 	// Instantiate the Unit Under Test (UUT)
-	cus27_furrtek_ref uut (
-		._rst_ni(_rst_ni), 
-		.pin_48M_i(sig_48M_i), 
-		.pin_OTEN_i(1'b0),
-		.pin_MODE0_i(1'b0),
-		.pin_MODE1_i(1'b0),
-		.pin_FLIP_i(1'b0),
-		.pin_6M_IN_i(sig_6M_o), 
-		.pin_bHRES_IN_i(sig_bHRES_IN_i),
-		.pin_bVRES_IN_i(sig_bVRES_IN_i),
-		.pin_24M_o(sig_24M_o), 
-		.pin_12M_o(sig_12M_o), 
-		.pin_6M_OUT_o(sig_6M_o), 
-		.pin_bVSYNC_o(sig_bVSYNC_o), 
-		.pin_bHSYNC_o(sig_bHSYNC_o), 
-		.pin_bVBLANK_o(sig_bVBLANK_o), 
-		.pin_bHBLANK_o(sig_bHBLANK_o), 
-		.pin_bVRES_o(sig_bVRES_o), 
-		.pin_bHRES_o(sig_bHRES_o), 
-		.pin_1H_o(sig_1H_o), 
-		.pin_2H_o(sig_2H_o), 
-		.pin_4H_o(sig_4H_o), 
-		.pin_8H_o(sig_8H_o), 
-		.pin_1V_o(sig_1V_o), 
-		.pin_2V_o(sig_2V_o), 
-		.pin_4V_o(sig_4V_o), 
-		.pin_8V_o(sig_8V_o), 
-		.pin_S1H_o(sig_S1H_o), 
-		.pin_S2H_o(sig_S2H_o),
-		.pin_PIN40_o(sig_PIN40_o),
-		.pin_PIN41_o(sig_PIN41_o)
-	);
+	cus27_furrtek_ref #(	
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
+		uut (
+			._rst_ni(_rst_ni), 
+			.pin_48M_i(sig_48M_i), 
+			.pin_OTEN_i(1'b0),
+			.pin_MODE0_i(1'b0),
+			.pin_MODE1_i(1'b0),
+			.pin_FLIP_i(1'b0),
+			.pin_6M_IN_i(sig_6M_o), 
+			.pin_bHRES_IN_i(sig_bHRES_IN_i),
+			.pin_bVRES_IN_i(sig_bVRES_IN_i),
+			.pin_24M_o(sig_24M_o), 
+			.pin_12M_o(sig_12M_o), 
+			.pin_6M_OUT_o(sig_6M_o), 
+			.pin_bVSYNC_o(sig_bVSYNC_o), 
+			.pin_bHSYNC_o(sig_bHSYNC_o), 
+			.pin_bVBLANK_o(sig_bVBLANK_o), 
+			.pin_bHBLANK_o(sig_bHBLANK_o), 
+			.pin_bVRES_o(sig_bVRES_o), 
+			.pin_bHRES_o(sig_bHRES_o), 
+			.pin_1H_o(sig_1H_o), 
+			.pin_2H_o(sig_2H_o), 
+			.pin_4H_o(sig_4H_o), 
+			.pin_8H_o(sig_8H_o), 
+			.pin_1V_o(sig_1V_o), 
+			.pin_2V_o(sig_2V_o), 
+			.pin_4V_o(sig_4V_o), 
+			.pin_8V_o(sig_8V_o), 
+			.pin_bS1H_o(sig_bS1H_o), 
+			.pin_bS2H_o(sig_bS2H_o),
+			.pin_PIN40_o(sig_PIN40_o),
+			.pin_PIN41_o(sig_PIN41_o)
+		);
 
 	initial begin
 		// Initialize Inputs

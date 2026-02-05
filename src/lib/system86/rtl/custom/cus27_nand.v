@@ -26,31 +26,52 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus27_nand (
-  input wire A,
-  input wire B,
-  input wire C,
-  input wire D,
-  output wire Y
+module cus27_nand3
+(	
+	input wire A,
+	input wire B,
+	input wire C,
+	output wire Y 
 );
+	
+	cus27_cell
+		cell (
+			.D2(C),
+			.D3(B),
+			.D4(A),
+			.bQ(Y)
+		);
+	
+	/*wire iob_i = IOB_INPUT_INVERSION;
+	wire iob_o = IOB_OUTPUT_INVERSION;
+	wire active = ~iob_i;
+	
+	// Internal wires for resolved inputs
+	wire a, b, c, d, y;
 
-  // Internal wires for resolved inputs
-  wire a, b, c, d;
+	// Resolve each input (replace high-impedance with 1)
+	assign a = resolve_input(A);
+	assign b = resolve_input(B);
+	assign c = resolve_input(C);
+	assign d = resolve_input(D);
+	
+	generate
+		if (IOB_INPUT_INVERSION) begin	
+			// OR operation on the resolved inverted inputs
+			assign y = a | b | c | d;
+		end else begin
+			// NAND operation on the resolved inputs
+			assign y = ~(a & b & c & d);
+		end
+	endgenerate
 
-  // Resolve each input (replace high-impedance with 1)
-  assign a = resolve_input(A);
-  assign b = resolve_input(B);
-  assign c = resolve_input(C);
-  assign d = resolve_input(D);
-  
-  // NAND operation on the resolved inputs
-  assign Y = ~(a & b & c & d);
-  
-  // Function to resolve high-impedance inputs
-  function resolve_input(input sig);
-    begin
-      resolve_input = (sig !== 1'bz) ? sig : 1'b1;
-    end
-  endfunction
+	assign Y = y ^ iob_o;
+
+	// Function to resolve high-impedance inputs
+	function resolve_input(input sig);
+		begin
+			resolve_input = (sig !== 1'bx) ? sig : active;
+		end
+	endfunction*/
   
 endmodule

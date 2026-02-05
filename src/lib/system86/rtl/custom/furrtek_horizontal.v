@@ -29,23 +29,25 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module furrtek_horizontal
-(
-	// simulation control
-	input wire _rst_ni,
-	
-	// input clocks
-	input wire sig_6MIN2_i,
-	input wire sig_bHRESET3_i,
-	
-	output wire sig_b1H_o,
-	output wire sig_b2H_o,
-	output wire sig_b4H_o,
-	output wire sig_bPIN_6_o,	// presuming this is equivalent to 8H
-	
-	// internal routing ouputs
-	output wire sig_J5Q_o,
-	output wire sig_J5bQ_o
-);
+	#(	parameter IOB_INPUT_INVERSION = 1'b0,
+		parameter IOB_OUTPUT_INVERSION = 1'b0 )
+	(
+		// simulation control
+		input wire _rst_ni,
+		
+		// input clocks
+		input wire sig_6MIN2_i,
+		input wire sig_bHRESET3_i,
+		
+		output wire sig_b1H_o,
+		output wire sig_b2H_o,
+		output wire sig_b4H_o,
+		output wire sig_bPIN_6_o,	// presuming this is equivalent to 8H
+		
+		// internal routing ouputs
+		output wire sig_J5Q_o,
+		output wire sig_J5bQ_o
+	);
 
 	wire sig_H10BOT;
 	wire sig_H10TOP;
@@ -74,51 +76,57 @@ module furrtek_horizontal
 	//
 	// synthesise the routing of signals through simple logic cells 
 	
-	assign sig_J9TOP = ~sig_H10BOT;//~sig_H10BOT;
-	assign sig_J10BOT = ~sig_H10TOP;//~sig_H10TOP;
+	assign sig_J9TOP = ~sig_H10BOT;
+	assign sig_J10BOT = ~sig_H10TOP;
 	
 	//
 	// standard cell synthesis
 	
-	cus27_nand
-		cus27_H10BOT_nand(
-			.A(~sig_H1_Q),
-			.B(~sig_H5_bQ),
+	cus27_nand3 #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
+		cus27_H10BOT_nand3(
+			.A(sig_H1_Q),
+			.B(sig_H5_bQ),
 			.Y(sig_H10BOT)
 		);
 		
-	cus27_nand
-		cus27_H10TOP_nand(
-			.A(~sig_J1_bQ),
-			.B(~sig_H1_Q),
-			.C(~sig_H5_bQ),
+	cus27_nand3 #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
+		cus27_H10TOP_nand3(
+			.A(sig_J1_bQ),
+			.B(sig_H1_Q),
+			.C(sig_H5_bQ),
 			.Y(sig_H10TOP)
 		);
-		
-			
-	cus27_tff
+				
+	cus27_tff #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
 		cus27_H1_tff(
-			._rst_ni(_rst_ni),
 			.CLK(sig_6MIN2_i),
 			.bRES(sig_HRESET),
 			.Q(sig_H1_Q),
 			.bQ(sig_H1_bQ)
 		);
 		
-	cus27_jkff
+	cus27_jkff #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
 		cus27_H5_jkff(
-			._rst_ni(_rst_ni),
 			.CLK(sig_6MIN2_i),
-			.bJ(~sig_H1_bQ),
-			.K(~sig_H1_Q),
+			.bJ(sig_H1_bQ),
+			.K(sig_H1_Q),
 			.bSET(sig_HRESET),
 			.Q(sig_H5_Q),
 			.bQ(sig_H5_bQ)
 		);
 		
-	cus27_jkff
+	cus27_jkff #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
 		cus27_J1_jkff(
-			._rst_ni(_rst_ni),
 			.CLK(sig_6MIN2_i),
 			.bJ(sig_H10BOT),
 			.K(sig_J9TOP),
@@ -127,9 +135,10 @@ module furrtek_horizontal
 			.bQ(sig_J1_bQ)
 		);
 		
-	cus27_jkff
+	cus27_jkff #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
 		cus27_J5_jkff(
-			._rst_ni(_rst_ni),
 			.CLK(sig_6MIN2_i),
 			.bJ(sig_H10TOP),
 			.K(sig_J10BOT),

@@ -25,7 +25,6 @@
 module furrtek_clockdivider_tb;
 
 	// Inputs
-	reg _rst_ni;
 	reg sig_48M_i;
 	reg sig_bHRESET1_i;
 	reg sig_E7BOT_i;
@@ -33,35 +32,31 @@ module furrtek_clockdivider_tb;
 	// Outputs
 	wire sig_24M_o;
 	wire sig_12M_o;
-	wire sig_6M_o;
+	wire sig_b6M_OUT_o;
 
-	wire sig_S1H_o;
-	wire sig_S2H_o;
+	wire sig_bS1H_o;
+	wire sig_bS2H_o;
 
 	// Instantiate the Unit Under Test (UUT)
 	furrtek_clockdivider uut (
-		._rst_ni(_rst_ni), 
 		.sig_48M_i(sig_48M_i), 
 		.sig_bHRESET1_i(sig_bHRESET1_i), 
 		.sig_E7BOT_i(sig_E7BOT_i),
 		.sig_24M_o(sig_24M_o), 
 		.sig_12M_o(sig_12M_o), 
-		.sig_6M_o(sig_6M_o), 
-		.sig_S1H_o(sig_S1H_o), 
-		.sig_S2H_o(sig_S2H_o)
+		.sig_b6M_OUT_o(sig_b6M_OUT_o), 
+		.sig_bS1H_o(sig_bS1H_o), 
+		.sig_bS2H_o(sig_bS2H_o)
 	);
 
 	initial begin
 		// Initialize Inputs
-		_rst_ni = 0;
 		sig_48M_i = 0;
 		sig_bHRESET1_i = 1'b1;
 		sig_E7BOT_i = 1'b1;
 
 		// Wait 100 ns for global reset to finish
 		#100;
-        
-		_rst_ni = 1;
 		  
 		// Add stimulus here
 

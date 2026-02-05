@@ -24,6 +24,13 @@
 
 module cus27_dff_tb;
 
+	parameter IOB_INPUT_INVERSION = 1'b1;
+	parameter IOB_OUTPUT_INVERSION = 1'b0;
+	
+	wire iob_i = IOB_INPUT_INVERSION;
+	wire iob_o = IOB_OUTPUT_INVERSION;
+	wire active = ~ iob_i;
+	
 	reg _rst_n;
 	
 	// Inputs
@@ -37,15 +44,18 @@ module cus27_dff_tb;
 	wire bQ;
 
 	// Instantiate the Unit Under Test (UUT)
-	cus27_dff uut (
-	   ._rst_ni(_rst_n),
-		.CLK(CLK), 
-		.D(D), 
-		.Q(Q), 
-		.bQ(bQ), 
-		.bSET(bSET), 
-		.bRES(bRES)
-	);
+	cus27_dff #(
+			IOB_INPUT_INVERSION,
+			IOB_OUTPUT_INVERSION )
+		uut (
+			._rst_ni(_rst_n),
+			.CLK(CLK), 
+			.D(D), 
+			.Q(Q), 
+			.bQ(bQ), 
+			.bSET(bSET), 
+			.bRES(bRES)
+		);
 
 	integer p;
 
@@ -54,7 +64,7 @@ module cus27_dff_tb;
 		
 		// Initialize Inputs
 		CLK = 0;
-		D = 0;
+		D = ~active;
 		bSET = 0;
 		bRES = 0;
 
@@ -77,7 +87,7 @@ module cus27_dff_tb;
 			#5
 			bSET <= p[3];
 			bRES <= p[2];
-			D <= p[0];
+			D <= p[0] ^ iob_i;
 			
 			#5
 			CLK <= p[1];
@@ -87,7 +97,7 @@ module cus27_dff_tb;
 				bSET ? "H" : "L",
 				bRES ? "H" : "L", 
 				CLK ? "E" : "-",
-				D ? "H" : "L",
+				p[0] ? "H" : "L",
 				(Q === 1'bz) ? "-" : (Q ? "H" : "L"), 
 				(bQ === 1'bz) ? "-" : (bQ ? "H" : "L")
 				);

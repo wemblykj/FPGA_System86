@@ -26,42 +26,56 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus27_dff (
-  input wire _rst_ni,
-  input wire CLK,
-  input wire D,
-  output wire Q,
-  output wire bQ,
-  input wire bSET,
-  input wire bRES
-);
+module cus27_dff 
+	#( parameter IOB_INPUT_INVERSION = 0,
+		parameter IOB_OUTPUT_INVERSION = 0 )
+	(
+		input wire _rst_ni,
+		input wire CLK,
+		input wire D,
+		output wire Q,
+		output wire bQ,
+		input wire bSET,
+		input wire bRES
+	);
 
-  reg        q;
+	wire iob_i = IOB_INPUT_INVERSION;
+	wire iob_o = IOB_OUTPUT_INVERSION;
+	wire active = ~iob_i;
+	
+	reg q;
 
-  assign d = (D !== 1'bz) ? D : 1'b0;
-  
-  assign set = (bSET !== 1'bz) ? ~bSET : 1'b0;
-  assign res = (bRES !== 1'bz) ? ~bRES : 1'b0;
-  
-  assign Q = (set && res) ? 1'b1 : q;     // Unstable state when both bSET and bRES are low
-  assign bQ = (set && res) ? 1'b1 : ~q;   // Unstable state when both bSET and bRES are low
+	assign d = resolve_input(D) ^ iob_i;
 
-  always @(negedge _rst_ni or posedge CLK or posedge set or posedge res)
-  begin
-    if (!_rst_ni) begin
-	   q <= 1'b0;
-    end else if (set && res) begin
-      // most commerial D-type FF seem to have a preload or a reset but not both
-      // [^3] suggests that both Q and bQ would go high until either SET or RES go inactive
-      // this is not a scenario possible in the CUS27 according to [^2]
-      // so we'll just ignore and leave the state unchanged
-      q <= q;
-    end else if (set) begin
-      q <= 1'b1;
-    end else if (res) begin
-      q <= 1'b0;
-    end else begin
-      q <= d;
-    end
-  end
+	assign set = (bSET !== 1'bz) ? ~bSET : 1'b0;
+	assign res = (bRES !== 1'bz) ? ~bRES : 1'b0;
+
+	assign Q = (set && res) ? 1'b1 : q;     // Unstable state when both bSET and bRES are low
+	assign bQ = (set && res) ? 1'b1 : ~q;   // Unstable state when both bSET and bRES are low
+
+	always @(negedge _rst_ni or posedge CLK or posedge set or posedge res) begin
+		if (!_rst_ni) begin
+			q <= 1'b0;
+		end else if (set && res) begin
+			// most commerial D-type FF seem to have a preload or a reset but not both
+			// [^3] suggests that both Q and bQ would go high until either SET or RES go inactive
+			// this is not a scenario possible in the CUS27 according to [^2]
+			// so we'll just ignore and leave the state unchanged
+			q <= q;
+		end else if (set) begin
+			q <= 1'b1;
+		end else if (res) begin
+			q <= 1'b0;
+		end else begin
+			q <= d;
+		end
+	end
+	
+	// Function to resolve high-impedance inputs
+	function resolve_input(input sig);
+		begin
+			resolve_input = (sig !== 1'bx) ? sig : active;
+		end
+	endfunction
+	
 endmodule
