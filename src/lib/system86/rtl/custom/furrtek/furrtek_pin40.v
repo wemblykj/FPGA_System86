@@ -46,7 +46,7 @@ module furrtek_pin40 (
 	wire sig_A1_bQ;
 	wire sig_B1_Q;
 	
-	assign sig_bPIN40_o = sig_B1_Q;
+	assign #1 sig_bPIN40_o = sig_B1_Q;
 	
 	//
 	// RTL
@@ -57,8 +57,8 @@ module furrtek_pin40 (
 	
 	// E6BOT interpretation - enable <pin 41> signal if MODE1 active
 	//	output is low if MODE1 high and MODE0 and FLIP are low, otherwise output is high
-	cus27_nand3
-		cus27_E9TOP_nand3(
+	cus27_nand4
+		cus27_B9TOP_nand3(
 			.A(sig_b48M_i),
 			.B(sig_24M_i),
 			.C(sig_12M_i),
@@ -70,7 +70,7 @@ module furrtek_pin40 (
 		cus27_A5_jkff(
 			.CLK(sig_b48M_i),
 			.bJ(sig_A1_bQ),
-			.bRES(sig_B9TOP),
+			.RES(sig_B9TOP),
 			.Q(sig_A5_Q)
 		);
 		
@@ -78,7 +78,7 @@ module furrtek_pin40 (
 		cus27_A1_jkff(
 			.CLK(sig_b48M_i),
 			.bJ(sig_A5_Q),
-			.bRES(sig_B9TOP),
+			.RES(sig_B9TOP),
 			.Q(sig_A1_Q),
 			.bQ(sig_A1_bQ)
 		);
@@ -88,7 +88,7 @@ module furrtek_pin40 (
 			.CLK(sig_b48M_i),
 			.bJ(sig_A1_bQ),
 			.K(sig_A1_Q),
-			.bRES(sig_B9TOP),
+			.RES(sig_B9TOP),
 			.Q(sig_B1_Q)
 		);
 			

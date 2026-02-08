@@ -27,23 +27,32 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus27_nand3 (	
+module cus27_nand4 (	
 		input wire A,
 		input wire B,
 		input wire C,
+		input wire D,
 		output wire Y 
 	);
 	
-	wire y;
+	// making this up for now
+	assign Y = yA & yB;
 	
-	assign #5 Y = y;
+	wire yA;
+	wire yB;
 	
 	cus27_cell
-		cell (
-			.D2(C),
+		cell_A (
 			.D3(B),
 			.D4(A),
-			.bQ(y)
+			.bQ(yA)
+		);
+		
+	cus27_cell
+		cell_B (
+			.D3(D),
+			.D4(C),
+			.bQ(yB)
 		);
   
 endmodule

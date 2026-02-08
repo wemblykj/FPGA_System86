@@ -43,8 +43,15 @@ module cus27_dff	(
 	assign sig_RES = RES;
 	
 	// output mapping
-	assign Q = sig_F_bQ;
-	assign bQ = sig_C_bQ;
+	assign #2 Q = sig_F_bQ_2;
+	assign #2 bQ = sig_C_bQ_2;
+	
+	assign #1 sig_A_bQ_2 = sig_A_bQ;
+	assign #1 sig_B_bQ_2 = sig_B_bQ;
+	assign #1 sig_C_bQ_2 = sig_C_bQ;
+	assign #1 sig_D_bQ_2 = sig_D_bQ;
+	assign #1 sig_E_bQ_2 = sig_E_bQ;
+	assign #1 sig_F_bQ_2 = sig_F_bQ;
 	
 	// internal routing
 	wire sig_A_bQ;
@@ -58,15 +65,15 @@ module cus27_dff	(
 		cell_A (
 			.D1(),
 			.D2(sig_DIN),
-			.D3(sig_B_bQ),
+			.D3(sig_B_bQ_2),
 			.D4(sig_RES),
 			.bQ(sig_A_bQ)
 			);
 			
 	cus27_cell
 		cell_B (
-			.D1(sig_A_bQ),
-			.D2(sig_E_bQ),
+			.D1(sig_A_bQ_2),
+			.D2(sig_E_bQ_2),
 			.D3(sig_SET),
 			.D4(sig_CLK),
 			.bQ(sig_B_bQ)
@@ -74,23 +81,23 @@ module cus27_dff	(
 	
 	cus27_cell
 		cell_C (
-			.D2(sig_F_bQ),
+			.D2(sig_F_bQ_2),
 			.D3(sig_RES),
-			.D4(sig_B_bQ),
+			.D4(sig_B_bQ_2),
 			.bQ(sig_C_bQ)
 			);
 			
 	cus27_cell
 		cell_D (
-			.D2(sig_A_bQ),
-			.D3(sig_E_bQ),
+			.D2(sig_A_bQ_2),
+			.D3(sig_E_bQ_2),
 			.D4(sig_SET),
 			.bQ(sig_D_bQ)
 			);	
 	
 	cus27_cell
 		cell_E (
-			.D2(sig_D_bQ),
+			.D2(sig_D_bQ_2),
 			.D3(sig_RES),
 			.D4(sig_CLK),	
 			.bQ(sig_E_bQ)
@@ -98,9 +105,9 @@ module cus27_dff	(
 			
 	cus27_cell
 		cell_F (
-			.D2(sig_C_bQ),
+			.D2(sig_C_bQ_2),
 			.D3(sig_SET),
-			.D4(sig_E_bQ),
+			.D4(sig_E_bQ_2),
 			.bQ(sig_F_bQ)
 			);	
 			

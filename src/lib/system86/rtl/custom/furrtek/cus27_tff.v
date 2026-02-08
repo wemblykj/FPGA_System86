@@ -42,8 +42,15 @@ module cus27_tff (
 	assign sig_RES = RES;
 
 	// output mapping
-	assign Q = sig_D_bQ;
-	assign bQ = sig_A_bQ;
+	assign #5 Q = sig_D_bQ_2;
+	assign #5 bQ = sig_A_bQ_2;
+	
+	assign #4 sig_A_bQ_2 = sig_A_bQ;
+	assign #1 sig_B_bQ_2 = sig_B_bQ;
+	assign sig_C_bQ_2 = sig_C_bQ;
+	assign #4 sig_D_bQ_2 = sig_D_bQ;
+	assign #1 sig_E_bQ_2 = sig_E_bQ;
+	assign sig_F_bQ_2 = sig_F_bQ;
 	
 	// internal routing
 	wire sig_A_bQ;
@@ -56,25 +63,25 @@ module cus27_tff (
 	// ~Q driver - depends on D, C
 	cus27_cell
 		cell_A (
-			.D2(sig_D_bQ),
+			.D2(sig_D_bQ_2),
 			.D3(sig_RES),
-			.D4(sig_C_bQ),
+			.D4(sig_C_bQ_2),
 			.bQ(sig_A_bQ)
 			);
 			
 	// feedback depends on ~A, C
 	cus27_cell
 		cell_B (
-			.D2(sig_C_bQ),
+			.D2(sig_C_bQ_2),
 			.D3(sig_RES),
-			.D4(sig_A_bQ),
+			.D4(sig_A_bQ_2),
 			.bQ(sig_B_bQ)
 			);
 	
 	cus27_cell
 		cell_C (
-			.D1(sig_B_bQ),
-			.D2(sig_F_bQ),
+			.D1(sig_B_bQ_2),
+			.D2(sig_F_bQ_2),
 			.D3(sig_SET),
 			.D4(sig_CLK),
 			.bQ(sig_C_bQ)
@@ -83,17 +90,17 @@ module cus27_tff (
 	// Q driver - depends on ~A, ~F
 	cus27_cell
 		cell_D (
-			.D2(sig_A_bQ),
+			.D2(sig_A_bQ_2),
 			.D3(sig_SET),
-			.D4(sig_F_bQ),
+			.D4(sig_F_bQ_2),
 			.bQ(sig_D_bQ)
 			);	
 	
 	// feedback depends on ~B, ~F
 	cus27_cell
 		cell_E (
-			.D2(sig_B_bQ),
-			.D3(sig_F_bQ),
+			.D2(sig_B_bQ_2),
+			.D3(sig_F_bQ_2),
 			.D4(sig_SET),	
 			.bQ(sig_E_bQ)
 			);
@@ -101,7 +108,7 @@ module cus27_tff (
 	// slave gate - clocked latch depends on ~E, CLK
 	cus27_cell
 		cell_F (
-			.D2(sig_E_bQ),	// latch driver
+			.D2(sig_E_bQ_2),	// latch driver
 			.D3(sig_RES),	// reset latch
 			.D4(sig_CLK),	// clock
 			.bQ(sig_F_bQ)

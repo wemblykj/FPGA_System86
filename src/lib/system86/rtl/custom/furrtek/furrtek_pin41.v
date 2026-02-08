@@ -42,7 +42,7 @@ module furrtek_pin41 (
 	);
 
 	// output mapping
-	assign sig_bPIN41_o = sig_D8_Q;
+	assign #1 sig_bPIN41_o = sig_D8_Q;
 	
 	// internal routing
 	wire sig_E6BOT;
@@ -80,43 +80,39 @@ module furrtek_pin41 (
 		
 	cus27_jkff
 		cus27_C1_jkff(
-			._rst_ni(_rst_ni),
 			.CLK(sig_48M2_i),
 			.bJ(sig_C1_Q),
 			.K(sig_C9TOP),
-			.bRES(sig_E6BOT),
+			.RES(sig_E6BOT),
 			.Q(sig_C1_Q),
 			.bQ(sig_C1_bQ)
 		);
 		
 	cus27_jkff
 		cus27_C5_jkff(
-			._rst_ni(_rst_ni),
 			.CLK(sig_48M2_i),
 			.bJ(sig_C1_bQ),
 			.K(sig_C1_Q),
-			.bRES(sig_E6BOT),
+			.RES(sig_E6BOT),
 			.Q(sig_C5_Q),
 			.bQ(sig_C5_bQ)
 		);
 		
 	cus27_jkff
 		cus27_D1_jkff(
-			._rst_ni(_rst_ni),
 			.CLK(sig_48M2_i),
 			.bJ(sig_C5_bQ),
 			.K(sig_C5_Q),
-			.bRES(sig_E6BOT),
+			.RES(sig_E6BOT),
 			.Q(sig_D1_Q),
 			.bQ(sig_D1_bQ)
 		);
 		
 	cus27_dff
 		cus27_D8_dff(
-			._rst_ni(_rst_ni),
 			.CLK(sig_b48M_i),
-			.D(sig_D1_Q),
-			.bSET(sig_E6BOT),
+			.DIN(sig_D1_Q),
+			.SET(sig_E6BOT),
 			.Q(sig_D8_Q)
 		);
 			

@@ -15,7 +15,7 @@ module cus27_jkff_tb;
 	cus27_jkff
 		uut (
 			.CLK(sig_CLK), 
-			.J(sig_bJ),
+			.bJ(sig_bJ),
 			.K(sig_K),
 			.Q(sig_Q), 
 			.bQ(sig_bQ), 

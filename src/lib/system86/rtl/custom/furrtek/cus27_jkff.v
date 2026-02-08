@@ -41,8 +41,16 @@ module cus27_jkff (
 	assign sig_RES = RES;
 	
 	// output mapping
-	assign bQ = sig_E_bQ;
-	assign Q = sig_F_bQ;
+	assign #5 bQ = sig_E_bQ_2;
+	assign #5 Q = sig_F_bQ_2;
+	
+	assign #3 sig_A_Q_2 = sig_A_Q;
+	assign #4 sig_B_bQ_2 = sig_B_bQ;
+	assign sig_C_bQ_2 = sig_C_bQ;
+	assign #1 sig_D_bQ_2 = sig_D_bQ;
+	assign #4 sig_E_bQ_2 = sig_E_bQ;
+	assign #4 sig_F_bQ_2 = sig_F_bQ;
+	assign sig_G_bQ_2 = sig_G_bQ;
 	
 	// internal routing
 	wire sig_A_Q;
@@ -60,8 +68,8 @@ module cus27_jkff (
 	cus27_cell
 		cell_A (
 			.D2(bJ),
-			.D3(sig_E_bQ),
-			.D4(sig_G_bQ),
+			.D3(sig_E_bQ_2),
+			.D4(sig_G_bQ_2),
 			.Q(sig_A_Q)
 		);
 
@@ -71,11 +79,11 @@ module cus27_jkff (
 	//		sig_G_bQ ?? clock pos edge
 	cus27_cell
 		cell_B (
-			.D1(sig_F_bQ),
+			.D1(sig_F_bQ_2),
 			.D2(sig_SET),	// TODO: confirm SET
 			.D3(K),
-			.D4(sig_G_bQ),
-			.Q_IN(sig_A_Q),
+			.D4(sig_G_bQ_2),
+			.Q_IN(sig_A_Q_2),
 			.bQ(sig_B_bQ)
 		);
 		
@@ -84,15 +92,15 @@ module cus27_jkff (
 		cell_C (
 			.D2(sig_SET),	// TODO: SET?
 			.D3(CLK),	// TODO: confirm CLK
-			.D4(sig_D_bQ),
+			.D4(sig_D_bQ_2),
 			.bQ(sig_C_bQ)
 		);
 		
 	// ?? suppress or enable clock negative edge latch
 	cus27_cell
 		cell_D (
-			.D2(sig_C_bQ),	// TODO: confirm
-			.D3(sig_B_bQ),
+			.D2(sig_C_bQ_2),	// TODO: confirm
+			.D3(sig_B_bQ_2),
 			.D4(sig_RES), 	// TODO: confirm RES?
 			.bQ(sig_D_bQ)
 		);
@@ -103,9 +111,9 @@ module cus27_jkff (
 	//   sig_C_bQ - ?? reset the flip-flop
 	cus27_cell
 		cell_E (
-			.D2(sig_C_bQ),	// TODO: confirm
+			.D2(sig_C_bQ_2),	// TODO: confirm
 			.D3(sig_RES),		// reset logic
-			.D4(sig_F_bQ),	// feedback
+			.D4(sig_F_bQ_2),	// feedback
 			.bQ(sig_E_bQ)
 		);
 	
@@ -116,16 +124,16 @@ module cus27_jkff (
 	cus27_cell
 		cell_F (
 			.D2(sig_SET),		// set logic
-			.D3(sig_G_bQ), // K
-			.D4(sig_E_bQ),	// feedback
+			.D3(sig_G_bQ_2), // K
+			.D4(sig_E_bQ_2),	// feedback
 			.bQ(sig_F_bQ)
 		);
 	
 	// clock positive edge latch
 	cus27_cell
 		cell_G (
-			.D1(sig_C_bQ),
-			.D2(sig_B_bQ),
+			.D1(sig_C_bQ_2),
+			.D2(sig_B_bQ_2),
 			.D3(CLK),
 			.D4(sig_RES),	// TODO: confirm RES?
 			.bQ(sig_G_bQ)
