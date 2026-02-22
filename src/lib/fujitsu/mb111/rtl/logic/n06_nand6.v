@@ -4,12 +4,14 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    07/01/2025 
-// Design Name:    cus27_nand
-// Module Name:    system86\src\custom\furrtek\cus27_nand.v 
+// Design Name:    mb111_n06_nand6
+// Module Name:    system86\src\custom\furrtek\mb111_n06_nand6.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
-// Description:    Namco CUS27 - 4 input NAND gate based on third-party reverse engineering of the CUS27 die
+// Description:    MB111 N03 6-input NAND
+//
+//                 Namco CUS27 - 6-input NAND gate based on third-party reverse engineering of the CUS27 die
 //
 //                 [^1] https://siliconprawn.org/map/namco/27/
 //                 [^2] https://github.com/furrtek/SiliconRE/tree/master/Namco/CUS27
@@ -27,23 +29,34 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus27_nand3 (	
+module mb111_n06_nand6
+(	
 		input wire A,
 		input wire B,
 		input wire C,
+		input wire D,
+		input wire E,
+		input wire F,
 		output wire Y 
 	);
 	
-	wire y;
+	wire wired_and;
 	
-	assign #5 Y = y;
-	
-	cus27_cell
-		cell (
-			.D2(C),
-			.D3(B),
-			.D4(A),
-			.bQ(y)
+	mb111_gate
+		cell_A (
+			.A(A),
+			.B(B),
+			.C(C),
+			.AND_OUT(wired_and)
+		);
+		
+	mb111_gate
+		cell_B (
+			.A(D),
+			.B(E),
+			.C(F),
+			.AND_IN(wired_and),
+			.F(Y)
 		);
   
 endmodule

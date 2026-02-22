@@ -27,32 +27,18 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus27_nand4 (	
-		input wire A,
-		input wire B,
-		input wire C,
-		input wire D,
-		output wire Y 
-	);
+module mb111_n02_nand2
+(	
+	input wire A,
+	input wire B,
+	output wire Y 
+);
 	
-	// making this up for now
-	assign Y = yA & yB;
-	
-	wire yA;
-	wire yB;
-	
-	cus27_cell
-		cell_A (
-			.D3(B),
-			.D4(A),
-			.bQ(yA)
-		);
-		
-	cus27_cell
-		cell_B (
-			.D3(D),
-			.D4(C),
-			.bQ(yB)
+	mb111_gate
+		cell (
+			.A(A),
+			.B(B),
+			.F(Y)
 		);
   
 endmodule

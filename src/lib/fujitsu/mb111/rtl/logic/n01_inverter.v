@@ -4,8 +4,8 @@
 // Engineer:       Paul Wightmore
 // 
 // Create Date:    07/01/2025 
-// Design Name:    cus27_nand
-// Module Name:    system86\src\custom\furrtek\cus27_cell.v 
+// Design Name:    mb111_n01_inverter
+// Module Name:    system86\src\custom\furrtek\mb111_n01_inverter.v 
 // Project Name:   Namco System86 simulation
 // Target Devices: 
 // Tool versions: 
@@ -27,39 +27,16 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module cus27_cell (
-		input  wire D1,
-		input  wire D2,
-		input  wire D3,
-		input  wire D4,
-		input  wire Q_IN,
-		output wire Q,
-		output wire bQ
-	);
-	assign d1 = resolve_input(D1);
-	assign d2 = resolve_input(D2);
-	assign d3 = resolve_input(D3);
-	assign d4 = resolve_input(D4);
+module mb111_n01_inverter
+(	
+	input wire A,
+	output wire Y 
+);
 	
-	// logic high if not connected otherwise acts as a pull-down when logic low
-	assign q_in = (Q_IN !== 1'bx && Q_IN !== 1'bz) ? Q_IN : 1'b1;
-	
-	assign Q = q;
-	assign bQ = ~q;
-	
-	// output of input stage - logic high if all inputs are low (or disconnected)
-	assign x = d1 | d2 | d3 | d4;
-	
-	// q is logic high when x is logic high and not pulled-low by Q_IN
-	// FIXME: this works but is not intuitive
-	assign #1 q = q_in & x;
-
-	// Function to resolve high-impedance inputs - logic low if not connected
-	function resolve_input(input sig);
-		begin
-			resolve_input = (sig !== 1'bx && sig !== 1'bz) ? sig : 1'b0;
-		end
-		
-	endfunction
-	
+	mb111_gate
+		cell (
+			.A(A),
+			.F(Y)
+		);
+  
 endmodule

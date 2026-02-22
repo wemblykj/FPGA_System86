@@ -1,5 +1,4 @@
-`timescale 1ns / 1ps
-
+`timescale 100ps / 1ps
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer:
@@ -22,7 +21,7 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module cus27_furrtek_ref_tb;
+module furrtek_cus27_ref_tb;
 
 	parameter IOB_INPUT_INVERSION = 1'b1;
 	parameter IOB_OUTPUT_INVERSION = 1'b1;

@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+`timescale 100ps / 1ps
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 module furrtek_clock_divider_tb;
-	
+
 	// Inputs
 	reg sig_bMODE1;
 	reg sig_MODE0;
@@ -62,7 +62,7 @@ module furrtek_clock_divider_tb;
 			.sig_24M_o(sig_24M), 
 			.sig_12M_o(sig_12M)
 		);
-
+	 
 	reg hres;
 	reg mode1;
 	reg mode0;
@@ -72,12 +72,13 @@ module furrtek_clock_divider_tb;
 	
 	initial begin
 		// Initialize Inputs
-		apply_inputs(1, 1, 1, 1, 1);
-		apply_inputs(0, 0, 0, 0, 0);
+		apply_inputs(1, 0, 0, 0, 0);
+		apply_inputs(1, 0, 0, 0, 1);
 		
 		mode1 = 1'b0;
 		mode0 = 1'b0;
 		flip = 1'b0;
+		hres = 1'b0;
 		
 		// Wait 100 ns for global reset to finish
 		#10;
@@ -95,13 +96,15 @@ module furrtek_clock_divider_tb;
 		
 		write_divider();
 		
+		apply_test("HRES", mode1, mode0, flip, /*48M=*/1'b0, /*HRES=*/1'b1, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
+		apply_test("tick", mode1, mode0, flip, /*48M=*/1'b1, /*HRES=*/1'b1, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
+		apply_test("tock", mode1, mode0, flip, /*48M=*/1'b0, /*HRES=*/1'b1, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
+		apply_test("tick", mode1, mode0, flip, /*48M=*/1'b1, /*HRES=*/1'b1, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
+		apply_test("tock", mode1, mode0, flip, /*48M=*/1'b0, /*HRES=*/1'b1, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
+		apply_test("~HRES", mode1, mode0, flip, /*48M=*/1'b0, /*HRES=*/1'b0, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
+				
 		hres = 1'b1;
-				
-		apply_test("HRESET", mode1, mode0, flip, /*48M=*/1'b0, hres, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
-		apply_test("tick", mode1, mode0, flip, /*48M=*/1'b1, hres, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
-		apply_test("tock", mode1, mode0, flip, /*48M=*/1'b0, hres, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
-		apply_test("~HRESET", mode1, mode0, flip, /*48M=*/1'b0, hres, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
-				
+		
 		write_divider();
 		
 		apply_test("tick", mode1, mode0, flip, /*48M=*/1'b1, hres, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
@@ -222,7 +225,7 @@ module furrtek_clock_divider_tb;
 	 input iHRESET1
 	);
 	begin
-	   sig_bMODE1 = ~iMODE1;
+		sig_bMODE1 = ~iMODE1;
 		sig_MODE0 = iMODE0;
 		sig_FLIP = iFLIP;
 		sig_48M = i48M;

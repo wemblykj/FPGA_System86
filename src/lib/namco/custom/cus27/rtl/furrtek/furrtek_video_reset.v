@@ -82,21 +82,21 @@ module furrtek_video_reset (
 	//
 	// standard cell synthesis
 	
-	cus27_nand3
+	n03_nand3
 		cus27_E5BOT_nand3(
 			.A(sig_b48M_2_i),
 			.B(sig_E5TOP_i),
 			.Y(sig_E5BOT)
 		);
 		
-	cus27_nand3
+	n03_nand3
 		cus27_F5BOT_nand3(
 			.A(sig_bHRES_IN_i),
 			.B(sig_E5BOT),
 			.Y(sig_F5BOT)
 		);
 		
-	cus27_nand3
+	n03_nand3
 		cus27_F5TOP_nand3(
 			.A(sig_bHRES_IN_i),
 			.B(sig_E5BOT),

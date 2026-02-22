@@ -56,21 +56,12 @@ module furrtek_horizontal (
 	wire sig_J5_Q;
 	wire sig_J5_bQ;
 	
-	assign sig_J5Q_o = sig_J5_Q_2;
-	assign sig_J5bQ_o = sig_J5_bQ_2;
-	assign sig_b1H_o = sig_H1_bQ_2;
-	assign sig_b2H_o = sig_H5_Q_2;
-	assign sig_b4H_o = sig_J1_Q_2;
-	assign sig_bPIN_6_o = sig_J5_Q_2;
-	
-	assign sig_H1_Q_2 = sig_H1_Q;
-	assign sig_H1_bQ_2 = sig_H1_bQ;
-	assign sig_H5_Q_2 = sig_H5_Q;
-	assign sig_H5_bQ_2 = sig_H5_bQ;
-	assign sig_J1_Q_2 = sig_J1_Q;
-	assign sig_J1_bQ_2 = sig_J1_bQ;
-	assign sig_J5_Q_2 = sig_J5_Q;
-	assign sig_J5_bQ_2 = sig_J5_bQ;
+	assign sig_J5Q_o = sig_J5_Q;
+	assign sig_J5bQ_o = sig_J5_bQ;
+	assign sig_b1H_o = sig_H1_bQ;
+	assign sig_b2H_o = sig_H5_Q;
+	assign sig_b4H_o = sig_J1_Q;
+	assign sig_bPIN_6_o = sig_J5_Q;
 	
 	//
 	// RTL
@@ -85,22 +76,22 @@ module furrtek_horizontal (
 	//
 	// standard cell synthesis
 	
-	cus27_nand3
+	n03_nand3
 		cus27_H10BOT_nand3(
-			.A(sig_H1_Q_2),
-			.B(sig_H5_bQ_2),
+			.A(sig_H1_Q),
+			.B(sig_H5_bQ),
 			.Y(sig_H10BOT)
 		);
 		
-	cus27_nand3
+	n03_nand3
 		cus27_H10TOP_nand3(
-			.A(sig_J1_bQ_2),
-			.B(sig_H1_Q_2),
-			.C(sig_H5_bQ_2),
+			.A(sig_J1_bQ),
+			.B(sig_H1_Q),
+			.C(sig_H5_bQ),
 			.Y(sig_H10TOP)
 		);
 				
-	cus27_tff
+	ft1_tff
 		cus27_H1_tff(
 			.CLK(sig_6MIN2_i),
 			.RES(sig_bHRESET3_i),
@@ -108,17 +99,17 @@ module furrtek_horizontal (
 			.bQ(sig_H1_bQ)
 		);
 		
-	cus27_jkff
+	fj3_jxkff
 		cus27_H5_jkff(
 			.CLK(sig_6MIN2_i),
-			.bJ(sig_H1_bQ_2),
-			.K(sig_H1_Q_2),
+			.bJ(sig_H1_bQ),
+			.K(sig_H1_Q),
 			.SET(sig_bHRESET3_i),
 			.Q(sig_H5_Q),
 			.bQ(sig_H5_bQ)
 		);
 		
-	cus27_jkff
+	fj3_jxkff
 		cus27_J1_jkff(
 			.CLK(sig_6MIN2_i),
 			.bJ(sig_H10BOT),
@@ -128,7 +119,7 @@ module furrtek_horizontal (
 			.bQ(sig_J1_bQ)
 		);
 		
-	cus27_jkff
+	fj3_jxkff
 		cus27_J5_jkff(
 			.CLK(sig_6MIN2_i),
 			.bJ(sig_H10TOP),
@@ -137,5 +128,5 @@ module furrtek_horizontal (
 			.Q(sig_J5_Q),
 			.bQ(sig_J5_bQ)
 		);
-			
+	
 endmodule
