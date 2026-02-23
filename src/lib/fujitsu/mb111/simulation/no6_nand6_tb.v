@@ -21,7 +21,7 @@ module mb111_n06_nand6_tb;
 		apply_inputs(0, 0, 0, 0);
 
 		// Wait 100 ns for global reset to finish
-		#100;
+		#10;
         
 		// Add stimulus here
 		

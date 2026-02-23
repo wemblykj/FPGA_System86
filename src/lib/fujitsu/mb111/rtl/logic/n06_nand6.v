@@ -31,14 +31,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 module mb111_n06_nand6
 (	
-		input wire A,
-		input wire B,
-		input wire C,
-		input wire D,
-		input wire E,
-		input wire F,
-		output wire Y 
-	);
+	input wire A,
+	input wire B,
+	input wire C,
+	input wire D,
+	input wire E,
+	input wire F,
+	output wire Y 
+);
 	
 	wire wired_and;
 	
