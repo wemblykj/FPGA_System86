@@ -32,6 +32,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 module furrtek_clock_divider
 (
+	input wire sim_rst_n,
+    
 	// input clocks
 	input wire sig_48M_i,
 	
@@ -97,8 +99,7 @@ module furrtek_clock_divider
 			.Y(sig_E6TOP)
 		);
 		
-		// E7BOT interpretation - disables all clocks if MODE1 active
-	//	output is low if MODE1 high and MODE0 and FLIP are low, otherwise output is high
+	// disables all clocks if MODE1 active
 	mb111_n03_nand3
 		cus27_E7BOT_nand3 (
 			.A(sig_bMODE1_i),
@@ -110,7 +111,7 @@ module furrtek_clock_divider
 	mb111_ft1_tff
 		cus27_D5_tff (
 			.CLK(sig_48M_i),
-			.bSET(sig_E7BOT),
+			.bSET(sig_E7BOT & sim_rst_n),
 			.Q(sig_D5_Q),
 			.XQ(sig_D5_XQ) );
 		
@@ -119,7 +120,7 @@ module furrtek_clock_divider
 			.CLK(sig_48M_i),
 			.J(sig_D5_Q),
 			.XK(sig_D5_XQ),
-			.bRES(sig_E7BOT),
+			.bRES(sig_E7BOT & sim_rst_n),
 			.Q(sig_B5_Q) );
 		
 	mb111_n02_nand2
@@ -133,7 +134,7 @@ module furrtek_clock_divider
 			.CLK(sig_48M_i),
 			.J(sig_B9BOT),
 			.XK(sig_E6TOP),
-			.bRES(sig_E7BOT),
+			.bRES(sig_E7BOT & sim_rst_n),
 			.Q(sig_E1_Q),
 			.XQ(sig_E1_XQ)
 		);
@@ -141,7 +142,7 @@ module furrtek_clock_divider
 	mb111_ft1_tff
 		cus27_G8_tff(
 			.CLK(sig_E1_XQ),
-			.bRES(sig_bHRESET1_i),
+			.bRES(sig_bHRESET1_i & sim_rst_n),
 			.Q(sig_G8_Q),
 			.XQ(sig_G8_XQ)
 		);
@@ -151,7 +152,7 @@ module furrtek_clock_divider
 			.CLK(sig_E1_XQ),
 			.J(sig_G8_XQ),
 			.XK(sig_G8_Q),
-			.bSET(sig_bHRESET1_i),
+			.bSET(sig_bHRESET1_i & sim_rst_n),
 			.Q(sig_G1_Q)
 		);
 			

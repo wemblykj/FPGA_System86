@@ -24,6 +24,8 @@
 
 module furrtek_horizontal_tb;
 			
+	reg sim_rst_n;
+	
 	// Inputs
 	reg sig_6MIN2_i;
 	reg sig_bHRESET3_i;
@@ -36,19 +38,20 @@ module furrtek_horizontal_tb;
 
 	// internal routing ouputs
 	wire sig_J5Q_o;
-	wire sig_J5bQ_o;
+	wire sig_J5XQ_o;
 	
 	// Instantiate the Unit Under Test (UUT)
 	furrtek_horizontal
 		uut (
+			.sim_rst_n(sim_rst_n),
 			.sig_6MIN2_i(sig_6MIN2_i),
 			.sig_bHRESET3_i(sig_bHRESET3_i),
 			.sig_b1H_o(sig_b1H_o),
 			.sig_b2H_o(sig_b2H_o), 
 			.sig_b4H_o(sig_b4H_o),
 			.sig_bPIN_6_o(sig_bPIN_6_o), 
-			.sig_J5Q_o(sig_J5Q_o), 
-			.sig_J5bQ_o(sig_J5bQ_o)
+			.sig_J5_Q_o(sig_J5Q_o), 
+			.sig_J5_XQ_o(sig_J5XQ_o)
 		);
 
 	reg hres3;
@@ -62,9 +65,12 @@ module furrtek_horizontal_tb;
 		
 		hres3 = 1'b0;
 
+		sim_rst_n = 1'b0;
 		
 		// Wait 100 ns for global reset to finish
 		#10;
+		
+		sim_rst_n = 1'b1;
 		
 		// Add stimulus here
 
@@ -77,7 +83,7 @@ module furrtek_horizontal_tb;
 		
 		write_divider();
 	
-		hres3 = 1'b0;
+		hres3 = 1'b1;
 					
 		apply_test("tick", /*HRESET3=*/1'b0, /*6MIN=*/1'b1, /*1H_exp=*/1'b0, /*2H_exp=*/1'b0, /*4H_exp=*/1'b0, /*8H_exp=*/1'b0, /*J5Q_exp=*/1'b0, /*J5~Q_exp=*/1'b0, test_result);
 		apply_test("tock", /*HRESET3=*/1'b0, /*6MIN=*/1'b0, /*1H_exp=*/1'b0, /*2H_exp=*/1'b0, /*4H_exp=*/1'b0, /*8H_exp=*/1'b0, /*J5Q_exp=*/1'b0, /*J5~Q_exp=*/1'b0, test_result);
@@ -143,19 +149,19 @@ module furrtek_horizontal_tb;
 	 input o4H_exp,
 	 input o8H_exp,
 	 input oJ5Q_exp,
-	 input oJ5bQ_exp,
+	 input oJ5XQ_exp,
 	 input o1H,
 	 input o2H, 
 	 input o4H,
 	 input o8H,
 	 input oJ5Q,
-	 input oJ5bQ,
+	 input oJ5XQ,
 	 input reg [5*8:1] result
 	);
 	begin
-	   //           | HRESET3  | 6MIN   | 1H _exp| 2H_exp | 4H_exp | 8H_exp | J5Q_exp | J5bQ_exp | 1H | 2H | 4H | 8H | J5Q | J5bQ | RESULT
+	   //           | HRESET3  | 6MIN   | 1H _exp| 2H_exp | 4H_exp | 8H_exp | J5Q_exp | J5XQ_exp | 1H | 2H | 4H | 8H | J5Q | J5XQ | RESULT
 		$display("%s |   %b  |  %b |   %b |   %b |  %b |  %b |  %b |  %b |  %b |  %b |  %b |   %b  |  %b |  %b  |  %s",
-					  test_name, iHRESET3, i6MIN2, o1H_exp, o2H_exp, o4H_exp, o8H_exp, oJ5Q_exp, oJ5bQ_exp, o1H, o2H, o4H, o8H, oJ5Q, oJ5bQ, result);
+					  test_name, iHRESET3, i6MIN2, o1H_exp, o2H_exp, o4H_exp, o8H_exp, oJ5Q_exp, oJ5XQ_exp, o1H, o2H, o4H, o8H, oJ5Q, oJ5XQ, result);
 	end
 	endtask
 	
@@ -168,7 +174,7 @@ module furrtek_horizontal_tb;
 	 input o4H_exp,
 	 input o8H_exp,
 	 input oJ5Q_exp,
-	 input oJ5bQ_exp,
+	 input oJ5XQ_exp,
 	 output reg result
 	);
 	begin
@@ -176,12 +182,12 @@ module furrtek_horizontal_tb;
 		
 		#5;
 		
-		if (~sig_b1H_o === o1H_exp && ~sig_b2H_o === o2H_exp && ~sig_b4H_o === o4H_exp && ~sig_bPIN_6_o === o8H_exp && ~sig_J5Q_o === oJ5Q_exp && ~sig_J5bQ_o === oJ5bQ_exp) begin
+		if (~sig_b1H_o === o1H_exp && ~sig_b2H_o === o2H_exp && ~sig_b4H_o === o4H_exp && ~sig_bPIN_6_o === o8H_exp && ~sig_J5Q_o === oJ5Q_exp && ~sig_J5XQ_o === oJ5XQ_exp) begin
 		  result = 1; // Test passed
-		  write_result(test_name, iHRESET3, i6MIN2, o1H_exp, o2H_exp, o4H_exp, o8H_exp, oJ5Q_exp, oJ5bQ_exp, sig_b1H_o, sig_b2H_o, sig_b4H_o, sig_bPIN_6_o, sig_J5Q_o, sig_J5bQ_o, "PASS");
+		  write_result(test_name, iHRESET3, i6MIN2, o1H_exp, o2H_exp, o4H_exp, o8H_exp, oJ5Q_exp, oJ5XQ_exp, sig_b1H_o, sig_b2H_o, sig_b4H_o, sig_bPIN_6_o, sig_J5Q_o, sig_J5XQ_o, "PASS");
 		end else begin
 		  result = 0; // Test failed
-		  write_result(test_name, iHRESET3, i6MIN2, o1H_exp, o2H_exp, o4H_exp, o8H_exp, oJ5Q_exp, oJ5bQ_exp, sig_b1H_o, sig_b2H_o, sig_b4H_o, sig_bPIN_6_o, sig_J5Q_o, sig_J5bQ_o, "FAIL");
+		  write_result(test_name, iHRESET3, i6MIN2, o1H_exp, o2H_exp, o4H_exp, o8H_exp, oJ5Q_exp, oJ5XQ_exp, sig_b1H_o, sig_b2H_o, sig_b4H_o, sig_bPIN_6_o, sig_J5Q_o, sig_J5XQ_o, "FAIL");
 		end
 		
 		#5;

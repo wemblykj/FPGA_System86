@@ -21,7 +21,7 @@
 
 module mb111_ft1_tff
 (
-    input  wire CLK,
+	input  wire CLK,
     input  wire bSET,
     input  wire bRES,
     output wire Q,

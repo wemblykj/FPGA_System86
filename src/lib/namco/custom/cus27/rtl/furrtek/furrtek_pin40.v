@@ -29,21 +29,23 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module furrtek_pin40 (
-		// input clocks
-		input wire sig_b48M_i,
-		input wire sig_24M_i,
-		input wire sig_12M_i,
-		
-		// internal routing inputs
-		input wire sig_HRESET_i,
-		
-		output wire sig_bPIN40_o	//	pin 40 driver
-	);
+	input wire sim_rst_n,
+
+	// input clocks
+	input wire sig_b48M_i,
+	input wire sig_24M_i,
+	input wire sig_12M_i,
+	
+	// internal routing inputs
+	input wire sig_HRESET_i,
+	
+	output wire sig_bPIN40_o	//	pin 40 driver
+);
 
 	wire sig_B9TOP;
 	wire sig_A5_Q;
 	wire sig_A1_Q;
-	wire sig_A1_bQ;
+	wire sig_A1_XQ;
 	wire sig_B1_Q;
 	
 	assign #1 sig_bPIN40_o = sig_B1_Q;
@@ -57,7 +59,7 @@ module furrtek_pin40 (
 	
 	// E6BOT interpretation - enable <pin 41> signal if MODE1 active
 	//	output is low if MODE1 high and MODE0 and FLIP are low, otherwise output is high
-	n04_nand4
+	mb111_n04_nand4
 		cus27_B9TOP_nand4(
 			.A(sig_b48M_i),
 			.B(sig_24M_i),
@@ -66,29 +68,29 @@ module furrtek_pin40 (
 			.Y(sig_B9TOP)
 		);
 		
-	fj3_jxkff
+	mb111_fj3_jxkff
 		cus27_A5_jkff(
 			.CLK(sig_b48M_i),
-			.bJ(sig_A1_bQ),
-			.RES(sig_B9TOP),
+			.J(sig_A1_bQ),
+			.bRES(sig_B9TOP),
 			.Q(sig_A5_Q)
 		);
 		
-	fj3_jxkff
+	mb111_fj3_jxkff
 		cus27_A1_jkff(
 			.CLK(sig_b48M_i),
-			.bJ(sig_A5_Q),
-			.RES(sig_B9TOP),
+			.J(sig_A5_Q),
+			.bRES(sig_B9TOP & sim_rst_n),
 			.Q(sig_A1_Q),
-			.bQ(sig_A1_bQ)
+			.XQ(sig_A1_XQ)
 		);
 		
-	fj3_jxkff
+	mb111_fj3_jxkff
 		cus27_D1_jkff(
 			.CLK(sig_b48M_i),
-			.bJ(sig_A1_bQ),
-			.K(sig_A1_Q),
-			.RES(sig_B9TOP),
+			.J(sig_A1_bQ),
+			.XK(sig_A1_Q),
+			.bRES(sig_B9TOP & sim_rst_n),
 			.Q(sig_B1_Q)
 		);
 			

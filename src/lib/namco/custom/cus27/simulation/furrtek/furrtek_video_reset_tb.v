@@ -24,6 +24,8 @@
 
 module furrtek_video_reset_tb;
 	
+	reg sim_rst_n;
+	
 	// Inputs
 	reg sig_b48M_2_i;
 	reg sig_bHRES_IN_i;
@@ -42,6 +44,7 @@ module furrtek_video_reset_tb;
 	// Instantiate the Unit Under Test (UUT)
 	furrtek_video_reset
 		uut (
+			.sim_rst_n(sim_rst_n),
 			.sig_b48M_2_i(sig_b48M_2_i),
 			.sig_bHRES_IN_i(sig_bHRES_IN_i),
 			.sig_bVRES_IN_i(sig_bVRES_IN_i),
@@ -70,8 +73,12 @@ module furrtek_video_reset_tb;
 		vres = 1'b0;
 		e5top = 1'b0;
 		
+		sim_rst_n = 1'b0;
+		
 		// Wait 100 ns for global reset to finish
 		#10;
+		
+		sim_rst_n = 1'b1;
 		
 		// Add stimulus here
 
@@ -83,6 +90,7 @@ module furrtek_video_reset_tb;
 		apply_test("tock", hres, vres, e5top, /*48M=*/1'b1, /*HRESET_exp=*/1'b0, /*HRESET1_exp=*/1'b0, /*HRESET2_exp=*/1'b0, /*HRESET3_exp=*/1'b0, /*VRESET1_exp=*/1'b0, /*VRESET2_exp=*/1'b0, /*VRESET3_exp=*/1'b0, test_result);
 		
 		hres = 1'b1;
+		vres = 1'b0;
 		
 		apply_test("tick", hres, vres, e5top, /*48M=*/1'b0, /*HRESET_exp=*/1'b0, /*HRESET1_exp=*/1'b0, /*HRESET2_exp=*/1'b0, /*HRESET3_exp=*/1'b0, /*VRESET1_exp=*/1'b0, /*VRESET2_exp=*/1'b0, /*VRESET3_exp=*/1'b0, test_result);
 		apply_test("tock", hres, vres, e5top, /*48M=*/1'b1, /*HRESET_exp=*/1'b0, /*HRESET1_exp=*/1'b0, /*HRESET2_exp=*/1'b0, /*HRESET3_exp=*/1'b0, /*VRESET1_exp=*/1'b0, /*VRESET2_exp=*/1'b0, /*VRESET3_exp=*/1'b0, test_result);
@@ -107,6 +115,8 @@ module furrtek_video_reset_tb;
 		
 		write_divider();
 		
+		hres = 1'b0;
+		vres = 1'b0;
 		e5top = 1'b1;
 		
 		apply_test("tick", hres, vres, e5top, /*48M=*/1'b0, /*HRESET_exp=*/1'b0, /*HRESET1_exp=*/1'b0, /*HRESET2_exp=*/1'b0, /*HRESET3_exp=*/1'b0, /*VRESET1_exp=*/1'b0, /*VRESET2_exp=*/1'b0, /*VRESET3_exp=*/1'b0, test_result);
@@ -115,6 +125,7 @@ module furrtek_video_reset_tb;
 		apply_test("tock", hres, vres, e5top, /*48M=*/1'b1, /*HRESET_exp=*/1'b0, /*HRESET1_exp=*/1'b0, /*HRESET2_exp=*/1'b0, /*HRESET3_exp=*/1'b0, /*VRESET1_exp=*/1'b0, /*VRESET2_exp=*/1'b0, /*VRESET3_exp=*/1'b0, test_result);
 		
 		hres = 1'b1;
+		vres = 1'b0;
 		
 		apply_test("tick", hres, vres, e5top, /*48M=*/1'b0, /*HRESET_exp=*/1'b0, /*HRESET1_exp=*/1'b0, /*HRESET2_exp=*/1'b0, /*HRESET3_exp=*/1'b0, /*VRESET1_exp=*/1'b0, /*VRESET2_exp=*/1'b0, /*VRESET3_exp=*/1'b0, test_result);
 		apply_test("tock", hres, vres, e5top, /*48M=*/1'b1, /*HRESET_exp=*/1'b0, /*HRESET1_exp=*/1'b0, /*HRESET2_exp=*/1'b0, /*HRESET3_exp=*/1'b0, /*VRESET1_exp=*/1'b0, /*VRESET2_exp=*/1'b0, /*VRESET3_exp=*/1'b0, test_result);
@@ -224,7 +235,7 @@ module furrtek_video_reset_tb;
 	 input i48M
 	);
 	begin
-	   sig_bHRES_IN_i = ~iHRES_IN;
+		sig_bHRES_IN_i = ~iHRES_IN;
 		sig_bVRES_IN_i = ~iVRES_IN;
 		sig_E5TOP_i = iE5TOP;
 		sig_b48M_2_i = ~i48M;

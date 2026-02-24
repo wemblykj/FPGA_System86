@@ -26,6 +26,8 @@ module furrtek_cus27_ref_tb;
 	parameter IOB_INPUT_INVERSION = 1'b1;
 	parameter IOB_OUTPUT_INVERSION = 1'b1;
 	
+	reg sim_rst_n;
+	
 	// Inputs
 	reg sig_48M_i;
 	reg sig_6M_IN_i;
@@ -65,6 +67,7 @@ module furrtek_cus27_ref_tb;
 			IOB_INPUT_INVERSION,
 			IOB_OUTPUT_INVERSION )
 		uut ( 
+			.sim_rst_n(sim_rst_n),
 			.pin_48M_i(sig_48M_i), 
 			.pin_OTEN_i(1'b0),
 			.pin_MODE0_i(1'b0),
@@ -103,9 +106,13 @@ module furrtek_cus27_ref_tb;
 		sig_bHRES_IN_i = 1'b1;
 		sig_bVRES_IN_i = 1'b1;
 
+		sim_rst_n = 1'b0;
+		
 		// Wait 100 ns for global reset to finish
 		#10;
-		  
+		 
+		sim_rst_n = 1'b1;
+		
 		// Add stimulus here
 		
 		#800;

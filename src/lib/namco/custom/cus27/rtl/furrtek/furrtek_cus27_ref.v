@@ -11,14 +11,16 @@
 // Tool versions: 
 // Description:    Namco CUS27 - based on third-party reverse engineering of the CUS27 die
 //
-//                 [^1] https://siliconprawn.org/map/namco/27/
-//                 [^2] https://github.com/furrtek/SiliconRE/tree/master/Namco/CUS27
-//                 [^3] https://www.ti.com/lit/ds/symlink/sn74lvc2g74-ep.pdf
-//
 //                 Kudos go to:
 //                  Furrtek for reverse engineering: http://www.furrtek.org
 //                  JohnDMcMaster for die photos: https://siliconprawn.org/
 //
+// References:
+//                 [^1] https://siliconprawn.org/map/namco/27/
+//                 [^2] https://github.com/furrtek/SiliconRE/tree/master/Namco/CUS27
+//                 [^3] https://www.ti.com/lit/ds/symlink/sn74lvc2g74-ep.pdf
+//                 [^4] https://datasheet4u.com/pdf-down/M/B/1/MB111XXX_Fujitsu.pdf
+//                 [^5] https://patents.google.com/patent/US4584653A/ja
 //
 // Dependencies: 
 //
@@ -32,6 +34,7 @@ module cus27_furrtek_ref
 	#( parameter IOB_INPUT_INVERSION = 1'b1,
 		parameter IOB_OUTPUT_INVERSION = 1'b1 )
 	(
+		input wire sim_rst_n,
 		
 		// input clocks
 		input wire pin_48M_i,
@@ -44,7 +47,7 @@ module cus27_furrtek_ref
 		input wire pin_FLIP_i,
 		
 		input wire pin_bHRES_IN_i,	// external horizontal reset
-		input wire pin_bVRES_IN_i, // external vertical reset
+		input wire pin_bVRES_IN_i,  // external vertical reset
 		
 		// generated clocks
 		output wire pin_24M_o,
@@ -80,42 +83,6 @@ module cus27_furrtek_ref
 		output wire pin_PIN41_o	// unknown function, regular pulse in sync with 48M clock
 	);
 
-	// I'm going out on a limb and assuming that signals into and out of the chip are inverted and that the logic cells are
-	// expecting this such that the inputs to an inverter are themselves inverted and the standard cell input stage logic is a NOR gate
-	// resulting in NAND logic
-	
-	// As a proof of my conjecture...
-	// Assume an external observer applies signls A and B to input pins routed through an internal 'NAND' gate and the resultant output is observered as signal Q
-	// The truth table for the observer is therefore as follows
-	//
-	//  A  |  B  |  Q ¬(A AND B) `
-	// ----+-----+--------------
-	//  0  |  0  |  1
-	//  0  |  1  |  1
-	//  1  |  0  |  1
-	//  1  |  1  |  0
-	//
-	// However internally if inputs are inverted and the output is inverted (via a 3 output NAND as proposed by [^2])
-	// then the standard cell can be implemented as an N input NOR gate (my unfounded suspicion from looking at the die)
-   //	
-	// observable      standard cell                    observable
-	// inputs          logic                            output
-	//  A  |  B  |     | ¬A |  ¬B |  ¬Q ¬(A OR B) |     | Q ¬(A AND B) |
-	// ----+-----+     +----+-----+---------------+     +--------------+
-	//  0  |  0  |     | 1  |  1  |  0            |     |  1           |
-	//  0  |  1  |  => | 1  |  0  |  0            |  => |  1           |
-	//  1  |  0  |     | 0  |  1  |  0            |     |  1           |
-	//  1  |  1  |     | 0  |  0  |  1            |     |  0           |
-	//
-	// An inverter is simply one of these NOR gates with a single input and the unconnected inputs being treated as [high? TBC]
-   //
-	// observable         standard cell                    observable
-	// inputs             logic                            output
-	//  A  |  B (nc)|     | ¬A |  ¬B |  ¬Q ¬(A OR B) |     | Q ¬(A AND B) |
-	// ----+--------+     +----+-----+---------------+     +--------------+
-	//  0  |  1     |  => | 1  |  1  |  0            |     |  1           |
-	//  1  |  1     |     | 0  |  0  |  1            |     |  0           |
-	
 	//
 	// internal input signals
 	
@@ -224,7 +191,8 @@ module cus27_furrtek_ref
 	
 	furrtek_clock_divider
 		clock_divider (
-		   .sig_bMODE1_i(sig_bMODE1),
+			.sim_rst_n(sim_rst_n),
+			.sig_bMODE1_i(sig_bMODE1),
 			.sig_MODE0_i(sig_MODE0),
 			.sig_FLIP_i(sig_FLIP),
 			.sig_48M_i(sig_48M), 
@@ -241,10 +209,11 @@ module cus27_furrtek_ref
 	
 	furrtek_horizontal
 		horizontal_timings (
+			.sim_rst_n(sim_rst_n),
 			.sig_6MIN2_i(sig_6MIN2),
 			.sig_bHRESET3_i(sig_bHRESET3),
-			.sig_J5Q_o(sig_J5Q),
-			.sig_J5bQ_o(sig_J5bQ),
+			.sig_J5_Q_o(sig_J5_Q),
+			.sig_J5_XQ_o(sig_J5_XQ),
 			.sig_b1H_o(sig_b1H),
 			.sig_b2H_o(sig_b2H),
 			.sig_b4H_o(sig_b4H),
@@ -253,7 +222,8 @@ module cus27_furrtek_ref
 	
 	furrtek_video_reset
 		video_reset (
-		.sig_b48M_2_i(sig_b48M_2),
+			.sim_rst_n(sim_rst_n),
+			.sig_b48M_2_i(sig_b48M_2),
 			.sig_bHRES_IN_i(sig_bHRES_IN),
 			.sig_bVRES_IN_i(sig_bVRES_IN),
 			.sig_E5TOP_i(sig_E5TOP), 
@@ -268,21 +238,23 @@ module cus27_furrtek_ref
 	
 	furrtek_pin40
 		pin40 (	
-		.sig_b48M_i(sig_b48M),
-		.sig_24M_i(sig_24M),
-		.sig_12M_i(sig_12M),
-		.sig_HRESET_i(sig_HRESET),
-		.sig_bPIN40_o(sig_bPIN40)
+			.sim_rst_n(sim_rst_n),
+			.sig_b48M_i(sig_b48M),
+			.sig_24M_i(sig_24M),
+			.sig_12M_i(sig_12M),
+			.sig_HRESET_i(sig_HRESET),
+			.sig_bPIN40_o(sig_bPIN40)
 	);
 	
 	furrtek_pin41
 		pin41 (
-		.sig_bMODE1_i(sig_bMODE1),
-		.sig_MODE0_i(sig_MODE0),
-		.sig_FLIP_i(sig_FLIP),
-		.sig_b48M_i(sig_b48M),
-		.sig_48M2_i(sig_48M2), 
-		.sig_bPIN41_o(sig_bPIN41)
+			.sim_rst_n(sim_rst_n),
+			.sig_bMODE1_i(sig_bMODE1),
+			.sig_MODE0_i(sig_MODE0),
+			.sig_FLIP_i(sig_FLIP),
+			.sig_b48M_i(sig_b48M),
+			.sig_48M2_i(sig_48M2), 
+			.sig_bPIN41_o(sig_bPIN41)
 	);
 			
 endmodule

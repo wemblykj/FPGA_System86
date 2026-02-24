@@ -29,31 +29,33 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module furrtek_vertical (
-		// input clocks
-		input wire sig_6MIN_i,
-		
-		input wire sig_FLIP_i,
-		input wire sig_MODE0_i,
-		
-		input wire sig_bVRESET3_i,
-		
-		input wire sig_E12Q_i,
-		input wire sig_J5bQ_i,
-		input wire sig_C11TOP_i,
-		input wire sig_D11Q_i,
-		input wire sig_J10BOT_i,
-		input wire sig_G11bQ_i,
-		
-		output wire sig_b1V_o,
-		output wire sig_b2V_o,
-		output wire sig_b4V_o,
-		
-		// internal routing ouputs
-		output wire sig_C15TOP_o,
-		output wire sig_C17bQ_o,
-		output wire sig_A17Q_o,	// presuming this is equivalent to 8V
-		output wire sig_A17Q_o
-	);
+	input wire sim_rst_n,
+	
+	// input clocks
+	input wire sig_6MIN_i,
+	
+	input wire sig_FLIP_i,
+	input wire sig_MODE0_i,
+	
+	input wire sig_bVRESET3_i,
+	
+	input wire sig_E12_Q_i,
+	input wire sig_J5_XQ_i,
+	input wire sig_C11TOP_i,
+	input wire sig_D11_Q_i,
+	input wire sig_J10BOT_i,
+	input wire sig_G11_XQ_i,
+	
+	output wire sig_b1V_o,
+	output wire sig_b2V_o,
+	output wire sig_b4V_o,
+	
+	// internal routing ouputs
+	output wire sig_C15TOP_o,
+	output wire sig_C17_XQ_o,
+	output wire sig_A17_Q_o,	// presuming this is equivalent to 8V
+	output wire sig_A17_XQ_o
+);
 	
 	wire sig_A16TOP;
 	wire sig_B16TOP;
@@ -69,103 +71,119 @@ module furrtek_vertical (
 	assign sig_b2V_o = sig_B17_Q;
 	assign sig_b4V_o = sig_C17_Q;
 	assign sig_C15TOP_o = sig_C15TOP;
-	assign sig_C17_bQ_o = sig_C17_bQ;
-	assign sig_A17Q_o = sig_A17_Q;
-	assign sig_A17bQ_o = sig_A17_bQ;
+	assign sig_C17_XQ_o = sig_C17_XQ;
+	assign sig_A17_Q_o = sig_A17_Q;
+	assign sig_A17_XQ_o = sig_A17_XQ;
 	
 	//
 	// RTL
 	//
-	
-	//
-	// synthesise the routing of signals through simple logic cells 
-	
-	assign sig_E15TOP = ~sig_F16BOT;
-	assign sig_B16TOP = ~sig_F17BOT;
-	assign sig_C15TOP = ~sig_F17TOP;
-	assign sig_A16TOP = ~sig_F15TOP;
-	
+
 	//
 	// standard cell synthesis
 	
-	n06_nand6
+	mb111_n01_inverter
+		cus27_E15TOP_inverter (
+			.A(sig_F16BOT),
+			.Y(sig_E15TOP)
+		);
+		
+	mb111_n01_inverter
+		cus27_B16TOP_inverter (
+			.A(sig_F17BOT),
+			.Y(sig_B16TOP)
+		);
+		
+	mb111_n01_inverter
+		cus27_C15TOP_inverter (
+			.A(sig_F17TOP),
+			.Y(sig_C15TOP)
+		);
+		
+	mb111_n01_inverter
+		cus27_E5TOP_inverter (
+			.A(sig_F15TOP),
+			.Y(sig_A16TOP)
+		);
+		
+	mb111_n06_nand6
 		cus27_F11TOP_nand6(
 			.A(sig_E12Q_i),
-			.B(sig_J5bQ_i),
+			.B(sig_J5XQ_i),
 			.C(sig_C11TOP_i),
 			.D(sig_D11Q_i),
 			.E(sig_J10BOT_i),
-			.F(sig_G11bQ_i),
+			.F(sig_G11XQ_i),
 			.Y(sig_F11TOP)
 		);
 	
-	n03_nand3
-		cus27_E9BOT_nand3(
+	mb111_n02_nand2
+		cus27_E9BOT_nand2(
 			.A(sig_FLIP_i),
 			.B(sig_MODE0_i),
 			.Y(sig_E9BOT)
 		);
 		
-	n03_nand3
-		cus27_F16BOT_nand3(
+	mb111_n02_nand2
+		cus27_F16BOT_nand2(
 			.A(sig_F11TOP),
 			.B(sig_E9BOT),
 			.Y(sig_F16BOT)
 		);
 		
-	n03_nand3
+	mb111_n02_nand2
 		cus27_F17BOT_nand3(
-			.A(sig_E17_bQ),
+			.A(sig_E17_XQ),
 			.B(sig_F16BOT),
 			.Y(sig_F17BOT)
 		);
 	
-	n03_nand3
+	mb111_n03_nand3
 		cus27_F17TOP_nand3(
-			.A(sig_B17_bQ),
-			.B(sig_E17_bQ),
+			.A(sig_B17_XQ),
+			.B(sig_E17_XQ),
 			.C(sig_F16BOT),
 			.Y(sig_F17TOP)
 		);
 		
-	fj3_jxkff
+	mb111_fj3_jxkff
 		cus27_E17_jkff(
 			.CLK(sig_6MIN_i),
-			.bJ(sig_E17TOP),
-			.K(sig_F16BOT),
-			.SET(sig_bVRESET3_i),
+			.J(sig_E17TOP),
+			.XK(sig_F16BOT),
+			.bSET(sig_bVRESET3_i & sim_rst_n),
 			.Q(sig_E17_Q),
-			.bQ(sig_E17_bQ)
+			.XQ(sig_E17_XQ)
 		);
 		
-	fj3_jxkff
+	mb111_fj3_jxkff
 		cus27_B17_jkff(
 			.CLK(sig_6MIN_i),
-			.bJ(sig_F16BOT),
-			.K(sig_B16TOP),
-			.SET(sig_bVRESET3_i),
+			.J(sig_F16BOT),
+			.XK(sig_B16TOP),
+			.bSET(sig_bVRESET3_i & sim_rst_n),
 			.Q(sig_B17_Q),
-			.bQ(sig_B17_bQ)
+			.XQ(sig_B17_XQ)
 		);
 		
-	fj3_jxkff
+	mb111_fj3_jxkff
 		cus27_C17_jkff(
 			.CLK(sig_6MIN_i),
-			.bJ(sig_F17TOP),
-			.K(sig_C15TOP),
-			.SET(sig_bVRESET3_i),
+			.J(sig_F17TOP),
+			.XK(sig_C15TOP),
+			.bSET(sig_bVRESET3_i & sim_rst_n),
 			.Q(sig_C17_Q),
-			.bQ(sig_C17_bQ)
+			.XQ(sig_C17_XQ)
 		);
 		
-	fj3_jxkff
-		cus27_E17_jkff(
+	mb111_fj3_jxkff
+		cus27_A17_jkff(
 			.CLK(sig_6MIN_i),
-			.bJ(sig_F15TOP),
-			.K(sig_A16TOP),
-			.SET(sig_bVRESET3_i),
-			.Q(sig_E17_Q),
-			.bQ(sig_E17_bQ)
+			.J(sig_F15TOP),
+			.XK(sig_A16TOP),
+			.bSET(sig_bVRESET3_i & sim_rst_n),
+			.Q(sig_A17_Q),
+			.XQ(sig_A17_XQ)
 		);
 	
 endmodule

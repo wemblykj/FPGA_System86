@@ -24,6 +24,8 @@
 
 module furrtek_clock_divider_tb;
 
+	reg sim_rst_n;
+	
 	// Inputs
 	reg sig_bMODE1;
 	reg sig_MODE0;
@@ -48,6 +50,7 @@ module furrtek_clock_divider_tb;
 	// Instantiate the Unit Under Test (UUT)
 	furrtek_clock_divider
 		uut (
+			.sim_rst_n(sim_rst_n),
 			.sig_bMODE1_i(sig_bMODE1),
 			.sig_MODE0_i(sig_MODE0),
 			.sig_FLIP_i(sig_FLIP),
@@ -80,8 +83,12 @@ module furrtek_clock_divider_tb;
 		flip = 1'b0;
 		hres = 1'b0;
 		
+		sim_rst_n = 1'b0;
+		
 		// Wait 100 ns for global reset to finish
 		#10;
+		
+		sim_rst_n = 1'b1;
 		
 		// Add stimulus here
 
@@ -103,7 +110,7 @@ module furrtek_clock_divider_tb;
 		apply_test("tock", mode1, mode0, flip, /*48M=*/1'b0, /*HRES=*/1'b1, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
 		apply_test("~HRES", mode1, mode0, flip, /*48M=*/1'b0, /*HRES=*/1'b0, /*24M_exp=*/1'b0, /*12M_exp=*/1'b0, /*6M_OUT_exp=*/1'b0, /*S1H_exp=*/1'b0, /*S2H_exp=*/1'b0, /*E5TOP_exp=*/1'b0, test_result);
 				
-		hres = 1'b1;
+		hres = 1'b0;
 		
 		write_divider();
 		

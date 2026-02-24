@@ -29,19 +29,21 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module furrtek_video_reset (
-		// input clocks
-		input wire sig_b48M_2_i,
-		input wire sig_bHRES_IN_i,
-		input wire sig_bVRES_IN_i,
-		input wire sig_E5TOP_i,
-		output wire sig_HRESET_o,
-		output wire sig_bHRESET1_o,
-		output wire sig_bHRESET2_o,
-		output wire sig_bHRESET3_o,
-		output wire sig_bVRESET1_o,
-		output wire sig_bVRESET2_o,
-		output wire sig_bVRESET3_o
-	);
+	input wire sim_rst_n,
+	
+	// input clocks
+	input wire sig_b48M_2_i,
+	input wire sig_bHRES_IN_i,
+	input wire sig_bVRES_IN_i,
+	input wire sig_E5TOP_i,
+	output wire sig_HRESET_o,
+	output wire sig_bHRESET1_o,
+	output wire sig_bHRESET2_o,
+	output wire sig_bHRESET3_o,
+	output wire sig_bVRESET1_o,
+	output wire sig_bVRESET2_o,
+	output wire sig_bVRESET3_o
+);
 
 	wire sig_E5BOT;
 	wire sig_F5BOT;
@@ -55,49 +57,74 @@ module furrtek_video_reset (
 	wire sig_F9BOT;
 	wire sig_H9TOP;
 	
-	assign #1 sig_HRESET_o = sig_F5TOP;
-	assign #1 sig_bHRESET1_o = sig_F9TOP;
-	assign #1 sig_bHRESET2_o = sig_F9BOT;
-	assign #1 sig_bHRESET3_o = sig_H9TOP;
+	assign sig_HRESET_o = sig_F5TOP;
+	assign sig_bHRESET1_o = sig_F9TOP;
+	assign sig_bHRESET2_o = sig_F9BOT;
+	assign sig_bHRESET3_o = sig_H9TOP;
 	
-	assign #1 sig_bVRESET1_o = sig_F9TOP;
-	assign #1 sig_bVRESET2_o = sig_F9BOT;
-	assign #1 sig_bVRESET3_o = sig_H9TOP;
+	assign sig_bVRESET1_o = sig_C16TOP;
+	assign sig_bVRESET2_o = sig_B15TOP;
+	assign sig_bVRESET3_o = sig_B15BOT;
 	
 	//
 	// RTL
 	//
 	
 	//
-	// synthesise the routing of signals through simple logic cells 
-	
-	assign sig_C16TOP = ~sig_F5BOT;
-	assign sig_B15TOP = ~sig_F5BOT;
-	assign sig_B15BOT = ~sig_F5BOT;
-	
-	assign sig_F9TOP = ~sig_F5TOP;
-	assign sig_F9BOT = ~sig_F5TOP;
-	assign sig_H9TOP = ~sig_F5TOP;
-
-	//
 	// standard cell synthesis
 	
-	n03_nand3
-		cus27_E5BOT_nand3(
+	mb111_n01_inverter
+		cus27_C16TOP_inverter (
+			.A(sig_F5BOT),
+			.Y(sig_C16TOP)
+		);
+	
+	mb111_n01_inverter
+		cus27_B15TOP_inverter (
+			.A(sig_F5BOT),
+			.Y(sig_B15TOP)
+		);
+		
+	mb111_n01_inverter
+		cus27_B15BOT_inverter (
+			.A(sig_F5BOT),
+			.Y(sig_B15BOT)
+		);
+		
+	mb111_n01_inverter
+		cus27_F9TOP_inverter (
+			.A(sig_F5TOP),
+			.Y(sig_F9TOP)
+		);
+		
+	mb111_n01_inverter
+		cus27_F9BOT_inverter (
+			.A(sig_F5TOP),
+			.Y(sig_F9BOT)
+		);
+		
+	mb111_n01_inverter
+		cus27_H9TOP_inverter (
+			.A(sig_F5TOP),
+			.Y(sig_H9TOP)
+		);
+		
+	mb111_n02_nand2
+		cus27_E5BOT_nand2(
 			.A(sig_b48M_2_i),
 			.B(sig_E5TOP_i),
 			.Y(sig_E5BOT)
 		);
 		
-	n03_nand3
-		cus27_F5BOT_nand3(
-			.A(sig_bHRES_IN_i),
+	mb111_n02_nand2
+		cus27_F5BOT_nand2(
+			.A(sig_bVRES_IN_i),
 			.B(sig_E5BOT),
 			.Y(sig_F5BOT)
 		);
 		
-	n03_nand3
-		cus27_F5TOP_nand3(
+	mb111_n02_nand2
+		cus27_F5TOP_nand2(
 			.A(sig_bHRES_IN_i),
 			.B(sig_E5BOT),
 			.Y(sig_F5TOP)

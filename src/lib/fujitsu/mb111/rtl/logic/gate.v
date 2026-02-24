@@ -77,7 +77,7 @@ module mb111_gate
 	wire nand_comb = nand_in & ~and_comb;
     wire #(T_NAND - T_AND) nand_tap = nand_comb;
 	 
-	wire #(T_TOTAL - T_NAND) f = nand_comb;
+	wire #(T_TOTAL - T_NAND) f = nand_tap;
 
     // Outputs
 	assign AND_OUT = and_tap;

@@ -29,17 +29,19 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module furrtek_pin41 (
-		// input clocks
-		input wire sig_b48M_i,
-		input wire sig_48M2_i,
-		
-		// internal routing inputs
-		input wire sig_bMODE1_i,
-		input wire sig_MODE0_i,
-		input wire sig_FLIP_i,
-		
-		output wire sig_bPIN41_o	//	pin 41 driver
-	);
+	input wire sim_rst_n,
+	
+	// input clocks
+	input wire sig_b48M_i,
+	input wire sig_48M2_i,
+	
+	// internal routing inputs
+	input wire sig_bMODE1_i,
+	input wire sig_MODE0_i,
+	input wire sig_FLIP_i,
+	
+	output wire sig_bPIN41_o	//	pin 41 driver
+);
 
 	// output mapping
 	assign #1 sig_bPIN41_o = sig_D8_Q;
@@ -47,12 +49,12 @@ module furrtek_pin41 (
 	// internal routing
 	wire sig_E6BOT;
 	wire sig_C1_Q;
-	wire sig_C1_bQ;
+	wire sig_C1_XQ;
 	wire sig_C9TOP;
 	wire sig_C5_Q;
-	wire sig_C5_bQ;
+	wire sig_C5_XQ;
 	wire sig_D1_Q;
-	wire sig_D1_bQ;
+	wire sig_D1_XQ;
 	wire sig_D8_Q;
 	
 
@@ -63,14 +65,14 @@ module furrtek_pin41 (
 	//
 	// synthesise the routing of signals through simple logic cells 
 	
-	assign #1 sig_C9TOP = sig_C5_bQ & sig_D1_bQ;
+	assign #1 sig_C9TOP = sig_C5_XQ & sig_D1_XQ;
 	
 	//
 	// standard cell synthesis
 	
 	// E6BOT interpretation - enable <pin 41> signal if MODE1 active
 	//	output is low if MODE1 high and MODE0 and FLIP are low, otherwise output is high
-	n03_nand3
+	mb111_n03_nand3
 		cus27_E6BOT_nand3(
 			.A(sig_bMODE1_i),
 			.B(sig_MODE0_i),
@@ -78,41 +80,41 @@ module furrtek_pin41 (
 			.Y(sig_E6BOT)
 		);
 		
-	fj3_jxkff
+	mb111_fj3_jxkff
 		cus27_C1_jkff(
 			.CLK(sig_48M2_i),
-			.bJ(sig_C1_Q),
-			.K(sig_C9TOP),
-			.RES(sig_E6BOT),
+			.J(sig_C1_Q),
+			.XK(sig_C9TOP),
+			.bRES(sig_E6BOT & sim_rst_n),
 			.Q(sig_C1_Q),
-			.bQ(sig_C1_bQ)
+			.XQ(sig_C1_XQ)
 		);
 		
-	fj3_jxkff
+	mb111_fj3_jxkff
 		cus27_C5_jkff(
 			.CLK(sig_48M2_i),
-			.bJ(sig_C1_bQ),
-			.K(sig_C1_Q),
-			.RES(sig_E6BOT),
+			.J(sig_C1_XQ),
+			.XK(sig_C1_Q),
+			.bRES(sig_E6BOT & sim_rst_n),
 			.Q(sig_C5_Q),
-			.bQ(sig_C5_bQ)
+			.XQ(sig_C5_XQ)
 		);
 		
-	fj3_jxkff
+	mb111_fj3_jxkff
 		cus27_D1_jkff(
 			.CLK(sig_48M2_i),
-			.bJ(sig_C5_bQ),
-			.K(sig_C5_Q),
-			.RES(sig_E6BOT),
+			.J(sig_C5_XQ),
+			.XK(sig_C5_Q),
+			.bRES(sig_E6BOT & sim_rst_n),
 			.Q(sig_D1_Q),
-			.bQ(sig_D1_bQ)
+			.XQ(sig_D1_XQ)
 		);
 		
-	fd1_dff
+	mb111_fd1_dff
 		cus27_D8_dff(
 			.CLK(sig_b48M_i),
-			.DIN(sig_D1_Q),
-			.SET(sig_E6BOT),
+			.D(sig_D1_Q),
+			.bSET(sig_E6BOT & sim_rst_n),
 			.Q(sig_D8_Q)
 		);
 			
