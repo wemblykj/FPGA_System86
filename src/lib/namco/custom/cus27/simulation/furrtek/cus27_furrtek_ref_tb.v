@@ -1,4 +1,4 @@
-`timescale 100ps / 1ps
+`timescale 1ns / 1ps
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer:
@@ -23,17 +23,23 @@
 
 module furrtek_cus27_ref_tb;
 
+	parameter CLOCK_FREQ_MHZ = 49.152;
+	parameter CLOCK_PERIOD_NS = 1000.0 / CLOCK_FREQ_MHZ;
+	parameter CLOCK_HALF_PERIOD_NS = CLOCK_PERIOD_NS / 2.0;
+	
 	parameter IOB_INPUT_INVERSION = 1'b1;
 	parameter IOB_OUTPUT_INVERSION = 1'b1;
 	
 	reg sim_rst_n;
 	
-	// Inputs
+	// Inputs 
 	reg sig_48M_i;
-	reg sig_6M_IN_i;
-	reg sig_bHRES_IN_i;
-	reg sig_bVRES_IN_i;
-
+	//reg sig_6M_IN_i;
+	//reg sig_bHRES_IN_i;
+	//reg sig_bVRES_IN_i;
+	wire sig_bHRES_IN_i = dir_HRES_o ? 1'bz : 1'b0;
+	wire sig_bVRES_IN_i = dir_VRES_o ? 1'bz : 1'b0;
+	
 	// Outputs
 	wire sig_24M_o;
 	wire sig_12M_o;
@@ -42,10 +48,12 @@ module furrtek_cus27_ref_tb;
 	wire sig_bHSYNC_o;
 	wire sig_bHBLANK_o;
 	wire sig_bHRES_o;
+	wire dir_HRES_o;
 	
 	wire sig_bVSYNC_o;
 	wire sig_bVBLANK_o;
 	wire sig_bVRES_o;
+	wire dir_VRES_o;
 		
 	wire sig_1H_o;
 	wire sig_2H_o;
@@ -60,7 +68,7 @@ module furrtek_cus27_ref_tb;
 	wire sig_PIN40_o;
 	wire sig_PIN41_o;
 
-	//assign #1 sig_6M_IN_i = sig_6M_o;
+	assign #1 sig_6M_IN_i = sig_6M_OUT_o;
 	
 	// Instantiate the Unit Under Test (UUT)
 	cus27_furrtek_ref #(	
@@ -83,8 +91,10 @@ module furrtek_cus27_ref_tb;
 			.pin_bHSYNC_o(sig_bHSYNC_o), 
 			.pin_bVBLANK_o(sig_bVBLANK_o), 
 			.pin_bHBLANK_o(sig_bHBLANK_o), 
-			.pin_bVRES_o(sig_bVRES_o), 
 			.pin_bHRES_o(sig_bHRES_o), 
+			.dir_HRES_o(dir_HRES_o),
+			.pin_bVRES_o(sig_bVRES_o), 
+			.dir_VRES_o(dir_VRES_o),
 			.pin_1H_o(sig_1H_o), 
 			.pin_2H_o(sig_2H_o), 
 			.pin_4H_o(sig_4H_o), 
@@ -102,20 +112,23 @@ module furrtek_cus27_ref_tb;
 	initial begin
 		// Initialize Inputs
 		sig_48M_i = 1'b0;
-		sig_6M_IN_i = 1'b0;
-		sig_bHRES_IN_i = 1'b1;
-		sig_bVRES_IN_i = 1'b1;
+		//sig_6M_IN_i = 1'b1;
+		//sig_bHRES_IN_i = 1'bz;	// in theory not connected as input?
+		//sig_bVRES_IN_i = 1'bz;	// in theory not connected as input?
 
 		sim_rst_n = 1'b0;
 		
+		#(CLOCK_PERIOD_NS)
+		#(CLOCK_PERIOD_NS)
+		#(CLOCK_PERIOD_NS)
 		// Wait 100 ns for global reset to finish
-		#10;
+		//#1000;
 		 
 		sim_rst_n = 1'b1;
 		
 		// Add stimulus here
 		
-		#800;
+		#8000;
 		
 		/*#800;
 		
@@ -145,9 +158,7 @@ module furrtek_cus27_ref_tb;
 	//end
     
 	always begin
-		//#10.1725 sig_48M_i = ~sig_48M_i;
-		#25 sig_48M_i = ~sig_48M_i;
-		#10 sig_6M_IN_i = sig_6M_OUT_o;
+		#(CLOCK_HALF_PERIOD_NS) sig_48M_i = ~sig_48M_i;
 	end
       
 endmodule

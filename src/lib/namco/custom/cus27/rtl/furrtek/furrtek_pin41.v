@@ -44,7 +44,7 @@ module furrtek_pin41 (
 );
 
 	// output mapping
-	assign #1 sig_bPIN41_o = sig_D8_Q;
+	assign sig_bPIN41_o = sig_D8_Q;
 	
 	// internal routing
 	wire sig_E6BOT;
@@ -65,7 +65,7 @@ module furrtek_pin41 (
 	//
 	// synthesise the routing of signals through simple logic cells 
 	
-	assign #1 sig_C9TOP = sig_C5_XQ & sig_D1_XQ;
+	assign sig_C9TOP = sig_C5_XQ & sig_D1_XQ;
 	
 	//
 	// standard cell synthesis

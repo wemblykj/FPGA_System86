@@ -42,7 +42,7 @@
 
 module mb111_gate
     #(parameter T_AND = 0.3,
-	  parameter T_NAND = 0.8,	
+	  parameter T_NAND = 1.2,	
 	  parameter T_TOTAL = 1.65 )
 (
     input wire A,

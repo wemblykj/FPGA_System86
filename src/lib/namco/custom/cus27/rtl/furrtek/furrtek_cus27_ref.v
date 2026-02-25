@@ -32,57 +32,63 @@
 //////////////////////////////////////////////////////////////////////////////////
 module cus27_furrtek_ref
 	#( parameter IOB_INPUT_INVERSION = 1'b1,
-		parameter IOB_OUTPUT_INVERSION = 1'b1 )
-	(
-		input wire sim_rst_n,
-		
-		// input clocks
-		input wire pin_48M_i,
-		input wire pin_6M_IN_i,
-		
-		// configuration
-		input wire pin_OTEN_i,
-		input wire pin_MODE0_i,
-		input wire pin_MODE1_i,		// use external resets
-		input wire pin_FLIP_i,
-		
-		input wire pin_bHRES_IN_i,	// external horizontal reset
-		input wire pin_bVRES_IN_i,  // external vertical reset
-		
-		// generated clocks
-		output wire pin_24M_o,
-		output wire pin_12M_o,
-		output wire pin_6M_OUT_o,
-		
-		// video synchronisation
-		
-		output wire pin_bHSYNC_o,
-		output wire pin_bHBLANK_o,
-		output wire pin_bHRES_o,
-		output wire dir_bHRES_o,
-		
-		output wire pin_bVSYNC_o,
-		output wire pin_bVBLANK_o,
-		output wire pin_bVRES_o,
-		output wire dir_bVRES_o,
-		
-		// video timing signals
-		
-		output wire pin_1H_o,	// 1 pixel count
-		output wire pin_2H_o,	// 2 pixel count
-		output wire pin_4H_o,	// 4 pixel count
-		output wire pin_8H_o,	// 8 pixel count (pin 6)
-		output wire pin_1V_o,	//	1 line count
-		output wire pin_2V_o,	//	2 line count
-		output wire pin_4V_o,	//	4 line count
-		output wire pin_8V_o,	//	8 line count
-		output wire pin_S1H_o,	//	1 pixel count (negative offset?)
-		output wire pin_S2H_o,	//	2 pixel count (negative offset?)
-		
-		output wire pin_PIN40_o,	// unknown function, HRESET dependant
-		output wire pin_PIN41_o	// unknown function, regular pulse in sync with 48M clock
-	);
+	   parameter IOB_OUTPUT_INVERSION = 1'b1 )
+(
+	input wire sim_rst_n,
+	
+	// input clocks
+	input wire pin_48M_i,
+	input wire pin_6M_IN_i,
+	
+	// configuration
+	input wire pin_OTEN_i,
+	input wire pin_MODE0_i,
+	input wire pin_MODE1_i,		// use external resets
+	input wire pin_FLIP_i,
+	
+	input wire pin_bHRES_IN_i,	// external horizontal reset
+	input wire pin_bVRES_IN_i,  // external vertical reset
+	
+	// generated clocks
+	output wire pin_24M_o,
+	output wire pin_12M_o,
+	output wire pin_6M_OUT_o,
+	
+	// video synchronisation
+	
+	output wire pin_bHSYNC_o,
+	output wire pin_bHBLANK_o,
+	output wire pin_bHRES_o,
+	output wire dir_HRES_o,
+	
+	output wire pin_bVSYNC_o,
+	output wire pin_bVBLANK_o,
+	output wire pin_bVRES_o,
+	output wire dir_VRES_o,
+	
+	// video timing signals
+	
+	output wire pin_1H_o,	// 1 pixel count
+	output wire pin_2H_o,	// 2 pixel count
+	output wire pin_4H_o,	// 4 pixel count
+	output wire pin_8H_o,	// 8 pixel count (pin 6)
+	output wire pin_1V_o,	//	1 line count
+	output wire pin_2V_o,	//	2 line count
+	output wire pin_4V_o,	//	4 line count
+	output wire pin_8V_o,	//	8 line count
+	output wire pin_S1H_o,	//	1 pixel count (negative offset?)
+	output wire pin_S2H_o,	//	2 pixel count (negative offset?)
+	
+	output wire pin_PIN40_o,	// unknown function, HRESET dependant
+	output wire pin_PIN41_o	// unknown function, regular pulse in sync with 48M clock
+);
 
+	//
+	//
+	
+	wire iob_i = IOB_INPUT_INVERSION;
+	wire iob_o = IOB_OUTPUT_INVERSION;
+	
 	//
 	// internal input signals
 	
@@ -97,12 +103,12 @@ module cus27_furrtek_ref
 	// input inverter stage
 	
 	wire sig_FLIP;		// E9TOP
-	wire sig_FLIP2;	// A11BOT
-	wire sig_MODE0;	// E10BOT
+	wire sig_FLIP2;		// A11BOT
+	wire sig_MODE0;		// E10BOT
 	wire sig_48M;		// A9BOT
-	wire sig_48M_2;	// C9BOT
+	wire sig_48M2;		// C9BOT
 	wire sig_6MIN;		// H9BOT
-	wire sig_6MIN2;	// J9BOT
+	wire sig_6MIN2;		// J9BOT
 	
 	// internal routing
 	
@@ -127,11 +133,17 @@ module cus27_furrtek_ref
 	wire sig_bPIN40;
 	wire sig_bPIN41;
 
-	//
-	//
+	wire sig_J5_XQ;
+	wire sig_C17_XQ;
+	wire sig_A17_Q;
+	wire sig_A17_XQ;
+	wire sig_E12_Q;
+	wire sig_C11TOP;
+	wire sig_D11_Q;
+	wire sig_J10BOT;
+	wire sig_G11_XQ;
 	
-	wire iob_i = IOB_INPUT_INVERSION;
-	wire iob_o = IOB_OUTPUT_INVERSION;
+
 	
 	//
 	// route input pins to internal signals (assuming external signal is inverted by IO block)
@@ -158,6 +170,12 @@ module cus27_furrtek_ref
 	assign pin_2H_o = sig_b2H ^ iob_o;
 	assign pin_4H_o = sig_b4H ^ iob_o;
 	assign pin_8H_o = sig_bPIN_6 ^ iob_o;
+	
+	assign pin_1V_o = sig_b1V ^ iob_o;
+	assign pin_2V_o = sig_b2V ^ iob_o;
+	assign pin_4V_o = sig_b4V ^ iob_o;
+	assign pin_8V_o = sig_A17_Q ^ iob_o;	// intuition
+	
 	assign pin_bHRES_o = sig_bHRES ^ iob_o;
 	assign pin_bVRES_o = sig_bVRES ^ iob_o;
 	assign dir_HRES_o = sig_bMODE1;
@@ -176,15 +194,38 @@ module cus27_furrtek_ref
 	//
 	
 	//
-	// synthesise the routing of signals through inverter cells  
+	// synthesise the routing of static signals through inverter cells  
 	
 	assign sig_MODE0 = ~sig_bMODE0;		// E10BOT
-	assign sig_FLIP = ~sig_bFLIP;			// E9TOP
+	assign sig_FLIP = ~sig_bFLIP;		// E9TOP
 	assign sig_FLIP2 = ~sig_bFLIP;		// E9TOP
-	assign sig_48M = ~sig_b48M;			// A9BOT
-	assign sig_48M2 = ~sig_b48M_2;		// C9BOT
-	assign sig_6MIN = ~sig_b6M_IN;		// H9BOT
-	assign sig_6MIN2 = ~sig_b6M_IN;		// J9BOT
+	
+	//
+	// standard cell synthesis
+	
+	mb111_n01_inverter
+		cus27_A9BOT_inverter (
+			.A(sig_b48M),
+			.Y(sig_48M)
+		);
+			
+	mb111_n01_inverter
+		cus27_C9BOT_inverter (
+			.A(sig_b48M_2),
+			.Y(sig_48M2)
+		);
+			
+	mb111_n01_inverter
+		cus27_H9BOT_inverter (
+			.A(sig_b6M_IN),
+			.Y(sig_6MIN)
+		);
+			
+	mb111_n01_inverter
+		cus27_J9BOT_inverter (
+			.A(sig_b6M_IN),
+			.Y(sig_6MIN2)
+		);
 	
 	//	
 	// delegate to sub-modules
@@ -196,7 +237,7 @@ module cus27_furrtek_ref
 			.sig_MODE0_i(sig_MODE0),
 			.sig_FLIP_i(sig_FLIP),
 			.sig_48M_i(sig_48M), 
-			.sig_bHRESET1_i(sig_bHRESET1),
+			.sig_bHRESET1_i(1'b1/*sig_bHRESET1*/),
 			.sig_E5TOP_o(sig_E5TOP),			
 			.sig_24M_o(sig_24M), 
 			.sig_12M_o(sig_12M), 
@@ -205,19 +246,6 @@ module cus27_furrtek_ref
 			.sig_b6M_OUT_o(sig_b6M_OUT), // drive the output pin directly as sig_b6M_IN maps to the CUS27 input
 			.sig_bS1H_o(sig_bS1H), 
 			.sig_bS2H_o(sig_bS2H)
-		);
-	
-	furrtek_horizontal
-		horizontal_timings (
-			.sim_rst_n(sim_rst_n),
-			.sig_6MIN2_i(sig_6MIN2),
-			.sig_bHRESET3_i(sig_bHRESET3),
-			.sig_J5_Q_o(sig_J5_Q),
-			.sig_J5_XQ_o(sig_J5_XQ),
-			.sig_b1H_o(sig_b1H),
-			.sig_b2H_o(sig_b2H),
-			.sig_b4H_o(sig_b4H),
-			.sig_bPIN_6_o(sig_bPIN_6)
 		);
 	
 	furrtek_video_reset
@@ -235,7 +263,41 @@ module cus27_furrtek_ref
 			.sig_bVRESET2_o(sig_bVRESET2),
 			.sig_bVRESET3_o(sig_bVRESET3)
 		);
+
+	furrtek_horizontal
+		horizontal_timings (
+			.sim_rst_n(sim_rst_n),
+			.sig_6MIN2_i(sig_6MIN2),
+			.sig_bHRESET3_i(sig_bHRESET3),
+			.sig_J5_Q_o(sig_J5_Q),
+			.sig_J5_XQ_o(sig_J5_XQ),
+			.sig_b1H_o(sig_b1H),
+			.sig_b2H_o(sig_b2H),
+			.sig_b4H_o(sig_b4H),
+			.sig_bPIN_6_o(sig_bPIN_6)
+		);
 	
+	furrtek_vertical
+		vertical_timings (
+			.sim_rst_n(sim_rst_n),
+			.sig_6MIN_i(sig_6MIN),
+			.sig_bVRESET3_i(sig_bVRESET3),
+			.sig_MODE0_i(sig_MODE0),
+			.sig_FLIP_i(sig_FLIP),
+			.sig_E12_Q_i(sig_E12_Q),
+			.sig_J5_XQ_i(sig_J5_XQ),
+			.sig_C11TOP_i(sig_C11TOP),
+			.sig_D11_Q_i(sig_D11_Q),
+			.sig_J10BOT_i(sig_J10BOT),
+			.sig_G11_XQ_i(sig_G11_XQ),
+			.sig_b1V_o(sig_b1V),
+			.sig_b2V_o(sig_b2V),
+			.sig_b4V_o(sig_b4V),
+			.sig_C17_XQ_o(sig_C17_XQ),
+			.sig_A17_Q_o(sig_A17_Q),
+			.sig_A17_XQ_o(sig_A17_XQ)
+		);
+		
 	furrtek_pin40
 		pin40 (	
 			.sim_rst_n(sim_rst_n),
