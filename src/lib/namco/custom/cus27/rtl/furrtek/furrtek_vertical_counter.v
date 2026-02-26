@@ -28,7 +28,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module furrtek_vertical (
+module furrtek_vertical_counter (
 	input wire sim_rst_n,
 	
 	// input clocks
@@ -65,6 +65,7 @@ module furrtek_vertical (
 	
 	wire sig_F11TOP;
 	wire sig_F16BOT;
+	wire sig_F17BOT;
 	wire sig_F17TOP;
 	
 	assign sig_b1V_o = sig_E17_Q;
@@ -101,19 +102,19 @@ module furrtek_vertical (
 		);
 		
 	mb111_n01_inverter
-		cus27_E5TOP_inverter (
+		cus27_A16TOP_inverter (
 			.A(sig_F15TOP),
 			.Y(sig_A16TOP)
 		);
 		
 	mb111_n06_nand6
 		cus27_F11TOP_nand6(
-			.A(sig_E12Q_i),
-			.B(sig_J5XQ_i),
+			.A(sig_E12_Q_i),
+			.B(sig_J5_XQ_i),
 			.C(sig_C11TOP_i),
-			.D(sig_D11Q_i),
+			.D(sig_D11_Q_i),
 			.E(sig_J10BOT_i),
-			.F(sig_G11XQ_i),
+			.F(sig_G11_XQ_i),
 			.Y(sig_F11TOP)
 		);
 	
@@ -145,11 +146,18 @@ module furrtek_vertical (
 			.C(sig_F16BOT),
 			.Y(sig_F17TOP)
 		);
+	
+	mb111_n02_nand2
+		cus27_F15TOP_nand2(
+			.A(sig_C15TOP),
+			.B(sig_C17_XQ),
+			.Y(sig_F15TOP)
+		);
 		
 	mb111_fj3_jxkff
 		cus27_E17_jkff(
 			.CLK(sig_6MIN_i),
-			.J(sig_E17TOP),
+			.J(sig_E15TOP),
 			.XK(sig_F16BOT),
 			.bSET(sig_bVRESET3_i & sim_rst_n),
 			.Q(sig_E17_Q),
@@ -159,7 +167,7 @@ module furrtek_vertical (
 	mb111_fj3_jxkff
 		cus27_B17_jkff(
 			.CLK(sig_6MIN_i),
-			.J(sig_F16BOT),
+			.J(sig_F17BOT),
 			.XK(sig_B16TOP),
 			.bSET(sig_bVRESET3_i & sim_rst_n),
 			.Q(sig_B17_Q),

@@ -72,7 +72,8 @@ module furrtek_pin40 (
 		cus27_A5_jkff(
 			.CLK(sig_b48M_i),
 			.J(sig_A1_XQ),
-			.bRES(sig_B9TOP & sim_rst_n),
+			.bSET(sim_rst_n),
+			.bRES(sig_B9TOP/* & sim_rst_n*/),
 			.Q(sig_A5_Q)
 		);
 		
@@ -80,8 +81,8 @@ module furrtek_pin40 (
 		cus27_A1_jkff(
 			.CLK(sig_b48M_i),
 			.J(sig_A5_Q),
-			.bSET(sim_rst_n),	// set on reset in order to stabilise this circuit
-			.bRES(sig_B9TOP /*& ~sim_rst_n*/),
+			//.bSET(sim_rst_n),
+			.bRES(sig_B9TOP & sim_rst_n),
 			.Q(sig_A1_Q),
 			.XQ(sig_A1_XQ)
 		);
@@ -91,7 +92,8 @@ module furrtek_pin40 (
 			.CLK(sig_b48M_i),
 			.J(sig_A1_XQ),
 			.XK(sig_A1_Q),
-			.bRES(sig_B9TOP & sim_rst_n),
+			.bSET(sim_rst_n),	// set on reset in order to stabilise this circuit
+			.bRES(sig_B9TOP/* & sim_rst_n*/),
 			.Q(sig_B1_Q)
 		);
 			

@@ -114,7 +114,8 @@ module furrtek_pin41 (
 		cus27_D8_dff(
 			.CLK(sig_b48M_i),
 			.D(sig_D1_Q),
-			.bSET(sig_E6BOT & sim_rst_n),
+			.bRES(sim_rst_n),
+			.bSET(sig_E6BOT),
 			.Q(sig_D8_Q)
 		);
 			

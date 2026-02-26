@@ -6,7 +6,7 @@
 //
 // Create Date:   21:10:47 01/08/2026
 // Design Name:   cus27_furrtek_ref
-// Module Name:   C:/Users/paulw/Development/FPGA/FPGA_System86/src/lib/system86/simulation/custom/furrtek/furrtek_clock_divider_tb.v
+// Module Name:   furrtek_horizontal_counter_tb.v
 // Project Name:  rthunder
 // Target Device:  
 // Tool versions:  
@@ -22,7 +22,7 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module furrtek_horizontal_tb;
+module furrtek_horizontal_counter_tb;
 			
 	reg sim_rst_n;
 	
@@ -32,7 +32,7 @@ module furrtek_horizontal_tb;
 
 	// Outputs
 	wire sig_b1H_o;
-   wire sig_b2H_o;
+    wire sig_b2H_o;
 	wire sig_b4H_o;		// internal routing outputs
 	wire sig_bPIN_6_o;	// presuming this is equivalent to 8Hwire sig_24M;
 
@@ -41,7 +41,7 @@ module furrtek_horizontal_tb;
 	wire sig_J5XQ_o;
 	
 	// Instantiate the Unit Under Test (UUT)
-	furrtek_horizontal
+	furrtek_horizontal_counter
 		uut (
 			.sim_rst_n(sim_rst_n),
 			.sig_6MIN2_i(sig_6MIN2_i),

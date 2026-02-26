@@ -28,7 +28,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module furrtek_video_reset (
+module furrtek_video_reset_in (
 	input wire sim_rst_n,
 	
 	// input clocks

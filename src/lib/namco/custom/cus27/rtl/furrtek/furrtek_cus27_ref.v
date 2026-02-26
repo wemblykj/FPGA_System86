@@ -125,25 +125,31 @@ module cus27_furrtek_ref
 	wire sig_bS1H;
 	wire sig_bS2H;	
 
+	// horizontal counter
+	wire sig_J5_XQ;
+	wire sig_J10BOT;
 	wire sig_b1H;	
 	wire sig_b2H;	
 	wire sig_b4H;	
 	wire sig_bPIN_6;	
 	
-	wire sig_bPIN40;
-	wire sig_bPIN41;
-
-	wire sig_J5_XQ;
-	wire sig_C17_XQ;
-	wire sig_A17_Q;
-	wire sig_A17_XQ;
+	// horizontal timings
 	wire sig_E12_Q;
 	wire sig_C11TOP;
 	wire sig_D11_Q;
-	wire sig_J10BOT;
 	wire sig_G11_XQ;
+	wire sig_bHBLA;
+	wire sig_bHSYNC;
 	
+	wire sig_bPIN40;
+	wire sig_bPIN41;
 
+	
+	wire sig_C17_XQ;
+	wire sig_A17_Q;
+	wire sig_A17_XQ;
+	
+	
 	
 	//
 	// route input pins to internal signals (assuming external signal is inverted by IO block)
@@ -175,12 +181,17 @@ module cus27_furrtek_ref
 	assign pin_2V_o = sig_b2V ^ iob_o;
 	assign pin_4V_o = sig_b4V ^ iob_o;
 	assign pin_8V_o = sig_A17_Q ^ iob_o;	// intuition
-	
+
+	assign pin_bHSYNC_o = sig_bHSYNC ^ iob_o;
+	assign pin_bHBLANK_o = sig_bHBLA ^ iob_o;
 	assign pin_bHRES_o = sig_bHRES ^ iob_o;
-	assign pin_bVRES_o = sig_bVRES ^ iob_o;
 	assign dir_HRES_o = sig_bMODE1;
+		
+	//assign pin_bVSYNC_o = sig_bVSYNC ^ iob_o;
+	//assign pin_bVBLANK_o = sig_bVBLA ^ iob_o;
+	assign pin_bVRES_o = sig_bVRES ^ iob_o;
 	assign dir_VRES_o = sig_bMODE1;
-	
+
 	assign pin_PIN40_o = sig_bPIN40 ^ iob_o;
 	assign pin_PIN41_o = sig_bPIN41 ^ iob_o;
 
@@ -237,7 +248,7 @@ module cus27_furrtek_ref
 			.sig_MODE0_i(sig_MODE0),
 			.sig_FLIP_i(sig_FLIP),
 			.sig_48M_i(sig_48M), 
-			.sig_bHRESET1_i(1'b1/*sig_bHRESET1*/),
+			.sig_bHRESET1_i(sig_bHRESET1),
 			.sig_E5TOP_o(sig_E5TOP),			
 			.sig_24M_o(sig_24M), 
 			.sig_12M_o(sig_12M), 
@@ -248,8 +259,8 @@ module cus27_furrtek_ref
 			.sig_bS2H_o(sig_bS2H)
 		);
 	
-	furrtek_video_reset
-		video_reset (
+	furrtek_video_reset_in
+		video_reset_in (
 			.sim_rst_n(sim_rst_n),
 			.sig_b48M_2_i(sig_b48M_2),
 			.sig_bHRES_IN_i(sig_bHRES_IN),
@@ -264,21 +275,38 @@ module cus27_furrtek_ref
 			.sig_bVRESET3_o(sig_bVRESET3)
 		);
 
-	furrtek_horizontal
-		horizontal_timings (
+	furrtek_horizontal_counter
+		horizontal_counter (
 			.sim_rst_n(sim_rst_n),
 			.sig_6MIN2_i(sig_6MIN2),
 			.sig_bHRESET3_i(sig_bHRESET3),
 			.sig_J5_Q_o(sig_J5_Q),
 			.sig_J5_XQ_o(sig_J5_XQ),
+			.sig_J10BOT_o(sig_J10BOT),
 			.sig_b1H_o(sig_b1H),
 			.sig_b2H_o(sig_b2H),
 			.sig_b4H_o(sig_b4H),
 			.sig_bPIN_6_o(sig_bPIN_6)
 		);
 	
-	furrtek_vertical
-		vertical_timings (
+	furrtek_horizontal_timings
+		horizontal_timings (
+			.sim_rst_n(sim_rst_n),
+			.sig_6MIN2_i(sig_6MIN2),
+			.sig_bHRESET1_i(sig_bHRESET1),
+			.sig_bHRESET2_i(sig_bHRESET2),
+			.sig_J5_XQ_i(sig_J5_XQ),	// 8H
+			.sig_J10BOT_i(sig_J10BOT),	// 4H, 2H, 1H = 111
+			.sig_C11TOP_o(sig_C11TOP),
+			.sig_D11_Q_o(sig_D11_Q),
+			.sig_E12_Q_o(sig_E12_Q),
+			.sig_G11_XQ_o(sig_G11_XQ),
+			.sig_bHSYNC_o(sig_bHSYNC),
+			.sig_bHBLA_o(sig_bHBLA)
+		);
+		
+	furrtek_vertical_counter
+		vertical_counter (
 			.sim_rst_n(sim_rst_n),
 			.sig_6MIN_i(sig_6MIN),
 			.sig_bVRESET3_i(sig_bVRESET3),

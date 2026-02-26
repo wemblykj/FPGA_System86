@@ -22,7 +22,7 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module furrtek_vertical_tb;
+module furrtek_vertical_counter_tb;
 		
 	reg sim_rst_n;
 	
@@ -41,7 +41,7 @@ module furrtek_vertical_tb;
 	wire sig_J5bQ_o;
 	
 	// Instantiate the Unit Under Test (UUT)
-	furrtek_vertical
+	furrtek_vertical_counter
 		uut (
 			.sig_6MIN_i(sig_6MIN_i),
 			.sig_bHRESET3_i(sig_bHRESET3_i),

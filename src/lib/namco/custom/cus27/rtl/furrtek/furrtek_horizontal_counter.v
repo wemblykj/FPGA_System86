@@ -28,7 +28,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module furrtek_horizontal (
+module furrtek_horizontal_counter (
 	input wire sim_rst_n,
 	
 	// input clocks
@@ -42,7 +42,8 @@ module furrtek_horizontal (
 	
 	// internal routing ouputs
 	output wire sig_J5_Q_o,
-	output wire sig_J5_XQ_o
+	output wire sig_J5_XQ_o,
+	output wire sig_J10BOT_o
 );
 
 	wire sig_H10BOT;
@@ -60,6 +61,7 @@ module furrtek_horizontal (
 	
 	assign sig_J5_Q_o = sig_J5_Q;
 	assign sig_J5_XQ_o = sig_J5_XQ;
+	assign sig_J10BOT_o = sig_J10BOT;
 	assign sig_b1H_o = sig_H1_XQ;
 	assign sig_b2H_o = sig_H5_Q;
 	assign sig_b4H_o = sig_J1_Q;
