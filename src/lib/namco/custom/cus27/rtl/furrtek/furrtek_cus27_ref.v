@@ -141,6 +141,11 @@ module cus27_furrtek_ref
 	wire sig_bHBLA;
 	wire sig_bHSYNC;
 	
+	// vertical timings
+	wire sig_F18_XQ;
+	wire sig_H18_Q; 
+	wire sig_bVBLA;
+	
 	wire sig_bPIN40;
 	wire sig_bPIN41;
 
@@ -187,8 +192,8 @@ module cus27_furrtek_ref
 	assign pin_bHRES_o = sig_bHRES ^ iob_o;
 	assign dir_HRES_o = sig_bMODE1;
 		
-	//assign pin_bVSYNC_o = sig_bVSYNC ^ iob_o;
-	//assign pin_bVBLANK_o = sig_bVBLA ^ iob_o;
+	assign pin_bVSYNC_o = (~(sig_A17_XQ & sig_H18_Q & sig_F18_XQ)) ^ iob_o;	// looks to use NAND logic of IOB
+	assign pin_bVBLANK_o = sig_bVBLA ^ iob_o;
 	assign pin_bVRES_o = sig_bVRES ^ iob_o;
 	assign dir_VRES_o = sig_bMODE1;
 
@@ -324,6 +329,18 @@ module cus27_furrtek_ref
 			.sig_C17_XQ_o(sig_C17_XQ),
 			.sig_A17_Q_o(sig_A17_Q),
 			.sig_A17_XQ_o(sig_A17_XQ)
+		);
+		
+	furrtek_vertical_timings
+		vertical_timings (
+			.sim_rst_n(sim_rst_n),
+			.sig_bVRESET1_i(sig_bVRESET1),
+			.sig_bVRESET2_i(sig_bVRESET2),
+			.sig_bVRESET3_i(sig_bVRESET3),
+			.sig_A17_Q_i(sig_A17_Q),
+			.sig_F18_XQ_o(sig_F18_XQ),
+			.sig_H18_Q_o(sig_H18_Q),
+			.sig_bVBLA_o(sig_bVBLA)
 		);
 		
 	furrtek_pin40

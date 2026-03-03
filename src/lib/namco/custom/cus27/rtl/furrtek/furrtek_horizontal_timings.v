@@ -148,7 +148,7 @@ module furrtek_horizontal_timings (
 		
 	mb111_fd1_dff
 		cus27_A12_dff(
-			.CLK(sig_D11_Q),
+			.CLK(sig_D11_XQ),
 			.D(sig_A11TOP),
 			.bRES(sig_C11TOP & sim_rst_n),
 			.Q(sig_A12_Q)
