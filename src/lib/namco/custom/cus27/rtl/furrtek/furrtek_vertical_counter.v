@@ -52,6 +52,7 @@ module furrtek_vertical_counter (
 	
 	// internal routing ouputs
 	output wire sig_C15TOP_o,
+	output wire sig_C17_Q_o,
 	output wire sig_C17_XQ_o,
 	output wire sig_A17_Q_o,	// presuming this is equivalent to 8V
 	output wire sig_A17_XQ_o
@@ -71,6 +72,7 @@ module furrtek_vertical_counter (
 	assign sig_b1V_o = sig_E17_Q;
 	assign sig_b2V_o = sig_B17_Q;
 	assign sig_b4V_o = sig_C17_Q;
+	assign sig_C17_Q_o = sig_C17_Q;
 	assign sig_C15TOP_o = sig_C15TOP;
 	assign sig_C17_XQ_o = sig_C17_XQ;
 	assign sig_A17_Q_o = sig_A17_Q;

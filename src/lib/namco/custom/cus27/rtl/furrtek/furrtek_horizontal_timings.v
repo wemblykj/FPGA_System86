@@ -43,6 +43,8 @@ module furrtek_horizontal_timings (
 	output wire sig_C11TOP_o,
 	output wire sig_E12_Q_o,
 	output wire sig_D11_Q_o,
+	output wire sig_D11_XQ_o,
+	output wire sig_G11_Q_o,
 	output wire sig_G11_XQ_o,
 	
 	output wire sig_bHSYNC_o,
@@ -67,7 +69,9 @@ module furrtek_horizontal_timings (
 	
 	assign sig_C11TOP_o = sig_C11TOP;
 	assign sig_D11_Q_o = sig_D11_Q;
+	assign sig_D11_XQ_o = sig_D11_XQ;
 	assign sig_E12_Q_o = sig_E12_Q;
+	assign sig_G11_Q_o = sig_G11_Q;
 	assign sig_G11_XQ_o = sig_G11_XQ;
 	assign sig_bHBLA_o = sig_A12_Q;
 	assign sig_bHSYNC_o = sig_C12_Q;

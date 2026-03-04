@@ -137,24 +137,29 @@ module cus27_furrtek_ref
 	wire sig_E12_Q;
 	wire sig_C11TOP;
 	wire sig_D11_Q;
+	wire sig_D11_XQ;
+	wire sig_G11_Q;
 	wire sig_G11_XQ;
 	wire sig_bHBLA;
 	wire sig_bHSYNC;
 	
+	
 	// vertical timings
 	wire sig_F18_XQ;
-	wire sig_H18_Q; 
+	wire sig_H18_Q;
+	wire sig_J18_Q;
 	wire sig_bVBLA;
+	
+	// video reset
+	wire sig_F6_XQ;
+	wire sig_G5_XQ;
 	
 	wire sig_bPIN40;
 	wire sig_bPIN41;
 
-	
 	wire sig_C17_XQ;
 	wire sig_A17_Q;
 	wire sig_A17_XQ;
-	
-	
 	
 	//
 	// route input pins to internal signals (assuming external signal is inverted by IO block)
@@ -189,21 +194,16 @@ module cus27_furrtek_ref
 
 	assign pin_bHSYNC_o = sig_bHSYNC ^ iob_o;
 	assign pin_bHBLANK_o = sig_bHBLA ^ iob_o;
-	assign pin_bHRES_o = sig_bHRES ^ iob_o;
+	assign pin_bHRES_o = ~(sig_6MIN & sig_F6_XQ) ^ iob_o;
 	assign dir_HRES_o = sig_bMODE1;
 		
-	assign pin_bVSYNC_o = (~(sig_A17_XQ & sig_H18_Q & sig_F18_XQ)) ^ iob_o;	// looks to use NAND logic of IOB
+	assign pin_bVSYNC_o = ~(sig_A17_XQ & sig_H18_Q & sig_F18_XQ) ^ iob_o;	// looks to use NAND logic of IOB
 	assign pin_bVBLANK_o = sig_bVBLA ^ iob_o;
-	assign pin_bVRES_o = sig_bVRES ^ iob_o;
+	assign pin_bVRES_o = ~(sig_6MIN & sig_G5_XQ) ^ iob_o;
 	assign dir_VRES_o = sig_bMODE1;
 
 	assign pin_PIN40_o = sig_bPIN40 ^ iob_o;
-	assign pin_PIN41_o = sig_bPIN41 ^ iob_o;
-
-	// HRESET in output mode
-	assign sig_bHRES = 1'b1; 
-	// VRESET in output mode
-	assign sig_bVRES = 1'b1; 
+	assign pin_PIN41_o = sig_bPIN41 ^ iob_o; 
 	
 	//
 	// RTL
@@ -304,7 +304,9 @@ module cus27_furrtek_ref
 			.sig_J10BOT_i(sig_J10BOT),	// 4H, 2H, 1H = 111
 			.sig_C11TOP_o(sig_C11TOP),
 			.sig_D11_Q_o(sig_D11_Q),
+			.sig_D11_XQ_o(sig_D11_XQ),
 			.sig_E12_Q_o(sig_E12_Q),
+			.sig_G11_Q_o(sig_G11_Q),
 			.sig_G11_XQ_o(sig_G11_XQ),
 			.sig_bHSYNC_o(sig_bHSYNC),
 			.sig_bHBLA_o(sig_bHBLA)
@@ -326,9 +328,11 @@ module cus27_furrtek_ref
 			.sig_b1V_o(sig_b1V),
 			.sig_b2V_o(sig_b2V),
 			.sig_b4V_o(sig_b4V),
+			.sig_C17_Q_o(sig_C17_Q),
 			.sig_C17_XQ_o(sig_C17_XQ),
 			.sig_A17_Q_o(sig_A17_Q),
-			.sig_A17_XQ_o(sig_A17_XQ)
+			.sig_A17_XQ_o(sig_A17_XQ),
+			.sig_C15TOP_o(sig_C15TOP)
 		);
 		
 	furrtek_vertical_timings
@@ -340,7 +344,25 @@ module cus27_furrtek_ref
 			.sig_A17_Q_i(sig_A17_Q),
 			.sig_F18_XQ_o(sig_F18_XQ),
 			.sig_H18_Q_o(sig_H18_Q),
+			.sig_J18_Q_o(sig_J18_Q),
 			.sig_bVBLA_o(sig_bVBLA)
+		);
+	
+	furrtek_video_reset_out
+		furrtek_video_reset_out (
+			.sim_rst_n(sim_rst_n),
+			.sig_6MIN_i(sig_6MIN),
+			.sig_E12_Q_i(sig_E12_Q),
+			.sig_J5_XQ_i(sig_J5_XQ),
+			.sig_C11TOP_i(sig_C11TOP),
+			.sig_D11_XQ_i(sig_D11_XQ),
+			.sig_J10BOT_i(sig_J10BOT),
+			.sig_G11_Q_i(sig_G11_Q),
+			.sig_J18_Q_i(sig_J18_Q),
+			.sig_C17_XQ_i(sig_C17_XQ),
+			.sig_C15TOP_i(sig_C15TOP),
+			.sig_F6_XQ_o(sig_F6_XQ),
+			.sig_G5_XQ_o(sig_G5_XQ)
 		);
 		
 	furrtek_pin40
