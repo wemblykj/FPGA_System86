@@ -36,17 +36,17 @@ module furrtek_horizontal_timings (
 	
 	input wire sig_bHRESET1_i,
 	input wire sig_bHRESET2_i,
-	
 	input wire sig_J5_XQ_i,
 	input wire sig_J10BOT_i,
-	
+	output wire sig_B11_Q_o,
+	output wire sig_B11_XQ_o,
 	output wire sig_C11TOP_o,
-	output wire sig_E12_Q_o,
 	output wire sig_D11_Q_o,
 	output wire sig_D11_XQ_o,
+	output wire sig_E12_Q_o,
+	output wire sig_E12_XQ_o,
 	output wire sig_G11_Q_o,
 	output wire sig_G11_XQ_o,
-	
 	output wire sig_bHSYNC_o,
 	output wire sig_bHBLA_o	
 );
@@ -67,10 +67,13 @@ module furrtek_horizontal_timings (
 	wire sig_J11BOT;
 	wire sig_J12BOT;
 	
+	assign sig_B11_Q_o = sig_B11_Q;
+	assign sig_B11_XQ_o = sig_B11_XQ;
 	assign sig_C11TOP_o = sig_C11TOP;
 	assign sig_D11_Q_o = sig_D11_Q;
 	assign sig_D11_XQ_o = sig_D11_XQ;
 	assign sig_E12_Q_o = sig_E12_Q;
+	assign sig_E12_XQ_o = sig_E12_XQ;
 	assign sig_G11_Q_o = sig_G11_Q;
 	assign sig_G11_XQ_o = sig_G11_XQ;
 	assign sig_bHBLA_o = sig_A12_Q;
@@ -112,7 +115,7 @@ module furrtek_horizontal_timings (
 
 	mb111_n02_nand2
 		cus27_J12BOT_nand2(
-			.A(sig_bHRESET1_i),
+			.A(sig_bHRESET1_i & sim_rst_n),
 			.B(sig_J11BOT),
 			.Y(sig_J12BOT)
 		);
@@ -126,7 +129,7 @@ module furrtek_horizontal_timings (
 		
 	mb111_n03_nand3
 		cus27_E11BOT_nand3(
-			.A(sig_bHRESET1_i),
+			.A(sig_bHRESET1_i & sim_rst_n),
 			.B(sig_J11BOT),
 			.C(sig_B11_XQ),
 			.Y(sig_E11BOT)
@@ -160,8 +163,8 @@ module furrtek_horizontal_timings (
 	
 	mb111_ft1_tff
 		cus27_G11_tff(
-			.CLK(sig_E12_Q),
-			.bRES(sig_bHRESET2_i & sim_rst_n),
+			.CLK(sig_E12_XQ),
+			.bRES(sig_bHRESET2_i & sim_rst_n),  // labelled as F9BOT driver for HRESET2
 			.Q(sig_G11_Q),
 			.XQ(sig_G11_XQ)
 		);
@@ -170,7 +173,7 @@ module furrtek_horizontal_timings (
 		cus27_B11_jkff(
 			.CLK(sig_G11_XQ),
 			.J(sig_C11TOP),
-			.bRES(sig_bHRESET2_i & sim_rst_n),
+			.bRES(sig_bHRESET2_i & sim_rst_n),	// labelled as F9BOT driver for HRESET2
 			.Q(sig_B11_Q),
 			.XQ(sig_B11_XQ)
 		);

@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
-// Engineer:
+// Engineer:      Paul Wightmore
 //
-// Create Date:   21:10:47 01/08/2026
-// Design Name:   cus27_furrtek_ref
-// Module Name:   C:/Users/paulw/Development/FPGA/FPGA_System86/src/lib/system86/simulation/custom/cus27_furrtek_ref_tb.v
-// Project Name:  rthunder
+// Create Date:   January 2026
+// Design Name:   furrtek_cus27_ref_tb
+// Module Name:   furrtek_cus27_ref_tb.v
+// Project Name:  Namco Custom Chips
 // Target Device:  
 // Tool versions:  
 // Description: 
@@ -32,9 +32,13 @@ module furrtek_cus27_ref_tb;
 	
 	reg sim_rst_n;
 	
-	// Inputs 
+	// Inputs
+	reg opt_OTEN_i;
+	reg opt_FLIP_i;
+	reg opt_MODE0_i;
+	reg opt_MODE1_i;
 	reg sig_48M_i;
-	//reg sig_6M_IN_i;
+	reg sig_6M_IN_i;
 	//reg sig_bHRES_IN_i;
 	//reg sig_bVRES_IN_i;
 	wire sig_bHRES_IN_i = dir_HRES_o ? 1'bz : 1'b0;
@@ -65,10 +69,21 @@ module furrtek_cus27_ref_tb;
 	wire sig_8V_o;
 	wire sig_S1H_o;
 	wire sig_S2H_o;
+	wire sig_A0_o;
+	wire sig_A1_o;
+	wire sig_A2_o;
+	wire sig_A3_o;
+	wire sig_A4_o;
+	wire sig_A5_o;
+	wire sig_A6_o;
+	wire sig_A7_o;
+	wire sig_A8_o;
+	wire sig_A9_o;
+	wire sig_A10_o;
 	wire sig_PIN40_o;
 	wire sig_PIN41_o;
 
-	assign #1 sig_6M_IN_i = sig_6M_OUT_o;
+	//assign #1 sig_6M_IN_i = sig_6M_OUT_o;
 	
 	// Instantiate the Unit Under Test (UUT)
 	cus27_furrtek_ref #(	
@@ -77,10 +92,10 @@ module furrtek_cus27_ref_tb;
 		uut ( 
 			.sim_rst_n(sim_rst_n),
 			.pin_48M_i(sig_48M_i), 
-			.pin_OTEN_i(1'b0),
-			.pin_MODE0_i(1'b0),
-			.pin_MODE1_i(1'b0),
-			.pin_FLIP_i(1'b0),
+			.pin_OTEN_i(opt_OTEN_i),
+			.pin_FLIP_i(opt_FLIP_i),
+			.pin_MODE0_i(opt_MODE0_i),
+			.pin_MODE1_i(opt_MODE1_i),
 			.pin_6M_IN_i(sig_6M_IN_i), 
 			.pin_bHRES_IN_i(sig_bHRES_IN_i),
 			.pin_bVRES_IN_i(sig_bVRES_IN_i),
@@ -105,24 +120,36 @@ module furrtek_cus27_ref_tb;
 			.pin_8V_o(sig_8V_o), 
 			.pin_S1H_o(sig_S1H_o), 
 			.pin_S2H_o(sig_S2H_o),
+			.pin_A0_o(sig_A0_o),
+			.pin_A1_o(sig_A1_o),
+			.pin_A2_o(sig_A2_o),
+			.pin_A3_o(sig_A3_o),
+			.pin_A4_o(sig_A4_o),
+			.pin_A5_o(sig_A5_o),
+			.pin_A6_o(sig_A6_o),
+			.pin_A7_o(sig_A7_o),
+			.pin_A8_o(sig_A8_o),
+			.pin_A9_o(sig_A9_o),
+			.pin_A10_o(sig_A10_o),
 			.pin_PIN40_o(sig_PIN40_o),
 			.pin_PIN41_o(sig_PIN41_o)
 		);
 
 	initial begin
 		// Initialize Inputs
+		opt_OTEN_i = 1'b1;
+		opt_FLIP_i = 1'b0;
+		opt_MODE0_i = 1'b0;
+		opt_MODE1_i = 1'b0;
 		sig_48M_i = 1'b0;
-		//sig_6M_IN_i = 1'b1;
-		//sig_bHRES_IN_i = 1'bz;	// in theory not connected as input?
-		//sig_bVRES_IN_i = 1'bz;	// in theory not connected as input?
+		sig_6M_IN_i = 1'b0;
 
 		sim_rst_n = 1'b0;
 		
+		// Wait for global reset to finish - sync'd to clock to avoid instabilities
 		#(CLOCK_PERIOD_NS)
 		#(CLOCK_PERIOD_NS)
 		#(CLOCK_PERIOD_NS)
-		// Wait 100 ns for global reset to finish
-		//#1000;
 		 
 		sim_rst_n = 1'b1;
 		
@@ -130,33 +157,18 @@ module furrtek_cus27_ref_tb;
 		
 		#8000;
 		
-		/*#800;
-		
-		sig_bHRES_IN_i = 1'b0;
-		
-		#100;
-		
-		sig_bHRES_IN_i = 1'b1;
-		
-		#100;
-		
-		sig_bVRES_IN_i = 1'b0;
-		
-		#100;
-		
-		sig_bVRES_IN_i = 1'b1;
-		
-		#800;*/
-		
 		$finish;
 
 	end
 	
-	//always @(negedge sig_bHSYNC_o) begin
-	//	if (sig_8V_o)
-	//		$stop;
-	//end
+	always @(negedge sig_bVRES_o) begin
+		$stop;
+	end
     
+	always @(posedge sig_48M_i) begin
+		sig_6M_IN_i = sig_6M_OUT_o;
+	end
+	
 	always begin
 		#(CLOCK_HALF_PERIOD_NS) sig_48M_i = ~sig_48M_i;
 	end

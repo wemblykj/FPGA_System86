@@ -79,6 +79,18 @@ module cus27_furrtek_ref
 	output wire pin_S1H_o,	//	1 pixel count (negative offset?)
 	output wire pin_S2H_o,	//	2 pixel count (negative offset?)
 	
+	output wire pin_A0_o,
+	output wire pin_A1_o,
+	output wire pin_A2_o,
+	output wire pin_A3_o,
+	output wire pin_A4_o,
+	output wire pin_A5_o,
+	output wire pin_A6_o,
+	output wire pin_A7_o,
+	output wire pin_A8_o,
+	output wire pin_A9_o,
+	output wire pin_A10_o,
+	
 	output wire pin_PIN40_o,	// unknown function, HRESET dependant
 	output wire pin_PIN41_o	// unknown function, regular pulse in sync with 48M clock
 );
@@ -99,6 +111,7 @@ module cus27_furrtek_ref
 	
 	wire sig_bMODE0;
 	wire sig_bFLIP;
+	wire sig_bOTEN;
 	
 	// input inverter stage
 	
@@ -125,6 +138,18 @@ module cus27_furrtek_ref
 	wire sig_bS1H;
 	wire sig_bS2H;	
 
+	wire sig_A0;
+	wire sig_A1;
+	wire sig_A2;
+	wire sig_A3;
+	wire sig_A4;
+	wire sig_A5;
+	wire sig_A6;
+	wire sig_A7;
+	wire sig_A8;
+	wire sig_A9;
+	wire sig_A10;
+
 	// horizontal counter
 	wire sig_J5_XQ;
 	wire sig_J10BOT;
@@ -134,18 +159,26 @@ module cus27_furrtek_ref
 	wire sig_bPIN_6;	
 	
 	// horizontal timings
-	wire sig_E12_Q;
+	wire sig_B11_Q;
+	wire sig_B11_XQ;
 	wire sig_C11TOP;
 	wire sig_D11_Q;
 	wire sig_D11_XQ;
+	wire sig_E12_Q;
+	wire sig_E12_XQ;
 	wire sig_G11_Q;
 	wire sig_G11_XQ;
 	wire sig_bHBLA;
 	wire sig_bHSYNC;
 	
-	
 	// vertical timings
+	wire sig_D15_Q;
+	wire sig_D15_XQ;
+	wire sig_D18_Q;
+	wire sig_D18_XQ;
 	wire sig_F18_XQ;
+	wire sig_G18_Q;
+	wire sig_G18_XQ;
 	wire sig_H18_Q;
 	wire sig_J18_Q;
 	wire sig_bVBLA;
@@ -161,15 +194,29 @@ module cus27_furrtek_ref
 	wire sig_A17_Q;
 	wire sig_A17_XQ;
 	
+	// flipping muxes
+	wire sig_E15BOT;
+	wire sig_F13TOP;
+	wire sig_F13BOT;
+	wire sig_H11BOT;
+	wire sig_H11TOP;
+	wire sig_H13BOT;
+	wire sig_H13TOP;
+	wire sig_J11TOP;
+	wire sig_J13TOP;
+	wire sig_J13BOT;
+	
 	//
 	// route input pins to internal signals (assuming external signal is inverted by IO block)
 	
 	assign sig_b48M = pin_48M_i ^ iob_i;
 	assign sig_b48M_2 = pin_48M_i ^ iob_i;
-	assign sig_bMODE1 = pin_MODE1_i ^ iob_i;
 	assign sig_b6M_IN = pin_6M_IN_i ^ iob_i;
+	assign sig_bOTEN = pin_OTEN_i ^ iob_i;
 	assign sig_bFLIP = pin_FLIP_i ^ iob_i;
+	assign sig_bFLIP_2 = pin_FLIP_i ^ iob_i;
 	assign sig_bMODE0 = pin_MODE0_i ^ iob_i;
+	assign sig_bMODE1 = pin_MODE1_i ^ iob_i;
 	assign sig_bHRES_IN = pin_bHRES_IN_i ^ iob_i;
 	assign sig_bVRES_IN = pin_bVRES_IN_i ^ iob_i;
 	
@@ -201,6 +248,19 @@ module cus27_furrtek_ref
 	assign pin_bVBLANK_o = sig_bVBLA ^ iob_o;
 	assign pin_bVRES_o = ~(sig_6MIN & sig_G5_XQ) ^ iob_o;
 	assign dir_VRES_o = sig_bMODE1;
+
+	// A0 - A9 are not marked as barred and so probably should not be inverted
+	assign pin_A0_o = sig_A0; //^ iob_o;
+	assign pin_A1_o = sig_A1; //^ iob_o;
+	assign pin_A2_o = sig_A2; //^ iob_o;
+	assign pin_A3_o = sig_A3; //^ iob_o;
+	assign pin_A4_o = sig_A4; //^ iob_o;
+	assign pin_A5_o = sig_A5; //^ iob_o;
+	assign pin_A6_o = sig_A6; //^ iob_o;
+	assign pin_A7_o = sig_A7; //^ iob_o;
+	assign pin_A8_o = sig_A8; //^ iob_o;
+	assign pin_A9_o = sig_A9; //^ iob_o;
+	assign pin_A10_o = sig_A10 ^ iob_o;	// buffer change in OTEN?
 
 	assign pin_PIN40_o = sig_bPIN40 ^ iob_o;
 	assign pin_PIN41_o = sig_bPIN41 ^ iob_o; 
@@ -303,9 +363,12 @@ module cus27_furrtek_ref
 			.sig_J5_XQ_i(sig_J5_XQ),	// 8H
 			.sig_J10BOT_i(sig_J10BOT),	// 4H, 2H, 1H = 111
 			.sig_C11TOP_o(sig_C11TOP),
+			.sig_B11_Q_o(sig_B11_Q),
+			.sig_B11_XQ_o(sig_B11_XQ),
 			.sig_D11_Q_o(sig_D11_Q),
 			.sig_D11_XQ_o(sig_D11_XQ),
 			.sig_E12_Q_o(sig_E12_Q),
+			.sig_E12_XQ_o(sig_E12_XQ),
 			.sig_G11_Q_o(sig_G11_Q),
 			.sig_G11_XQ_o(sig_G11_XQ),
 			.sig_bHSYNC_o(sig_bHSYNC),
@@ -342,14 +405,21 @@ module cus27_furrtek_ref
 			.sig_bVRESET2_i(sig_bVRESET2),
 			.sig_bVRESET3_i(sig_bVRESET3),
 			.sig_A17_Q_i(sig_A17_Q),
+			.sig_D15_Q_o(sig_D15_Q),
+			.sig_D15_XQ_o(sig_D15_XQ),
+			.sig_D18_Q_o(sig_D18_Q),
+			.sig_D18_XQ_o(sig_D18_XQ),
 			.sig_F18_XQ_o(sig_F18_XQ),
 			.sig_H18_Q_o(sig_H18_Q),
+			.sig_H18_XQ_o(sig_H18_XQ),
 			.sig_J18_Q_o(sig_J18_Q),
+			.sig_G18_Q_o(sig_G18_Q),
+			.sig_G18_XQ_o(sig_G18_XQ),
 			.sig_bVBLA_o(sig_bVBLA)
 		);
 	
 	furrtek_video_reset_out
-		furrtek_video_reset_out (
+		video_reset_out (
 			.sim_rst_n(sim_rst_n),
 			.sig_6MIN_i(sig_6MIN),
 			.sig_E12_Q_i(sig_E12_Q),
@@ -363,6 +433,72 @@ module cus27_furrtek_ref
 			.sig_C15TOP_i(sig_C15TOP),
 			.sig_F6_XQ_o(sig_F6_XQ),
 			.sig_G5_XQ_o(sig_G5_XQ)
+		);
+	
+	furrtek_flipping_muxes
+		flipping_muxes (
+			.sig_FLIP2_i(sig_FLIP2),
+			.sig_bFLIP_2_i(sig_bFLIP_2),	
+			.sig_A17_Q_i(sig_A17_Q),
+			.sig_A17_XQ_i(sig_A17_XQ),			
+			.sig_B11_Q_i(sig_B11_Q),
+			.sig_B11_XQ_i(sig_B11_XQ),
+			.sig_D11_Q_i(sig_D11_Q),
+			.sig_D11_XQ_i(sig_D11_XQ),
+			.sig_D15_Q_i(sig_D15_Q),
+			.sig_D15_XQ_i(sig_D15_XQ),
+			.sig_D18_Q_i(sig_D18_Q),
+			.sig_D18_XQ_i(sig_D18_XQ),
+			.sig_E12_Q_i(sig_E12_Q),
+			.sig_E12_XQ_i(sig_E12_XQ),
+			.sig_G11_Q_i(sig_G11_Q),
+			.sig_G11_XQ_i(sig_G11_XQ),
+			.sig_G18_Q_i(sig_G18_Q),
+			.sig_G18_XQ_i(sig_G18_XQ),
+			.sig_H18_Q_i(sig_H18_Q),
+			.sig_H18_XQ_i(sig_H18_XQ),
+			.sig_J5_Q_i(sig_J5_Q),
+			.sig_J5_XQ_i(sig_J5_XQ),
+			.sig_E15BOT_o(sig_E15BOT),
+			.sig_F13TOP_o(sig_F13TOP),
+			.sig_F13BOT_o(sig_F13BOT),
+			.sig_H11TOP_o(sig_H11TOP),
+			.sig_H11BOT_o(sig_H11BOT),
+			.sig_H13TOP_o(sig_H13TOP),
+			.sig_H13BOT_o(sig_H13BOT),
+			.sig_J11TOP_o(sig_J11TOP),
+			.sig_J13TOP_o(sig_J13TOP),
+			.sig_J13BOT_o(sig_J13BOT)
+		);
+		
+	furrtek_address_lines
+		furrtek_address_lines (
+			.sim_rst_n(sim_rst_n),
+			.sig_bHRESET1_i(sig_bHRESET1),
+			.sig_bOTEN_i(sig_bOTEN),
+			.sig_MODE0_i(sig_MODE0),
+			.sig_C11TOP_i(sig_C11TOP),
+			.sig_E15BOT_i(sig_E15BOT),
+			.sig_F13TOP_i(sig_F13TOP),
+			.sig_F13BOT_i(sig_F13BOT),
+			.sig_H11TOP_i(sig_H11TOP),
+			.sig_H11BOT_i(sig_H11BOT),
+			.sig_H13TOP_i(sig_H13TOP),
+			.sig_H13BOT_i(sig_H13BOT),
+			.sig_J11TOP_i(sig_J11TOP),
+			.sig_J13TOP_i(sig_J13TOP),
+			.sig_J13BOT_i(sig_J13BOT),
+			.sig_A0_o(sig_A0),
+			.sig_A1_o(sig_A1),
+			.sig_A2_o(sig_A2),
+			.sig_A3_o(sig_A3),
+			.sig_A4_o(sig_A4),
+			.sig_A5_o(sig_A5),
+			.sig_A6_o(sig_A6),
+			.sig_A7_o(sig_A7),
+			.sig_A8_o(sig_A8),
+			.sig_A9_o(sig_A9),
+			.sig_A10_o(sig_A10)			
 		);
 		
 	furrtek_pin40

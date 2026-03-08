@@ -34,8 +34,15 @@ module furrtek_vertical_timings (
 	input wire sig_bVRESET2_i,
 	input wire sig_bVRESET3_i,
 	input wire sig_A17_Q_i,
+	output wire sig_D15_Q_o,
+	output wire sig_D15_XQ_o,
+	output wire sig_D18_Q_o,
+	output wire sig_D18_XQ_o,
 	output wire sig_F18_XQ_o,
 	output wire sig_H18_Q_o,
+	output wire sig_H18_XQ_o,
+	output wire sig_G18_Q_o,
+	output wire sig_G18_XQ_o,
 	output wire sig_J18_Q_o,
 	output wire sig_bVBLA_o
 );
@@ -52,8 +59,15 @@ module furrtek_vertical_timings (
 	wire sig_J18_XQ;
 	wire sig_F15BOT;
 	
+	assign sig_D15_Q_o = sig_D15_Q;
+	assign sig_D15_XQ_o = sig_D15_XQ;
+	assign sig_D18_Q_o = sig_D18_Q;
+	assign sig_D18_XQ_o = sig_D18_XQ;
 	assign sig_F18_XQ_o = sig_F18_XQ;
+	assign sig_G18_Q_o = sig_G18_Q;
+	assign sig_G18_XQ_o = sig_G18_XQ;
 	assign sig_H18_Q_o = sig_H18_Q;
+	assign sig_H18_XQ_o = sig_H18_XQ;
 	assign sig_J18_Q_o = sig_J18_Q;
 	assign sig_bVBLA_o = sig_F18_XQ;
 
