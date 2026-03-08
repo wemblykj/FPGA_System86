@@ -3,21 +3,24 @@
 // Company: 
 // Engineer:       Paul Wightmore
 // 
-// Create Date:    07/01/2025 
-// Design Name:    cus27_nand
+// Create Date:    February 2026 
+// Design Name:    Fujitsu MB111XXX
 // Module Name:    mb111_gate.v 
-// Project Name:   Namco System86 simulation
+// Project Name:   Fujistu MB111XXX Gate Array
 // Target Devices: 
 // Tool versions: 
-// Description:    Namco CUS27 - 4 input NAND gate based on third-party reverse engineering of the CUS27 die.
+// Description:    Fujitsu MB111XXX Basic Gate
+//
+//                 Based on third-party reverse engineering of the Namco CUS27 die
+//
 //                 From further investigation it looks like the chip is a Fujistu B-350 gate array [^4].
 //                 Out of interest, the patent US4584653A [^5] possibly describes this device's origins.
 //
-//                 The 6-input NAND gate is two bsic gates linked by 
+//                 The 6-input NAND gate is two basic gates linked by 
 //                 Details from datasheet [^4]:
 //                 
 //                 Input transistors are PNP so behaviour is that of a NAND gate as inferred by die schematics. [^2]
-//                 Propogation delay through the [standard speed] cell is 1.65ns. I have picked intermediate propogation delays
+//                 Propogation delay through the [standard speed] cell is 1.65ns. I have picked arbitrary propogation delays
 //                 for the intermediate wired-AND and wired-NAND taps.
 //
 // References:

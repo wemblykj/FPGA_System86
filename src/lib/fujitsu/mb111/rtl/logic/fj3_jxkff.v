@@ -3,26 +3,25 @@
 // Company: 
 // Engineer:       Paul Wightmore
 // 
-// Create Date:    07/01/2025 
-// Design Name:    mb111_fj3_jxkff
-// Module Name:    fj3_jxkff.v 
-// Project Name:   Namco System86 simulation
+// Create Date:    February 2026 
+// Design Name:    Fujitsu MB111XXX
+// Module Name:    mb111_fj3_jxkff.v 
+// Project Name:   Fujistu MB111XXX Gate Array
 // Target Devices: 
 // Tool versions: 
-// Description:    Namco CUS27 - J-XK flip flop, based on third-party reverse engineering of the CUS27 die.
-//                 From further investigation it looks like the chip is a Fujistu B-350 gate array [^4].
-//                 Due to lack of logic block documentation for this device I will use documentation for later
-//                 devices as a reference, for example [^5].
+// Description:    FJ1 J-XK Type Flip-Flop
+//
+//                 Based on third-party reverse engineering of the Namco CUS27 die
 //
 //                 [^1] https://siliconprawn.org/map/namco/27/
 //                 [^2] https://github.com/furrtek/SiliconRE/tree/master/Namco/CUS27
 //                 [^3] https://www.ti.com/lit/ds/symlink/sn74lvc2g74-ep.pdf
-//                 [^4] https://datasheet4u.com/pdf-down/M/B/1/MB111XXX_Fujitsu.pdf
-//                 [^5] https://bitsavers.org/components/fujitsu/_dataBooks/1990_Fujitsu_Channelless_Gate_Arrays.pdf
 //
 //                 Kudos go to:
 //                  Furrtek for reverse engineering: http://www.furrtek.org
 //                  JohnDMcMaster for die photos: https://siliconprawn.org/
+//
+// Dependencies:   mb111_gate.v
 //
 // Dependencies: 
 //

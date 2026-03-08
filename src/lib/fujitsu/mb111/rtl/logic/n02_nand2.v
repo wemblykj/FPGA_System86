@@ -3,13 +3,15 @@
 // Company: 
 // Engineer:       Paul Wightmore
 // 
-// Create Date:    07/01/2025 
-// Design Name:    cus27_nand
-// Module Name:    system86\src\custom\furrtek\cus27_nand.v 
-// Project Name:   Namco System86 simulation
+// Create Date:    February 2026 
+// Design Name:    Fujitsu MB111XXX
+// Module Name:    mb111_n06_nand2.v 
+// Project Name:   Fujistu MB111XXX Gate Array
 // Target Devices: 
 // Tool versions: 
-// Description:    Namco CUS27 - 4 input NAND gate based on third-party reverse engineering of the CUS27 die
+// Description:    N02 2-input NAND
+//
+//                 Based on third-party reverse engineering of the Namco CUS27 die
 //
 //                 [^1] https://siliconprawn.org/map/namco/27/
 //                 [^2] https://github.com/furrtek/SiliconRE/tree/master/Namco/CUS27
@@ -18,6 +20,8 @@
 //                 Kudos go to:
 //                  Furrtek for reverse engineering: http://www.furrtek.org
 //                  JohnDMcMaster for die photos: https://siliconprawn.org/
+//
+// Dependencies:   mb111_gate.v
 //
 // Dependencies: 
 //
