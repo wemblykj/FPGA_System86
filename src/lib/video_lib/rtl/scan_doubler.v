@@ -189,7 +189,21 @@ module scanline_doubler #(
     .q_o          (x2_hblank_no),
     .is_valid_o   (x2_hblank_valid)
   );
-    
+  
+  pulse_delay (
+    .clk_i        (clk_x2_i),
+    .rst_ni       (rst_ni),
+    .d_i          (vsync_ni),
+    .q_o          (x2_vsync_no),
+  );
+  
+  pulse_delay (
+    .clk_i        (clk_x2_i),
+    .rst_ni       (rst_ni),
+    .d_i          (vblank_ni),
+    .q_o          (x2_vblank_no),
+  );
+  
   //
   // Dual-port Buffer
   
