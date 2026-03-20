@@ -27,18 +27,20 @@ module line_buffer_dp_ram #(
   parameter DataWidth = 8
 ) (
   // Write port (Port A)
-  input                    clk_a_i,
-  input                    we_a_i,
-  input  [AddrWidth-1:0]   addr_a_i,
-  input  [DataWidth-1:0]   wdata_a_i,
+  input                 clk_a_i,
+  input                 we_a_i,
+  input [AddrWidth-1:0] addr_a_i,
+  input [DataWidth-1:0] wdata_a_i,
 
   // Read port (Port B)
-  input                    clk_b_i,
-  input  [AddrWidth-1:0]   addr_b_i,
+  input                        clk_b_i,
+  input                        oe_b_i,
+  input        [AddrWidth-1:0] addr_b_i,
   output logic [DataWidth-1:0] rdata_b_o
 );
 
   logic [DataWidth-1:0] mem[2**AddrWidth];
+  logic [DataWidth-1:0] rdata_raw;
 
   // Port A: synchronous write
   always_ff @(posedge clk_a_i) begin
@@ -49,7 +51,9 @@ module line_buffer_dp_ram #(
 
   // Port B: synchronous read
   always_ff @(posedge clk_b_i) begin
-    rdata_b_o <= mem[addr_b_i];
+    rdata_raw <= mem[addr_b_i];
   end
 
+  assign rdata_b_o = oe_b_i ? rdata_raw : '0;
+  
 endmodule

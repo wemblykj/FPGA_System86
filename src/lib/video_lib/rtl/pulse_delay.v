@@ -34,7 +34,7 @@ module pulse_delay (
       q2 <= 1'b0;
     end else if (d_i) begin
       q2 <= q;
-      q <= d;
+      q <= d_i;
     end
   end
   

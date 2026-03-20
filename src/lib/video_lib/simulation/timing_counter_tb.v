@@ -21,15 +21,15 @@
 //////////////////////////////////////////////////////////////////////////////////
 module timing_counter_tb;
 
-  localparam Width = 3;
+  localparam CounterWidth = 3;
   logic clk;
   logic rst_n;
   logic reset;
-  logic [Width-1:0] counter;
-  logic [Width-1:0] test_counter;
+  logic [CounterWidth-1:0] counter;
+  logic [CounterWidth-1:0] test_counter;
 
   // Instantiate DUT
-  timing_counter #(.Width(Width)) dut (
+  timing_counter #(.CounterWidth(CounterWidth)) dut (
     .clk_i     (clk),
     .rst_ni    (rst_n),
     .reset_i   (reset),
@@ -50,7 +50,7 @@ module timing_counter_tb;
 
   // Task for check stage
   task automatic check_output(
-    input [Width-1:0] expect_counter,
+    input [CounterWidth-1:0] expect_counter,
     input string msg
   );
     @(negedge clk);

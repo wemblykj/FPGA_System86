@@ -25,8 +25,9 @@ module line_buffer_dp_ram_tb;
   parameter DataWidth = 8;
 
   logic clk_a;
-  logic clk_b;
   logic we_a;
+  logic clk_b;
+  logic oe_b;
   logic [AddrWidth-1:0] addr_a;
   logic [DataWidth-1:0] wdata_a;
   logic [AddrWidth-1:0] addr_b;
@@ -41,6 +42,7 @@ module line_buffer_dp_ram_tb;
     .addr_a_i  (addr_a),
     .wdata_a_i (wdata_a),
     .clk_b_i   (clk_b),
+    .oe_b_i    (oe_b),
     .addr_b_i  (addr_b),
     .rdata_b_o (rdata_b)
   );
@@ -69,6 +71,7 @@ module line_buffer_dp_ram_tb;
     we_a = 1'b0; // esure only single-cycle write
 
     // Read phase (port b)
+    oe_b   = 1'b1;
     addr_b = addr;
     @(posedge clk_b); // Present address
     @(posedge clk_b); // Wait for synchronous read pipeline if RAM registers the output
@@ -76,6 +79,7 @@ module line_buffer_dp_ram_tb;
       $display("FAIL: Addr %0d | Expected: %0h, Got: %0h", addr, data, rdata_b);
     else
       $display("PASS: Addr %0d | Data: %0h", addr, rdata_b);
+    oe_b   = 1'b0;
   endtask
 
   // Test sequence

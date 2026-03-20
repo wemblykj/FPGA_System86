@@ -73,6 +73,8 @@ module scanline_doubler #(
                       x2_hsync_valid && 
                       x2_hblank_valid;
   
+  assign read_buffer_select  = ~write_buffer_select;
+  
   //
   // input pre-processing
   
@@ -154,21 +156,13 @@ module scanline_doubler #(
     .reset_i   (x2_hreset),  // pulse at start of input frame
     .counter_o (h_ctr_out_q)
   );
-
-  pulse_toggle
-    u_read_buf_sel (
-    .clk_i  (clk_i),
-    .rst_ni (rst_ni),
-    .d_i    (x2_hsync_no),
-    .q_o    (read_buffer_select)
-  );
   
   //
   // generate output timings
   
   pulse_generator #(
     .CounterWidth(BufferCounterWidth)
-  ) u_horiz_sync_generator (
+  ) u_hsync_generator (
     .clk_i        (clk_x2_i),
     .rst_ni       (rst_ni),
     .counter_i    (h_ctr_in_q),
@@ -180,7 +174,7 @@ module scanline_doubler #(
   
   pulse_generator #(
     .CounterWidth(BufferCounterWidth)
-  ) u_horiz_blank_generator (
+  ) u_hblank_generator (
     .clk_i        (clk_x2_i),
     .rst_ni       (rst_ni),
     .counter_i    (h_ctr_in_q),
@@ -190,18 +184,20 @@ module scanline_doubler #(
     .is_valid_o   (x2_hblank_valid)
   );
   
-  pulse_delay (
+  pulse_delay 
+    u_vsync_generator (
     .clk_i        (clk_x2_i),
     .rst_ni       (rst_ni),
     .d_i          (vsync_ni),
-    .q_o          (x2_vsync_no),
+    .q_o          (x2_vsync_no)
   );
   
-  pulse_delay (
+  pulse_delay 
+    u_vblank_generator (
     .clk_i        (clk_x2_i),
     .rst_ni       (rst_ni),
     .d_i          (vblank_ni),
-    .q_o          (x2_vblank_no),
+    .q_o          (x2_vblank_no)
   );
   
   //
@@ -213,11 +209,12 @@ module scanline_doubler #(
   ) u_line_buf (
     // x1 write
     .clk_a_i  (clk_i),
-    .we_a_i   (1'b0),
+    .we_a_i   (hblank_ni),
     .addr_a_i ({write_buffer_select, h_ctr_in_q}),
     .wdata_a_i(data_i),
     // x2 read
     .clk_b_i  (clk_x2_i),
+    .oe_b_i   (x2_hblank_no),
     .addr_b_i ({read_buffer_select, h_ctr_out_q}),
     .rdata_b_o(x2_data_o)
   );

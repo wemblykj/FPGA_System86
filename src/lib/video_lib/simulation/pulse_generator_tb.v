@@ -25,8 +25,9 @@ module pulse_generator_tb;
   logic clk;
   logic rst_n;
   logic [CounterWidth-1:0] counter;
-  logic q;
   logic [CounterWidth-1:0] rising_at, falling_at;
+  logic q;
+  logic is_valid;
   
   // Instantiate DUT
   pulse_generator #(
@@ -37,7 +38,8 @@ module pulse_generator_tb;
     .counter_i    (counter),
     .rising_at_i  (rising_at),
     .falling_at_i (falling_at),
-    .q_o          (q)
+    .q_o          (q),
+    .is_valid_o   (is_valid)
   );
 
   // Clock generation
@@ -55,11 +57,12 @@ module pulse_generator_tb;
   // Task for check stage
   task automatic check_output(
     input expect_q,
+    input expect_is_valid,
     input string msg
   );
     @(negedge clk);
-    if (q !== expect_q)
-      $display("FAIL: %s | d: %b", msg, q);
+    if (q !== expect_q || is_valid !== expect_is_valid)
+      $display("FAIL: %s | q: %b | is_valid: %b", msg, q, is_valid);
     else
       $display("PASS: %s", msg);
   endtask
@@ -75,27 +78,27 @@ module pulse_generator_tb;
     
     // Stage 1: Initial state (low)
     @(negedge clk);
-    check_output(0, "Initial state (low)");
+    check_output(0, 0,"Initial state (low)");
 
     // Stage 2: Counter increment (still low)
     @(negedge clk); counter = counter + 1;
-    check_output(0, "Counter increment (still low)");
+    check_output(0, 0, "Counter increment (still low)");
     
     // Stage 3: Counter increment (rising)
     @(negedge clk); counter = counter + 1;
-    check_output(1, "Counter increment (rising)");
+    check_output(1, 0, "Counter increment (rising)");
     
     // Stage4: Counter increment (still high)
     @(negedge clk); counter = counter + 1;
-    check_output(1, "Counter increment (still low)");
+    check_output(1, 0, "Counter increment (still low)");
     
     // Stage 5: Counter increment (falling)
     @(negedge clk); counter = counter + 1;
-    check_output(0, "Counter increment (faling)");
+    check_output(0, 1, "Counter increment (falling, goes valid)");
     
     // Stage 6: Counter increment (still low)
     @(negedge clk); counter = counter + 1;
-    check_output(0, "Counter increment (still low)");
+    check_output(0, 1, "Counter increment (still low)");
     
     $display("All tests completed.");
     $finish;

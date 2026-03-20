@@ -19,7 +19,7 @@
 // License:        https://www.apache.org/licenses/LICENSE-2.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-module edge_timing_capture_tb;
+module pulse_timing_capture_tb;
 
   localparam CounterWidth = 3;
   logic clk;
