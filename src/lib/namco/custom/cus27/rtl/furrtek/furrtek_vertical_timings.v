@@ -121,7 +121,7 @@ module furrtek_vertical_timings (
 		cus27_F15BOT_nand3(
 			.A(sig_D15_Q),
 			.B(sig_D18_Q),
-			.C(sig_J18_Q),
+			.C(sig_G18_Q),
 			.Y(sig_F15BOT)
 		);
 		

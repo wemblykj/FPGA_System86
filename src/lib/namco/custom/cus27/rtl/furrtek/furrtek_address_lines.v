@@ -101,8 +101,6 @@ module furrtek_address_lines (
 			.Y(sig_F10BOT)
 		);
 	
-	//
-	
 	mb111_a02_and2
 		cus27_C15BOT_and2(
 			.A(sig_C11TOP_i),

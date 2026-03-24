@@ -31,8 +31,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module cus27_furrtek_ref
-	#( parameter IOB_INPUT_INVERSION = 1'b1,
-	   parameter IOB_OUTPUT_INVERSION = 1'b1 )
 (
 	input wire sim_rst_n,
 	
@@ -95,12 +93,6 @@ module cus27_furrtek_ref
 	output wire pin_PIN41_o	// unknown function, regular pulse in sync with 48M clock
 );
 
-	//
-	//
-	
-	wire iob_i = IOB_INPUT_INVERSION;
-	wire iob_o = IOB_OUTPUT_INVERSION;
-	
 	//
 	// internal input signals
 	
@@ -184,6 +176,10 @@ module cus27_furrtek_ref
 	wire sig_bVBLA;
 	
 	// video reset
+	wire sig_bHRES_IN;
+	wire sig_bHRES;
+	wire sig_bVRES_IN;
+	//wire sig_bVRES;
 	wire sig_F6_XQ;
 	wire sig_G5_XQ;
 	
@@ -209,61 +205,75 @@ module cus27_furrtek_ref
 	//
 	// route input pins to internal signals (assuming external signal is inverted by IO block)
 	
-	assign sig_b48M = pin_48M_i ^ iob_i;
-	assign sig_b48M_2 = pin_48M_i ^ iob_i;
-	assign sig_b6M_IN = pin_6M_IN_i ^ iob_i;
-	assign sig_bOTEN = pin_OTEN_i ^ iob_i;
-	assign sig_bFLIP = pin_FLIP_i ^ iob_i;
-	assign sig_bFLIP_2 = pin_FLIP_i ^ iob_i;
-	assign sig_bMODE0 = pin_MODE0_i ^ iob_i;
-	assign sig_bMODE1 = pin_MODE1_i ^ iob_i;
-	assign sig_bHRES_IN = pin_bHRES_IN_i ^ iob_i;
-	assign sig_bVRES_IN = pin_bVRES_IN_i ^ iob_i;
+	assign sig_b48M = ~pin_48M_i;
+	assign sig_b48M_2 = ~pin_48M_i;
+	assign sig_b6M_IN = ~pin_6M_IN_i;
+	assign sig_bOTEN = ~pin_OTEN_i;
+	assign sig_bFLIP = ~pin_FLIP_i;
+	assign sig_bFLIP_2 = ~pin_FLIP_i;
+	assign sig_bMODE0 = ~pin_MODE0_i;
+	assign sig_bMODE1 = ~pin_MODE1_i;
+	
+	// becomes unstable if we feed the IOB output state directly into the IOB output state
+	//assign sig_bHRES_IN = sig_HRES_DIR ? sig_HRES_IOB : (pin_bHRES_IN_i);
+	//assign sig_bVRES_IN = sig_VRES_DIR ? sig_VRES_IOB : (pin_bVRES_IN_i);
+	// we can stabilise by managing and debouncing, and looping back the reset signal externally
+	// FIXME: for some reason this does not work if the pin is inverted by the IOB
+	assign sig_bHRES_IN = /*sig_HRES_DIR ? / *1'b1* /sig_HRES_IOB :*/ pin_bHRES_IN_i;
+	assign sig_bVRES_IN = /*sig_VRES_DIR ? / *1'b1* /sig_VRES_IOB :*/ pin_bVRES_IN_i;
 	
 	//
 	// route internal signals to output pins (assuming internal signals are inverted by IO blocks)
 	
-	assign pin_24M_o = sig_b24M ^ iob_o;	// non-barred 24M and barred PIN_24M are both driven from the same output
-	assign pin_12M_o = sig_b12M ^ iob_o;  // non-barred 12M and barred PIN_12M are both driven from the same output
-	assign pin_6M_OUT_o = sig_b6M_OUT ^ iob_o;
-	assign pin_S1H_o = sig_bS1H ^ iob_o;
-	assign pin_S2H_o = sig_bS2H ^ iob_o;
+	assign pin_24M_o = ~sig_b24M;	// non-barred 24M and barred PIN_24M are both driven from the same output
+	assign pin_12M_o = ~sig_b12M;  // non-barred 12M and barred PIN_12M are both driven from the same output
+	assign pin_6M_OUT_o = ~sig_b6M_OUT;
+	assign pin_S1H_o = ~sig_bS1H;
+	assign pin_S2H_o = ~sig_bS2H;
 	
-	assign pin_1H_o = sig_b1H ^ iob_o;
-	assign pin_2H_o = sig_b2H ^ iob_o;
-	assign pin_4H_o = sig_b4H ^ iob_o;
-	assign pin_8H_o = sig_bPIN_6 ^ iob_o;
+	assign pin_1H_o = ~sig_b1H;
+	assign pin_2H_o = ~sig_b2H;
+	assign pin_4H_o = ~sig_b4H;
+	assign pin_8H_o = ~sig_bPIN_6;
 	
-	assign pin_1V_o = sig_b1V ^ iob_o;
-	assign pin_2V_o = sig_b2V ^ iob_o;
-	assign pin_4V_o = sig_b4V ^ iob_o;
-	assign pin_8V_o = sig_A17_Q ^ iob_o;	// intuition
+	assign pin_1V_o = ~sig_b1V;
+	assign pin_2V_o = ~sig_b2V;
+	assign pin_4V_o = ~sig_b4V;
+	assign pin_8V_o = ~sig_A17_Q;	// intuition
 
-	assign pin_bHSYNC_o = sig_bHSYNC ^ iob_o;
-	assign pin_bHBLANK_o = sig_bHBLA ^ iob_o;
-	assign pin_bHRES_o = ~(sig_6MIN & sig_F6_XQ) ^ iob_o;
-	assign dir_HRES_o = sig_bMODE1;
-		
-	assign pin_bVSYNC_o = ~(sig_A17_XQ & sig_H18_Q & sig_F18_XQ) ^ iob_o;	// looks to use NAND logic of IOB
-	assign pin_bVBLANK_o = sig_bVBLA ^ iob_o;
-	assign pin_bVRES_o = ~(sig_6MIN & sig_G5_XQ) ^ iob_o;
-	assign dir_VRES_o = sig_bMODE1;
+	assign sig_HRES = sig_6MIN & sig_F6_XQ;		// IOB input and loopback
+	assign sig_bHRES_IOB = ~sig_HRES;			// IOB output pin logic
+	assign sig_HRES_DIR = sig_bMODE1;
+	
+	assign sig_VRES = sig_6MIN & sig_G5_XQ;		// IOB input and loopback
+	assign sig_bVRES_IOB = ~sig_VRES;			// IOB output pin logic
+	assign sig_VRES_DIR = sig_bMODE1;
+	
+	assign pin_bHSYNC_o = ~sig_bHSYNC ;
+	assign pin_bHBLANK_o = ~sig_bHBLA;
+	assign pin_bHRES_o = sig_HRES_DIR ? sig_bHRES_IOB : 1'bz;
+	assign dir_HRES_o = sig_HRES_DIR;
+	
+	assign pin_bVSYNC_o = ~(sig_A17_XQ & sig_H18_Q & sig_F18_XQ); // looks to use NAND logic of IOB
+	assign pin_bVBLANK_o = ~sig_bVBLA;
+	assign pin_bVRES_o = sig_VRES_DIR ? sig_bVRES_IOB : 1'bz;
+	assign dir_VRES_o = sig_VRES_DIR;
 
-	// A0 - A9 are not marked as barred and so probably should not be inverted
-	assign pin_A0_o = sig_A0; //^ iob_o;
-	assign pin_A1_o = sig_A1; //^ iob_o;
-	assign pin_A2_o = sig_A2; //^ iob_o;
-	assign pin_A3_o = sig_A3; //^ iob_o;
-	assign pin_A4_o = sig_A4; //^ iob_o;
-	assign pin_A5_o = sig_A5; //^ iob_o;
-	assign pin_A6_o = sig_A6; //^ iob_o;
-	assign pin_A7_o = sig_A7; //^ iob_o;
-	assign pin_A8_o = sig_A8; //^ iob_o;
-	assign pin_A9_o = sig_A9; //^ iob_o;
-	assign pin_A10_o = sig_A10 ^ iob_o;	// buffer change in OTEN?
+	// A0 - A9 are already inverted via IOB NAND logic applied in sub-module
+	assign pin_A0_o = sig_A0;
+	assign pin_A1_o = sig_A1;
+	assign pin_A2_o = sig_A2;
+	assign pin_A3_o = sig_A3;
+	assign pin_A4_o = sig_A4;
+	assign pin_A5_o = sig_A5;
+	assign pin_A6_o = sig_A6;
+	assign pin_A7_o = sig_A7;
+	assign pin_A8_o = sig_A8;
+	assign pin_A9_o = sig_A9;
+	assign pin_A10_o = sig_A10;	// buffer change in OTEN?
 
-	assign pin_PIN40_o = sig_bPIN40 ^ iob_o;
-	assign pin_PIN41_o = sig_bPIN41 ^ iob_o; 
+	assign pin_PIN40_o = sig_bPIN40;
+	assign pin_PIN41_o = sig_bPIN41; 
 	
 	//
 	// RTL

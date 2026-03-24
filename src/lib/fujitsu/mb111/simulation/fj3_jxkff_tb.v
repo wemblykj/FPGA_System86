@@ -160,7 +160,7 @@ module mb111_fj3_jxkff_tb;
 		
 		// J=1 XK=1 (reset)
 		
-		apply_test("J=1 XK=1", /*CLK=*/1'b0, /*J=*/1'b1, /*XK=*/1'b1, /*bSET=*/1'b1, /*bRES=*/1'b1, /*Q_exp=*/1'b1, /*XQ_exp=*/1'b1, test_result);
+		apply_test("J=1 XK=1", /*CLK=*/1'b0, /*J=*/1'b1, /*XK=*/1'b1, /*bSET=*/1'b1, /*bRES=*/1'b1, /*Q_exp=*/1'b1, /*XQ_exp=*/1'b0, test_result);
 		apply_test("J=1 XK=1 (tick)", /*CLK=*/1'b1, /*J=*/1'b1, /*XK=*/1'b1, /*bSET=*/1'b1, /*bRES=*/1'b1, /*Q_exp=*/1'b0, /*XQ_exp=*/1'b1, test_result);
 		apply_test("J=1 XK=1 (tock)", /*CLK=*/1'b0, /*J=*/1'b1, /*XK=*/1'b1, /*bSET=*/1'b1, /*bRES=*/1'b1, /*Q_exp=*/1'b0, /*XQ_exp=*/1'b1, test_result);	
 		apply_test("J=1 XK=1 (tick)", /*CLK=*/1'b1, /*J=*/1'b1, /*XK=*/1'b1, /*bSET=*/1'b1, /*bRES=*/1'b1, /*Q_exp=*/1'b0, /*XQ_exp=*/1'b1, test_result);

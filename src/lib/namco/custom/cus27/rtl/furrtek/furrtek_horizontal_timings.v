@@ -115,7 +115,7 @@ module furrtek_horizontal_timings (
 
 	mb111_n02_nand2
 		cus27_J12BOT_nand2(
-			.A(sig_bHRESET1_i & sim_rst_n),
+			.A(sig_bHRESET1_i),
 			.B(sig_J11BOT),
 			.Y(sig_J12BOT)
 		);
@@ -129,7 +129,7 @@ module furrtek_horizontal_timings (
 		
 	mb111_n03_nand3
 		cus27_E11BOT_nand3(
-			.A(sig_bHRESET1_i & sim_rst_n),
+			.A(sig_bHRESET1_i),
 			.B(sig_J11BOT),
 			.C(sig_B11_XQ),
 			.Y(sig_E11BOT)
@@ -157,14 +157,14 @@ module furrtek_horizontal_timings (
 		cus27_A12_dff(
 			.CLK(sig_D11_XQ),
 			.D(sig_A11TOP),
-			.bRES(sig_C11TOP & sim_rst_n),
+			.bRES(sig_C11TOP),
 			.Q(sig_A12_Q)
 		);	
 	
 	mb111_ft1_tff
 		cus27_G11_tff(
 			.CLK(sig_E12_XQ),
-			.bRES(sig_bHRESET2_i & sim_rst_n),  // labelled as F9BOT driver for HRESET2
+			.bRES(sig_bHRESET2_i & sim_rst_n),  // labelled as F9BOT driver, for bHRESET2
 			.Q(sig_G11_Q),
 			.XQ(sig_G11_XQ)
 		);
@@ -173,7 +173,7 @@ module furrtek_horizontal_timings (
 		cus27_B11_jkff(
 			.CLK(sig_G11_XQ),
 			.J(sig_C11TOP),
-			.bRES(sig_bHRESET2_i & sim_rst_n),	// labelled as F9BOT driver for HRESET2
+			.bRES(sig_bHRESET2_i & sim_rst_n),	// labelled as F9BOT driver, for bHRESET2
 			.Q(sig_B11_Q),
 			.XQ(sig_B11_XQ)
 		);
@@ -182,7 +182,7 @@ module furrtek_horizontal_timings (
 		cus27_C12_dff(
 			.CLK(sig_D11_XQ),
 			.D(sig_G11_XQ),
-			.bRES(sig_A12_Q & sim_rst_n),
+			.bRES(sig_A12_Q),
 			.Q(sig_C12_Q)
 		);	
 		

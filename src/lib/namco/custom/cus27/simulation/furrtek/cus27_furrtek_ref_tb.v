@@ -39,10 +39,11 @@ module furrtek_cus27_ref_tb;
 	reg opt_MODE1_i;
 	reg sig_48M_i;
 	reg sig_6M_IN_i;
-	//reg sig_bHRES_IN_i;
-	//reg sig_bVRES_IN_i;
-	wire sig_bHRES_IN_i = dir_HRES_o ? 1'bz : 1'b0;
-	wire sig_bVRES_IN_i = dir_VRES_o ? 1'bz : 1'b0;
+	reg sig_bHRES_IN_i;
+	reg sig_bVRES_IN_i;
+	
+	//wire sig_bHRES_IN_i = /*dir_HRES_o ? 1'bz :*/ (sig_bHRES_o | sig_1H_o | sig_2H_o | sig_4H_o);
+	//wire sig_bVRES_IN_i = /*dir_VRES_o ? 1'bz : 1'b1*/ (sig_bVRES_o | sig_1V_o | sig_2V_o | sig_4V_o);
 	
 	// Outputs
 	wire sig_24M_o;
@@ -86,9 +87,7 @@ module furrtek_cus27_ref_tb;
 	//assign #1 sig_6M_IN_i = sig_6M_OUT_o;
 	
 	// Instantiate the Unit Under Test (UUT)
-	cus27_furrtek_ref #(	
-			IOB_INPUT_INVERSION,
-			IOB_OUTPUT_INVERSION )
+	cus27_furrtek_ref
 		uut ( 
 			.sim_rst_n(sim_rst_n),
 			.pin_48M_i(sig_48M_i), 
@@ -135,6 +134,40 @@ module furrtek_cus27_ref_tb;
 			.pin_PIN41_o(sig_PIN41_o)
 		);
 
+    initial begin
+	    forever #(CLOCK_HALF_PERIOD_NS) sig_48M_i = ~sig_48M_i;
+	end
+	
+	initial begin
+	    sim_rst_n = 1'b0;
+		
+		// Wait for global reset to finish - sync'd to clock to avoid instabilities
+		repeat(3) @(negedge sig_48M_i);
+		//#(CLOCK_PERIOD_NS)
+		//#(CLOCK_PERIOD_NS)
+		//#(CLOCK_PERIOD_NS)
+		//#(CLOCK_PERIOD_NS)
+		 
+		sim_rst_n = 1'b1;
+	end
+	
+	always @(negedge sig_bHRES_o) begin
+		sig_bHRES_IN_i = 1'b0;
+		repeat(4) @(negedge sig_48M_i);
+		sig_bHRES_IN_i = 1'b1;
+	end
+	
+	always @(negedge sig_bVRES_o) begin
+		sig_bVRES_IN_i = 1'b0;
+		repeat(4) @(negedge sig_48M_i);
+		sig_bVRES_IN_i = 1'b1;
+	end
+	
+	/*initial begin	
+		@(posedge sim_rst_n);
+		@(negedge sig_bVSYNC_o) $stop;
+	end*/
+	
 	initial begin
 		// Initialize Inputs
 		opt_OTEN_i = 1'b1;
@@ -143,34 +176,14 @@ module furrtek_cus27_ref_tb;
 		opt_MODE1_i = 1'b0;
 		sig_48M_i = 1'b0;
 		sig_6M_IN_i = 1'b0;
+		sig_bHRES_IN_i = 1'b1;
+		sig_bVRES_IN_i = 1'b1;
 
-		sim_rst_n = 1'b0;
-		
-		// Wait for global reset to finish - sync'd to clock to avoid instabilities
-		#(CLOCK_PERIOD_NS)
-		#(CLOCK_PERIOD_NS)
-		#(CLOCK_PERIOD_NS)
-		 
-		sim_rst_n = 1'b1;
-		
 		// Add stimulus here
-		
-		#8000;
-		
-		$finish;
-
-	end
-	
-	always @(negedge sig_bVRES_o) begin
-		$stop;
 	end
     
-	always @(posedge sig_48M_i) begin
+	always @(sig_6M_OUT_o) begin
 		sig_6M_IN_i = sig_6M_OUT_o;
-	end
-	
-	always begin
-		#(CLOCK_HALF_PERIOD_NS) sig_48M_i = ~sig_48M_i;
 	end
       
 endmodule
