@@ -21,10 +21,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 module pulse_toggle_tb;
 
-  logic clk;
-  logic rst_n;
-  logic d;
-  logic q;
+  reg clk;
+  reg rst_n;
+  reg d;
+  wire q;
 
   // Instantiate DUT
   pulse_toggle dut (
@@ -48,14 +48,16 @@ module pulse_toggle_tb;
 
   // Task for check stage
   task automatic check_output(
-    input bit expected_q,
-    input string msg
+    input            expected_q,
+    input [8*32-1:0] msg
   );
-    @(negedge clk);
-    if (q !== expected_q)
-      $display("FAIL: %s | q_o: %0b", msg, q);
-    else
-      $display("PASS: %s", msg);
+    begin
+      @(negedge clk);
+      if (q !== expected_q)
+        $display("FAIL: %s | q_o: %0b", msg, q);
+      else
+        $display("PASS: %s", msg);
+	  end
   endtask
 
   // Sequence of test stages

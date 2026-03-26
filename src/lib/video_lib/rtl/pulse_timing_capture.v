@@ -22,17 +22,17 @@
 module pulse_timing_capture #(
   parameter CounterWidth = 12
 ) (
-  input                           clk_i,
-  input                           rst_ni,
-  input [CounterWidth-1:0]        counter_i,
-  input                           d_i,
-  output logic [CounterWidth-1:0] rising_at_o,
-  output logic [CounterWidth-1:0] falling_at_o,
-  output logic                    is_valid_o
+  input                     clk_i,
+  input                     rst_ni,
+  input  [CounterWidth-1:0] counter_i,
+  input                     d_i,
+  output [CounterWidth-1:0] rising_at_o,
+  output [CounterWidth-1:0] falling_at_o,
+  output                    is_valid_o
 );
   
-  logic d_q;
-  logic rising_d, falling_d;
+  reg d_q;
+  wire rising_d, falling_d;
 
   edge_timing_capture #(
     .CounterWidth(CounterWidth)
@@ -50,9 +50,9 @@ module pulse_timing_capture #(
   assign rising_d = !d_q && d_i;
   assign falling_d = d_q && !d_i;
   
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      d_q    <= '0;
+      d_q    <= 1'b0;
     end else begin
       d_q  <= d_i;
     end

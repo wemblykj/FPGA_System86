@@ -22,11 +22,11 @@
 module timing_counter_tb;
 
   localparam CounterWidth = 3;
-  logic clk;
-  logic rst_n;
-  logic reset;
-  logic [CounterWidth-1:0] counter;
-  logic [CounterWidth-1:0] test_counter;
+  reg clk;
+  reg rst_n;
+  reg reset;
+  wire [CounterWidth-1:0] counter;
+  reg [CounterWidth-1:0] test_counter;
 
   // Instantiate DUT
   timing_counter #(.CounterWidth(CounterWidth)) dut (
@@ -51,13 +51,15 @@ module timing_counter_tb;
   // Task for check stage
   task automatic check_output(
     input [CounterWidth-1:0] expect_counter,
-    input string msg
+    input [8*32-1:0] msg
   );
-    @(negedge clk);
-    if (counter !== expect_counter)
-      $display("FAIL: %s | counter: %0b", msg, counter);
-    else
-      $display("PASS: %s", msg);
+    begin
+      @(negedge clk);
+      if (counter !== expect_counter)
+        $display("FAIL: %s | counter: %0b", msg, counter);
+      else
+        $display("PASS: %s", msg);
+	  end
   endtask
 
   // Sequence of test stages

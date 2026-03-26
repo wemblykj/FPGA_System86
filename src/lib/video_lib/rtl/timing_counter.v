@@ -22,20 +22,20 @@
 module timing_counter #(
   parameter integer CounterWidth = 12
 ) (
-  input                    clk_i,
-  input                    rst_ni,
-  input                    reset_i,    // reset pulse for counter
-  output logic [CounterWidth-1:0] counter_o
+  input                     clk_i,
+  input                     rst_ni,
+  input                     reset_i,    // reset pulse for counter
+  output [CounterWidth-1:0] counter_o
 );
 
-  logic [CounterWidth-1:0] counter_d;
-  logic [CounterWidth-1:0] counter_q;
+  wire [CounterWidth-1:0] counter_d;
+  reg  [CounterWidth-1:0] counter_q;
 
-  assign counter_d = reset_i ? '0 : counter_q + 1'b1;
+  assign counter_d = reset_i ? 1'b0 : counter_q + 1'b1;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      counter_q <= '0;
+      counter_q <= 1'b0;
     end else begin
       counter_q <= counter_d;
     end

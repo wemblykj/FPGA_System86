@@ -21,10 +21,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 module edge_detector_tb;
 
-  logic clk;
-  logic rst_n;
-  logic d;
-  logic falling, rising;
+  reg clk;
+  reg rst_n;
+  reg d;
+  wire falling, rising;
 
   // Instantiate DUT
   edge_detector dut (
@@ -49,15 +49,17 @@ module edge_detector_tb;
 
   // Task for check stage
   task automatic check_edge(
-    input bit expect_falling,
-    input bit expect_rising,
-    input string msg
+    input            expect_falling,
+    input            expect_rising,
+    input [8*24-1:0] msg
   );
-    @(negedge clk);
-    if (falling !== expect_falling || rising !== expect_rising)
-      $display("FAIL: %s | falling_o: %0b | rising_o: %0b", msg, falling, rising);
-    else
-      $display("PASS: %s", msg);
+    begin
+      @(negedge clk);
+      if (falling !== expect_falling || rising !== expect_rising)
+        $display("FAIL: %s | falling_o: %0b | rising_o: %0b", msg, falling, rising);
+      else
+        $display("PASS: %s", msg);
+	end
   endtask
 
   // Sequence of test stages

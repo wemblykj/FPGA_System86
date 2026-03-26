@@ -31,40 +31,40 @@ module scanline_doubler #(
   input                       hblank_ni,
   input                       vsync_ni,
   input                       vblank_ni,
-  output logic [BitDepth-1:0] x2_data_o,
-  output logic           	  x2_hsync_no,
-  output logic           	  x2_hblank_no,
-  output logic           	  x2_vsync_no,
-  output logic           	  x2_vblank_no,
-  output logic           	  x2_valid_o
+  output [BitDepth-1:0] x2_data_o,
+  output           	    x2_hsync_no,
+  output           	    x2_hblank_no,
+  output           	    x2_vsync_no,
+  output           	    x2_vblank_no,
+  output           	    x2_valid_o
 );
   
-  localparam BufferCounterWidth = $clog2(LineWidth);
+  localparam BufferCounterWidth = 9;//$clog2(LineWidth);
   // use a single memory region for both buffers
-  localparam MemAddrWidth = $clog2(LineWidth) + 1;  // +1 for buffer select
+  localparam MemAddrWidth = 10;//$clog2(LineWidth) + 1;  // +1 for buffer select
 
-  logic                          write_buffer_select;
-  logic [BufferCounterWidth-1:0] h_ctr_in_q;
+  wire                          write_buffer_select;
+  wire [BufferCounterWidth-1:0] h_ctr_in_q;
   
-  logic                          read_buffer_select;
-  logic [BufferCounterWidth-1:0] h_ctr_out_q;
+  wire                          read_buffer_select;
+  wire [BufferCounterWidth-1:0] h_ctr_out_q;
 
   // timing capture
-  logic [BufferCounterWidth-1:0] hsync_start_q;
-  logic [BufferCounterWidth-1:0] hsync_end_q;
-  logic [BufferCounterWidth-1:0] hblank_start_q;
-  logic [BufferCounterWidth-1:0] hblank_end_q;
-  logic                          hsync_captured_q;
-  logic                          hblank_captured_q;
-  logic                          hsync_in_falling_q;
-  logic                          hsync_in_rising_q;
-  logic                          hblank_in_falling_q;
-  logic                          hblank_in_rising_q;
+  wire [BufferCounterWidth-1:0] hsync_start_q;
+  wire [BufferCounterWidth-1:0] hsync_end_q;
+  wire [BufferCounterWidth-1:0] hblank_start_q;
+  wire [BufferCounterWidth-1:0] hblank_end_q;
+  wire                          hsync_captured_q;
+  wire                          hblank_captured_q;
+  wire                          hsync_in_falling_q;
+  wire                          hsync_in_rising_q;
+  wire                          hblank_in_falling_q;
+  wire                          hblank_in_rising_q;
   
   // timing generation
-  logic x2_hsync_valid;
-  logic x2_hblank_valid;
-  logic x2_hreset;
+  wire x2_hsync_valid;
+  wire x2_hblank_valid;
+  wire x2_hreset;
   
   assign x2_hreset = h_ctr_out_q === hsync_start_q;
   
@@ -165,7 +165,7 @@ module scanline_doubler #(
   ) u_hsync_generator (
     .clk_i        (clk_x2_i),
     .rst_ni       (rst_ni),
-    .counter_i    (h_ctr_in_q),
+    .counter_i    (h_ctr_out_q),
     .falling_at_i (hsync_start_q),
     .rising_at_i  (hsync_end_q),
     .q_o          (x2_hsync_no),
@@ -177,7 +177,7 @@ module scanline_doubler #(
   ) u_hblank_generator (
     .clk_i        (clk_x2_i),
     .rst_ni       (rst_ni),
-    .counter_i    (h_ctr_in_q),
+    .counter_i    (h_ctr_out_q),
     .falling_at_i (hblank_start_q),
     .rising_at_i  (hblank_end_q),
     .q_o          (x2_hblank_no),

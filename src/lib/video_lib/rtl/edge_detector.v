@@ -20,21 +20,21 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module edge_detector (
-  input        clk_i,
-  input        rst_ni,
-  input        d_i,
-  output logic falling_o,
-  output logic rising_o
+  input  clk_i,
+  input  rst_ni,
+  input  d_i,
+  output falling_o,
+  output rising_o
 );
 
-  logic d_q;
-  logic falling_d, rising_d;
-  logic falling_q, rising_q;
+  reg d_q;
+  wire falling_d, rising_d;
+  reg falling_q, rising_q;
   
   assign falling_d = d_q && !d_i;
   assign rising_d = !d_q && d_i;
   
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       d_q <= 1'b0;
     end else begin

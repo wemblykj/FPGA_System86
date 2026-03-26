@@ -24,14 +24,14 @@ module line_buffer_dp_ram_tb;
   parameter AddrWidth = 4;
   parameter DataWidth = 8;
 
-  logic clk_a;
-  logic we_a;
-  logic clk_b;
-  logic oe_b;
-  logic [AddrWidth-1:0] addr_a;
-  logic [DataWidth-1:0] wdata_a;
-  logic [AddrWidth-1:0] addr_b;
-  logic [DataWidth-1:0] rdata_b;
+  reg clk_a;
+  reg we_a;
+  reg clk_b;
+  reg oe_b;
+  reg [AddrWidth-1:0] addr_a;
+  reg [DataWidth-1:0] wdata_a;
+  reg [AddrWidth-1:0] addr_b;
+  wire [DataWidth-1:0] rdata_b;
 
   line_buffer_dp_ram #(
     .AddrWidth(AddrWidth),
@@ -62,48 +62,54 @@ module line_buffer_dp_ram_tb;
     input [AddrWidth-1:0] addr,
     input [DataWidth-1:0] data
   );
-    // Write phase: write on clk_a
-    @(posedge clk_a);
-    we_a   = 1'b1;
-    addr_a = addr;
-    wdata_a = data;
-    @(posedge clk_a);
-    we_a = 1'b0; // esure only single-cycle write
+    begin
+	  // Write phase: setup on falling edge of clk_a, write on rising edge
+      @(negedge clk_a);
+      we_a    <= 1'b1;
+      addr_a  <= addr;
+      wdata_a <= data;
 
-    // Read phase (port b)
-    oe_b   = 1'b1;
-    addr_b = addr;
-    @(posedge clk_b); // Present address
-    @(posedge clk_b); // Wait for synchronous read pipeline if RAM registers the output
-    if (rdata_b !== data)
-      $display("FAIL: Addr %0d | Expected: %0h, Got: %0h", addr, data, rdata_b);
-    else
-      $display("PASS: Addr %0d | Data: %0h", addr, rdata_b);
-    oe_b   = 1'b0;
+      @(posedge clk_a);  // write occurs here
+
+      @(negedge clk_a);
+      we_a    <= 1'b0;// ensure only single-cycle write
+
+      // Read phase (port b)
+      @(negedge clk_b); // Present address
+	  oe_b   = 1'b1;
+      addr_b = addr;
+      @(posedge clk_b); // Wait for synchronous read pipeline if RAM registers the output
+      if (rdata_b !== data)
+        $display("FAIL: Addr %0d | Expected: %0h, Got: %0h", addr, data, rdata_b);
+      else
+        $display("PASS: Addr %0d | Data: %0h", addr, rdata_b);
+	  @(negedge clk_b);
+      oe_b   = 1'b0;
+	 end
   endtask
 
   // Test sequence
   integer i;
   initial begin
     // Initialize signals
-    we_a = 1'b0;
-    addr_a = '0;
-    wdata_a = '0;
-    addr_b = '0;
+    we_a    = 1'b0;
+    addr_a  = {AddrWidth{1'b0}};
+    wdata_a = {DataWidth{1'b0}};
+    addr_b  = {AddrWidth{1'b0}};
 
     // Wait for clocks to stabilize
     repeat(2) @(posedge clk_a);
     repeat(2) @(posedge clk_b);
 
     // Write and read a handful of values
-    check_write_read(4'd0, 8'h12);
-    check_write_read(4'd3, 8'hAB);
-    check_write_read(4'd7, 8'hFF);
+    check_write_read(4'd0 , 8'h12);
+    check_write_read(4'd3 , 8'hAB);
+    check_write_read(4'd7 , 8'hFF);
     check_write_read(4'd15, 8'h01);
 
     // Optional: Loop through a pattern
     for (i = 0; i < 16; i = i + 1) begin
-      check_write_read(i[AddrWidth-1:0], (i * 7) & 8'hFF);
+      check_write_read(i[AddrWidth-1:0], (i * 7) & {DataWidth{1'hFF}});
     end
 
     $display("All tests completed.");

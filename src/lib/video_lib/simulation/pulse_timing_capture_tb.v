@@ -22,13 +22,13 @@
 module pulse_timing_capture_tb;
 
   localparam CounterWidth = 3;
-  logic clk;
-  logic rst_n;
-  logic [CounterWidth-1:0] counter;
-  logic d;
-  logic [CounterWidth-1:0] rising_at, falling_at;
-  logic is_valid;
-  logic [CounterWidth-1:0] last_rising_at, last_falling_at;
+  reg clk;
+  reg  rst_n;
+  reg  [CounterWidth-1:0] counter;
+  reg  d;
+  wire [CounterWidth-1:0] rising_at, falling_at;
+  wire is_valid;
+  reg [CounterWidth-1:0] last_rising_at, last_falling_at;
 
   // Instantiate DUT
   pulse_timing_capture #(
@@ -57,35 +57,39 @@ module pulse_timing_capture_tb;
 
   // Task for check stage
   task automatic check_invalid(
-    input string msg
+    input [8*32-1:0] msg
   );
-    @(negedge clk);
-    if (is_valid)
-      $display("FAIL: %s | is_valid: %b | rising_at: %b | falling_at: %b", msg, is_valid, rising_at, falling_at);
-    else
-      $display("PASS: %s", msg);
+    begin
+      @(negedge clk);
+      if (is_valid)
+        $display("FAIL: %s | is_valid: %b | rising_at: %b | falling_at: %b", msg, is_valid, rising_at, falling_at);
+      else
+        $display("PASS: %s", msg);
+	end
   endtask
 
   task automatic check_valid(
     input [CounterWidth-1:0] expect_rising_at,
     input [CounterWidth-1:0] expect_falling_at,
-    input string msg
+    input [8*32-1:0] msg
   );
-    @(negedge clk);
-    if (!is_valid || falling_at !== expect_falling_at || rising_at !== expect_rising_at)
-      $display("FAIL: %s | is_valid: %b | rising_o: %b| falling_o: %b", msg, is_valid, rising_at, falling_at);
-    else
-      $display("PASS: %s", msg);
+    begin
+      @(negedge clk);
+      if (!is_valid || falling_at !== expect_falling_at || rising_at !== expect_rising_at)
+        $display("FAIL: %s | is_valid: %b | rising_o: %b| falling_o: %b", msg, is_valid, rising_at, falling_at);
+      else
+        $display("PASS: %s", msg);
+	end
   endtask
   
   // Sequence of test stages
   initial begin
-    counter = '0;
+    counter = 1'b0;
     
-    d = '0;
+    d = 1'b0;
     
-    last_rising_at = '0;
-    last_falling_at = '0;
+    last_rising_at = {CounterWidth{1'b0}};
+    last_falling_at = {CounterWidth{1'b0}};
 
     @(posedge rst_n);
     
@@ -94,7 +98,7 @@ module pulse_timing_capture_tb;
     check_invalid("Initial state");
 
     // Stage 2: Rising edge only (invalid)
-    @(negedge clk); counter = counter + 1; d = '1; 
+    @(negedge clk); counter = counter + 1; d = 1'b1; 
     check_invalid("Calture rising edge only (invalid)");
     @(negedge clk); last_rising_at = counter;
     
@@ -103,7 +107,7 @@ module pulse_timing_capture_tb;
     check_invalid("No change (invalid)");
     
     // Stage 4: Falling edge only (valid)
-    @(negedge clk); counter = counter + 1; d = '0; 
+    @(negedge clk); counter = counter + 1; d = 1'b0; 
     check_valid(last_rising_at, counter, "Capture falling edge (goes valid)");
     @(negedge clk); last_falling_at = counter;
     
@@ -112,12 +116,12 @@ module pulse_timing_capture_tb;
     check_valid(last_rising_at, last_falling_at, "No change (valid)");
     
     // Stage 6: Recapture rising edge (valid)
-    @(negedge clk); counter = counter + 1; d = '1; 
+    @(negedge clk); counter = counter + 1; d = 1'b1; 
     check_valid(counter, last_falling_at, "Recapture rising edge (valid)");
     @(negedge clk); last_rising_at = counter;
     
     // Stage 7: Recapture falling edge (valid)
-    @(negedge clk); counter = counter + 1; d = '0; 
+    @(negedge clk); counter = counter + 1; d = 1'b0; 
     check_valid(last_rising_at, counter, "Recapture falling edge (valid)");
     @(negedge clk); last_falling_at = counter;
     

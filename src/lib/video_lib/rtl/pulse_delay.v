@@ -20,15 +20,15 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module pulse_delay (
-  input        clk_i,
-  input        rst_ni,
-  input        d_i,
-  output logic q_o
+  input  clk_i,
+  input  rst_ni,
+  input  d_i,
+  output q_o
 );
   
-  logic q, q2;
+  reg q, q2;
   
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       q <= 1'b0;
       q2 <= 1'b0;

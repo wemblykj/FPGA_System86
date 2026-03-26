@@ -43,22 +43,22 @@ module scanline_doubler_tb;
   // -------------------------------------------------------
   // DUT signals
   // -------------------------------------------------------
-  logic                clk;
-  logic                clk_x2;
-  logic                rst_n;
+  reg                clk;
+  reg                clk_x2;
+  reg                rst_n;
 
-  logic [BitDepth-1:0] data;
-  logic                hsync_n;
-  logic                hblank_n;
-  logic                vsync_n;
-  logic                vblank_n;
+  reg [BitDepth-1:0] data;
+  reg                hsync_n;
+  reg                hblank_n;
+  reg                vsync_n;
+  reg                vblank_n;
 
-  logic [BitDepth-1:0] x2_data;
-  logic                x2_hsync_n;
-  logic                x2_hblank_n;
-  logic                x2_vsync_n;
-  logic                x2_vblank_n;
-  logic                x2_valid;
+  wire [BitDepth-1:0] x2_data;
+  wire                x2_hsync_n;
+  wire                x2_hblank_n;
+  wire                x2_vsync_n;
+  wire                x2_vblank_n;
+  wire                x2_valid;
 
   scanline_doubler #(
     .BitDepth(BitDepth),
@@ -104,7 +104,7 @@ module scanline_doubler_tb;
   // -------------------------------------------------------
   // Reference storage: what we drove as input
   // -------------------------------------------------------
-  logic [BitDepth-1:0] ref_line [0:NUM_LINES-1][0:ACTIVE_PIXELS-1];
+  reg [BitDepth-1:0] ref_line [0:NUM_LINES-1][0:ACTIVE_PIXELS-1];
 
   // -------------------------------------------------------
   // Task: drive one complete scanline
@@ -117,42 +117,44 @@ module scanline_doubler_tb;
   //  Note: edges are driven on @(negedge clk) so they are stable
   //        well before the DUT samples on @(posedge clk).
   // -------------------------------------------------------
+  integer px;
   task automatic drive_line(input integer line_num);
-    integer px;
+    begin
+      
+      // --- Active region ---
+      for (px = 0; px < ACTIVE_PIXELS; px = px + 1) begin
+        @(negedge clk);
+        hblank_n <= 1'b1;
+        hsync_n  <= 1'b1;
+        data     <= (line_num * ACTIVE_PIXELS + px) & {BitDepth{1'b1}};
+        // store reference
+        ref_line[line_num][px] = (line_num * ACTIVE_PIXELS + px) & {BitDepth{1'b1}};
+      end
 
-    // --- Active region ---
-    for (px = 0; px < ACTIVE_PIXELS; px++) begin
-      @(negedge clk);
-      hblank_n <= 1'b1;
-      hsync_n  <= 1'b1;
-      data     <= (line_num * ACTIVE_PIXELS + px) & {BitDepth{1'b1}};
-      // store reference
-      ref_line[line_num][px] = (line_num * ACTIVE_PIXELS + px) & {BitDepth{1'b1}};
-    end
+      // --- Front porch (hblank asserted, hsync still high) ---
+      repeat (HFRONT_PORCH) begin
+        @(negedge clk);
+        hblank_n <= 1'b0;
+        hsync_n  <= 1'b1;
+        data     <= 1'b0;
+      end
 
-    // --- Front porch (hblank asserted, hsync still high) ---
-    repeat (HFRONT_PORCH) begin
-      @(negedge clk);
-      hblank_n <= 1'b0;
-      hsync_n  <= 1'b1;
-      data     <= '0;
-    end
+      // --- Hsync pulse (hblank and hsync both asserted) ---
+      repeat (HSYNC_WIDTH) begin
+        @(negedge clk);
+        hblank_n <= 1'b0;
+        hsync_n  <= 1'b0;
+        data     <= 1'b0;
+      end
 
-    // --- Hsync pulse (hblank and hsync both asserted) ---
-    repeat (HSYNC_WIDTH) begin
-      @(negedge clk);
-      hblank_n <= 1'b0;
-      hsync_n  <= 1'b0;
-      data     <= '0;
-    end
-
-    // --- Back porch (hblank asserted, hsync deasserted) ---
-    repeat (HBACK_PORCH) begin
-      @(negedge clk);
-      hblank_n <= 1'b0;
-      hsync_n  <= 1'b1;
-      data     <= '0;
-    end
+      // --- Back porch (hblank asserted, hsync deasserted) ---
+      repeat (HBACK_PORCH) begin
+        @(negedge clk);
+        hblank_n <= 1'b0;
+        hsync_n  <= 1'b1;
+        data     <= 1'b0;
+      end
+	end
   endtask
 
   // -------------------------------------------------------
@@ -166,8 +168,12 @@ module scanline_doubler_tb;
   integer              cap_errors = 0;
   integer              out_line_count = 0;
   integer              cap_px;
-  logic [BitDepth-1:0] cap_buf [0:ACTIVE_PIXELS-1];
+  reg [BitDepth-1:0] cap_buf [0:ACTIVE_PIXELS-1];
 
+  integer input_line;
+  integer ref_px;
+  integer line_ok;
+  
   initial begin
     // Wait for reset and valid
     @(posedge rst_n);
@@ -183,7 +189,7 @@ module scanline_doubler_tb;
       // Capture active pixels
       while (x2_valid && x2_hblank_n && cap_px < ACTIVE_PIXELS) begin
         cap_buf[cap_px] = x2_data;
-        cap_px++;
+        cap_px = cap_px + 1;
         @(posedge clk_x2);
       end
 
@@ -193,9 +199,6 @@ module scanline_doubler_tb;
       // capture), so useful output may start from input line 1 or 2 
       // depending on latency. We check what we can.
       begin
-        integer input_line;
-        integer px;
-        integer line_ok;
 
         // The output line corresponds to input_line = out_line_count / 2
         // (each input line produces two output lines)
@@ -203,13 +206,13 @@ module scanline_doubler_tb;
 
         line_ok = 1;
         if (input_line < NUM_LINES && cap_px == ACTIVE_PIXELS) begin
-          for (px = 0; px < ACTIVE_PIXELS; px++) begin
-            if (cap_buf[px] !== ref_line[input_line][px]) begin
+          for (ref_px = 0; ref_px < ACTIVE_PIXELS; ref_px = ref_px + 1) begin
+            if (cap_buf[ref_px] !== ref_line[input_line][ref_px]) begin
               $display("FAIL: out_line=%0d (input_line=%0d), px=%0d: expected=%0h got=%0h",
-                       out_line_count, input_line, px,
-                       ref_line[input_line][px], cap_buf[px]);
+                       out_line_count, input_line, ref_px,
+                       ref_line[input_line][ref_px], cap_buf[ref_px]);
               line_ok = 0;
-              cap_errors++;
+              cap_errors = cap_errors + 1;
             end
           end
           if (line_ok)
@@ -221,7 +224,7 @@ module scanline_doubler_tb;
         end
       end
 
-      out_line_count++;
+      out_line_count = out_line_count + 1;
     end
   end
 
@@ -231,7 +234,7 @@ module scanline_doubler_tb;
   integer line;
   initial begin
     // Initialize
-    data     = '0;
+    data     = 1'b0;
     hsync_n  = 1'b1;
     hblank_n = 1'b1;
     vsync_n  = 1'b1;
@@ -242,7 +245,7 @@ module scanline_doubler_tb;
 
     // Drive multiple scanlines
     $display("=== Driving %0d input lines ===", NUM_LINES);
-    for (line = 0; line < NUM_LINES; line++) begin
+    for (line = 0; line < NUM_LINES; line = line + 1) begin
       $display("--- Input line %0d ---", line);
       drive_line(line);
     end

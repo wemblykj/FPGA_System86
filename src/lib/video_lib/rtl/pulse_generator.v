@@ -25,36 +25,36 @@
 module pulse_generator #(
   parameter CounterWidth = 12
 ) (
-  input                          clk_i,
-  input                          rst_ni,
-  input [CounterWidth-1:0]       counter_i,
-  input logic [CounterWidth-1:0] rising_at_i,
-  input logic [CounterWidth-1:0] falling_at_i,
-  output                         q_o,
-  output logic                   is_valid_o
+  input                    clk_i,
+  input                    rst_ni,
+  input [CounterWidth-1:0] counter_i,
+  input [CounterWidth-1:0] rising_at_i,
+  input [CounterWidth-1:0] falling_at_i,
+  output                   q_o,
+  output                   is_valid_o
 );
   
-  logic q;
-  logic rising_edge, faling_edge;
-  logic have_rising_q, have_falling_q;
+  reg q;
+  wire rising_edge_d, faling_edge_d;
+  reg have_rising_q, have_falling_q;
   
-  assign rising_edge = counter_i === rising_at_i;
-  assign faling_edge = counter_i === falling_at_i;
+  assign rising_edge_d = counter_i === rising_at_i;
+  assign faling_edge_d = counter_i === falling_at_i;
   
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      q              <= '0;
-      have_rising_q  <= '0;
-      have_falling_q <= 0;
+      q              <= 1'b0;
+      have_rising_q  <= 1'b0;
+      have_falling_q <= 1'b0;
     end else begin
       q <= q;
-      if (rising_edge) begin
-        q             <= '1;
-        have_rising_q <= '1;
+      if (rising_edge_d) begin
+        q             <= 1'b1;
+        have_rising_q <= 1'b1;
       end
-      if (faling_edge) begin
-        q              <= '0;
-        have_falling_q <= '1;
+      if (faling_edge_d) begin
+        q              <= 1'b0;
+        have_falling_q <= 1'b1;
       end
     end
   end

@@ -22,12 +22,12 @@
 module pulse_generator_tb;
 
   localparam CounterWidth = 3;
-  logic clk;
-  logic rst_n;
-  logic [CounterWidth-1:0] counter;
-  logic [CounterWidth-1:0] rising_at, falling_at;
-  logic q;
-  logic is_valid;
+  reg clk;
+  reg rst_n;
+  reg [CounterWidth-1:0] counter;
+  reg [CounterWidth-1:0] rising_at, falling_at;
+  wire q;
+  wire is_valid;
   
   // Instantiate DUT
   pulse_generator #(
@@ -58,21 +58,23 @@ module pulse_generator_tb;
   task automatic check_output(
     input expect_q,
     input expect_is_valid,
-    input string msg
+    input [8*32-1:0] msg
   );
-    @(negedge clk);
-    if (q !== expect_q || is_valid !== expect_is_valid)
-      $display("FAIL: %s | q: %b | is_valid: %b", msg, q, is_valid);
-    else
-      $display("PASS: %s", msg);
+    begin
+      @(negedge clk);
+      if (q !== expect_q || is_valid !== expect_is_valid)
+        $display("FAIL: %s | q: %b | is_valid: %b", msg, q, is_valid);
+      else
+        $display("PASS: %s", msg);
+	end
   endtask
   
   // Sequence of test stages
   initial begin
-    counter = '0;
+    counter = 1'b0;
     
-    rising_at = CounterWidth'(2);
-    falling_at = CounterWidth'(4);
+    rising_at = 3'd2;
+    falling_at = 3'd4;
 
     @(posedge rst_n);
     

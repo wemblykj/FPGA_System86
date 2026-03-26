@@ -20,15 +20,15 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module pulse_toggle (
-  input        clk_i,
-  input        rst_ni,
-  input        d_i,
-  output logic q_o
+  input  clk_i,
+  input  rst_ni,
+  input  d_i,
+  output q_o
 );
   
-  logic q;
+  reg q;
   
-  always_ff @(posedge clk_i or negedge rst_ni) begin
+  always @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       q <= 1'b0;
     end else if (d_i) begin
