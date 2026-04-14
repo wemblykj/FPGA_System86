@@ -24,6 +24,7 @@ module edge_timing_capture #(
 ) (
   input                     clk_i,
   input                     rst_ni,
+  input                     enable_i,
   input  [CounterWidth-1:0] counter_i,
   input                     falling_i,
   input                     rising_i,
@@ -42,14 +43,16 @@ module edge_timing_capture #(
       have_falling_q <= 1'b0;
       have_rising_q  <= 1'b0;
     end else begin
-      if (falling_i) begin
-        falling_at_q  <= counter_i;
-        have_falling_q <= 1'b1;
-      end  
-      if (rising_i) begin
-        rising_at_q   <= counter_i;
-        have_rising_q <= 1'b1;
-      end
+	  if (enable_i) begin
+        if (falling_i) begin
+          falling_at_q  <= counter_i;
+          have_falling_q <= 1'b1;
+        end  
+        if (rising_i) begin
+          rising_at_q   <= counter_i;
+          have_rising_q <= 1'b1;
+        end
+	  end
     end
   end
 

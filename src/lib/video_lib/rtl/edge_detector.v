@@ -36,7 +36,9 @@ module edge_detector (
   
   always @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      d_q <= 1'b0;
+      d_q <= 1'b0;  
+	  falling_q <= 1'b0;
+	  rising_q <= 1'b0;
     end else begin
       d_q <= d_i;
       falling_q <= falling_d;

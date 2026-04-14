@@ -25,22 +25,35 @@ module timing_counter #(
   input                     clk_i,
   input                     rst_ni,
   input                     reset_i,    // reset pulse for counter
-  output [CounterWidth-1:0] counter_o
+  output [CounterWidth-1:0] counter_o,
+  output                    is_valid_o
 );
 
+  wire                    reset_d;
+  reg                     reset_q;
   wire [CounterWidth-1:0] counter_d;
   reg  [CounterWidth-1:0] counter_q;
+  reg                     is_valid_q;
 
+  //assign reset_d = reset_i && !reset_q;
   assign counter_d = reset_i ? 1'b0 : counter_q + 1'b1;
-
+  
   always @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      counter_q <= 1'b0;
+	  //reset_q    <= 1'b0;
+      counter_q  <= 1'b0;  
+	  is_valid_q <= 1'b0;
     end else begin
-      counter_q <= counter_d;
+	  //reset_q <= reset_i;
+	  if (is_valid_q == 1'b0) begin
+	    is_valid_q <= 1'b1;
+	  end else begin
+	    counter_q <= counter_d;
+	  end
     end
   end
   
   assign counter_o = counter_q;
+  assign is_valid_o = is_valid_q;
   
 endmodule

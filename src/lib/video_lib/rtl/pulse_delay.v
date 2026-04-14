@@ -22,23 +22,33 @@
 module pulse_delay (
   input  clk_i,
   input  rst_ni,
+  input  enable_i,
   input  d_i,
-  output q_o
+  output q_o,
+  output is_valid_o
 );
   
   reg q, q2;
+  reg is_valid;
   
   always @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      q <= 1'b0;
-      q2 <= 1'b0;
-    end else if (d_i) begin
-      q2 <= q;
       q <= d_i;
-    end
+      q2 <= d_i;
+	  is_valid <= 1'b0;
+    end else begin
+	  if (enable_i) begin
+	    q2 <= q;
+	    if (d_i != q) begin  
+          q <= d_i;
+		  is_valid <= 1'b1;
+        end
+	  end
+	end
   end
   
   assign q_o = q2;
+  assign is_valid_o = is_valid;
   
 endmodule
 

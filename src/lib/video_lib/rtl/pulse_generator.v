@@ -27,6 +27,7 @@ module pulse_generator #(
 ) (
   input                    clk_i,
   input                    rst_ni,
+  input                    enable_i,
   input [CounterWidth-1:0] counter_i,
   input [CounterWidth-1:0] rising_at_i,
   input [CounterWidth-1:0] falling_at_i,
@@ -48,13 +49,15 @@ module pulse_generator #(
       have_falling_q <= 1'b0;
     end else begin
       q <= q;
-      if (rising_edge_d) begin
-        q             <= 1'b1;
-        have_rising_q <= 1'b1;
-      end
-      if (faling_edge_d) begin
-        q              <= 1'b0;
-        have_falling_q <= 1'b1;
+	  if (enable_i) begin
+        if (rising_edge_d) begin
+          q             <= 1'b1;
+          have_rising_q <= 1'b1;
+        end
+        if (faling_edge_d) begin
+          q              <= 1'b0;
+          have_falling_q <= 1'b1;
+		end
       end
     end
   end

@@ -38,6 +38,10 @@ module scanline_doubler_tb;
   localparam BLANK_PIXELS  = HFRONT_PORCH + HSYNC_WIDTH + HBACK_PORCH;
   localparam TOTAL_LINE    = ACTIVE_PIXELS + BLANK_PIXELS;
 
+  localparam VFRONT_PORCH  = 1;   // vblank asserted, before vsync
+  localparam VSYNC_WIDTH   = 2;   // vsync asserted
+  localparam VBACK_PORCH   = 1;   // vblank asserted, after vsync
+  
   localparam NUM_LINES     = 6;   // number of active lines to drive
 
   // -------------------------------------------------------
@@ -118,9 +122,66 @@ module scanline_doubler_tb;
   //        well before the DUT samples on @(posedge clk).
   // -------------------------------------------------------
   integer px;
+  task automatic drive_blank_line();
+    begin
+      
+	  // --- Back porch (hblank asserted, hsync deasserted) ---
+      repeat (HBACK_PORCH) begin
+        @(negedge clk);
+        hblank_n <= 1'b0;
+        hsync_n  <= 1'b1;
+        data     <= {BitDepth{1'b0}};
+      end
+	  
+	  // --- Active region ---
+	  repeat (ACTIVE_PIXELS) begin
+	    @(negedge clk);
+        hblank_n <= 1'b1;
+        hsync_n  <= 1'b1;
+		data     <= {BitDepth{1'b0}};
+	  end
+      
+      // --- Front porch (hblank asserted, hsync still high) ---
+      repeat (HFRONT_PORCH) begin
+        @(negedge clk);
+        hblank_n <= 1'b0;
+        hsync_n  <= 1'b1;
+        data     <= {BitDepth{1'b0}};
+      end
+
+      // --- Hsync pulse (hblank and hsync both asserted) ---
+      repeat (HSYNC_WIDTH) begin
+        @(negedge clk);
+        hblank_n <= 1'b0;
+        hsync_n  <= 1'b0;
+        data     <= {BitDepth{1'b0}};
+      end
+
+	end
+  endtask
+  
+  // -------------------------------------------------------
+  // Task: drive one complete scanline
+  //
+  //  Cycle:  0..ACTIVE-1 | ACTIVE..ACTIVE+FP-1 | +FP..+FP+SYNC-1 | ...BP |
+  //  hblank: ^^^^^^^^^^^^   ___________________________________________^^^^
+  //  hsync:  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ________________^^^^^^^
+  //  data:   px0 px1 ...    000                     000              000
+  //
+  //  Note: edges are driven on @(negedge clk) so they are stable
+  //        well before the DUT samples on @(posedge clk).
+  // -------------------------------------------------------
   task automatic drive_line(input integer line_num);
     begin
       
+	  // --- Back porch (hblank asserted, hsync deasserted) ---
+      repeat (HBACK_PORCH) begin
+        @(negedge clk);
+        hblank_n <= 1'b0;
+        hsync_n  <= 1'b1;
+        data     <= {BitDepth{1'b0}};
+      end
+	  
       // --- Active region ---
       for (px = 0; px < ACTIVE_PIXELS; px = px + 1) begin
         @(negedge clk);
@@ -136,7 +197,7 @@ module scanline_doubler_tb;
         @(negedge clk);
         hblank_n <= 1'b0;
         hsync_n  <= 1'b1;
-        data     <= 1'b0;
+        data     <= {BitDepth{1'b0}};
       end
 
       // --- Hsync pulse (hblank and hsync both asserted) ---
@@ -144,16 +205,9 @@ module scanline_doubler_tb;
         @(negedge clk);
         hblank_n <= 1'b0;
         hsync_n  <= 1'b0;
-        data     <= 1'b0;
+        data     <= {BitDepth{1'b0}};
       end
 
-      // --- Back porch (hblank asserted, hsync deasserted) ---
-      repeat (HBACK_PORCH) begin
-        @(negedge clk);
-        hblank_n <= 1'b0;
-        hsync_n  <= 1'b1;
-        data     <= 1'b0;
-      end
 	end
   endtask
 
@@ -242,7 +296,24 @@ module scanline_doubler_tb;
 
     @(posedge rst_n);
     repeat (2) @(posedge clk);
-
+	
+	// --- Vsync pulse (vblank and vsync both asserted) ---
+    repeat (VSYNC_WIDTH) begin
+      vblank_n <= 1'b0;
+      vsync_n  <= 1'b0;
+	  drive_blank_line();
+    end
+	
+	// --- Back porch (vblank asserted, vsync deasserted) ---
+    repeat (VBACK_PORCH) begin
+      vblank_n <= 1'b0;
+      vsync_n  <= 1'b1;
+	  drive_blank_line();
+    end
+	
+	vsync_n  = 1'b1;
+    vblank_n = 1'b1;
+	
     // Drive multiple scanlines
     $display("=== Driving %0d input lines ===", NUM_LINES);
     for (line = 0; line < NUM_LINES; line = line + 1) begin
@@ -250,6 +321,31 @@ module scanline_doubler_tb;
       drive_line(line);
     end
 
+    // --- Front porch (vblank asserted, vsync still high) ---
+    repeat (VFRONT_PORCH) begin
+      vblank_n <= 1'b0;
+      vsync_n  <= 1'b1;
+	  drive_blank_line();
+    end
+
+    // --- Vsync pulse (vblank and vsync both asserted) ---
+    repeat (VSYNC_WIDTH) begin
+      vblank_n <= 1'b0;
+      vsync_n  <= 1'b0;
+	  drive_blank_line();
+    end
+
+    // --- Back porch (vblank asserted, vsync deasserted) ---
+    repeat (VBACK_PORCH) begin
+      vblank_n <= 1'b0;
+      vsync_n  <= 1'b1;
+	  drive_blank_line();
+    end
+	
+	@(negedge clk);
+	vsync_n  = 1'b1;
+    vblank_n = 1'b1;
+	
     // Let the pipeline drain: enough time for all doubled output to appear
     repeat (TOTAL_LINE * 4) @(posedge clk_x2);
 
